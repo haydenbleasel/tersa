@@ -1,8 +1,8 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { currentUser } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';
 
 export const deleteProjectAction = async (
@@ -16,15 +16,18 @@ export const deleteProjectAction = async (
     }
 > => {
   try {
-    const user = await currentUser();
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    if (!user) {
+    if (!data?.user) {
       throw new Error('User not found');
     }
 
     const project = await database
       .delete(projects)
-      .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
+      .where(
+        and(eq(projects.id, projectId), eq(projects.userId, data.user.id))
+      );
 
     if (!project) {
       throw new Error('Project not found');

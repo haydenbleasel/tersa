@@ -1,12 +1,10 @@
+import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { Waitlist } from '@clerk/nextjs';
-import { currentUser } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
-import Background from '../(unauthenticated)/background.jpg';
 import { createProjectAction } from '../actions/project/create';
 
 export const metadata: Metadata = {
@@ -15,26 +13,33 @@ export const metadata: Metadata = {
 };
 
 const Home = async () => {
-  const user = await currentUser();
+  const client = await createClient();
+  const { data } = await client.auth.getUser();
 
-  if (!user) {
+  if (!data?.user) {
     return (
-      <div className="relative flex h-screen w-full items-center justify-center p-8">
-        <Image
-          src={Background}
-          alt="Background"
-          className="absolute inset-0 size-full object-cover"
-          placeholder="blur"
-        />
-        <Waitlist />
-      </div>
+      <Canvas
+        projects={[]}
+        data={{
+          id: -1,
+          name: 'test',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: 'test',
+          transcriptionModel: 'test',
+          visionModel: 'test',
+          content: 'test',
+          organizationId: 'test',
+          image: 'test',
+        }}
+      />
     );
   }
 
   const allProjects = await database
     .select()
     .from(projects)
-    .where(eq(projects.userId, user.id));
+    .where(eq(projects.userId, data.user.id));
 
   if (!allProjects.length) {
     const newProject = await createProjectAction('Untitled Project');

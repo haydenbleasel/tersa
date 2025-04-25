@@ -14,7 +14,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
       className="absolute inset-0 size-full object-cover"
       placeholder="blur"
     />
-    {children}
+    <div className="relative z-10 size-full">{children}</div>
   </div>
 );
 

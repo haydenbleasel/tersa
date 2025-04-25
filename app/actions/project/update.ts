@@ -1,8 +1,8 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { currentUser } from '@clerk/nextjs/server';
 import { and, eq } from 'drizzle-orm';
 
 export const updateProjectAction = async (
@@ -17,9 +17,10 @@ export const updateProjectAction = async (
     }
 > => {
   try {
-    const user = await currentUser();
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    if (!user) {
+    if (!data?.user) {
       throw new Error('User not found');
     }
 
@@ -29,7 +30,9 @@ export const updateProjectAction = async (
         ...data,
         updatedAt: new Date(),
       })
-      .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
+      .where(
+        and(eq(projects.id, projectId), eq(projects.userId, data.user.id))
+      );
 
     if (!project) {
       throw new Error('Project not found');

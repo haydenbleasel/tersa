@@ -1,7 +1,7 @@
 import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { currentUser } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -18,17 +18,18 @@ type ProjectProps = {
 };
 
 const Project = async ({ params }: ProjectProps) => {
-  const user = await currentUser();
+  const client = await createClient();
+  const { data } = await client.auth.getUser();
   const { projectId } = await params;
 
-  if (!user) {
+  if (!data?.user) {
     return redirect('/sign-in');
   }
 
   const allProjects = await database
     .select()
     .from(projects)
-    .where(eq(projects.userId, user.id));
+    .where(eq(projects.userId, data.user.id));
 
   if (!allProjects.length) {
     notFound();

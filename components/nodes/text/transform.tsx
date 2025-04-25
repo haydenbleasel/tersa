@@ -10,7 +10,6 @@ import {
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
 import { useChat } from '@ai-sdk/react';
-import { useUser } from '@clerk/nextjs';
 import { useReactFlow } from '@xyflow/react';
 import {
   ClockIcon,
@@ -60,7 +59,6 @@ export const TextTransform = ({
       });
     },
   });
-  const { user } = useUser();
 
   const handleGenerate = async () => {
     const incoming = getRecursiveIncomers(id, getNodes(), getEdges());
@@ -120,40 +118,38 @@ export const TextTransform = ({
     },
   ];
 
-  if (user) {
-    if (status === 'streaming') {
-      toolbar.push({
-        tooltip: 'Stop',
-        children: (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            onClick={stop}
-          >
-            <SquareIcon size={12} />
-          </Button>
-        ),
-      });
-    } else if (nonUserMessages.length) {
-      toolbar.push({
-        tooltip: 'Regenerate',
-        children: (
-          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
-            <RotateCcwIcon size={12} />
-          </Button>
-        ),
-      });
-    } else {
-      toolbar.push({
-        tooltip: 'Generate',
-        children: (
-          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
-            <PlayIcon size={12} />
-          </Button>
-        ),
-      });
-    }
+  if (status === 'streaming') {
+    toolbar.push({
+      tooltip: 'Stop',
+      children: (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={stop}
+        >
+          <SquareIcon size={12} />
+        </Button>
+      ),
+    });
+  } else if (nonUserMessages.length) {
+    toolbar.push({
+      tooltip: 'Regenerate',
+      children: (
+        <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+          <RotateCcwIcon size={12} />
+        </Button>
+      ),
+    });
+  } else {
+    toolbar.push({
+      tooltip: 'Generate',
+      children: (
+        <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+          <PlayIcon size={12} />
+        </Button>
+      ),
+    });
   }
 
   if (data.updatedAt) {

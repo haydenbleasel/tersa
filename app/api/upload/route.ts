@@ -1,4 +1,4 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { createClient } from '@/lib/supabase/server';
 import { type HandleUploadBody, handleUpload } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
 
@@ -13,9 +13,10 @@ export const POST = async (request: Request): Promise<NextResponse> => {
         pathname
         /* clientPayload */
       ) => {
-        const user = await currentUser();
+        const client = await createClient();
+        const { data } = await client.auth.getUser();
 
-        if (!user) {
+        if (!data?.user) {
           throw new Error('Unauthorized');
         }
 
@@ -23,7 +24,7 @@ export const POST = async (request: Request): Promise<NextResponse> => {
           allowedContentTypes: ['image/*', 'audio/*', 'video/*'],
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({
-            userId: user.id,
+            userId: data.user.id,
           }),
         };
       },

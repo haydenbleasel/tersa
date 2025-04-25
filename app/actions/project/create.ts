@@ -1,8 +1,8 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { currentUser } from '@clerk/nextjs/server';
 
 export const createProjectAction = async (
   name: string
@@ -15,9 +15,10 @@ export const createProjectAction = async (
     }
 > => {
   try {
-    const user = await currentUser();
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    if (!user) {
+    if (!data?.user) {
       throw new Error('User not found');
     }
 
@@ -25,7 +26,7 @@ export const createProjectAction = async (
       .insert(projects)
       .values({
         name,
-        userId: user.id,
+        userId: data.user.id,
         transcriptionModel: 'gpt-4o-mini-transcribe',
         visionModel: 'gpt-4.1-nano',
       })
