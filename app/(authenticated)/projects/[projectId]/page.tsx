@@ -45,7 +45,7 @@ const Project = async ({ params }: ProjectProps) => {
 
   return (
     <div className="h-screen w-screen">
-      <Canvas projects={allProjects} data={project} />
+      <Canvas projects={allProjects} data={project} userId={data.user.id} />
     </div>
   );
 };

@@ -1,11 +1,11 @@
-import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { createProjectAction } from '../actions/project/create';
+import { createProjectAction } from './actions/project/create';
+import { Demo } from './components/demo';
 
 export const metadata: Metadata = {
   title: 'Tersa',
@@ -17,23 +17,7 @@ const Home = async () => {
   const { data } = await client.auth.getUser();
 
   if (!data?.user) {
-    return (
-      <Canvas
-        projects={[]}
-        data={{
-          id: -1,
-          name: 'test',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          userId: 'test',
-          transcriptionModel: 'test',
-          visionModel: 'test',
-          content: 'test',
-          organizationId: 'test',
-          image: 'test',
-        }}
-      />
-    );
+    return <Demo />;
   }
 
   const allProjects = await database

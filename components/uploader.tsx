@@ -48,6 +48,8 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
     onUploadCompleted(downloadUrl.publicUrl, file.type);
   };
 
+  console.log(files);
+
   return (
     <Dropzone
       maxSize={1024 * 1024 * 10}

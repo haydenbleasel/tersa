@@ -3,6 +3,7 @@
 import { updateProjectAction } from '@/app/actions/project/update';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import type { projects } from '@/schema';
+import { useLocalStorage } from '@uidotdev/usehooks';
 import {
   Background,
   type Connection,
@@ -13,6 +14,7 @@ import {
   type NodeChange,
   ReactFlow,
   type ReactFlowInstance,
+  type ReactFlowJsonObject,
   type Viewport,
   type XYPosition,
   addEdge,
@@ -66,15 +68,29 @@ type ProjectData = {
     | undefined;
 };
 
-type CanvasProps = {
+export type CanvasProps = {
   projects: (typeof projects.$inferSelect)[];
   data: typeof projects.$inferSelect;
+  userId: string | undefined;
+  defaultContent?: {
+    nodes: Node[];
+    edges: Edge[];
+  };
 };
 
-export const CanvasInner = ({ projects, data }: CanvasProps) => {
+export const CanvasInner = ({
+  projects,
+  data,
+  userId,
+  defaultContent,
+}: CanvasProps) => {
   const content = data.content as ProjectData['content'];
-  const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
-  const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
+  const [nodes, setNodes] = useState<Node[]>(
+    content?.nodes ?? defaultContent?.nodes ?? []
+  );
+  const [edges, setEdges] = useState<Edge[]>(
+    content?.edges ?? defaultContent?.edges ?? []
+  );
   const [viewport, setViewport] = useState<Viewport | undefined>({
     x: content?.x ?? 0,
     y: content?.y ?? 0,
@@ -85,6 +101,27 @@ export const CanvasInner = ({ projects, data }: CanvasProps) => {
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [localSave, setLocalSave] = useLocalStorage<ReactFlowJsonObject<
+    Node,
+    Edge
+  > | null>('tersa-local-save', null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Restore local save if there is no user ID
+  useEffect(() => {
+    if (
+      localSave &&
+      !userId &&
+      nodes.length === 0 &&
+      edges.length === 0 &&
+      !loaded
+    ) {
+      setNodes(localSave.nodes);
+      setEdges(localSave.edges);
+      setViewport(localSave.viewport);
+      setLoaded(true);
+    }
+  }, [localSave, nodes, edges, userId, loaded]);
 
   const getScreenshot = async () => {
     const nodes = getNodes();
@@ -123,6 +160,12 @@ export const CanvasInner = ({ projects, data }: CanvasProps) => {
 
       const content = rfInstance.toObject();
       const image = await getScreenshot();
+
+      if (!userId) {
+        setLocalSave(content);
+
+        return;
+      }
 
       const response = await updateProjectAction(data.id, {
         image,
@@ -256,13 +299,8 @@ export const CanvasInner = ({ projects, data }: CanvasProps) => {
     (changes: NodeChange[]) => {
       setNodes((nds) => applyNodeChanges(changes, nds));
 
-      // Don't save if only the selected state is changing
-      // or if the node is being dragged
-      if (
-        changes.every(
-          (change) => change.type === 'position' || change.type === 'select'
-        )
-      ) {
+      // Don't save if only the selected state is changing.
+      if (changes.every((change) => change.type === 'select')) {
         return;
       }
 

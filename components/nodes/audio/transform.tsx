@@ -21,9 +21,7 @@ export const AudioTransform = ({
   title,
 }: AudioTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [audio, setAudio] = useState<string | null>(
-    data.audio?.downloadUrl ?? null
-  );
+  const [audio, setAudio] = useState<string | null>(data.audio?.url ?? null);
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
