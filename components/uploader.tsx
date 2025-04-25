@@ -11,7 +11,7 @@ import { useState } from 'react';
 
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
-  onUploadCompleted: (url: string) => void;
+  onUploadCompleted: (url: string, type: string) => void;
 };
 
 export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
@@ -45,7 +45,7 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
       .from(data.user.id)
       .getPublicUrl(blob.data.path);
 
-    onUploadCompleted(downloadUrl.publicUrl);
+    onUploadCompleted(downloadUrl.publicUrl, file.type);
   };
 
   return (
