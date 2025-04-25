@@ -1,7 +1,6 @@
 import { transcribeAction } from '@/app/actions/generate/transcribe';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Uploader } from '@/components/uploader';
-import type { PutBlobResult } from '@vercel/blob';
 import { useReactFlow } from '@xyflow/react';
 import { useParams } from 'next/navigation';
 import type { AudioNodeProps } from '.';
@@ -19,18 +18,18 @@ export const AudioPrimitive = ({
   const { updateNodeData } = useReactFlow();
   const { projectId } = useParams();
 
-  const handleUploadCompleted = async (blob: PutBlobResult) => {
-    const transcription = await transcribeAction(
-      blob.downloadUrl,
-      projectId as string
-    );
+  const handleUploadCompleted = async (url: string, type: string) => {
+    const transcription = await transcribeAction(url, projectId as string);
 
     if ('error' in transcription) {
       throw new Error(transcription.error);
     }
 
     updateNodeData(id, {
-      audio: blob,
+      audio: {
+        url,
+        type,
+      },
       transcript: transcription.transcript,
     });
   };
@@ -40,7 +39,7 @@ export const AudioPrimitive = ({
       <div className="p-4">
         {data.audio ? (
           // biome-ignore lint/a11y/useMediaCaption: <explanation>
-          <audio src={data.audio.downloadUrl} controls />
+          <audio src={data.audio.url} controls />
         ) : (
           <Uploader
             onUploadCompleted={handleUploadCompleted}

@@ -1,6 +1,5 @@
 import { NodeLayout } from '@/components/nodes/layout';
 import { Uploader } from '@/components/uploader';
-import type { PutBlobResult } from '@vercel/blob';
 import { useReactFlow } from '@xyflow/react';
 import type { VideoNodeProps } from '.';
 
@@ -29,11 +28,14 @@ export const VideoPrimitive = ({
   title,
 }: VideoPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const handleUploadCompleted = async (blob: PutBlobResult) => {
-    const response = await getVideoDimensions(blob.downloadUrl);
+  const handleUploadCompleted = async (url: string, type: string) => {
+    const response = await getVideoDimensions(url);
 
     updateNodeData(id, {
-      content: blob,
+      content: {
+        url,
+        type,
+      },
       width: response.width,
       height: response.height,
     });
@@ -43,7 +45,7 @@ export const VideoPrimitive = ({
     <NodeLayout id={id} data={data} type={type} title={title}>
       {data.content ? (
         <video
-          src={data.content.downloadUrl}
+          src={data.content.url}
           width={data.width ?? 100}
           height={data.height ?? 100}
           className="h-auto w-full rounded-lg"

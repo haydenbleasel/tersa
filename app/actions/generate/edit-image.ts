@@ -1,15 +1,19 @@
 'use server';
 
-import { type PutBlobResult, put } from '@vercel/blob';
+import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 import OpenAI, { toFile } from 'openai';
 
 export const editImageAction = async (
-  images: PutBlobResult[],
+  images: {
+    url: string;
+    type: string;
+  }[],
   instructions?: string
 ): Promise<
   | {
       url: string;
+      type: string;
     }
   | {
       error: string;
@@ -17,14 +21,20 @@ export const editImageAction = async (
 > => {
   try {
     const openai = new OpenAI();
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
+
+    if (!data?.user) {
+      throw new Error('User not found');
+    }
 
     const promptImages = await Promise.all(
       images.map(async (image) => {
         const response = await fetch(image.url);
         const blob = await response.blob();
 
-        return toFile(blob, image.pathname, {
-          type: image.contentType,
+        return toFile(blob, nanoid(), {
+          type: image.type,
         });
       })
     );
@@ -38,6 +48,7 @@ export const editImageAction = async (
       model: 'gpt-image-1',
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
+      user: data.user.id,
     });
 
     const json = response.data?.at(0)?.b64_json;
@@ -48,13 +59,25 @@ export const editImageAction = async (
 
     const bytes = Buffer.from(json, 'base64');
     const filename = nanoid();
+    const contentType = 'image/png';
 
-    const blob = await put(`${filename}.png`, bytes, {
-      access: 'public',
-    });
+    const blob = await client.storage
+      .from(data.user.id)
+      .upload(filename, bytes, {
+        contentType,
+      });
+
+    if (blob.error) {
+      throw new Error(blob.error.message);
+    }
+
+    const { data: downloadUrl } = client.storage
+      .from(data.user.id)
+      .getPublicUrl(blob.data.path);
 
     return {
-      url: blob.url,
+      url: downloadUrl.publicUrl,
+      type: contentType,
     };
   } catch (error) {
     return {

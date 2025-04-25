@@ -1,4 +1,3 @@
-import type { JSONContent } from '@tiptap/core';
 import { ImagePrimitive } from './primitive';
 import { ImageTransform } from './transform';
 
@@ -6,7 +5,10 @@ export type ImageNodeProps = {
   type: string;
   data: {
     source: 'primitive' | 'transform';
-    content?: JSONContent;
+    content?: {
+      url: string;
+      type: string;
+    };
     width?: number;
     height?: number;
     updatedAt?: string;

@@ -1,7 +1,7 @@
 'use server';
 
+import { createClient } from '@/lib/supabase/server';
 import { openai } from '@ai-sdk/openai';
-import { put } from '@vercel/blob';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
 import { nanoid } from 'nanoid';
 
@@ -22,12 +22,28 @@ export const generateSpeechAction = async (
       outputFormat: 'mp3',
     });
 
-    const blob = await put(`${nanoid()}.mp3`, new Blob([audio.uint8Array]), {
-      access: 'public',
-      contentType: audio.mimeType,
-    });
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    return { url: blob.url };
+    if (!data?.user) {
+      throw new Error('User not found');
+    }
+
+    const blob = await client.storage
+      .from(data.user.id)
+      .upload(nanoid(), new Blob([audio.uint8Array]), {
+        contentType: audio.mimeType,
+      });
+
+    if (blob.error) {
+      throw new Error(blob.error.message);
+    }
+
+    const { data: downloadUrl } = client.storage
+      .from(data.user.id)
+      .getPublicUrl(blob.data.path);
+
+    return { url: downloadUrl.publicUrl };
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Unknown error' };
   }

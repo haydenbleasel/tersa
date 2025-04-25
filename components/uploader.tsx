@@ -4,14 +4,14 @@ import {
   DropzoneEmptyState,
   type DropzoneProps,
 } from '@/components/ui/kibo-ui/dropzone';
-import type { PutBlobResult } from '@vercel/blob';
-import { upload } from '@vercel/blob/client';
+import { createClient } from '@/lib/supabase/client';
+import { nanoid } from 'nanoid';
 import Image from 'next/image';
 import { useState } from 'react';
 
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
-  onUploadCompleted: (blob: PutBlobResult) => void;
+  onUploadCompleted: (url: string) => void;
 };
 
 export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
@@ -24,12 +24,28 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
     setFiles(files);
     const file = files[0];
 
-    const newBlob = await upload(file.name, file, {
-      access: 'public',
-      handleUploadUrl: '/api/upload',
-    });
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    onUploadCompleted(newBlob);
+    if (!data?.user) {
+      throw new Error('User not found');
+    }
+
+    const blob = await client.storage
+      .from(data.user.id)
+      .upload(nanoid(), new Blob([file]), {
+        contentType: file.type,
+      });
+
+    if (blob.error) {
+      throw new Error(blob.error.message);
+    }
+
+    const { data: downloadUrl } = client.storage
+      .from(data.user.id)
+      .getPublicUrl(blob.data.path);
+
+    onUploadCompleted(downloadUrl.publicUrl);
   };
 
   return (

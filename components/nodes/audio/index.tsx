@@ -1,4 +1,3 @@
-import type { PutBlobResult } from '@vercel/blob';
 import { AudioPrimitive } from './primitive';
 import { AudioTransform } from './transform';
 
@@ -6,7 +5,10 @@ export type AudioNodeProps = {
   type: string;
   data: {
     source: 'primitive' | 'transform';
-    audio?: PutBlobResult;
+    audio?: {
+      url: string;
+      type: string;
+    };
     updatedAt?: string;
     model?: string;
     transcript?: string;

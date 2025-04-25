@@ -1,7 +1,7 @@
 'use server';
 
 import { imageModels } from '@/lib/models';
-import { put } from '@vercel/blob';
+import { createClient } from '@/lib/supabase/server';
 import { experimental_generateImage as generateImage } from 'ai';
 import { nanoid } from 'nanoid';
 
@@ -12,6 +12,7 @@ export const generateImageAction = async (
 ): Promise<
   | {
       url: string;
+      type: string;
     }
   | {
       error: string;
@@ -39,11 +40,28 @@ export const generateImageAction = async (
       ].join('\n'),
     });
 
-    const blob = await put(nanoid(), new Blob([image.uint8Array]), {
-      access: 'public',
-    });
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
 
-    return { url: blob.url };
+    if (!data?.user) {
+      throw new Error('User not found');
+    }
+
+    const blob = await client.storage
+      .from(data.user.id)
+      .upload(nanoid(), new Blob([image.uint8Array]), {
+        contentType: image.mimeType,
+      });
+
+    if (blob.error) {
+      throw new Error(blob.error.message);
+    }
+
+    const { data: downloadUrl } = client.storage
+      .from(data.user.id)
+      .getPublicUrl(blob.data.path);
+
+    return { url: downloadUrl.publicUrl, type: image.mimeType };
   } catch (error) {
     return { error: error instanceof Error ? error.message : 'Unknown error' };
   }

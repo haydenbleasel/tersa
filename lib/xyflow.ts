@@ -1,7 +1,6 @@
 import type { AudioNodeProps } from '@/components/nodes/audio';
 import type { ImageNodeProps } from '@/components/nodes/image';
 import type { TextNodeProps } from '@/components/nodes/text';
-import type { PutBlobResult } from '@vercel/blob';
 import { type Edge, type Node, getIncomers } from '@xyflow/react';
 
 export const getRecursiveIncomers = (
@@ -62,7 +61,7 @@ export const getImagesFromImageNodes = (nodes: Node[]) => {
   const images = nodes
     .filter((node) => node.type === 'image')
     .map((node) => (node.data as ImageNodeProps['data']).content)
-    .filter(Boolean) as PutBlobResult[];
+    .filter(Boolean) as { url: string; type: string }[];
 
   return images;
 };

@@ -10,7 +10,6 @@ import {
   getRecursiveIncomers,
   getTextFromTextNodes,
 } from '@/lib/xyflow';
-import type { PutBlobResult } from '@vercel/blob';
 import { useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -31,9 +30,7 @@ export const ImageTransform = ({
   title,
 }: ImageTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [image, setImage] = useState<string | null>(
-    (data.content as PutBlobResult)?.url ?? null
-  );
+  const [image, setImage] = useState<string | null>(data.content?.url ?? null);
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
 
@@ -74,7 +71,10 @@ export const ImageTransform = ({
 
       updateNodeData(id, {
         updatedAt: new Date().toISOString(),
-        content: response.url,
+        content: {
+          url: response.url,
+          type: response.type,
+        },
         description: description.description,
       });
     } catch (error) {
