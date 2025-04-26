@@ -22,9 +22,9 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
     }
 
     setFiles(files);
-    const file = files[0];
 
-    const client = await createClient();
+    const file = files[0];
+    const client = createClient();
     const { data } = await client.auth.getUser();
 
     if (!data?.user) {
@@ -47,8 +47,6 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
 
     onUploadCompleted(downloadUrl.publicUrl, file.type);
   };
-
-  console.log(files);
 
   return (
     <Dropzone

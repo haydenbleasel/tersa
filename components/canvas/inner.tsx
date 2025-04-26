@@ -3,7 +3,6 @@
 import { updateProjectAction } from '@/app/actions/project/update';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import type { projects } from '@/schema';
-import { useLocalStorage } from '@uidotdev/usehooks';
 import {
   Background,
   type Connection,
@@ -14,7 +13,7 @@ import {
   type NodeChange,
   ReactFlow,
   type ReactFlowInstance,
-  type ReactFlowJsonObject,
+  type Viewport,
   type XYPosition,
   addEdge,
   applyEdgeChanges,
@@ -25,14 +24,15 @@ import {
 } from '@xyflow/react';
 import { toPng } from 'html-to-image';
 import { nanoid } from 'nanoid';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebouncedCallback } from 'use-debounce';
-import { Auth } from '../auth';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
+import { CreateAccount } from '../create-account';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
+import { Logout } from '../logout';
 import { AudioNode } from '../nodes/audio';
 import { CommentNode } from '../nodes/comment';
 import { DropNode } from '../nodes/drop';
@@ -66,9 +66,7 @@ type ProjectData = {
     | {
         nodes: Node[];
         edges: Edge[];
-        x: number;
-        y: number;
-        zoom: number;
+        viewport: Viewport;
       }
     | undefined;
 };
@@ -80,6 +78,7 @@ export type CanvasProps = {
   defaultContent?: {
     nodes: Node[];
     edges: Edge[];
+    viewport: Viewport;
   };
 };
 
@@ -96,32 +95,14 @@ export const CanvasInner = ({
   const [edges, setEdges] = useState<Edge[]>(
     content?.edges ?? defaultContent?.edges ?? []
   );
+  const [viewport, setViewport] = useState<Viewport>(
+    content?.viewport ?? defaultContent?.viewport ?? { x: 0, y: 0, zoom: 1 }
+  );
   const { getEdges, screenToFlowPosition, getNodes, getNodesBounds } =
     useReactFlow();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [localSave, setLocalSave] = useLocalStorage<ReactFlowJsonObject<
-    Node,
-    Edge
-  > | null>('tersa-local-save', null);
-  const [loaded, setLoaded] = useState(false);
-
-  // Restore local save if there is no user ID
-  useEffect(() => {
-    if (
-      localSave &&
-      !userId &&
-      nodes.length === 0 &&
-      edges.length === 0 &&
-      !loaded
-    ) {
-      setNodes(localSave.nodes);
-      setEdges(localSave.edges);
-
-      setLoaded(true);
-    }
-  }, [localSave, nodes, edges, userId, loaded]);
 
   const getScreenshot = async () => {
     const nodes = getNodes();
@@ -145,13 +126,17 @@ export const CanvasInner = ({
     return image;
   };
 
+  console.log(
+    JSON.stringify(nodes.filter((node) => node.type === 'image').at(0), null, 2)
+  );
+
   const save = useDebouncedCallback(async () => {
     if (!rfInstance) {
       toast.error('No instance found');
       return;
     }
 
-    if (isSaving) {
+    if (isSaving || !userId) {
       return;
     }
 
@@ -160,13 +145,6 @@ export const CanvasInner = ({
 
       const content = rfInstance.toObject();
       const image = await getScreenshot();
-
-      if (!userId) {
-        setLocalSave(content);
-
-        return;
-      }
-
       const response = await updateProjectAction(data.id, {
         image,
         content,
@@ -321,6 +299,14 @@ export const CanvasInner = ({
     [save]
   );
 
+  const onViewportChange = useCallback(
+    (viewport: Viewport) => {
+      setViewport(viewport);
+      save();
+    },
+    [save]
+  );
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -338,16 +324,24 @@ export const CanvasInner = ({
       onInit={setRfInstance}
       fitView
       panOnScroll
+      viewport={viewport}
+      onViewportChange={onViewportChange}
     >
       <Controls />
       <Background bgColor="var(--secondary)" />
       <Toolbar />
-      <Auth />
       <Projects projects={projects} currentProject={data.id.toString()} />
-      <SaveIndicator
-        lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
-        saving={isSaving}
-      />
+      {userId ? (
+        <>
+          <Logout />
+          <SaveIndicator
+            lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
+            saving={isSaving}
+          />
+        </>
+      ) : (
+        <CreateAccount />
+      )}
     </ReactFlow>
   );
 };

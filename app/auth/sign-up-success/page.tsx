@@ -6,6 +6,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
+const title = 'Thank you for signing up!';
+const description = 'Check your email to confirm';
+
+export const metadata = {
+  title,
+  description,
+};
+
 export default function Page() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -13,10 +21,8 @@ export default function Page() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">
-                Thank you for signing up!
-              </CardTitle>
-              <CardDescription>Check your email to confirm</CardDescription>
+              <CardTitle className="text-2xl">{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground text-sm">
