@@ -1,4 +1,5 @@
 import { Canvas } from '@/components/canvas';
+import { RealtimeCursors } from '@/components/supabase-ui/realtime-cursors';
 import { database } from '@/lib/database';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -45,6 +46,10 @@ const Project = async ({ params }: ProjectProps) => {
 
   return (
     <div className="h-screen w-screen">
+      <RealtimeCursors
+        roomName={project.id.toString()}
+        username={data.user.user_metadata.full_name ?? data.user.email}
+      />
       <Canvas projects={allProjects} data={project} userId={data.user.id} />
     </div>
   );
