@@ -16,18 +16,26 @@ export const generateSpeechAction = async (
     }
 > => {
   try {
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
+
+    if (!data?.user) {
+      throw new Error('Create an account to use AI features.');
+    }
+
+    if (data.user.user_metadata.isBanned) {
+      throw new Error('You are banned from using AI features.');
+    }
+
+    if (!data.user.user_metadata.stripeSubscriptionId) {
+      throw new Error('Please upgrade to a paid plan to use AI features.');
+    }
+
     const { audio } = await generateSpeech({
       model: openai.speech('gpt-4o-mini-tts'),
       text,
       outputFormat: 'mp3',
     });
-
-    const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('User not found');
-    }
 
     const blob = await client.storage
       .from(data.user.id)

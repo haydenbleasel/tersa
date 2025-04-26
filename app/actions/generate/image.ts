@@ -19,6 +19,21 @@ export const generateImageAction = async (
     }
 > => {
   try {
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
+
+    if (!data?.user) {
+      throw new Error('Create an account to use AI features.');
+    }
+
+    if (data.user.user_metadata.isBanned) {
+      throw new Error('You are banned from using AI features.');
+    }
+
+    if (!data.user.user_metadata.stripeSubscriptionId) {
+      throw new Error('Please upgrade to a paid plan to use AI features.');
+    }
+
     const model = imageModels
       .flatMap((m) => m.models)
       .find((m) => m.id === modelId)?.model;
@@ -39,13 +54,6 @@ export const generateImageAction = async (
         prompt,
       ].join('\n'),
     });
-
-    const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('User not found');
-    }
 
     const blob = await client.storage
       .from(data.user.id)

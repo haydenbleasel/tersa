@@ -20,13 +20,22 @@ export const editImageAction = async (
     }
 > => {
   try {
-    const openai = new OpenAI();
     const client = await createClient();
     const { data } = await client.auth.getUser();
 
     if (!data?.user) {
-      throw new Error('User not found');
+      throw new Error('Create an account to use AI features.');
     }
+
+    if (data.user.user_metadata.isBanned) {
+      throw new Error('You are banned from using AI features.');
+    }
+
+    if (!data.user.user_metadata.stripeSubscriptionId) {
+      throw new Error('Please upgrade to a paid plan to use AI features.');
+    }
+
+    const openai = new OpenAI();
 
     const promptImages = await Promise.all(
       images.map(async (image) => {

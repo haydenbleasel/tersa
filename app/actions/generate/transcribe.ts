@@ -2,6 +2,7 @@
 
 import { database } from '@/lib/database';
 import { transcriptionModels } from '@/lib/models';
+import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { experimental_transcribe as transcribe } from 'ai';
 import { eq } from 'drizzle-orm';
@@ -18,6 +19,21 @@ export const transcribeAction = async (
     }
 > => {
   try {
+    const client = await createClient();
+    const { data } = await client.auth.getUser();
+
+    if (!data?.user) {
+      throw new Error('Create an account to use AI features.');
+    }
+
+    if (data.user.user_metadata.isBanned) {
+      throw new Error('You are banned from using AI features.');
+    }
+
+    if (!data.user.user_metadata.stripeSubscriptionId) {
+      throw new Error('Please upgrade to a paid plan to use AI features.');
+    }
+
     const project = await database
       .select({
         transcriptionModel: projects.transcriptionModel,
