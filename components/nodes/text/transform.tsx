@@ -72,14 +72,6 @@ export const TextTransform = ({
       return;
     }
 
-    console.log('Synthesizing...', {
-      instructions: data.instructions,
-      textPrompts,
-      audioPrompts,
-      imageDescriptions,
-      images,
-    });
-
     setMessages([]);
     append({
       role: 'user',

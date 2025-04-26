@@ -126,10 +126,6 @@ export const CanvasInner = ({
     return image;
   };
 
-  console.log(
-    JSON.stringify(nodes.filter((node) => node.type === 'image').at(0), null, 2)
-  );
-
   const save = useDebouncedCallback(async () => {
     if (!rfInstance) {
       toast.error('No instance found');
