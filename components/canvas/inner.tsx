@@ -35,8 +35,10 @@ import { Controls } from '../controls';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
 import { AudioNode } from '../nodes/audio';
+import { CommentNode } from '../nodes/comment';
 import { DropNode } from '../nodes/drop';
 import { ImageNode } from '../nodes/image';
+import { LogoNode } from '../nodes/logo';
 import { TextNode } from '../nodes/text';
 import { VideoNode } from '../nodes/video';
 import { Projects } from '../projects';
@@ -49,6 +51,8 @@ const nodeTypes = {
   drop: DropNode,
   video: VideoNode,
   audio: AudioNode,
+  logo: LogoNode,
+  comment: CommentNode,
 };
 
 const edgeTypes = {
@@ -56,8 +60,10 @@ const edgeTypes = {
   temporary: TemporaryEdge,
 };
 
+const SAVE_TIMEOUT = 1000;
+
 type ProjectData = {
-  content:
+  content?:
     | {
         nodes: Node[];
         edges: Edge[];
@@ -71,7 +77,7 @@ type ProjectData = {
 export type CanvasProps = {
   projects: (typeof projects.$inferSelect)[];
   data: typeof projects.$inferSelect;
-  userId: string | undefined;
+  userId?: string | undefined;
   defaultContent?: {
     nodes: Node[];
     edges: Edge[];
@@ -91,13 +97,13 @@ export const CanvasInner = ({
   const [edges, setEdges] = useState<Edge[]>(
     content?.edges ?? defaultContent?.edges ?? []
   );
-  const [viewport, setViewport] = useState<Viewport | undefined>({
-    x: content?.x ?? 0,
-    y: content?.y ?? 0,
-    zoom: content?.zoom ?? 1,
-  });
-  const { getEdges, screenToFlowPosition, getNodes, getNodesBounds } =
-    useReactFlow();
+  const {
+    getEdges,
+    screenToFlowPosition,
+    getNodes,
+    getNodesBounds,
+    setViewport,
+  } = useReactFlow();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -119,9 +125,10 @@ export const CanvasInner = ({
       setNodes(localSave.nodes);
       setEdges(localSave.edges);
       setViewport(localSave.viewport);
+
       setLoaded(true);
     }
-  }, [localSave, nodes, edges, userId, loaded]);
+  }, [localSave, nodes, edges, userId, loaded, setViewport]);
 
   const getScreenshot = async () => {
     const nodes = getNodes();
@@ -183,7 +190,7 @@ export const CanvasInner = ({
     } finally {
       setIsSaving(false);
     }
-  }, 2000);
+  }, SAVE_TIMEOUT);
 
   const addNode = useCallback(
     (type: string, position?: XYPosition, data?: Record<string, unknown>) => {
@@ -321,31 +328,13 @@ export const CanvasInner = ({
     [save]
   );
 
-  useEffect(() => {
-    // Add keyboard shortcut for selecting all nodes (Cmd/Ctrl + A)
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for meta key (Cmd on Mac, Ctrl on Windows) + A
-      if ((event.metaKey || event.ctrlKey) && event.key === 'a') {
-        event.preventDefault(); // Prevent default browser select all behavior
-
-        // Select all nodes by setting their selected property to true
-        setNodes((nodes) =>
-          nodes.map((node) => ({
-            ...node,
-            selected: true,
-          }))
-        );
-      }
-    };
-
-    // Add event listener when component mounts
-    window.addEventListener('keydown', handleKeyDown);
-
-    // Clean up event listener when component unmounts
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  const handleViewportChange = useCallback(
+    (viewport: Viewport) => {
+      setViewport(viewport);
+      save();
+    },
+    [save, setViewport]
+  );
 
   return (
     <ReactFlow
@@ -363,8 +352,7 @@ export const CanvasInner = ({
       connectionLineComponent={ConnectionLine}
       onInit={setRfInstance}
       fitView
-      viewport={viewport}
-      onViewportChange={setViewport}
+      onViewportChange={handleViewportChange}
       panOnScroll
     >
       <Controls />

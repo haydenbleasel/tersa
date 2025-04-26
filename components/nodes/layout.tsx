@@ -133,7 +133,11 @@ export const NodeLayout = ({
           {/* )} */}
         </NodeToolbar>
       )}
-      <NodeResizeControl minWidth={400} minHeight={170} />
+      <NodeResizeControl
+        minWidth={400}
+        minHeight={170}
+        keepAspectRatio={type === 'image' || type === 'video'}
+      />
       <Handle type="target" position={Position.Left} />
       <div className="relative size-full">
         <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">

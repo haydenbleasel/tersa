@@ -2,6 +2,8 @@ import { type Node, Panel, type XYPosition, useReactFlow } from '@xyflow/react';
 import {
   AudioWaveformIcon,
   ImageIcon,
+  LogOutIcon,
+  MessageSquareDashedIcon,
   TextIcon,
   VideoIcon,
 } from 'lucide-react';
@@ -55,6 +57,18 @@ export const Toolbar = () => {
       label: 'Video',
       icon: VideoIcon,
       onClick: () => addNode('video'),
+    },
+    {
+      id: 'comment',
+      label: 'Comment',
+      icon: MessageSquareDashedIcon,
+      onClick: () => addNode('comment'),
+    },
+    {
+      id: 'logo',
+      label: 'Logo',
+      icon: LogOutIcon,
+      onClick: () => addNode('logo'),
     },
   ];
 
