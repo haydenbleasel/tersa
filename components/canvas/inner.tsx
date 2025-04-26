@@ -15,7 +15,6 @@ import {
   ReactFlow,
   type ReactFlowInstance,
   type ReactFlowJsonObject,
-  type Viewport,
   type XYPosition,
   addEdge,
   applyEdgeChanges,
@@ -97,13 +96,8 @@ export const CanvasInner = ({
   const [edges, setEdges] = useState<Edge[]>(
     content?.edges ?? defaultContent?.edges ?? []
   );
-  const {
-    getEdges,
-    screenToFlowPosition,
-    getNodes,
-    getNodesBounds,
-    setViewport,
-  } = useReactFlow();
+  const { getEdges, screenToFlowPosition, getNodes, getNodesBounds } =
+    useReactFlow();
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -124,11 +118,10 @@ export const CanvasInner = ({
     ) {
       setNodes(localSave.nodes);
       setEdges(localSave.edges);
-      setViewport(localSave.viewport);
 
       setLoaded(true);
     }
-  }, [localSave, nodes, edges, userId, loaded, setViewport]);
+  }, [localSave, nodes, edges, userId, loaded]);
 
   const getScreenshot = async () => {
     const nodes = getNodes();
@@ -328,14 +321,6 @@ export const CanvasInner = ({
     [save]
   );
 
-  const handleViewportChange = useCallback(
-    (viewport: Viewport) => {
-      setViewport(viewport);
-      save();
-    },
-    [save, setViewport]
-  );
-
   return (
     <ReactFlow
       nodes={nodes}
@@ -352,7 +337,6 @@ export const CanvasInner = ({
       connectionLineComponent={ConnectionLine}
       onInit={setRfInstance}
       fitView
-      onViewportChange={handleViewportChange}
       panOnScroll
     >
       <Controls />

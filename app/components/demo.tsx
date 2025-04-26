@@ -1,5 +1,7 @@
 'use client';
+
 import { Canvas } from '@/components/canvas';
+import { RealtimeCursors } from '@/components/supabase-ui/realtime-cursors';
 import type { Edge, Node } from '@xyflow/react';
 
 const sampleNodes: Node[] = [
@@ -22,6 +24,7 @@ const sampleEdges: Edge[] = [{ id: '1', source: '1', target: '2' }];
 export const Demo = () => {
   return (
     <div className="h-screen w-screen">
+      <RealtimeCursors roomName="demo" username="Demo user" />
       <Canvas
         projects={[]}
         data={{
@@ -34,6 +37,7 @@ export const Demo = () => {
           updatedAt: null,
           organizationId: null,
           image: null,
+          content: undefined,
         }}
         defaultContent={{
           nodes: sampleNodes,
