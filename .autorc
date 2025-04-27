@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "git-tag",
+    "first-time-contributor",
+    "released"
+  ],
+  "owner": "haydenbleasel",
+  "repo": "tersa",
+  "name": "Hayden Bleasel",
+  "email": "hello@haydenbleasel.com"
+}
