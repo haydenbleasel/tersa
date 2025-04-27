@@ -8,7 +8,7 @@ export const createProjectAction = async (
   name: string
 ): Promise<
   | {
-      id: number;
+      id: string;
     }
   | {
       error: string;

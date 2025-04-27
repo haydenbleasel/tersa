@@ -75,7 +75,7 @@ export const ProjectSelector = ({
     }
   };
 
-  const handleSelect = (projectId: number) => {
+  const handleSelect = (projectId: string) => {
     setValue(projectId.toString());
     setOpen(false);
     router.push(`/projects/${projectId}`);
@@ -90,7 +90,7 @@ export const ProjectSelector = ({
           className="w-[200px] justify-between rounded-full border-none shadow-none"
         >
           {value
-            ? projects.find((project) => project.id === Number(value))?.name
+            ? projects.find((project) => project.id === value)?.name
             : 'Select project...'}
           <ChevronsUpDownIcon className="opacity-50" />
         </Button>
@@ -104,7 +104,7 @@ export const ProjectSelector = ({
               {projects.map((project) => (
                 <CommandItem
                   key={project.id}
-                  value={project.id.toString()}
+                  value={project.id}
                   onSelect={() => handleSelect(project.id)}
                   className="cursor-pointer"
                 >
@@ -112,9 +112,7 @@ export const ProjectSelector = ({
                   <CheckIcon
                     className={cn(
                       'ml-auto',
-                      value === project.id.toString()
-                        ? 'opacity-100'
-                        : 'opacity-0'
+                      value === project.id ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                 </CommandItem>

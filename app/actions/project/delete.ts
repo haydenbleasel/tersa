@@ -6,7 +6,7 @@ import { projects } from '@/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const deleteProjectAction = async (
-  projectId: number
+  projectId: string
 ): Promise<
   | {
       sucess: true;

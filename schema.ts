@@ -1,13 +1,10 @@
-import {
-  integer,
-  json,
-  pgTable,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { json, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+
+const uuid = sql`uuid_generate_v4()`;
 
 export const projects = pgTable('project', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: text('id').primaryKey().default(uuid).notNull(),
   name: varchar().notNull(),
   transcriptionModel: varchar().notNull(),
   visionModel: varchar().notNull(),

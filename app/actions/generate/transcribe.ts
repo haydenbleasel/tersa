@@ -39,7 +39,7 @@ export const transcribeAction = async (
         transcriptionModel: projects.transcriptionModel,
       })
       .from(projects)
-      .where(eq(projects.id, Number.parseInt(projectId)));
+      .where(eq(projects.id, projectId));
 
     if (!project?.length) {
       throw new Error('Project not found');

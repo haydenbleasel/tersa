@@ -36,9 +36,7 @@ const Project = async ({ params }: ProjectProps) => {
     notFound();
   }
 
-  const project = allProjects.find(
-    (project) => project.id === Number(projectId)
-  );
+  const project = allProjects.find((project) => project.id === projectId);
 
   if (!project) {
     notFound();
@@ -47,7 +45,7 @@ const Project = async ({ params }: ProjectProps) => {
   return (
     <div className="h-screen w-screen">
       <RealtimeCursors
-        roomName={project.id.toString()}
+        roomName={project.id}
         username={data.user.user_metadata.full_name ?? data.user.email}
       />
       <Canvas projects={allProjects} data={project} userId={data.user.id} />

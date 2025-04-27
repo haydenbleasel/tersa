@@ -6,7 +6,7 @@ import { projects } from '@/schema';
 import { and, eq } from 'drizzle-orm';
 
 export const updateProjectAction = async (
-  projectId: number,
+  projectId: string,
   data: Partial<typeof projects.$inferInsert>
 ): Promise<
   | {
@@ -18,9 +18,9 @@ export const updateProjectAction = async (
 > => {
   try {
     const client = await createClient();
-    const { data } = await client.auth.getUser();
+    const { data: userData } = await client.auth.getUser();
 
-    if (!data?.user) {
+    if (!userData?.user) {
       throw new Error('User not found');
     }
 
@@ -31,7 +31,7 @@ export const updateProjectAction = async (
         updatedAt: new Date(),
       })
       .where(
-        and(eq(projects.id, projectId), eq(projects.userId, data.user.id))
+        and(eq(projects.id, projectId), eq(projects.userId, userData.user.id))
       );
 
     if (!project) {

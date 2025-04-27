@@ -41,7 +41,7 @@ export const describeAction = async (
         visionModel: projects.visionModel,
       })
       .from(projects)
-      .where(eq(projects.id, Number.parseInt(projectId)));
+      .where(eq(projects.id, projectId));
 
     const model = visionModels
       .flatMap((model) => model.models)
