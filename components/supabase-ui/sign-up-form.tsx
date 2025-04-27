@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -97,11 +98,15 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
             </div>
           </form>
         </CardContent>
+        {process.env.NODE_ENV === 'production' && (
+          <CardFooter className="flex justify-center border-t">
+            <Turnstile
+              siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+            />
+          </CardFooter>
+        )}
       </Card>
-      <Turnstile
-        siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-        onSuccess={setCaptchaToken}
-      />
     </div>
   )
 }

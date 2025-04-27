@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -15,6 +16,8 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
+import { env } from '@/lib/env'
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('')
@@ -22,6 +25,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +37,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
+        options: {
+          captchaToken,
+        }
       })
       if (error) throw error
       // Update this route to redirect to an authenticated route. The user already has an active session.
@@ -81,6 +88,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
@@ -96,6 +104,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             </div>
           </form>
         </CardContent>
+        {process.env.NODE_ENV === 'production' && (
+          <CardFooter className="flex justify-center border-t">
+            <Turnstile
+              siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+            />
+          </CardFooter>
+        )}
       </Card>
     </div>
   )

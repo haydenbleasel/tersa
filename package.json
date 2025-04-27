@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --turbopack\" \"npx supabase start\"",
+    "dev": "concurrently -n \"Next.js,Supabase\" \"next dev --turbopack\" \"npx supabase start\"",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint"
