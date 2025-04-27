@@ -33,6 +33,7 @@ Tersa is an AI canvas powered by [Supabase](https://supabase.com/), [shadcn/ui](
 - Node.js (v20+)
 - PNPM package manager
 - Supabase account and project
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) installed
 
 ### Installation
 
