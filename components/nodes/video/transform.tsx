@@ -24,27 +24,35 @@ export const VideoTransform = ({
   type,
   title,
 }: VideoTransformProps) => {
-  const { updateNodeData, getNodes, getEdges, getNode } = useReactFlow();
-  const [video, setVideo] = useState<Uint8Array | null>(null);
+  const { updateNodeData, getNodes, getEdges } = useReactFlow();
+  const [video, setVideo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
     const incomers = getRecursiveIncomers(id, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
-    const imagePrompts = getImagesFromImageNodes(incomers);
+    const images = getImagesFromImageNodes(incomers);
 
-    if (!textPrompts.length && !imagePrompts.length) {
+    if (!textPrompts.length && !images.length) {
       toast.error('No prompts found');
       return;
     }
 
     try {
       setLoading(true);
+
       const response = await generateVideoAction(
-        [...textPrompts, ...imagePrompts].join('\n'),
-        data.model ?? 'T2V-01-Director'
+        data.model ?? 'T2V-01-Director',
+        textPrompts,
+        images.slice(0, 1)
       );
-      setVideo(response);
+
+      if ('error' in response) {
+        throw new Error(response.error);
+      }
+
+      setVideo(response.url);
+
       updateNodeData(id, {
         updatedAt: new Date().toISOString(),
         video: response,
@@ -110,7 +118,7 @@ export const VideoTransform = ({
         {video && (
           // biome-ignore lint/a11y/useMediaCaption: <explanation>
           <video
-            src={URL.createObjectURL(new Blob([video]))}
+            src={video}
             width={1600}
             height={900}
             className="aspect-video w-full object-cover"

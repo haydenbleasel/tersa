@@ -55,8 +55,12 @@ type RetrieveUrlResponse = {
 const baseUrl = 'https://api.minimaxi.chat/';
 
 export const generateVideoAction = async (
+  modelId: string,
   prompt: string,
-  modelId: string
+  images: {
+    url: string;
+    type: string;
+  }[]
 ): Promise<
   | {
       url: string;
@@ -93,6 +97,7 @@ export const generateVideoAction = async (
     const props: CreateJobProps = {
       model: model.id as CreateJobProps['model'],
       prompt,
+      first_frame_image: images.at(0)?.url,
     };
 
     // Create job
