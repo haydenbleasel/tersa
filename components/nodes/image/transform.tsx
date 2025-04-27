@@ -1,6 +1,6 @@
-import { describeAction } from '@/app/actions/generate/describe';
-import { editImageAction } from '@/app/actions/generate/edit-image';
-import { generateImageAction } from '@/app/actions/generate/image';
+import { generateImageAction } from '@/app/actions/image/create';
+import { describeAction } from '@/app/actions/image/describe';
+import { editImageAction } from '@/app/actions/image/edit';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';

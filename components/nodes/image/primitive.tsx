@@ -1,4 +1,4 @@
-import { describeAction } from '@/app/actions/generate/describe';
+import { describeAction } from '@/app/actions/image/describe';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Uploader } from '@/components/uploader';
 import { useReactFlow } from '@xyflow/react';

@@ -1,4 +1,4 @@
-import { transcribeAction } from '@/app/actions/generate/transcribe';
+import { transcribeAction } from '@/app/actions/generate/speech/transcribe';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Uploader } from '@/components/uploader';
 import { useReactFlow } from '@xyflow/react';
