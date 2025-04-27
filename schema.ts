@@ -12,6 +12,5 @@ export const projects = pgTable('project', {
   updatedAt: timestamp('updated_at'),
   content: json('content'),
   userId: varchar('user_id').notNull(),
-  organizationId: varchar('organization_id'),
   image: varchar('image'),
 });
