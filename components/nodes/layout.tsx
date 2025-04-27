@@ -117,20 +117,20 @@ export const NodeLayout = ({
             </TooltipTrigger>
             <TooltipContent>Delete</TooltipContent>
           </Tooltip>
-          {/* {process.env.NODE_ENV === 'development' && ( */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <CodeIcon size={12} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-[600px] text-wrap">
-              <pre className="whitespace-pre-wrap">
-                {JSON.stringify({ id, data, type, title }, null, 2)}
-              </pre>
-            </TooltipContent>
-          </Tooltip>
-          {/* )} */}
+          {process.env.NODE_ENV === 'development' && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <CodeIcon size={12} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-[600px] text-wrap">
+                <pre className="whitespace-pre-wrap">
+                  {JSON.stringify({ id, data, type, title }, null, 2)}
+                </pre>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </NodeToolbar>
       )}
       <NodeResizeControl

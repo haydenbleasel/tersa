@@ -167,7 +167,4 @@
   .react-flow__handle-right {
     @apply !-right-4;
   }
-  .react-flow__attribution {
-    @apply hidden;
-  }
 }

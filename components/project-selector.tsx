@@ -76,7 +76,7 @@ export const ProjectSelector = ({
   };
 
   const handleSelect = (projectId: string) => {
-    setValue(projectId.toString());
+    setValue(projectId);
     setOpen(false);
     router.push(`/projects/${projectId}`);
   };

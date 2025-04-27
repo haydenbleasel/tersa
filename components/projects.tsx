@@ -10,7 +10,7 @@ type ProjectsProps = {
 
 export const Projects = ({ projects, currentProject }: ProjectsProps) => {
   const currentProjectData = projects.find(
-    (project) => project.id === Number(currentProject)
+    (project) => project.id === currentProject
   );
 
   if (!currentProjectData) {

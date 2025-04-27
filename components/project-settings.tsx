@@ -80,7 +80,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
     }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -114,7 +114,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
                 id="transcriptionModel"
                 value={transcriptionModel}
                 options={transcriptionModels}
-                width="auto"
+                width={462}
                 onChange={setTranscriptionModel}
               />
             </div>
@@ -125,7 +125,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
                 value={visionModel}
                 options={visionModels}
                 onChange={setVisionModel}
-                width="auto"
+                width={462}
               />
             </div>
             <Button

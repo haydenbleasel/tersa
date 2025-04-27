@@ -326,7 +326,7 @@ export const CanvasInner = ({
       <Controls />
       <Background bgColor="var(--secondary)" />
       <Toolbar />
-      <Projects projects={projects} currentProject={data.id.toString()} />
+      <Projects projects={projects} currentProject={data.id} />
       {userId ? (
         <>
           <Logout />
