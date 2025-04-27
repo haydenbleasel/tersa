@@ -82,11 +82,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="cursor-pointer rounded-full"
-        >
+        <Button variant="ghost" size="icon" className="rounded-full">
           <SettingsIcon size={16} />
         </Button>
       </DialogTrigger>
@@ -128,11 +124,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
                 width={462}
               />
             </div>
-            <Button
-              type="submit"
-              className="cursor-pointer"
-              disabled={isUpdating || !name.trim()}
-            >
+            <Button type="submit" disabled={isUpdating || !name.trim()}>
               Update
             </Button>
           </form>

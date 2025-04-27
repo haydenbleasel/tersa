@@ -106,7 +106,6 @@ export const ProjectSelector = ({
                   key={project.id}
                   value={project.id}
                   onSelect={() => handleSelect(project.id)}
-                  className="cursor-pointer"
                 >
                   {project.name}
                   <CheckIcon
@@ -123,7 +122,7 @@ export const ProjectSelector = ({
               <Dialog>
                 <DialogTrigger asChild>
                   <div>
-                    <CommandItem className="cursor-pointer">
+                    <CommandItem>
                       <PlusIcon size={16} />
                       Create new project
                     </CommandItem>
@@ -147,7 +146,6 @@ export const ProjectSelector = ({
                       />
                       <Button
                         type="submit"
-                        className="cursor-pointer"
                         disabled={isCreating || !name.trim()}
                       >
                         Create

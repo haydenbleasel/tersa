@@ -39,7 +39,7 @@ export const ThemeSwitcher = () => {
             size="icon"
             variant="ghost"
             aria-label="Select theme"
-            className="cursor-pointer rounded-full"
+            className="rounded-full"
           >
             {theme === 'light' && <SunIcon size={16} />}
             {theme === 'dark' && <MoonIcon size={16} />}
@@ -51,7 +51,6 @@ export const ThemeSwitcher = () => {
             <DropdownMenuItem
               key={theme.value}
               onClick={() => setTheme(theme.value)}
-              className="cursor-pointer"
             >
               <theme.icon
                 size={16}
