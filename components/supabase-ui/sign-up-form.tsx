@@ -15,6 +15,8 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { Turnstile } from '@marsidev/react-turnstile'
+import { env } from '@/lib/env'
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('')
@@ -22,6 +24,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined)
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,6 +38,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
         password,
         options: {
           emailRedirectTo: window.location.origin,
+          captchaToken,
         },
       })
       if (error) throw error
@@ -94,6 +98,10 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
           </form>
         </CardContent>
       </Card>
+      <Turnstile
+        siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        onSuccess={setCaptchaToken}
+      />
     </div>
   )
 }

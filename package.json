@@ -28,6 +28,7 @@
     "@ai-sdk/togetherai": "^0.2.12",
     "@ai-sdk/xai": "^1.2.14",
     "@hookform/resolvers": "^5.0.1",
+    "@marsidev/react-turnstile": "^1.1.0",
     "@radix-ui/react-accordion": "^1.2.7",
     "@radix-ui/react-alert-dialog": "^1.1.10",
     "@radix-ui/react-aspect-ratio": "^1.1.4",

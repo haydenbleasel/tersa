@@ -65,6 +65,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.56.0(react@19.1.0))
+      '@marsidev/react-turnstile':
+        specifier: ^1.1.0
+        version: 1.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-accordion':
         specifier: ^1.2.7
         version: 1.2.7(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -982,6 +985,12 @@ packages:
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     cpu: [x64]
     os: [win32]
+
+  '@marsidev/react-turnstile@1.1.0':
+    resolution: {integrity: sha512-X7bP9ZYutDd+E+klPYF+/BJHqEyyVkN4KKmZcNRr84zs3DcMoftlMAuoKqNSnqg0HE7NQ1844+TLFSJoztCdSA==}
+    peerDependencies:
+      react: ^17.0.2 || ^18.0.0 || ^19.0
+      react-dom: ^17.0.2 || ^18.0.0 || ^19.0
 
   '@next/env@15.3.1':
     resolution: {integrity: sha512-cwK27QdzrMblHSn9DZRV+DQscHXRuJv6MydlJRpFSqJWZrTYMLzKDeyueJNN9MGd8NNiUKzDQADAf+dMLXX7YQ==}
@@ -3919,6 +3928,11 @@ snapshots:
 
   '@img/sharp-win32-x64@0.34.1':
     optional: true
+
+  '@marsidev/react-turnstile@1.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@next/env@15.3.1': {}
 
