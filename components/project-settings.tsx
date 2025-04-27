@@ -55,6 +55,10 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
       if ('error' in response) {
         throw new Error(response.error);
       }
+
+      toast.success('Project updated successfully');
+      setOpen(false);
+      router.refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       toast.error(message);
