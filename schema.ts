@@ -5,13 +5,13 @@ const uuid = sql`uuid_generate_v4()`;
 
 export const projects = pgTable('project', {
   id: text('id').primaryKey().default(uuid).notNull(),
-  name: varchar().notNull(),
-  transcriptionModel: varchar().notNull(),
-  visionModel: varchar().notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp(),
-  content: json(),
-  userId: varchar().notNull(),
-  organizationId: varchar(),
-  image: varchar(),
+  name: varchar('name').notNull(),
+  transcriptionModel: varchar('transcription_model').notNull(),
+  visionModel: varchar('vision_model').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at'),
+  content: json('content'),
+  userId: varchar('user_id').notNull(),
+  organizationId: varchar('organization_id'),
+  image: varchar('image'),
 });
