@@ -1,12 +1,18 @@
 import { generateVideoAction } from '@/app/actions/generate/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
-import { getRecursiveIncomers } from '@/lib/xyflow';
+import { videoModels } from '@/lib/models';
+import {
+  getImagesFromImageNodes,
+  getRecursiveIncomers,
+  getTextFromTextNodes,
+} from '@/lib/xyflow';
 import { useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon } from 'lucide-react';
 import { type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import type { VideoNodeProps } from '.';
+import { ModelSelector } from '../model-selector';
 
 type VideoTransformProps = VideoNodeProps & {
   title: string;
@@ -24,18 +30,20 @@ export const VideoTransform = ({
 
   const handleGenerate = async () => {
     const incomers = getRecursiveIncomers(id, getNodes(), getEdges());
-    const prompts = incomers
-      .map((incomer) => getNode(incomer.id)?.data.text)
-      .filter(Boolean);
+    const textPrompts = getTextFromTextNodes(incomers);
+    const imagePrompts = getImagesFromImageNodes(incomers);
 
-    if (!prompts.length) {
+    if (!textPrompts.length && !imagePrompts.length) {
       toast.error('No prompts found');
       return;
     }
 
     try {
       setLoading(true);
-      const response = await generateVideoAction(prompts.join('\n'));
+      const response = await generateVideoAction(
+        [...textPrompts, ...imagePrompts].join('\n'),
+        data.model ?? 'T2V-01-Director'
+      );
       setVideo(response);
       updateNodeData(id, {
         updatedAt: new Date().toISOString(),
@@ -49,6 +57,17 @@ export const VideoTransform = ({
   };
 
   const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
+    {
+      children: (
+        <ModelSelector
+          value={data.model ?? 'T2V-01-Director'}
+          options={videoModels}
+          key={id}
+          className="w-[200px] rounded-full"
+          onChange={(value) => updateNodeData(id, { model: value })}
+        />
+      ),
+    },
     {
       tooltip: 'Generate',
       children: (

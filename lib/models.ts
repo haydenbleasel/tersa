@@ -28,6 +28,7 @@ import {
   HumeIcon,
   LmntIcon,
   LumaIcon,
+  MinimaxIcon,
   MistralIcon,
   OpenAiIcon,
   TogetherIcon,
@@ -941,6 +942,50 @@ export const transcriptionModels = [
         id: 'gpt-4o-transcribe',
         label: 'GPT-4o Transcribe',
         model: openai.transcription('gpt-4o-transcribe'),
+      },
+    ],
+  },
+];
+
+export const videoModels = [
+  {
+    label: 'Minimax',
+    models: [
+      {
+        icon: MinimaxIcon,
+        id: 'T2V-01-Director',
+        label: 'T2V-01-Director',
+        model: 'T2V-01-Director',
+      },
+      {
+        icon: MinimaxIcon,
+        id: 'I2V-01-Director',
+        label: 'I2V-01-Director',
+        model: 'I2V-01-Director',
+      },
+      {
+        icon: MinimaxIcon,
+        id: 'S2V-01',
+        label: 'S2V-01',
+        model: 'S2V-01',
+      },
+      {
+        icon: MinimaxIcon,
+        id: 'I2V-01',
+        label: 'I2V-01',
+        model: 'I2V-01',
+      },
+      {
+        icon: MinimaxIcon,
+        id: 'I2V-01-live',
+        label: 'I2V-01-live',
+        model: 'I2V-01-live',
+      },
+      {
+        icon: MinimaxIcon,
+        id: 'T2V-01',
+        label: 'T2V-01',
+        model: 'T2V-01',
       },
     ],
   },

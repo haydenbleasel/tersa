@@ -81,8 +81,10 @@ export const ModelSelector = ({
                       onChange?.(model.id);
                       setOpen(false);
                     }}
-                    // Temporarily disable non-OpenAI models
-                    disabled={option.label !== 'OpenAI'}
+                    // Temporarily disable non-OpenAI / non-Minimax models
+                    disabled={
+                      option.label !== 'OpenAI' && option.label !== 'Minimax'
+                    }
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
                       <model.icon className="size-4 shrink-0" />
