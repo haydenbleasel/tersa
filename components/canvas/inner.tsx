@@ -39,6 +39,7 @@ import { ImageNode } from '../nodes/image';
 import { LogoNode } from '../nodes/logo';
 import { TextNode } from '../nodes/text';
 import { VideoNode } from '../nodes/video';
+import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 
 const nodeTypes = {
   image: ImageNode,
@@ -329,40 +330,43 @@ export const CanvasInner = ({
   );
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      onNodesChange={onNodesChange}
-      onNodeDragStop={onNodeDragStop}
-      edges={edges}
-      onEdgesChange={onEdgesChange}
-      onConnectStart={onConnectStart}
-      onConnect={onConnect}
-      onConnectEnd={onConnectEnd}
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      isValidConnection={isValidConnection}
-      connectionLineComponent={ConnectionLine}
-      onInit={setRfInstance}
-      fitView
-      panOnScroll
-      viewport={viewport}
-      onViewportChange={onViewportChange}
-    >
-      <Controls />
-      <Background bgColor="var(--secondary)" />
-      <Toolbar />
-      <Projects projects={projects} currentProject={data.id} />
-      {userId ? (
-        <>
-          <Menu />
-          <SaveIndicator
-            lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
-            saving={isSaving}
-          />
-        </>
-      ) : (
-        <CreateAccount />
-      )}
-    </ReactFlow>
+    <>
+      <ReactFlow
+        nodes={nodes}
+        onNodesChange={onNodesChange}
+        onNodeDragStop={onNodeDragStop}
+        edges={edges}
+        onEdgesChange={onEdgesChange}
+        onConnectStart={onConnectStart}
+        onConnect={onConnect}
+        onConnectEnd={onConnectEnd}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        isValidConnection={isValidConnection}
+        connectionLineComponent={ConnectionLine}
+        onInit={setRfInstance}
+        fitView
+        panOnScroll
+        viewport={viewport}
+        onViewportChange={onViewportChange}
+      >
+        <Controls />
+        <Background bgColor="var(--secondary)" />
+        <Toolbar />
+        <Projects projects={projects} currentProject={data.id} />
+        {userId ? (
+          <>
+            <Menu />
+            <SaveIndicator
+              lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
+              saving={isSaving}
+            />
+          </>
+        ) : (
+          <CreateAccount />
+        )}
+      </ReactFlow>
+      <RealtimeCursors roomName={data.id} username={userId ?? 'Demo user'} />
+    </>
   );
 };
