@@ -24,15 +24,14 @@ import {
 } from '@xyflow/react';
 import { toPng } from 'html-to-image';
 import { nanoid } from 'nanoid';
+import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
-import { Controls } from '../controls';
 import { CreateAccount } from '../create-account';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
-import { Logout } from '../logout';
 import { AudioNode } from '../nodes/audio';
 import { CommentNode } from '../nodes/comment';
 import { DropNode } from '../nodes/drop';
@@ -40,9 +39,6 @@ import { ImageNode } from '../nodes/image';
 import { LogoNode } from '../nodes/logo';
 import { TextNode } from '../nodes/text';
 import { VideoNode } from '../nodes/video';
-import { Projects } from '../projects';
-import { SaveIndicator } from '../save-indicator';
-import { Toolbar } from '../toolbar';
 
 const nodeTypes = {
   image: ImageNode,
@@ -81,6 +77,35 @@ export type CanvasProps = {
     viewport: Viewport;
   };
 };
+
+const SaveIndicator = dynamic(
+  () => import('../save-indicator').then((mod) => mod.SaveIndicator),
+  {
+    ssr: false,
+  }
+);
+
+const Menu = dynamic(() => import('../menu').then((mod) => mod.Menu), {
+  ssr: false,
+});
+
+const Controls = dynamic(
+  () => import('../controls').then((mod) => mod.Controls),
+  {
+    ssr: false,
+  }
+);
+
+const Toolbar = dynamic(() => import('../toolbar').then((mod) => mod.Toolbar), {
+  ssr: false,
+});
+
+const Projects = dynamic(
+  () => import('../projects').then((mod) => mod.Projects),
+  {
+    ssr: false,
+  }
+);
 
 export const CanvasInner = ({
   projects,
@@ -329,7 +354,7 @@ export const CanvasInner = ({
       <Projects projects={projects} currentProject={data.id} />
       {userId ? (
         <>
-          <Logout />
+          <Menu />
           <SaveIndicator
             lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
             saving={isSaving}

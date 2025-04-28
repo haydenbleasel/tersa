@@ -1,12 +1,7 @@
 'use client';
 
 import { Controls as FlowControls } from '@xyflow/react';
-import dynamic from 'next/dynamic';
-
-const ThemeSwitcher = dynamic(
-  () => import('./theme-switcher').then((mod) => mod.ThemeSwitcher),
-  { ssr: false }
-);
+import { ThemeSwitcher } from './theme-switcher';
 
 export const Controls = () => (
   <FlowControls
