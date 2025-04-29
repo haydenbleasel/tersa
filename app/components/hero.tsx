@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRightIcon } from 'lucide-react';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 type HeroProps = {
-  title: string;
+  title: ReactNode;
   description: string;
   announcement?: {
     title: string;

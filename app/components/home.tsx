@@ -6,7 +6,14 @@ export const Home = () => (
   <div className="container mx-auto py-8">
     <Header />
     <Hero
-      title="Visualize your AI workflows"
+      title={
+        <>
+          <span className="font-semibold font-serif text-7xl italic">
+            Visualize
+          </span>{' '}
+          your AI workflows
+        </>
+      }
       description="Tersa is an AI canvas for building powerful workflows. Drag, drop, connect and build your own workflows powered by various industry-leading models."
       announcement={{
         title: 'Tersa is now open source!',
