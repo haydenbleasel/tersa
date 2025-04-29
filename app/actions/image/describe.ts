@@ -18,6 +18,13 @@ export const describeAction = async (
       error: string;
     }
 > => {
+  if (process.env.NODE_ENV === 'development') {
+    // URLs are local in development so we can't describe them.
+    return {
+      description: 'A beautiful image of a cat',
+    };
+  }
+
   try {
     await getSubscribedUser();
 

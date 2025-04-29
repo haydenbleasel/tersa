@@ -112,7 +112,7 @@ export const VideoTransform = ({
 
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
-      <div>
+      <div className="flex-1">
         {loading && !video && (
           <div className="flex items-center justify-center p-4">
             <Loader2Icon size={16} className="animate-spin" />
@@ -139,7 +139,7 @@ export const VideoTransform = ({
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );

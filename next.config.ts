@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lhp3nvhhmxw8ikcx.public.blob.vercel-storage.com',
       },
+
+      // Supabase storage
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+      },
     ],
   },
 };

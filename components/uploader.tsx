@@ -23,6 +23,7 @@ export const Uploader = ({
   bucket = 'files',
 }: UploaderProps) => {
   const [files, setFiles] = useState<File[] | undefined>();
+
   const handleDrop = async (files: File[]) => {
     if (!files.length) {
       throw new Error('No file selected');
@@ -33,6 +34,7 @@ export const Uploader = ({
     const file = files[0];
     const client = createClient();
     const { data } = await client.auth.getUser();
+    const extension = file.name.split('.').pop();
 
     if (!data?.user) {
       throw new Error('User not found');
@@ -40,7 +42,7 @@ export const Uploader = ({
 
     const blob = await client.storage
       .from(bucket)
-      .upload(`${data.user.id}/${nanoid()}`, new Blob([file]), {
+      .upload(`${data.user.id}/${nanoid()}.${extension}`, file, {
         contentType: file.type,
       });
 

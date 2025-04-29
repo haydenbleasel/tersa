@@ -4,6 +4,7 @@ import { Uploader } from '@/components/uploader';
 import { useReactFlow } from '@xyflow/react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
 import type { ImageNodeProps } from '.';
 
 type ImagePrimitiveProps = ImageNodeProps & {
@@ -34,22 +35,28 @@ export const ImagePrimitive = ({
   const { projectId } = useParams();
 
   const handleUploadCompleted = async (url: string, type: string) => {
-    const response = await getImageDimensions(url);
-    const description = await describeAction(url, projectId as string);
+    try {
+      const response = await getImageDimensions(url);
+      const description = await describeAction(url, type, projectId as string);
 
-    if ('error' in description) {
-      throw new Error(description.error);
+      if ('error' in description) {
+        throw new Error(description.error);
+      }
+
+      updateNodeData(id, {
+        content: {
+          url,
+          type,
+        },
+        width: response.width,
+        height: response.height,
+        description: description.description,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+
+      toast.error(message);
     }
-
-    updateNodeData(id, {
-      content: {
-        url,
-        type,
-      },
-      width: response.width,
-      height: response.height,
-      description: description.description,
-    });
   };
 
   return (

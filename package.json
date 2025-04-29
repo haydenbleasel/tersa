@@ -128,6 +128,7 @@
     "@types/react-dom": "^19",
     "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.0",
+    "prettier": "^3.5.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "ultracite": "4.2.1"

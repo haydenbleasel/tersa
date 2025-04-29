@@ -360,6 +360,9 @@ importers:
       drizzle-kit:
         specifier: ^0.31.0
         version: 0.31.0
+      prettier:
+        specifier: ^3.5.3
+        version: 3.5.3
       tailwindcss:
         specifier: ^4
         version: 4.1.4
