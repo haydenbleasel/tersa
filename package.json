@@ -106,6 +106,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",
+    "react-fast-marquee": "^1.6.5",
     "react-hook-form": "^7.56.0",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.1.8",

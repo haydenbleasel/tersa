@@ -342,7 +342,6 @@ export const CerebrasIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const AmazonIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    height="46.5414364640884"
     viewBox="0 0 181 108"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -626,32 +625,32 @@ export const LumaIcon = (props: SVGProps<SVGSVGElement>) => (
     <title>Luma</title>
     <path
       d="M0 35.6017L60.5 0.607422V140.607L0 105.606V35.6017Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
     <path
       d="M60.5 140.598L0 105.596L60.5 70.594L121 105.596L60.5 140.598Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
     <path
       d="M60.5 140.598L0 105.596L60.5 70.594L121 105.596L60.5 140.598Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
     <path
       d="M0 35.6017L60.5 0.607422V140.607L0 105.606V35.6017Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
     <path
       d="M60.5 140.598L0 105.596L60.5 70.594L121 105.596L60.5 140.598Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
     <path
       d="M0 35.6017L60.5 0.607422V140.607L0 105.606V35.6017Z"
-      fill="white"
+      fill="currentColor"
       fillOpacity="0.3"
     />
   </svg>

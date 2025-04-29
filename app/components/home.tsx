@@ -2,6 +2,7 @@ import { Demo } from './demo';
 import { Features } from './features';
 import { Header } from './header';
 import { Hero } from './hero';
+import { Providers } from './providers';
 
 export const Home = () => (
   <div className="container mx-auto py-8">
@@ -23,6 +24,7 @@ export const Home = () => (
       ]}
     />
     <Demo />
+    <Providers />
     <Features />
   </div>
 );
