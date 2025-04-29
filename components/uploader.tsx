@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { nanoid } from 'nanoid';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
@@ -25,36 +26,43 @@ export const Uploader = ({
   const [files, setFiles] = useState<File[] | undefined>();
 
   const handleDrop = async (files: File[]) => {
-    if (!files.length) {
-      throw new Error('No file selected');
+    try {
+      if (!files.length) {
+        throw new Error('No file selected');
+      }
+
+      const client = createClient();
+      const { data } = await client.auth.getUser();
+
+      if (!data?.user) {
+        throw new Error('User not found');
+      }
+
+      setFiles(files);
+
+      const file = files[0];
+      const extension = file.name.split('.').pop();
+
+      const blob = await client.storage
+        .from(bucket)
+        .upload(`${data.user.id}/${nanoid()}.${extension}`, file, {
+          contentType: file.type,
+        });
+
+      if (blob.error) {
+        throw new Error(blob.error.message);
+      }
+
+      const { data: downloadUrl } = client.storage
+        .from(bucket)
+        .getPublicUrl(blob.data.path);
+
+      onUploadCompleted(downloadUrl.publicUrl, file.type);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+
+      toast.error(message);
     }
-
-    setFiles(files);
-
-    const file = files[0];
-    const client = createClient();
-    const { data } = await client.auth.getUser();
-    const extension = file.name.split('.').pop();
-
-    if (!data?.user) {
-      throw new Error('User not found');
-    }
-
-    const blob = await client.storage
-      .from(bucket)
-      .upload(`${data.user.id}/${nanoid()}.${extension}`, file, {
-        contentType: file.type,
-      });
-
-    if (blob.error) {
-      throw new Error(blob.error.message);
-    }
-
-    const { data: downloadUrl } = client.storage
-      .from(bucket)
-      .getPublicUrl(blob.data.path);
-
-    onUploadCompleted(downloadUrl.publicUrl, file.type);
   };
 
   return (
