@@ -7,7 +7,12 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { type XYPosition, useReactFlow } from '@xyflow/react';
-import { BrainIcon, ImageIcon, TextIcon, VideoIcon } from 'lucide-react';
+import {
+  AudioWaveformIcon,
+  ImageIcon,
+  TextIcon,
+  VideoIcon,
+} from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useEffect } from 'react';
 import { NodeLayout } from './layout';
@@ -31,14 +36,14 @@ const buttons = [
     icon: ImageIcon,
   },
   {
+    id: 'audio',
+    label: 'Audio',
+    icon: AudioWaveformIcon,
+  },
+  {
     id: 'video',
     label: 'Video',
     icon: VideoIcon,
-  },
-  {
-    id: 'transform',
-    label: 'Transform',
-    icon: BrainIcon,
   },
 ];
 
@@ -66,7 +71,9 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
       id: newNodeId,
       type,
       position,
-      data: {},
+      data: {
+        source: 'primitive',
+      },
       origin: [0, 0.5],
     });
 

@@ -13,6 +13,7 @@ export type VideoNodeProps = {
     height?: number;
     updatedAt?: string;
     model?: string;
+    instructions?: string;
   };
   id: string;
 };

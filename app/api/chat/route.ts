@@ -13,7 +13,11 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
-  await getSubscribedUser();
+  try {
+    await getSubscribedUser();
+  } catch (error) {
+    return new Response('Unauthorized', { status: 401 });
+  }
 
   // Apply rate limiting
   if (process.env.NODE_ENV === 'production') {

@@ -1,6 +1,7 @@
 import { generateVideoAction } from '@/app/actions/generate/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { videoModels } from '@/lib/models';
 import {
   getImagesFromImageNodes,
@@ -9,7 +10,7 @@ import {
 } from '@/lib/xyflow';
 import { useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon } from 'lucide-react';
-import { type ComponentProps, useState } from 'react';
+import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import type { VideoNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
@@ -43,7 +44,7 @@ export const VideoTransform = ({
 
       const response = await generateVideoAction(
         data.model ?? 'T2V-01-Director',
-        textPrompts,
+        [data.instructions ?? '', ...textPrompts].join('\n'),
         images.slice(0, 1)
       );
 
@@ -105,6 +106,10 @@ export const VideoTransform = ({
     });
   }
 
+  const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => updateNodeData(id, { instructions: event.target.value });
+
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       <div>
@@ -130,6 +135,12 @@ export const VideoTransform = ({
           />
         )}
       </div>
+      <Textarea
+        value={data.instructions ?? ''}
+        onChange={handleInstructionsChange}
+        placeholder="Enter instructions"
+        className="shrink-0 rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
+      />
     </NodeLayout>
   );
 };
