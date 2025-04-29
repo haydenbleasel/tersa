@@ -1,5 +1,4 @@
 'use client';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,14 +14,13 @@ import { env } from '@/lib/env';
 import { handleError } from '@/lib/error/handle';
 import { socialProviders } from '@/lib/social';
 import { createClient } from '@/lib/supabase/client';
-
 import { Turnstile } from '@marsidev/react-turnstile';
 import type { Provider } from '@supabase/supabase-js';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type FormEventHandler, useState } from 'react';
 
-export const LoginForm = () => {
+export const SignUpForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,16 +29,19 @@ export const LoginForm = () => {
     undefined
   );
 
-  const handleEmailLogin: FormEventHandler<HTMLFormElement> = async (event) => {
+  const handleEmailSignUp: FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
     event.preventDefault();
     const supabase = createClient();
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: window.location.origin,
           captchaToken,
         },
       });
@@ -48,16 +49,14 @@ export const LoginForm = () => {
         throw error;
       }
 
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push('/');
+      router.push('/auth/sign-up-success');
     } catch (error: unknown) {
-      handleError('Error logging in with email', error);
-
+      handleError('Error signing up with email', error);
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = async (provider: Provider) => {
+  const handleSocialSignUp = async (provider: Provider) => {
     const supabase = createClient();
     setIsLoading(true);
 
@@ -77,7 +76,7 @@ export const LoginForm = () => {
         throw error;
       }
     } catch (error: unknown) {
-      handleError('Error logging in with social provider', error);
+      handleError('Error signing up with social provider', error);
 
       setIsLoading(false);
     }
@@ -86,10 +85,8 @@ export const LoginForm = () => {
   return (
     <Card className="gap-0 overflow-hidden bg-secondary p-0">
       <CardHeader className="bg-background py-8">
-        <CardTitle>Login</CardTitle>
-        <CardDescription>
-          Enter your email or choose a social provider.
-        </CardDescription>
+        <CardTitle>Sign up</CardTitle>
+        <CardDescription>Create a new account</CardDescription>
       </CardHeader>
       <CardContent className="rounded-b-xl border-b bg-background pb-8">
         <div
@@ -105,7 +102,7 @@ export const LoginForm = () => {
               className="border"
               size="lg"
               disabled={isLoading}
-              onClick={() => handleSocialLogin(provider.id)}
+              onClick={() => handleSocialSignUp(provider.id)}
             >
               <provider.icon size={16} />
               <span className="sr-only">Continue with {provider.name}</span>
@@ -119,7 +116,7 @@ export const LoginForm = () => {
           </p>
           <div className="h-px w-full bg-border" />
         </div>
-        <form onSubmit={handleEmailLogin}>
+        <form onSubmit={handleEmailSignUp}>
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
@@ -135,12 +132,6 @@ export const LoginForm = () => {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/auth/forgot-password"
-                  className="ml-auto inline-block text-muted-foreground text-xs underline-offset-4 hover:underline"
-                >
-                  Forgot your password?
-                </Link>
               </div>
               <Input
                 id="password"
@@ -152,19 +143,19 @@ export const LoginForm = () => {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? 'Creating an account...' : 'Sign up'}
             </Button>
           </div>
         </form>
       </CardContent>
       <CardFooter className="grid divide-y p-0">
         <div className="p-4 text-center text-xs">
-          Don&apos;t have an account?{' '}
+          Already have an account?{' '}
           <Link
-            href="/auth/sign-up"
+            href="/auth/login"
             className="text-primary underline underline-offset-4"
           >
-            Sign up
+            Login
           </Link>
         </div>
         <div className="p-4">
