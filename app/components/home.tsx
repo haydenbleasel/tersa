@@ -26,7 +26,7 @@ export const Home = () => (
         },
         {
           title: 'Sign in',
-          link: '/auth/sign-in',
+          link: '/auth/login',
         },
       ]}
     />
