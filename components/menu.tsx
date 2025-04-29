@@ -13,6 +13,7 @@ import { MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { type MouseEventHandler, useEffect, useState } from 'react';
+import { Feedback } from './feedback';
 import { Profile } from './profile';
 import { Subscribe } from './subscribe';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -25,6 +26,7 @@ export const Menu = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const user = useUser();
 
   const logout = async () => {
@@ -50,6 +52,16 @@ export const Menu = () => {
     // shadcn/ui issue: dropdown animation causes profile modal to close immediately after opening
     setTimeout(() => {
       setSubscribeOpen(true);
+    }, 200);
+  };
+
+  const handleOpenFeedback: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    setDropdownOpen(false);
+
+    // shadcn/ui issue: dropdown animation causes profile modal to close immediately after opening
+    setTimeout(() => {
+      setFeedbackOpen(true);
     }, 200);
   };
 
@@ -86,8 +98,9 @@ export const Menu = () => {
               align="end"
               collisionPadding={8}
               sideOffset={16}
+              className="w-52"
             >
-              <DropdownMenuLabel className="grid gap-2">
+              <DropdownMenuLabel>
                 <Avatar>
                   <AvatarImage src={user?.user_metadata.avatar} />
                   <AvatarFallback className="bg-primary text-primary-foreground uppercase">
@@ -97,7 +110,14 @@ export const Menu = () => {
                       .join('')}
                   </AvatarFallback>
                 </Avatar>
-                <p>{user?.user_metadata.name ?? user?.email ?? user?.id}</p>
+                <p className="mt-2">
+                  {user?.user_metadata.name ?? user?.email ?? user?.id}
+                </p>
+                {user?.user_metadata.name && user?.email && (
+                  <p className="font-normal text-muted-foreground text-xs">
+                    {user.email}
+                  </p>
+                )}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleOpenProfile}>
@@ -113,6 +133,9 @@ export const Menu = () => {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleOpenFeedback}>
+                Send feedback
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -120,6 +143,7 @@ export const Menu = () => {
       </Panel>
       <Profile open={profileOpen} setOpen={setProfileOpen} />
       <Subscribe open={subscribeOpen} setOpen={setSubscribeOpen} />
+      <Feedback open={feedbackOpen} setOpen={setFeedbackOpen} />
     </>
   );
 };
