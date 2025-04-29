@@ -96,8 +96,11 @@ export const TextTransform = ({
   ) => updateNodeData(id, { instructions: event.target.value });
 
   const nonUserMessages = messages.filter((message) => message.role !== 'user');
-  const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
-    {
+
+  const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
+    const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
+
+    toolbar.push({
       children: (
         <ModelSelector
           value={data.model ?? 'gpt-4'}
@@ -107,59 +110,62 @@ export const TextTransform = ({
           onChange={(value) => updateNodeData(id, { model: value })}
         />
       ),
-    },
-  ];
+    });
 
-  if (status === 'streaming') {
-    toolbar.push({
-      tooltip: 'Stop',
-      children: (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          onClick={stop}
-        >
-          <SquareIcon size={12} />
-        </Button>
-      ),
-    });
-  } else if (nonUserMessages.length) {
-    toolbar.push({
-      tooltip: 'Regenerate',
-      children: (
-        <Button size="icon" className="rounded-full" onClick={handleGenerate}>
-          <RotateCcwIcon size={12} />
-        </Button>
-      ),
-    });
-  } else {
-    toolbar.push({
-      tooltip: 'Generate',
-      children: (
-        <Button size="icon" className="rounded-full" onClick={handleGenerate}>
-          <PlayIcon size={12} />
-        </Button>
-      ),
-    });
-  }
+    if (status === 'submitted' || status === 'streaming') {
+      toolbar.push({
+        tooltip: 'Stop',
+        children: (
+          <Button size="icon" className="rounded-full" onClick={stop}>
+            <SquareIcon size={12} />
+          </Button>
+        ),
+      });
+    } else if (nonUserMessages.length) {
+      toolbar.push({
+        tooltip: 'Regenerate',
+        children: (
+          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+            <RotateCcwIcon size={12} />
+          </Button>
+        ),
+      });
+    } else {
+      toolbar.push({
+        tooltip: 'Generate',
+        children: (
+          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+            <PlayIcon size={12} />
+          </Button>
+        ),
+      });
+    }
 
-  if (data.updatedAt) {
-    toolbar.push({
-      tooltip: `Last updated: ${new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      }).format(new Date(data.updatedAt))}`,
-      children: (
-        <Button size="icon" variant="ghost" className="rounded-full">
-          <ClockIcon size={12} />
-        </Button>
-      ),
-    });
-  }
+    if (data.updatedAt) {
+      toolbar.push({
+        tooltip: `Last updated: ${new Intl.DateTimeFormat('en-US', {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        }).format(new Date(data.updatedAt))}`,
+        children: (
+          <Button size="icon" variant="ghost" className="rounded-full">
+            <ClockIcon size={12} />
+          </Button>
+        ),
+      });
+    }
+
+    return toolbar;
+  };
 
   return (
-    <NodeLayout id={id} data={data} title={title} type={type} toolbar={toolbar}>
+    <NodeLayout
+      id={id}
+      data={data}
+      title={title}
+      type={type}
+      toolbar={createToolbar()}
+    >
       <div className="flex-1 p-4">
         {status === 'streaming' && (
           <div className="flex items-center justify-center">

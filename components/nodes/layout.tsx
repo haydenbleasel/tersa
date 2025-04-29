@@ -78,7 +78,7 @@ export const NodeLayout = ({
       {type !== 'drop' && (
         <NodeToolbar
           isVisible={data?.forceToolbarVisible || undefined}
-          position={data?.toolbarPosition}
+          position={Position.Bottom}
           className="flex items-center gap-1 rounded-full border bg-background/90 p-1 drop-shadow-xs backdrop-blur-sm"
         >
           {toolbar?.map((button, index) =>

@@ -79,6 +79,8 @@
     "@tiptap/starter-kit": "^2.11.7",
     "@tiptap/suggestion": "^2.11.7",
     "@uidotdev/usehooks": "^2.4.1",
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.34.8",
     "@vercel/analytics": "^1.5.0",
     "@xyflow/react": "^12.6.0",
     "ai": "^4.3.9",

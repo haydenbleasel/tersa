@@ -1,10 +1,32 @@
 import { chatModels } from '@/lib/models';
+import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+// Create a rate limiter for the chat API
+const rateLimiter = createRateLimiter({
+  limiter: slidingWindow(10, '1 m'),
+  prefix: 'api-chat',
+});
+
 export const POST = async (req: Request) => {
+  // Apply rate limiting
+  const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+  const { success, limit, reset, remaining } = await rateLimiter.limit(ip);
+
+  if (!success) {
+    return new Response('Too many requests', {
+      status: 429,
+      headers: {
+        'X-RateLimit-Limit': limit.toString(),
+        'X-RateLimit-Remaining': remaining.toString(),
+        'X-RateLimit-Reset': reset.toString(),
+      },
+    });
+  }
+
   const { messages, modelId } = await req.json();
 
   if (typeof modelId !== 'string') {

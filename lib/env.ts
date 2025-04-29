@@ -12,6 +12,9 @@ export const env = createEnv({
     MINIMAX_API_KEY: z.string().min(1),
 
     STRIPE_SECRET_KEY: z.string().min(1),
+
+    UPSTASH_REDIS_REST_URL: z.string().url().min(1),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
@@ -27,5 +30,7 @@ export const env = createEnv({
     MINIMAX_GROUP_ID: process.env.MINIMAX_GROUP_ID,
     MINIMAX_API_KEY: process.env.MINIMAX_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   },
 });
