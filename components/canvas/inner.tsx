@@ -36,7 +36,6 @@ import { AudioNode } from '../nodes/audio';
 import { CommentNode } from '../nodes/comment';
 import { DropNode } from '../nodes/drop';
 import { ImageNode } from '../nodes/image';
-import { LogoNode } from '../nodes/logo';
 import { TextNode } from '../nodes/text';
 import { VideoNode } from '../nodes/video';
 
@@ -46,7 +45,6 @@ const nodeTypes = {
   drop: DropNode,
   video: VideoNode,
   audio: AudioNode,
-  logo: LogoNode,
   comment: CommentNode,
 };
 

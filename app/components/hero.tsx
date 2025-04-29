@@ -1,11 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRightIcon } from 'lucide-react';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
 
 type HeroProps = {
-  title: ReactNode;
-  description: string;
   announcement?: {
     title: string;
     link: string;
@@ -16,12 +13,7 @@ type HeroProps = {
   }[];
 };
 
-export const Hero = ({
-  title,
-  description,
-  announcement,
-  buttons,
-}: HeroProps) => (
+export const Hero = ({ announcement, buttons }: HeroProps) => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
     {/* Gradient overlays */}
     <div className="pointer-events-none absolute inset-0">
@@ -72,11 +64,16 @@ export const Hero = ({
         )}
 
         <h1 className="mt-6 mb-5 text-center font-medium text-4xl tracking-[-0.12rem] md:text-6xl">
-          {title}
+          <span className="font-semibold font-serif text-7xl italic">
+            Visualize
+          </span>{' '}
+          your AI workflows
         </h1>
 
         <p className="max-w-2xl text-center text-lg text-muted-foreground tracking-[-0.01rem]">
-          {description}
+          Tersa is an open source canvas for building AI workflows. Drag, drop
+          connect and run nodes to build your own workflows powered by various
+          industry-leading AI models.
         </p>
       </div>
     </div>

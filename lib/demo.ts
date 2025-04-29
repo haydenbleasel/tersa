@@ -49,7 +49,7 @@ export const sampleNodes: Node[] = [
       },
       text: 'Delphiniums generally symbolize cheerfulness, goodwill, and protection. Specifically, they can represent striving for success, enjoying life, and celebrating important occasions. Blue delphiniums are also often associated with dignity and grace. ',
     },
-    position: { x: -258, y: 30 },
+    position: { x: -258, y: -100 },
     origin: [0, 0.5],
     measured: { width: 400, height: 203 },
     selected: false,
@@ -75,49 +75,6 @@ export const sampleNodes: Node[] = [
     height: 270,
     selected: false,
     dragging: false,
-  },
-  {
-    id: 'KprCwFIjHi90enH4BX_bf',
-    type: 'comment',
-    data: {
-      source: 'primitive',
-      content: {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text: 'An AI canvas powered by Supabase and the Vercel AI SDK.',
-              },
-            ],
-          },
-        ],
-      },
-      text: 'An AI canvas powered by Supabase and the Vercel AI SDK.',
-    },
-    position: { x: -249, y: -224 },
-    origin: [0, 0.5],
-    measured: { width: 279, height: 40 },
-    selected: false,
-    dragging: false,
-    width: 279,
-    height: 40,
-    resizing: false,
-  },
-  {
-    id: '46chONcEHliE7UChIseQm',
-    type: 'logo',
-    data: { source: 'primitive' },
-    position: { x: -250, y: -281 },
-    origin: [0, 0.5],
-    measured: { width: 145, height: 33 },
-    selected: false,
-    dragging: false,
-    width: 145,
-    height: 33.241106719367586,
-    resizing: false,
   },
   {
     id: 'wiHfpZJA_mGy1vQOULuOA',
