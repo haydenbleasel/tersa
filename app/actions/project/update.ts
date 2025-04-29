@@ -10,7 +10,7 @@ export const updateProjectAction = async (
   data: Partial<typeof projects.$inferInsert>
 ): Promise<
   | {
-      sucess: true;
+      success: true;
     }
   | {
       error: string;
@@ -38,7 +38,7 @@ export const updateProjectAction = async (
       throw new Error('Project not found');
     }
 
-    return { sucess: true };
+    return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return { error: message };

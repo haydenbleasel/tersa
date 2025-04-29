@@ -9,7 +9,7 @@ export const deleteProjectAction = async (
   projectId: string
 ): Promise<
   | {
-      sucess: true;
+      success: true;
     }
   | {
       error: string;
@@ -33,7 +33,7 @@ export const deleteProjectAction = async (
       throw new Error('Project not found');
     }
 
-    return { sucess: true };
+    return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return { error: message };

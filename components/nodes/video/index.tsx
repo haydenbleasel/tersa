@@ -9,8 +9,6 @@ export type VideoNodeProps = {
       url: string;
       type: string;
     };
-    width?: number;
-    height?: number;
     updatedAt?: string;
     model?: string;
     instructions?: string;

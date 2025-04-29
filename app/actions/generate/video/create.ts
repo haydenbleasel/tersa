@@ -40,12 +40,15 @@ type QueryJobResponse = {
 };
 
 type RetrieveUrlResponse = {
-  file_id: number;
-  bytes: number;
-  created_at: number;
-  filename: string;
-  purpose: string;
-  download_url: string;
+  file: {
+    file_id: number;
+    bytes: number;
+    created_at: number;
+    filename: string;
+    purpose: string;
+    download_url: string;
+    backup_download_url: string;
+  };
   base_resp: {
     status_code: number;
     status_msg: string;
@@ -85,7 +88,8 @@ export const generateVideoAction = async (
     const props: CreateJobProps = {
       model: model.id as CreateJobProps['model'],
       prompt,
-      first_frame_image: images.at(0)?.url,
+      first_frame_image:
+        'https://zszbbhofscgnnkvyonow.supabase.co/storage/v1/object/public/files/97131ce3-3415-4ea5-893c-7c30d201dec1/-lhMcumQRWpbaqJRVe7sr.jpg',
     };
 
     // Create job
@@ -169,16 +173,13 @@ export const generateVideoAction = async (
       throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
     }
 
-    const downloadUrl = retrieveUrlData.download_url;
-
     // Download the video
-    const videoResponse = await fetch(downloadUrl);
+    const videoResponse = await fetch(retrieveUrlData.file.download_url);
     const videoArrayBuffer = await videoResponse.arrayBuffer();
-    const videoUint8Array = new Uint8Array(videoArrayBuffer);
 
     const blob = await client.storage
       .from('files')
-      .upload(`${user.id}/${nanoid()}`, new Blob([videoUint8Array]), {
+      .upload(`${user.id}/${nanoid()}.mp4`, videoArrayBuffer, {
         contentType: 'video/mp4',
       });
 

@@ -7,20 +7,6 @@ type VideoPrimitiveProps = VideoNodeProps & {
   title: string;
 };
 
-const getVideoDimensions = (url: string) =>
-  new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const video = document.createElement('video');
-    video.src = url;
-
-    video.onloadedmetadata = () => {
-      resolve({ width: video.videoWidth, height: video.videoHeight });
-    };
-
-    video.onerror = () => {
-      reject(new Error('Failed to load video'));
-    };
-  });
-
 export const VideoPrimitive = ({
   data,
   id,
@@ -28,16 +14,12 @@ export const VideoPrimitive = ({
   title,
 }: VideoPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const handleUploadCompleted = async (url: string, type: string) => {
-    const response = await getVideoDimensions(url);
-
+  const handleUploadCompleted = (url: string, type: string) => {
     updateNodeData(id, {
       content: {
         url,
         type,
       },
-      width: response.width,
-      height: response.height,
     });
   };
 
@@ -46,8 +28,6 @@ export const VideoPrimitive = ({
       {data.content ? (
         <video
           src={data.content.url}
-          width={data.width ?? 100}
-          height={data.height ?? 100}
           className="h-auto w-full rounded-lg"
           playsInline
           autoPlay

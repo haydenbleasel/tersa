@@ -26,7 +26,7 @@ export const VideoTransform = ({
   title,
 }: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [video, setVideo] = useState<string | null>(null);
+  const [video, setVideo] = useState<string | null>(data.content?.url ?? null);
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
@@ -56,7 +56,10 @@ export const VideoTransform = ({
 
       updateNodeData(id, {
         updatedAt: new Date().toISOString(),
-        video: response,
+        content: {
+          url: response.url,
+          type: 'video/mp4',
+        },
       });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unknown error');
@@ -126,12 +129,15 @@ export const VideoTransform = ({
           </div>
         )}
         {video && (
-          // biome-ignore lint/a11y/useMediaCaption: <explanation>
           <video
             src={video}
             width={1600}
             height={900}
-            className="aspect-video w-full object-cover"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="aspect-video w-full rounded-t-lg object-cover"
           />
         )}
       </div>
