@@ -1,5 +1,6 @@
 'use server';
 
+import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
 import OpenAI, { toFile } from 'openai';
@@ -21,19 +22,7 @@ export const editImageAction = async (
 > => {
   try {
     const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('Create an account to use AI features.');
-    }
-
-    if (data.user.user_metadata.isBanned) {
-      throw new Error('You are banned from using AI features.');
-    }
-
-    if (!data.user.user_metadata.stripeSubscriptionId) {
-      throw new Error('Please upgrade to a paid plan to use AI features.');
-    }
+    const user = await getSubscribedUser();
 
     const openai = new OpenAI();
 
@@ -57,7 +46,7 @@ export const editImageAction = async (
       model: 'gpt-image-1',
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
-      user: data.user.id,
+      user: user.id,
     });
 
     const json = response.data?.at(0)?.b64_json;
@@ -70,18 +59,16 @@ export const editImageAction = async (
     const filename = nanoid();
     const contentType = 'image/png';
 
-    const blob = await client.storage
-      .from(data.user.id)
-      .upload(filename, bytes, {
-        contentType,
-      });
+    const blob = await client.storage.from(user.id).upload(filename, bytes, {
+      contentType,
+    });
 
     if (blob.error) {
       throw new Error(blob.error.message);
     }
 
     const { data: downloadUrl } = client.storage
-      .from(data.user.id)
+      .from(user.id)
       .getPublicUrl(blob.data.path);
 
     return {

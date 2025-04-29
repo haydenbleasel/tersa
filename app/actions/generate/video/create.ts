@@ -2,6 +2,7 @@
 
 import { env } from '@/lib/env';
 import { videoModels } from '@/lib/models';
+import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import ky from 'ky';
 import { nanoid } from 'nanoid';
@@ -72,19 +73,7 @@ export const generateVideoAction = async (
 > => {
   try {
     const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('Create an account to use AI features.');
-    }
-
-    if (data.user.user_metadata.isBanned) {
-      throw new Error('You are banned from using AI features.');
-    }
-
-    if (!data.user.user_metadata.stripeSubscriptionId) {
-      throw new Error('Please upgrade to a paid plan to use AI features.');
-    }
+    const user = await getSubscribedUser();
 
     const model = videoModels
       .flatMap((model) => model.models)
@@ -179,7 +168,7 @@ export const generateVideoAction = async (
     const videoUint8Array = new Uint8Array(videoArrayBuffer);
 
     const blob = await client.storage
-      .from(data.user.id)
+      .from(user.id)
       .upload(nanoid(), new Blob([videoUint8Array]), {
         contentType: 'video/mp4',
       });
@@ -189,7 +178,7 @@ export const generateVideoAction = async (
     }
 
     const { data: supabaseDownloadUrl } = client.storage
-      .from(data.user.id)
+      .from(user.id)
       .getPublicUrl(blob.data.path);
 
     return { url: supabaseDownloadUrl.publicUrl, type: 'video/mp4' };

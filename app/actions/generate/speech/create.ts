@@ -1,5 +1,6 @@
 'use server';
 
+import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { openai } from '@ai-sdk/openai';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
@@ -17,19 +18,7 @@ export const generateSpeechAction = async (
 > => {
   try {
     const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('Create an account to use AI features.');
-    }
-
-    if (data.user.user_metadata.isBanned) {
-      throw new Error('You are banned from using AI features.');
-    }
-
-    if (!data.user.user_metadata.stripeSubscriptionId) {
-      throw new Error('Please upgrade to a paid plan to use AI features.');
-    }
+    const user = await getSubscribedUser();
 
     const { audio } = await generateSpeech({
       model: openai.speech('gpt-4o-mini-tts'),
@@ -38,7 +27,7 @@ export const generateSpeechAction = async (
     });
 
     const blob = await client.storage
-      .from(data.user.id)
+      .from(user.id)
       .upload(nanoid(), new Blob([audio.uint8Array]), {
         contentType: audio.mimeType,
       });
@@ -48,7 +37,7 @@ export const generateSpeechAction = async (
     }
 
     const { data: downloadUrl } = client.storage
-      .from(data.user.id)
+      .from(user.id)
       .getPublicUrl(blob.data.path);
 
     return { url: downloadUrl.publicUrl };

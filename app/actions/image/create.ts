@@ -1,6 +1,7 @@
 'use server';
 
 import { imageModels } from '@/lib/models';
+import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { experimental_generateImage as generateImage } from 'ai';
 import { nanoid } from 'nanoid';
@@ -20,19 +21,7 @@ export const generateImageAction = async (
 > => {
   try {
     const client = await createClient();
-    const { data } = await client.auth.getUser();
-
-    if (!data?.user) {
-      throw new Error('Create an account to use AI features.');
-    }
-
-    if (data.user.user_metadata.isBanned) {
-      throw new Error('You are banned from using AI features.');
-    }
-
-    if (!data.user.user_metadata.stripeSubscriptionId) {
-      throw new Error('Please upgrade to a paid plan to use AI features.');
-    }
+    const user = await getSubscribedUser();
 
     const model = imageModels
       .flatMap((m) => m.models)
@@ -56,7 +45,7 @@ export const generateImageAction = async (
     });
 
     const blob = await client.storage
-      .from(data.user.id)
+      .from(user.id)
       .upload(nanoid(), new Blob([image.uint8Array]), {
         contentType: image.mimeType,
       });
@@ -66,7 +55,7 @@ export const generateImageAction = async (
     }
 
     const { data: downloadUrl } = client.storage
-      .from(data.user.id)
+      .from(user.id)
       .getPublicUrl(blob.data.path);
 
     return { url: downloadUrl.publicUrl, type: image.mimeType };
