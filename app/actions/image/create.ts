@@ -45,8 +45,8 @@ export const generateImageAction = async (
     });
 
     const blob = await client.storage
-      .from(user.id)
-      .upload(nanoid(), new Blob([image.uint8Array]), {
+      .from('files')
+      .upload(`${user.id}/${nanoid()}`, new Blob([image.uint8Array]), {
         contentType: image.mimeType,
       });
 
@@ -55,7 +55,7 @@ export const generateImageAction = async (
     }
 
     const { data: downloadUrl } = client.storage
-      .from(user.id)
+      .from('files')
       .getPublicUrl(blob.data.path);
 
     return { url: downloadUrl.publicUrl, type: image.mimeType };

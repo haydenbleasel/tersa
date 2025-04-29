@@ -27,8 +27,8 @@ export const generateSpeechAction = async (
     });
 
     const blob = await client.storage
-      .from(user.id)
-      .upload(nanoid(), new Blob([audio.uint8Array]), {
+      .from('files')
+      .upload(`${user.id}/${nanoid()}`, new Blob([audio.uint8Array]), {
         contentType: audio.mimeType,
       });
 
@@ -37,7 +37,7 @@ export const generateSpeechAction = async (
     }
 
     const { data: downloadUrl } = client.storage
-      .from(user.id)
+      .from('files')
       .getPublicUrl(blob.data.path);
 
     return { url: downloadUrl.publicUrl };

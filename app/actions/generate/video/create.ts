@@ -103,8 +103,6 @@ export const generateVideoAction = async (
 
     const createJobData = (await createJobResponse.json()) as CreateJobResponse;
 
-    console.log(createJobData, 'createJobData');
-
     if (createJobData.base_resp.status_code !== 0) {
       throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
     }
@@ -129,8 +127,6 @@ export const generateVideoAction = async (
       );
 
       const queryJobData = (await queryJobResponse.json()) as QueryJobResponse;
-
-      console.log(queryJobData, 'queryJobData');
 
       if (queryJobData.base_resp.status_code !== 0) {
         throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
@@ -169,8 +165,6 @@ export const generateVideoAction = async (
     const retrieveUrlData =
       (await retrieveUrlResponse.json()) as RetrieveUrlResponse;
 
-    console.log(retrieveUrlData, 'retrieveUrlData');
-
     if (retrieveUrlData.base_resp.status_code !== 0) {
       throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
     }
@@ -183,8 +177,8 @@ export const generateVideoAction = async (
     const videoUint8Array = new Uint8Array(videoArrayBuffer);
 
     const blob = await client.storage
-      .from(user.id)
-      .upload(nanoid(), new Blob([videoUint8Array]), {
+      .from('files')
+      .upload(`${user.id}/${nanoid()}`, new Blob([videoUint8Array]), {
         contentType: 'video/mp4',
       });
 
@@ -193,7 +187,7 @@ export const generateVideoAction = async (
     }
 
     const { data: supabaseDownloadUrl } = client.storage
-      .from(user.id)
+      .from('files')
       .getPublicUrl(blob.data.path);
 
     return { url: supabaseDownloadUrl.publicUrl, type: 'video/mp4' };

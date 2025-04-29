@@ -56,19 +56,20 @@ export const editImageAction = async (
     }
 
     const bytes = Buffer.from(json, 'base64');
-    const filename = nanoid();
     const contentType = 'image/png';
 
-    const blob = await client.storage.from(user.id).upload(filename, bytes, {
-      contentType,
-    });
+    const blob = await client.storage
+      .from('files')
+      .upload(`${user.id}/${nanoid()}`, bytes, {
+        contentType,
+      });
 
     if (blob.error) {
       throw new Error(blob.error.message);
     }
 
     const { data: downloadUrl } = client.storage
-      .from(user.id)
+      .from('files')
       .getPublicUrl(blob.data.path);
 
     return {
