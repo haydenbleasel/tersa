@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useCurrentUserName } from '@/hooks/use-current-user-name';
+import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import { Panel } from '@xyflow/react';
 import { MenuIcon } from 'lucide-react';
@@ -15,18 +15,18 @@ import { useParams, useRouter } from 'next/navigation';
 import { type MouseEventHandler, useEffect, useState } from 'react';
 import { Profile } from './profile';
 import { Subscribe } from './subscribe';
-import { CurrentUserAvatar } from './supabase-ui/current-user-avatar';
-import { RealtimeAvatarStack } from './supabase-ui/realtime-avatar-stack';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
 export const Menu = () => {
   const router = useRouter();
-  const name = useCurrentUserName();
   const { projectId } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const user = useUser();
+
   const logout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -69,11 +69,11 @@ export const Menu = () => {
         position="top-right"
         className="top-16! left-0 flex items-center gap-2 sm:top-0! sm:left-auto"
       >
-        {typeof projectId === 'string' && (
+        {/* {typeof projectId === 'string' && (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
             <RealtimeAvatarStack roomName={projectId} />
           </div>
-        )}
+        )} */}
         <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
@@ -87,9 +87,17 @@ export const Menu = () => {
               collisionPadding={8}
               sideOffset={16}
             >
-              <DropdownMenuLabel>
-                <CurrentUserAvatar />
-                <p>{name}</p>
+              <DropdownMenuLabel className="grid gap-2">
+                <Avatar>
+                  <AvatarImage src={user?.user_metadata.avatar} />
+                  <AvatarFallback className="bg-primary text-primary-foreground uppercase">
+                    {(user?.user_metadata.name ?? user?.email ?? user?.id)
+                      ?.split(' ')
+                      .map((name: string) => name.at(0))
+                      .join('')}
+                  </AvatarFallback>
+                </Avatar>
+                <p>{user?.user_metadata.name ?? user?.email ?? user?.id}</p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleOpenProfile}>

@@ -39,7 +39,6 @@ import { ImageNode } from '../nodes/image';
 import { LogoNode } from '../nodes/logo';
 import { TextNode } from '../nodes/text';
 import { VideoNode } from '../nodes/video';
-import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 
 const nodeTypes = {
   image: ImageNode,
@@ -366,7 +365,7 @@ export const CanvasInner = ({
           <CreateAccount />
         )}
       </ReactFlow>
-      <RealtimeCursors roomName={data.id} username={userId ?? 'Demo user'} />
+      {/* <RealtimeCursors roomName={data.id} username={userId ?? 'Demo user'} /> */}
     </>
   );
 };

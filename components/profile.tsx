@@ -7,10 +7,8 @@ import {
 } from '@/components/ui/dialog';
 import { createClient } from '@/lib/supabase/client';
 import type { UserAttributes } from '@supabase/supabase-js';
-import { UserIcon } from 'lucide-react';
 import { type FormEventHandler, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -27,10 +25,6 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
   const [image, setImage] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    console.log('Profile modal open state changed:', open);
-  }, [open]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -141,21 +135,12 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
         </DialogHeader>
         <div className="grid gap-2">
           <Label htmlFor="avatar">Avatar</Label>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src={image} />
-                <AvatarFallback>
-                  <UserIcon size={16} />
-                </AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
           <Uploader
             onUploadCompleted={handleUploadCompleted}
             accept={{
               'image/*': [],
             }}
+            bucket="avatars"
           />
         </div>
         <form

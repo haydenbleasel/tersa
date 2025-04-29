@@ -13,12 +13,14 @@ type UploaderProps = {
   accept?: DropzoneProps['accept'];
   onUploadCompleted: (url: string, type: string) => void;
   className?: string;
+  bucket?: 'avatars' | 'files';
 };
 
 export const Uploader = ({
   onUploadCompleted,
   accept,
   className,
+  bucket = 'files',
 }: UploaderProps) => {
   const [files, setFiles] = useState<File[] | undefined>();
   const handleDrop = async (files: File[]) => {
@@ -37,7 +39,7 @@ export const Uploader = ({
     }
 
     const blob = await client.storage
-      .from(data.user.id)
+      .from(bucket)
       .upload(nanoid(), new Blob([file]), {
         contentType: file.type,
       });
@@ -47,7 +49,7 @@ export const Uploader = ({
     }
 
     const { data: downloadUrl } = client.storage
-      .from(data.user.id)
+      .from(bucket)
       .getPublicUrl(blob.data.path);
 
     onUploadCompleted(downloadUrl.publicUrl, file.type);
