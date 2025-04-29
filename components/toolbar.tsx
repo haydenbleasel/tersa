@@ -1,4 +1,4 @@
-import { type Node, Panel, type XYPosition, useReactFlow } from '@xyflow/react';
+import { type Node, Panel, useReactFlow } from '@xyflow/react';
 import {
   AudioWaveformIcon,
   ImageIcon,
@@ -11,21 +11,27 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export const Toolbar = () => {
-  const { addNodes } = useReactFlow();
+  const { addNodes, getViewport } = useReactFlow();
 
-  const addNode = (
-    type: string,
-    position?: XYPosition,
-    data?: Record<string, unknown>
-  ) => {
+  const addNode = (type: string) => {
+    // Get the current viewport
+    const viewport = getViewport();
+
+    // Calculate the center of the current viewport
+    const centerX =
+      -viewport.x / viewport.zoom + window.innerWidth / 2 / viewport.zoom;
+    const centerY =
+      -viewport.y / viewport.zoom + window.innerHeight / 2 / viewport.zoom;
+
+    const position = { x: centerX, y: centerY };
+
     const newNode: Node = {
       id: nanoid(),
       type,
       data: {
         source: 'primitive',
-        ...data,
       },
-      position: position ?? { x: 0, y: 0 },
+      position,
       origin: [0, 0.5],
     };
 
