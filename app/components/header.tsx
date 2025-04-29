@@ -9,7 +9,7 @@ export const Header = () => (
     </Link>
     <div className="flex items-center gap-2">
       <Button variant="outline">
-        <Link href="/auth/sign-in">Sign in</Link>
+        <Link href="/auth/login">Login</Link>
       </Button>
       <Button>
         <Link href="/auth/sign-up">Sign up</Link>

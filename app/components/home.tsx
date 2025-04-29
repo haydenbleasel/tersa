@@ -25,7 +25,7 @@ export const Home = () => (
           link: '/auth/sign-up',
         },
         {
-          title: 'Sign in',
+          title: 'Login',
           link: '/auth/login',
         },
       ]}

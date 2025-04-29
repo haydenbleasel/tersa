@@ -59,7 +59,7 @@ Tersa is an AI canvas powered by [Supabase](https://supabase.com/), [shadcn/ui](
 
 ## Usage
 
-1. Sign in or create an account
+1. Login or create an account
 2. Create a new project or open an existing one
 3. Add nodes to your canvas by clicking the toolbar buttons
 4. Connect nodes by dragging from one node's output to another node's input
