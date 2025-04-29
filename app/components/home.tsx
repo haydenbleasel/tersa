@@ -1,4 +1,5 @@
 import { Demo } from './demo';
+import { Features } from './features';
 import { Header } from './header';
 import { Hero } from './hero';
 
@@ -22,5 +23,6 @@ export const Home = () => (
       ]}
     />
     <Demo />
+    <Features />
   </div>
 );
