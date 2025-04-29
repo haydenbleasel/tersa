@@ -118,7 +118,12 @@ export const TextTransform = ({
       toolbar.push({
         tooltip: 'Stop',
         children: (
-          <Button size="icon" className="rounded-full" onClick={stop}>
+          <Button
+            size="icon"
+            className="rounded-full"
+            onClick={stop}
+            disabled={!projectId}
+          >
             <SquareIcon size={12} />
           </Button>
         ),
@@ -127,7 +132,12 @@ export const TextTransform = ({
       toolbar.push({
         tooltip: 'Regenerate',
         children: (
-          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+          <Button
+            size="icon"
+            className="rounded-full"
+            onClick={handleGenerate}
+            disabled={!projectId}
+          >
             <RotateCcwIcon size={12} />
           </Button>
         ),
