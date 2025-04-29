@@ -94,7 +94,6 @@
     "fuse.js": "^7.1.0",
     "html-to-image": "1.11.11",
     "input-otp": "^1.4.2",
-    "ky": "^1.8.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.501.0",
     "nanoid": "^5.1.5",

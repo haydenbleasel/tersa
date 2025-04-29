@@ -112,7 +112,7 @@ export const TextTransform = ({
       ),
     });
 
-    if (status === 'submitted' || status === 'streaming') {
+    if (status === 'submitted') {
       toolbar.push({
         tooltip: 'Stop',
         children: (

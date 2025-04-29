@@ -13,9 +13,9 @@ export const getSubscribedUser = async () => {
   }
 
   // Should be temporarily disabled during beta
-  if (!data.user.user_metadata.stripeSubscriptionId) {
-    throw new Error('Please upgrade to a paid plan to use AI features.');
-  }
+  // if (!data.user.user_metadata.stripeSubscriptionId) {
+  //   throw new Error('Please upgrade to a paid plan to use AI features.');
+  // }
 
   return data.user;
 };

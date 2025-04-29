@@ -79,7 +79,12 @@ export const VideoTransform = ({
     {
       tooltip: 'Generate',
       children: (
-        <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+        <Button
+          size="icon"
+          className="rounded-full"
+          onClick={handleGenerate}
+          disabled={loading}
+        >
           <PlayIcon size={12} />
         </Button>
       ),

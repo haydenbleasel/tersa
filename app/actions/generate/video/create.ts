@@ -4,7 +4,6 @@ import { env } from '@/lib/env';
 import { videoModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
-import ky from 'ky';
 import { nanoid } from 'nanoid';
 
 type CreateJobProps = {
@@ -90,14 +89,21 @@ export const generateVideoAction = async (
     };
 
     // Create job
-    const createJobData = await ky
-      .post(new URL('/v1/video_generation', baseUrl), {
-        json: props,
+    const createJobResponse = await fetch(
+      new URL('/v1/video_generation', baseUrl),
+      {
+        method: 'POST',
         headers: {
-          authorization: `Bearer ${env.MINIMAX_API_KEY}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.MINIMAX_API_KEY}`,
         },
-      })
-      .json<CreateJobResponse>();
+        body: JSON.stringify(props),
+      }
+    );
+
+    const createJobData = (await createJobResponse.json()) as CreateJobResponse;
+
+    console.log(createJobData, 'createJobData');
 
     if (createJobData.base_resp.status_code !== 0) {
       throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
@@ -108,18 +114,23 @@ export const generateVideoAction = async (
     let isCompleted = false;
     let fileId: string | null = null;
     const startTime = Date.now();
-    const maxPollTime = 2 * 60 * 1000; // 2 minutes in milliseconds
+    const maxPollTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
     while (!isCompleted && Date.now() - startTime < maxPollTime) {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const queryJobData = await ky
-        .get(new URL(`/v1/query/video_generation?task_id=${taskId}`, baseUrl), {
+      const queryJobResponse = await fetch(
+        new URL(`/v1/query/video_generation?task_id=${taskId}`, baseUrl),
+        {
           headers: {
             authorization: `Bearer ${env.MINIMAX_API_KEY}`,
           },
-        })
-        .json<QueryJobResponse>();
+        }
+      );
+
+      const queryJobData = (await queryJobResponse.json()) as QueryJobResponse;
+
+      console.log(queryJobData, 'queryJobData');
 
       if (queryJobData.base_resp.status_code !== 0) {
         throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
@@ -142,20 +153,23 @@ export const generateVideoAction = async (
     }
 
     // Retrieve download URL
-    const retrieveUrlData = await ky
-      .get(
-        new URL(
-          `/v1/files/retrieve?GroupId=${env.MINIMAX_GROUP_ID}&file_id=${fileId}`,
-          baseUrl
-        ),
-        {
-          headers: {
-            authority: 'api.minimaxi.chat',
-            authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-          },
-        }
-      )
-      .json<RetrieveUrlResponse>();
+    const retrieveUrlResponse = await fetch(
+      new URL(
+        `/v1/files/retrieve?GroupId=${env.MINIMAX_GROUP_ID}&file_id=${fileId}`,
+        baseUrl
+      ),
+      {
+        headers: {
+          authority: 'api.minimaxi.chat',
+          authorization: `Bearer ${env.MINIMAX_API_KEY}`,
+        },
+      }
+    );
+
+    const retrieveUrlData =
+      (await retrieveUrlResponse.json()) as RetrieveUrlResponse;
+
+    console.log(retrieveUrlData, 'retrieveUrlData');
 
     if (retrieveUrlData.base_resp.status_code !== 0) {
       throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
@@ -164,7 +178,8 @@ export const generateVideoAction = async (
     const downloadUrl = retrieveUrlData.download_url;
 
     // Download the video
-    const videoArrayBuffer = await ky.get(downloadUrl).arrayBuffer();
+    const videoResponse = await fetch(downloadUrl);
+    const videoArrayBuffer = await videoResponse.arrayBuffer();
     const videoUint8Array = new Uint8Array(videoArrayBuffer);
 
     const blob = await client.storage
