@@ -40,7 +40,7 @@ export const Uploader = ({
 
     const blob = await client.storage
       .from(bucket)
-      .upload(nanoid(), new Blob([file]), {
+      .upload(`${data.user.id}/${nanoid()}`, new Blob([file]), {
         contentType: file.type,
       });
 
