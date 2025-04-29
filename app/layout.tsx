@@ -23,7 +23,13 @@ type RootLayoutProps = {
 
 const RootLayout = ({ children }: RootLayoutProps) => (
   <html lang="en" suppressHydrationWarning>
-    <body className={cn(geistSans.variable, geistMono.variable, 'antialiased')}>
+    <body
+      className={cn(
+        geistSans.variable,
+        geistMono.variable,
+        'text-foreground antialiased'
+      )}
+    >
       <ThemeProvider
         attribute="class"
         defaultTheme="system"

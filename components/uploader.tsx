@@ -12,9 +12,14 @@ import { useState } from 'react';
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
   onUploadCompleted: (url: string, type: string) => void;
+  className?: string;
 };
 
-export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
+export const Uploader = ({
+  onUploadCompleted,
+  accept,
+  className,
+}: UploaderProps) => {
   const [files, setFiles] = useState<File[] | undefined>();
   const handleDrop = async (files: File[]) => {
     if (!files.length) {
@@ -58,7 +63,7 @@ export const Uploader = ({ onUploadCompleted, accept }: UploaderProps) => {
       onDrop={handleDrop}
       src={files}
       onError={console.error}
-      className="rounded-none border-none bg-transparent p-0 shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+      className={className}
     >
       <DropzoneEmptyState />
       <DropzoneContent>

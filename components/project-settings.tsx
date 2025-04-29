@@ -94,45 +94,45 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
         <DialogHeader>
           <DialogTitle>Project settings</DialogTitle>
           <DialogDescription>Update your project's details.</DialogDescription>
-          <form
-            onSubmit={handleUpdateProject}
-            className="mt-2 grid gap-4"
-            aria-disabled={isUpdating}
-          >
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="My new project"
-                value={name}
-                onChange={({ target }) => setName(target.value)}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="transcriptionModel">Transcription model</Label>
-              <ModelSelector
-                id="transcriptionModel"
-                value={transcriptionModel}
-                options={transcriptionModels}
-                width={462}
-                onChange={setTranscriptionModel}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="visionModel">Vision model</Label>
-              <ModelSelector
-                id="visionModel"
-                value={visionModel}
-                options={visionModels}
-                onChange={setVisionModel}
-                width={462}
-              />
-            </div>
-            <Button type="submit" disabled={isUpdating || !name.trim()}>
-              Update
-            </Button>
-          </form>
         </DialogHeader>
+        <form
+          onSubmit={handleUpdateProject}
+          className="mt-2 grid gap-4"
+          aria-disabled={isUpdating}
+        >
+          <div className="grid gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              placeholder="My new project"
+              value={name}
+              onChange={({ target }) => setName(target.value)}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="transcriptionModel">Transcription model</Label>
+            <ModelSelector
+              id="transcriptionModel"
+              value={transcriptionModel}
+              options={transcriptionModels}
+              width={462}
+              onChange={setTranscriptionModel}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="visionModel">Vision model</Label>
+            <ModelSelector
+              id="visionModel"
+              value={visionModel}
+              options={visionModels}
+              onChange={setVisionModel}
+              width={462}
+            />
+          </div>
+          <Button type="submit" disabled={isUpdating || !name.trim()}>
+            Update
+          </Button>
+        </form>
         <DialogFooter className="-mx-6 mt-4 border-t px-6 pt-4 sm:justify-center">
           <Button
             variant="link"

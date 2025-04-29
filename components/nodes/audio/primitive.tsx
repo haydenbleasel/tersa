@@ -46,6 +46,7 @@ export const AudioPrimitive = ({
             accept={{
               'audio/*': [],
             }}
+            className="rounded-none border-none bg-transparent p-0 shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
           />
         )}
       </div>
