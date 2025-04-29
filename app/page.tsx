@@ -5,19 +5,19 @@ import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { createProjectAction } from './actions/project/create';
-import { Demo } from './components/demo';
+import { Home } from './components/home';
 
 export const metadata: Metadata = {
   title: 'Tersa',
   description: 'Join the waitlist to get early access to Tersa.',
 };
 
-const Home = async () => {
+const Index = async () => {
   const client = await createClient();
   const { data } = await client.auth.getUser();
 
   if (!data?.user) {
-    return <Demo />;
+    return <Home />;
   }
 
   const allProjects = await database
@@ -38,4 +38,4 @@ const Home = async () => {
   redirect(`/projects/${allProjects[0].id}`);
 };
 
-export default Home;
+export default Index;

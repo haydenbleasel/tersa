@@ -1,27 +1,29 @@
-'use client';
-
 import { Canvas } from '@/components/canvas';
 import { sampleEdges, sampleNodes, sampleViewport } from '@/lib/demo';
 
 export const Demo = () => (
-  <div className="h-screen w-screen">
-    <Canvas
-      projects={[]}
-      data={{
-        createdAt: new Date(),
-        id: 'demo',
-        name: 'Demo Project',
-        userId: 'test',
-        transcriptionModel: 'gpt-4o-mini-transcribe',
-        visionModel: 'gpt-4.1-nano',
-        updatedAt: null,
-        image: null,
-        content: {
-          nodes: sampleNodes,
-          edges: sampleEdges,
-          viewport: sampleViewport,
-        },
-      }}
-    />
-  </div>
+  <section className="container mx-auto">
+    <div className="rounded-lg bg-gradient-to-b from-primary to-border p-px">
+      <div className="aspect-video overflow-hidden rounded-[9px]">
+        <Canvas
+          projects={[]}
+          data={{
+            createdAt: new Date(),
+            id: 'demo',
+            name: 'Demo Project',
+            userId: 'test',
+            transcriptionModel: 'gpt-4o-mini-transcribe',
+            visionModel: 'gpt-4.1-nano',
+            updatedAt: null,
+            image: null,
+            content: {
+              nodes: sampleNodes,
+              edges: sampleEdges,
+              viewport: sampleViewport,
+            },
+          }}
+        />
+      </div>
+    </div>
+  </section>
 );

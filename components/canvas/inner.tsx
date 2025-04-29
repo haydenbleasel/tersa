@@ -29,7 +29,6 @@ import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
-import { CreateAccount } from '../create-account';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
 import { AudioNode } from '../nodes/audio';
@@ -352,18 +351,16 @@ export const CanvasInner = ({
       >
         <Controls />
         <Background bgColor="var(--secondary)" />
-        <Toolbar />
-        <Projects projects={projects} currentProject={data.id} />
-        {userId ? (
+        {userId && (
           <>
+            <Toolbar />
+            <Projects projects={projects} currentProject={data.id} />
             <Menu />
             <SaveIndicator
               lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
               saving={isSaving}
             />
           </>
-        ) : (
-          <CreateAccount />
         )}
       </ReactFlow>
       {/* <RealtimeCursors roomName={data.id} username={userId ?? 'Demo user'} /> */}
