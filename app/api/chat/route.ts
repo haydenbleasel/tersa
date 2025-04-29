@@ -1,4 +1,5 @@
 import { chatModels } from '@/lib/models';
+import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamText } from 'ai';
 
@@ -12,6 +13,8 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
+  await getSubscribedUser();
+
   // Apply rate limiting
   if (process.env.NODE_ENV === 'production') {
     const ip = req.headers.get('x-forwarded-for') || 'anonymous';
