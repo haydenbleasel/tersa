@@ -21,7 +21,7 @@ export const updateProjectAction = async (
     const { data: userData } = await client.auth.getUser();
 
     if (!userData?.user) {
-      throw new Error('User not found');
+      throw new Error('You need to be logged in to update a project!');
     }
 
     const project = await database

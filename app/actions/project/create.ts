@@ -19,7 +19,7 @@ export const createProjectAction = async (
     const { data } = await client.auth.getUser();
 
     if (!data?.user) {
-      throw new Error('User not found');
+      throw new Error('You need to be logged in to create a project!');
     }
 
     const project = await database
