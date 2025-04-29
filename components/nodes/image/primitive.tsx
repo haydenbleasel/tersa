@@ -37,7 +37,7 @@ export const ImagePrimitive = ({
   const handleUploadCompleted = async (url: string, type: string) => {
     try {
       const response = await getImageDimensions(url);
-      const description = await describeAction(url, type, projectId as string);
+      const description = await describeAction(url, projectId as string);
 
       if ('error' in description) {
         throw new Error(description.error);
