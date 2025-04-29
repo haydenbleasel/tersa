@@ -89,6 +89,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
       }
 
       toast.success('Profile updated successfully');
+      setOpen(false);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
 
