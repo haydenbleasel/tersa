@@ -18,6 +18,7 @@ import {
   RotateCcwIcon,
   SquareIcon,
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
@@ -35,6 +36,7 @@ export const TextTransform = ({
   title,
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
+  const { projectId } = useParams();
   const { append, messages, setMessages, status, stop } = useChat({
     body: {
       modelId: data.model ?? 'gpt-4',
@@ -134,7 +136,12 @@ export const TextTransform = ({
       toolbar.push({
         tooltip: 'Generate',
         children: (
-          <Button size="icon" className="rounded-full" onClick={handleGenerate}>
+          <Button
+            size="icon"
+            className="rounded-full"
+            onClick={handleGenerate}
+            disabled={!projectId}
+          >
             <PlayIcon size={12} />
           </Button>
         ),

@@ -107,7 +107,7 @@ export const ImageTransform = ({
           size="icon"
           className="rounded-full"
           onClick={handleGenerate}
-          disabled={loading}
+          disabled={loading || !projectId}
         >
           <PlayIcon size={12} />
         </Button>

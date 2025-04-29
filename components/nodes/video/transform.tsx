@@ -10,6 +10,7 @@ import {
 } from '@/lib/xyflow';
 import { useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import type { VideoNodeProps } from '.';
@@ -28,6 +29,7 @@ export const VideoTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [video, setVideo] = useState<string | null>(data.content?.url ?? null);
   const [loading, setLoading] = useState(false);
+  const { projectId } = useParams();
 
   const handleGenerate = async () => {
     const incomers = getRecursiveIncomers(id, getNodes(), getEdges());
@@ -87,7 +89,7 @@ export const VideoTransform = ({
           size="icon"
           className="rounded-full"
           onClick={handleGenerate}
-          disabled={loading}
+          disabled={loading || !projectId}
         >
           <PlayIcon size={12} />
         </Button>
