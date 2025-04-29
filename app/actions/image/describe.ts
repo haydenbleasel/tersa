@@ -1,6 +1,7 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { parseError } from '@/lib/error/parse';
 import { visionModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { projects } from '@/schema';
@@ -73,8 +74,8 @@ export const describeAction = async (
       description,
     };
   } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    const message = parseError(error);
+
+    return { error: message };
   }
 };

@@ -1,6 +1,7 @@
 'use server';
 
 import { env } from '@/lib/env';
+import { parseError } from '@/lib/error/parse';
 import { resend } from '@/lib/resend';
 
 export const subscribeToWaitlist = async (
@@ -26,7 +27,7 @@ export const subscribeToWaitlist = async (
 
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = parseError(error);
 
     return { error: message };
   }

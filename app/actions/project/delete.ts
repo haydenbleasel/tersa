@@ -1,6 +1,7 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { parseError } from '@/lib/error/parse';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { and, eq } from 'drizzle-orm';
@@ -35,7 +36,8 @@ export const deleteProjectAction = async (
 
     return { success: true };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = parseError(error);
+
     return { error: message };
   }
 };

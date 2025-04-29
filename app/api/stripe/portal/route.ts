@@ -1,4 +1,5 @@
 import { env } from '@/lib/env';
+import { parseError } from '@/lib/error/parse';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
@@ -28,7 +29,7 @@ export const GET = async (): Promise<Response> => {
 
     return NextResponse.redirect(session.url, { status: 302 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = parseError(error);
 
     return new Response(message, { status: 500 });
   }

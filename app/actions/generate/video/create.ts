@@ -1,6 +1,7 @@
 'use server';
 
 import { env } from '@/lib/env';
+import { parseError } from '@/lib/error/parse';
 import { videoModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
@@ -192,9 +193,8 @@ export const generateVideoAction = async (
 
     return { url: supabaseDownloadUrl.publicUrl, type: 'video/mp4' };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
+    const message = parseError(error);
 
-    return { error: errorMessage };
+    return { error: message };
   }
 };

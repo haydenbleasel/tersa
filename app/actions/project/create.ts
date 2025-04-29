@@ -1,6 +1,7 @@
 'use server';
 
 import { database } from '@/lib/database';
+import { parseError } from '@/lib/error/parse';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 
@@ -38,7 +39,7 @@ export const createProjectAction = async (
 
     return { id: project[0].id };
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
+    const message = parseError(error);
 
     return { error: message };
   }

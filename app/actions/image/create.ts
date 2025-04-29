@@ -1,5 +1,6 @@
 'use server';
 
+import { parseError } from '@/lib/error/parse';
 import { imageModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
@@ -60,6 +61,8 @@ export const generateImageAction = async (
 
     return { url: downloadUrl.publicUrl, type: image.mimeType };
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Unknown error' };
+    const message = parseError(error);
+
+    return { error: message };
   }
 };

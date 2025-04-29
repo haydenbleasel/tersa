@@ -1,5 +1,6 @@
 'use server';
 
+import { parseError } from '@/lib/error/parse';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { openai } from '@ai-sdk/openai';
@@ -43,6 +44,8 @@ export const generateSpeechAction = async (
 
     return { url: downloadUrl.publicUrl, type: 'audio/mpeg' };
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'Unknown error' };
+    const message = parseError(error);
+
+    return { error: message };
   }
 };

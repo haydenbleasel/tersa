@@ -1,5 +1,6 @@
 'use server';
 
+import { parseError } from '@/lib/error/parse';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { nanoid } from 'nanoid';
@@ -77,8 +78,8 @@ export const editImageAction = async (
       type: contentType,
     };
   } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    const message = parseError(error);
+
+    return { error: message };
   }
 };
