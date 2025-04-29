@@ -10,9 +10,11 @@ import { useCurrentUserName } from '@/hooks/use-current-user-name';
 import { createClient } from '@/lib/supabase/client';
 import { Panel } from '@xyflow/react';
 import { MenuIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { type MouseEventHandler, useState } from 'react';
+import { type MouseEventHandler, useEffect, useState } from 'react';
 import { Profile } from './profile';
+import { Subscribe } from './subscribe';
 import { CurrentUserAvatar } from './supabase-ui/current-user-avatar';
 import { RealtimeAvatarStack } from './supabase-ui/realtime-avatar-stack';
 import { Button } from './ui/button';
@@ -23,7 +25,8 @@ export const Menu = () => {
   const { projectId } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-
+  const [subscribed, setSubscribed] = useState(false);
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
   const logout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -39,6 +42,26 @@ export const Menu = () => {
       setProfileOpen(true);
     }, 200);
   };
+
+  const handleOpenSubscribe: MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    setDropdownOpen(false);
+
+    // shadcn/ui issue: dropdown animation causes profile modal to close immediately after opening
+    setTimeout(() => {
+      setSubscribeOpen(true);
+    }, 200);
+  };
+
+  useEffect(() => {
+    const loadBillingUrl = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      setSubscribed(Boolean(data.user?.user_metadata.stripeSubscriptionId));
+    };
+
+    loadBillingUrl();
+  }, []);
 
   return (
     <>
@@ -72,7 +95,15 @@ export const Menu = () => {
               <DropdownMenuItem onClick={handleOpenProfile}>
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem disabled>Billing</DropdownMenuItem>
+              {subscribed ? (
+                <DropdownMenuItem asChild>
+                  <Link href="/api/stripe/portal">Billing</Link>
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={handleOpenSubscribe} disabled>
+                  Subscribe
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
@@ -80,6 +111,7 @@ export const Menu = () => {
         </div>
       </Panel>
       <Profile open={profileOpen} setOpen={setProfileOpen} />
+      <Subscribe open={subscribeOpen} setOpen={setSubscribeOpen} />
     </>
   );
 };

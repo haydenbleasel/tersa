@@ -1,13 +1,17 @@
+import { vercel } from '@t3-oss/env-core/presets-zod';
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 export const env = createEnv({
+  extends: [vercel()],
   server: {
     OPENAI_API_KEY: z.string().min(1),
     DATABASE_URL: z.string().url().min(1),
 
     MINIMAX_GROUP_ID: z.string().min(1),
     MINIMAX_API_KEY: z.string().min(1),
+
+    STRIPE_SECRET_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
@@ -22,5 +26,6 @@ export const env = createEnv({
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
     MINIMAX_GROUP_ID: process.env.MINIMAX_GROUP_ID,
     MINIMAX_API_KEY: process.env.MINIMAX_API_KEY,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   },
 });
