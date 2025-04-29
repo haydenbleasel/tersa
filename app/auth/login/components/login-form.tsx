@@ -1,15 +1,21 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { env } from '@/lib/env';
-import { GoogleIcon } from '@/lib/icons';
 import { createClient } from '@/lib/supabase/client';
+import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { Turnstile } from '@marsidev/react-turnstile';
 import type { Provider } from '@supabase/supabase-js';
-import { AppleIcon, GithubIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type ElementType, type FormEventHandler, useState } from 'react';
@@ -22,18 +28,13 @@ const socialProviders: {
 }[] = [
   {
     name: 'Github',
-    icon: GithubIcon,
+    icon: SiGithub,
     id: 'github',
   },
   {
-    name: 'Google',
-    icon: GoogleIcon,
-    id: 'google',
-  },
-  {
-    name: 'Apple',
-    icon: AppleIcon,
-    id: 'apple',
+    name: 'Twitter',
+    icon: SiX,
+    id: 'twitter',
   },
 ];
 
@@ -70,7 +71,7 @@ export const LoginForm = () => {
         description:
           error instanceof Error ? error.message : 'An error occurred',
       });
-    } finally {
+
       setIsLoading(false);
     }
   };
@@ -99,18 +100,32 @@ export const LoginForm = () => {
         description:
           error instanceof Error ? error.message : 'An error occurred',
       });
+
       setIsLoading(false);
     }
   };
 
   return (
-    <Card>
-      <CardContent>
-        <div className="grid grid-cols-3 gap-3">
+    <Card className="gap-0 overflow-hidden bg-secondary p-0">
+      <CardHeader className="bg-background py-8">
+        <CardTitle>Login</CardTitle>
+        <CardDescription>
+          Enter your email or choose a social provider.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="rounded-b-xl border-b bg-background pb-8">
+        <div
+          className="grid gap-3"
+          style={{
+            gridTemplateColumns: `repeat(${socialProviders.length}, 1fr)`,
+          }}
+        >
           {socialProviders.map((provider) => (
             <Button
               key={provider.id}
-              variant="secondary"
+              variant="outline"
+              className="border"
+              size="lg"
               disabled={isLoading}
               onClick={() => handleSocialLogin(provider.id)}
             >
@@ -119,7 +134,13 @@ export const LoginForm = () => {
             </Button>
           ))}
         </div>
-        <p className="text-center text-sm">or</p>
+        <div className="my-4 flex items-center gap-4">
+          <div className="h-px w-full bg-border" />
+          <p className="font-medium text-muted-foreground text-xs uppercase">
+            or
+          </p>
+          <div className="h-px w-full bg-border" />
+        </div>
         <form onSubmit={handleEmailLogin}>
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
@@ -138,7 +159,7 @@ export const LoginForm = () => {
                 <Label htmlFor="password">Password</Label>
                 <Link
                   href="/auth/forgot-password"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  className="ml-auto inline-block text-muted-foreground text-xs underline-offset-4 hover:underline"
                 >
                   Forgot your password?
                 </Link>
@@ -156,22 +177,31 @@ export const LoginForm = () => {
               {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </div>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/sign-up" className="underline underline-offset-4">
-              Sign up
-            </Link>
-          </div>
         </form>
       </CardContent>
-      {process.env.NODE_ENV === 'production' && (
-        <CardFooter className="flex justify-center border-t">
-          <Turnstile
-            siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-            onSuccess={setCaptchaToken}
-          />
-        </CardFooter>
-      )}
+      <CardFooter className="grid divide-y p-0">
+        <div className="p-4 text-center text-xs">
+          Don&apos;t have an account?{' '}
+          <Link
+            href="/auth/sign-up"
+            className="text-primary underline underline-offset-4"
+          >
+            Sign up
+          </Link>
+        </div>
+        <div className="p-4">
+          {process.env.NODE_ENV === 'production' ? (
+            <Turnstile
+              siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+              onSuccess={setCaptchaToken}
+            />
+          ) : (
+            <p className="text-center text-muted-foreground text-xs">
+              Captcha disabled in development
+            </p>
+          )}
+        </div>
+      </CardFooter>
     </Card>
   );
 };
