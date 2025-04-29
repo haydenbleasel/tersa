@@ -157,7 +157,7 @@ export const CanvasInner = ({
       return;
     }
 
-    if (isSaving || !userId) {
+    if (isSaving || !userId || !data.id) {
       return;
     }
 
