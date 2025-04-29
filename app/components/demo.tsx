@@ -22,6 +22,11 @@ export const Demo = () => (
               viewport: sampleViewport,
             },
           }}
+          canvasProps={{
+            panOnScroll: false,
+            zoomOnScroll: false,
+            preventScrolling: false,
+          }}
         />
       </div>
     </div>

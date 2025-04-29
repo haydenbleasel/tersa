@@ -14,6 +14,7 @@ import {
   type NodeChange,
   ReactFlow,
   type ReactFlowInstance,
+  type ReactFlowProps,
   type Viewport,
   type XYPosition,
   addEdge,
@@ -75,6 +76,7 @@ export type CanvasProps = {
     edges: Edge[];
     viewport: Viewport;
   };
+  canvasProps?: ReactFlowProps;
 };
 
 const SaveIndicator = dynamic(
@@ -111,6 +113,7 @@ export const CanvasInner = ({
   data,
   userId,
   defaultContent,
+  canvasProps,
 }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(
@@ -345,6 +348,7 @@ export const CanvasInner = ({
         panOnScroll
         viewport={viewport}
         onViewportChange={onViewportChange}
+        {...canvasProps}
       >
         <Controls />
         <Background bgColor="var(--secondary)" />

@@ -1,4 +1,5 @@
 import { Logo } from '@/components/logo';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 type AuthLayoutProps = {
@@ -8,7 +9,9 @@ type AuthLayoutProps = {
 const AuthLayout = ({ children }: AuthLayoutProps) => (
   <div className="relative flex h-screen min-h-[50rem] w-full items-center justify-center bg-secondary/50 p-8">
     <div className="grid w-full max-w-sm gap-8">
-      <Logo className="mx-auto h-6 w-auto" />
+      <Link href="/" className="mx-auto h-6 w-auto">
+        <Logo className="text-border" />
+      </Link>
       {children}
     </div>
   </div>
