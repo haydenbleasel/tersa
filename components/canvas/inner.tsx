@@ -1,6 +1,7 @@
 'use client';
 
 import { updateProjectAction } from '@/app/actions/project/update';
+import { handleError } from '@/lib/error/handle';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import type { projects } from '@/schema';
 import {
@@ -26,7 +27,6 @@ import { toPng } from 'html-to-image';
 import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
-import { toast } from 'sonner';
 import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
 import { AnimatedEdge } from '../edges/animated';
@@ -151,16 +151,15 @@ export const CanvasInner = ({
   };
 
   const save = useDebouncedCallback(async () => {
-    if (!rfInstance) {
-      toast.error('Error saving project', { description: 'No instance found' });
-      return;
-    }
-
     if (isSaving || !userId || !data.id) {
       return;
     }
 
     try {
+      if (!rfInstance) {
+        throw new Error('No instance found');
+      }
+
       setIsSaving(true);
 
       const content = rfInstance.toObject();
@@ -176,9 +175,7 @@ export const CanvasInner = ({
 
       setLastSaved(new Date());
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error saving project', { description: message });
+      handleError('Error saving project', error);
     } finally {
       setIsSaving(false);
     }

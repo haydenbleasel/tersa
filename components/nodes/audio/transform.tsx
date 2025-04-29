@@ -1,13 +1,13 @@
 import { generateSpeechAction } from '@/app/actions/generate/speech/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
 import { getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ComponentProps, useState } from 'react';
-import { toast } from 'sonner';
 import type { AudioNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -33,17 +33,14 @@ export const AudioTransform = ({
       return;
     }
 
-    const incomers = getIncomers({ id }, getNodes(), getEdges());
-    const textPrompts = getTextFromTextNodes(incomers);
-
-    if (!textPrompts.length) {
-      toast.error('Error generating audio', {
-        description: 'No prompts found',
-      });
-      return;
-    }
-
     try {
+      const incomers = getIncomers({ id }, getNodes(), getEdges());
+      const textPrompts = getTextFromTextNodes(incomers);
+
+      if (!textPrompts.length) {
+        throw new Error('No prompts found');
+      }
+
       setLoading(true);
 
       const response = await generateSpeechAction(textPrompts);
@@ -60,9 +57,7 @@ export const AudioTransform = ({
         transcript: textPrompts,
       });
     } catch (error) {
-      toast.error('Error generating audio', {
-        description: error instanceof Error ? error.message : 'Unknown error',
-      });
+      handleError('Error generating audio', error);
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,10 @@
 import { describeAction } from '@/app/actions/image/describe';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Uploader } from '@/components/uploader';
+import { handleError } from '@/lib/error/handle';
 import { useReactFlow } from '@xyflow/react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { toast } from 'sonner';
 import type { ImageNodeProps } from '.';
 
 type ImagePrimitiveProps = ImageNodeProps & {
@@ -53,9 +53,7 @@ export const ImagePrimitive = ({
         description: description.description,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error uploading image', { description: message });
+      handleError('Error uploading image', error);
     }
   };
 

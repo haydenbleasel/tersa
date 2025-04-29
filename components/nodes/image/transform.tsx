@@ -4,6 +4,7 @@ import { editImageAction } from '@/app/actions/image/edit';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { handleError } from '@/lib/error/handle';
 import { imageModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
@@ -11,7 +12,6 @@ import { ClockIcon, Loader2Icon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
-import { toast } from 'sonner';
 import type { ImageNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -76,9 +76,7 @@ export const ImageTransform = ({
         description: description.description,
       });
     } catch (error) {
-      toast.error('Error generating image', {
-        description: error instanceof Error ? error.message : 'Unknown error',
-      });
+      handleError('Error generating image', error);
     } finally {
       setLoading(false);
     }

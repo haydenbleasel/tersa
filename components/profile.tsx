@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { handleError } from '@/lib/error/handle';
 import { createClient } from '@/lib/supabase/client';
 import type { UserAttributes } from '@supabase/supabase-js';
 import { type FormEventHandler, useEffect, useState } from 'react';
@@ -91,9 +92,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
       toast.success('Profile updated successfully');
       setOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error updating profile', { description: message });
+      handleError('Error updating profile', error);
     } finally {
       setIsUpdating(false);
     }
@@ -117,9 +116,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
 
       toast.success('Avatar updated successfully');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error updating avatar', { description: message });
+      handleError('Error updating avatar', error);
     } finally {
       setIsUpdating(false);
     }

@@ -2,13 +2,13 @@ import { generateVideoAction } from '@/app/actions/generate/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, Loader2Icon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
-import { toast } from 'sonner';
 import type { VideoNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -30,18 +30,15 @@ export const VideoTransform = ({
   const { projectId } = useParams();
 
   const handleGenerate = async () => {
-    const incomers = getIncomers({ id }, getNodes(), getEdges());
-    const textPrompts = getTextFromTextNodes(incomers);
-    const images = getImagesFromImageNodes(incomers);
-
-    if (!textPrompts.length && !images.length) {
-      toast.error('Error generating video', {
-        description: 'No prompts found',
-      });
-      return;
-    }
-
     try {
+      const incomers = getIncomers({ id }, getNodes(), getEdges());
+      const textPrompts = getTextFromTextNodes(incomers);
+      const images = getImagesFromImageNodes(incomers);
+
+      if (!textPrompts.length && !images.length) {
+        throw new Error('No prompts found');
+      }
+
       setLoading(true);
 
       const response = await generateVideoAction(
@@ -61,9 +58,7 @@ export const VideoTransform = ({
         generated: response,
       });
     } catch (error) {
-      toast.error('Error generating video', {
-        description: error instanceof Error ? error.message : 'Unknown error',
-      });
+      handleError('Error generating video', error);
     } finally {
       setLoading(false);
     }

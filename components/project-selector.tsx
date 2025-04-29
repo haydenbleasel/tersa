@@ -21,12 +21,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { handleError } from '@/lib/error/handle';
 import { cn } from '@/lib/utils';
 import type { projects } from '@/schema';
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type FormEventHandler, useState } from 'react';
-import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -67,9 +67,7 @@ export const ProjectSelector = ({
       setName('');
       router.push(`/projects/${response.id}`);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error creating project', { description: message });
+      handleError('Error creating project', error);
     } finally {
       setIsCreating(false);
     }

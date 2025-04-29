@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { handleError } from '@/lib/error/handle';
 import { transcriptionModels, visionModels } from '@/lib/models';
 import type { projects } from '@/schema';
 import { SettingsIcon, TrashIcon } from 'lucide-react';
@@ -60,8 +61,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
       setOpen(false);
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Error updating project', { description: message });
+      handleError('Error updating project', error);
     } finally {
       setIsUpdating(false);
     }
@@ -79,8 +79,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
       setOpen(false);
       router.push('/');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error('Error deleting project', { description: message });
+      handleError('Error deleting project', error);
     }
   };
   return (

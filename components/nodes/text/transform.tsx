@@ -1,6 +1,7 @@
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { handleError } from '@/lib/error/handle';
 import { chatModels } from '@/lib/models';
 import {
   getDescriptionsFromImageNodes,
@@ -21,7 +22,6 @@ import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { toast } from 'sonner';
 import type { TextNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -41,10 +41,7 @@ export const TextTransform = ({
     body: {
       modelId: data.model ?? 'gpt-4',
     },
-    onError: (error) =>
-      toast.error('Error generating text', {
-        description: error.message,
-      }),
+    onError: (error) => handleError('Error generating text', error),
     onFinish: () => {
       updateNodeData(id, {
         generated: messages
@@ -63,9 +60,7 @@ export const TextTransform = ({
     const imageDescriptions = getDescriptionsFromImageNodes(incomers);
 
     if (!textPrompts.length && !audioPrompts.length) {
-      toast.error('Error generating text', {
-        description: 'No prompts found',
-      });
+      handleError('Error generating text', 'No prompts found');
       return;
     }
 

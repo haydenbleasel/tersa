@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useUser } from '@/hooks/use-user';
+import { handleError } from '@/lib/error/handle';
 import { type FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
@@ -48,9 +49,7 @@ export const Feedback = ({ open, setOpen }: FeedbackProps) => {
       toast.success('Feedback sent successfully');
       setOpen(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error sending feedback', { description: message });
+      handleError('Error sending feedback', error);
     } finally {
       setIsSending(false);
     }

@@ -4,11 +4,11 @@ import {
   DropzoneEmptyState,
   type DropzoneProps,
 } from '@/components/ui/kibo-ui/dropzone';
+import { handleError } from '@/lib/error/handle';
 import { createClient } from '@/lib/supabase/client';
 import { nanoid } from 'nanoid';
 import Image from 'next/image';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
@@ -59,9 +59,7 @@ export const Uploader = ({
 
       onUploadCompleted(downloadUrl.publicUrl, file.type);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
-
-      toast.error('Error uploading file', { description: message });
+      handleError('Error uploading file', error);
     }
   };
 
