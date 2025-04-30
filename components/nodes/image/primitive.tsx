@@ -62,8 +62,6 @@ export const ImagePrimitive = ({
         height: dimensions.height,
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 50000));
-
       const { url, type } = await uploadFile(file, 'files');
 
       updateNodeData(id, {
