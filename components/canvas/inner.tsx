@@ -29,14 +29,8 @@ import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
-import { AnimatedEdge } from '../edges/animated';
-import { TemporaryEdge } from '../edges/temporary';
+import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
-
-const edgeTypes = {
-  animated: AnimatedEdge,
-  temporary: TemporaryEdge,
-};
 
 const SAVE_TIMEOUT = 1000;
 
