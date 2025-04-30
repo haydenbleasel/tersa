@@ -604,7 +604,7 @@ export const EditorProvider = ({
         char: '/',
         render: () => {
           let component: ReactRenderer<EditorSlashMenuProps>;
-          let popup: TippyInstance[];
+          let popup: TippyInstance;
 
           return {
             onStart: (props) => {
@@ -613,8 +613,9 @@ export const EditorProvider = ({
                 editor: props.editor,
               });
 
-              popup = tippy('body', {
-                getReferenceClientRect: props.clientRect,
+              popup = tippy(document.body, {
+                getReferenceClientRect: () =>
+                  props.clientRect?.() || new DOMRect(),
                 appendTo: () => document.body,
                 content: component.element,
                 showOnCreate: true,
@@ -627,24 +628,25 @@ export const EditorProvider = ({
             onUpdate(props) {
               component.updateProps(props);
 
-              popup[0].setProps({
-                getReferenceClientRect: props.clientRect,
+              popup.setProps({
+                getReferenceClientRect: () =>
+                  props.clientRect?.() || new DOMRect(),
               });
             },
 
             onKeyDown(props) {
               if (props.event.key === 'Escape') {
-                popup[0].hide();
+                popup.hide();
                 component.destroy();
 
                 return true;
               }
 
-              return component.ref?.onKeyDown(props);
+              return handleCommandNavigation(props.event) || false;
             },
 
             onExit() {
-              popup[0].destroy();
+              popup.destroy();
               component.destroy();
             },
           };
@@ -1246,6 +1248,7 @@ export const EditorFormatUnderline = ({
     <BubbleMenuButton
       name="Underline"
       isActive={() => editor.isActive('underline') ?? false}
+      // @ts-expect-error "TipTap extensions are not typed"
       command={() => editor.chain().focus().toggleUnderline().run()}
       icon={UnderlineIcon}
       hideName={hideName}
@@ -1304,8 +1307,9 @@ export const EditorLinkSelector = ({
     const href = getUrlFromString(url);
 
     if (href) {
+      // @ts-expect-error "TipTap extensions are not typed"
       editor.chain().focus().setLink({ href }).run();
-      onOpenChange(false);
+      onOpenChange?.(false);
     }
   };
 
@@ -1351,8 +1355,9 @@ export const EditorLinkSelector = ({
               type="button"
               className="flex h-8 items-center rounded-sm p-1 text-destructive transition-all hover:bg-destructive-foreground dark:hover:bg-destructive"
               onClick={() => {
+                // @ts-expect-error "TipTap extensions are not typed"
                 editor.chain().focus().unsetLink().run();
-                onOpenChange(false);
+                onOpenChange?.(false);
               }}
             >
               <TrashIcon size={12} />
