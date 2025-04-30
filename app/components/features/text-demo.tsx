@@ -17,12 +17,6 @@ const nodes: Node[] = [
             content: [
               {
                 type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
                 text: 'Say hello',
               },
             ],
@@ -46,12 +40,6 @@ const nodes: Node[] = [
             content: [
               {
                 type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
                 text: 'In French',
               },
             ],

@@ -4,6 +4,7 @@ import { Footer } from './footer';
 import { Header } from './header';
 import { Hero } from './hero';
 import { Providers } from './providers';
+import { SubFooter } from './sub-footer';
 import { Tweets } from './tweets';
 
 const buttons = [
@@ -45,5 +46,6 @@ export const Home = () => (
       ]}
     />
     <Footer buttons={buttons} />
+    <SubFooter />
   </div>
 );

@@ -350,7 +350,7 @@ export const CanvasInner = ({
         onViewportChange={onViewportChange}
         {...canvasProps}
       >
-        <Background bgColor="var(--secondary)" />
+        <Background />
         {userId && (
           <>
             <Controls />

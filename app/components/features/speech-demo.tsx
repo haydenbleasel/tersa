@@ -16,33 +16,15 @@ const nodes: Node[] = [
             content: [
               {
                 type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
                 text: 'Delphiniums generally symbolize ',
               },
               {
                 type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                  { type: 'bold' },
-                ],
+                marks: [{ type: 'bold' }],
                 text: 'cheerfulness, goodwill, and protection',
               },
               {
                 type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
                 text: '. Specifically, they can represent striving for success, enjoying life, and celebrating important occasions. Blue delphiniums are also often associated with dignity and grace.',
               },
             ],
