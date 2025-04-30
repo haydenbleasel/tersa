@@ -61,7 +61,7 @@ export const TextTransform = ({
     const imageDescriptions = getDescriptionsFromImageNodes(incomers);
     const files = getFilesFromFileNodes(incomers);
 
-    if (!textPrompts.length && !audioPrompts.length) {
+    if (!textPrompts.length && !audioPrompts.length && !data.instructions) {
       handleError('Error generating text', 'No prompts found');
       return;
     }
