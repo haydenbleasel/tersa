@@ -34,7 +34,7 @@ export const Uploader = ({
 
       setFiles(files);
 
-      const { url, type } = await uploadFile(files, bucket);
+      const { url, type } = await uploadFile(files[0], bucket);
 
       onUploadCompleted(url, type);
     } catch (error) {
