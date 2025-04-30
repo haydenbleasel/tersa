@@ -8,29 +8,32 @@ const nodes: Node[] = [
     position: { x: 0, y: 0 },
     data: {
       source: 'primitive',
-      text: 'A wild orchard of delphiniums',
+      content: {
+        text: "export const getTextFromTextNodes = (nodes) => {\n  return nodes\n    .filter((node) => node.type === 'text')\n    .map((node) => node.data.text)\n    .filter(Boolean)\n    .join('\\n');\n};",
+        language: 'javascript',
+      },
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
+    measured: { width: 400, height: 200 },
     width: 400,
-    height: 290,
+    height: 200,
   },
   {
     id: 'transform-1',
     type: 'code',
-    position: { x: 400, y: 0 },
+    position: { x: 600, y: 0 },
     data: {
       source: 'transform',
       generated: {
-        url: '/demo/delphiniums-anime.jpg',
-        type: 'image/jpeg',
+        text: "import { getTextFromTextNodes } from './your-file';\n\ndescribe('getTextFromTextNodes', () => {\n  it('should return text from text nodes', () => {\n    const nodes = [\n      { type: 'text', data: { text: 'Hello' } },\n      { type: 'image', data: { url: 'image.jpg' } },\n      { type: 'text', data: { text: 'World' } }\n    ];\n\n    const result = getTextFromTextNodes(nodes);\n    expect(result).toEqual('Hello\\nWorld');\n  });\n\n  it('should return empty string for non-text nodes', () => {\n    const nodes = [\n      { type: 'image', data: { url: 'image.jpg' } }\n    ];\n\n    const result = getTextFromTextNodes(nodes);\n    expect(result).toEqual('');\n  });\n\n  it('should ignore nodes without text', () => {\n    const nodes = [\n      { type: 'text', data: { text: '' } },\n      { type: 'text', data: { text: 'Hello' } }\n    ];\n\n    const result = getTextFromTextNodes(nodes);\n    expect(result).toEqual('Hello');\n  });\n});",
+        language: 'javascript',
       },
-      instructions: 'Make it anime style.',
+      instructions: 'Write unit tests.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
+    measured: { width: 400, height: 400 },
     width: 400,
-    height: 290,
+    height: 400,
   },
 ];
 
