@@ -5,6 +5,7 @@ import { handleError } from '@/lib/error/handle';
 import { chatModels } from '@/lib/models';
 import {
   getDescriptionsFromImageNodes,
+  getFilesFromFileNodes,
   getImagesFromImageNodes,
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
@@ -58,6 +59,7 @@ export const TextTransform = ({
     const audioPrompts = getTranscriptionFromAudioNodes(incomers);
     const images = getImagesFromImageNodes(incomers);
     const imageDescriptions = getDescriptionsFromImageNodes(incomers);
+    const files = getFilesFromFileNodes(incomers);
 
     if (!textPrompts.length && !audioPrompts.length) {
       handleError('Error generating text', 'No prompts found');
@@ -77,9 +79,14 @@ export const TextTransform = ({
         '--- Image Descriptions ---',
         ...imageDescriptions,
       ].join('\n'),
-      experimental_attachments: images.map((image) => ({
-        url: image.url,
-      })),
+      experimental_attachments: [
+        ...images.map((image) => ({
+          url: image.url,
+        })),
+        ...files.map((file) => ({
+          url: file.url,
+        })),
+      ],
     });
   };
 
