@@ -131,13 +131,13 @@ export const VideoTransform = ({
         {video && (
           <video
             src={video}
-            width={1600}
-            height={900}
+            width={data.width ?? 1600}
+            height={data.height ?? 900}
             autoPlay
             muted
             loop
             playsInline
-            className="aspect-video w-full rounded-t-lg object-cover"
+            className="w-full rounded-t-lg object-cover"
           />
         )}
       </div>
