@@ -26,6 +26,7 @@ import { useCallback, useState } from 'react';
 import { ConnectionLine } from '../connection-line';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
+import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 
 type ProjectData = {
   content?:
@@ -274,10 +275,13 @@ export const CanvasInner = ({
               lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
               saving={isSaving}
             />
+            <RealtimeCursors
+              roomName={data.id}
+              username={user.user_metadata.name ?? user.email ?? user.id}
+            />
           </>
         )}
       </ReactFlow>
-      {/* <RealtimeCursors roomName={data.id} username={userId ?? 'Demo user'} /> */}
     </>
   );
 };
