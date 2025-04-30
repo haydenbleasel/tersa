@@ -4,8 +4,8 @@ import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import Home from './(unauthenticated)/home/page';
 import { createProjectAction } from './actions/project/create';
-import { Home } from './components/home';
 
 export const metadata: Metadata = {
   title: 'Tersa',

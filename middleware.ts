@@ -12,9 +12,11 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - homepage (/)
+     * - / (homepage)
+     * - /home (home page)
+     * - /pricing (pricing page)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp3|mp4)$|$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|home|pricing|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp3|mp4)$).*)',
   ],
 };
