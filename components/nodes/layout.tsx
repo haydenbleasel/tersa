@@ -171,7 +171,9 @@ export const NodeLayout = ({
           minHeight={170}
           keepAspectRatio={type === 'image' || type === 'video'}
         />
-        <Handle type="target" position={Position.Left} />
+        {type !== 'drop' && type !== 'file' && (
+          <Handle type="target" position={Position.Left} />
+        )}
         <div className="relative size-full">
           {type !== 'drop' && (
             <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
@@ -194,7 +196,7 @@ export const NodeLayout = ({
             {children}
           </div>
         </div>
-        <Handle type="source" position={Position.Right} />
+        {type !== 'drop' && <Handle type="source" position={Position.Right} />}
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={handleDuplicate}>

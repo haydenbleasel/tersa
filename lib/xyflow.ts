@@ -49,6 +49,10 @@ export const isValidSourceTarget = (source: Node, target: Node) => {
     return false;
   }
 
+  if (target.type === 'file') {
+    return false;
+  }
+
   return true;
 };
 
