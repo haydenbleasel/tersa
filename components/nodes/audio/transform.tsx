@@ -110,7 +110,7 @@ export const AudioTransform = ({
 
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
-      <div>
+      <div className="flex flex-1 items-center justify-center rounded-lg bg-secondary/50">
         {loading && !audio && (
           <div className="flex items-center justify-center p-4">
             <Loader2Icon size={16} className="animate-spin" />

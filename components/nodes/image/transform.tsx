@@ -133,7 +133,7 @@ export const ImageTransform = ({
 
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
-      <div>
+      <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50">
         {loading && (
           <div className="flex items-center justify-center p-4">
             <Loader2Icon size={16} className="animate-spin" />
@@ -152,7 +152,7 @@ export const ImageTransform = ({
             alt="Generated image"
             width={1600}
             height={900}
-            className="aspect-video w-full rounded-t-lg object-cover"
+            className="w-full rounded-t-lg object-cover"
           />
         )}
       </div>
@@ -160,7 +160,7 @@ export const ImageTransform = ({
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );

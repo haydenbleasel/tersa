@@ -218,7 +218,7 @@ export const CodeTransform = ({
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );

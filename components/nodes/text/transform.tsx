@@ -186,7 +186,7 @@ export const TextTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div className="flex-1 p-4">
+      <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50 p-4">
         {status === 'streaming' && (
           <div className="flex items-center justify-center">
             <Loader2Icon size={16} className="animate-spin" />
@@ -207,7 +207,7 @@ export const TextTransform = ({
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none bg-secondary/50 shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );
