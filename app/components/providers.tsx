@@ -84,7 +84,7 @@ export const Providers = () => (
             Powered by the world's leading AI providers
           </h2>
 
-          <p className="mx-auto max-w-lg text-center text-lg text-muted-foreground tracking-[-0.01rem]">
+          <p className="mx-auto max-w-lg text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
             Connect your workflows to leading models from the world's top AI
             providers, including OpenAI, Anthropic, and more.
           </p>

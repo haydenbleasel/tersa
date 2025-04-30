@@ -64,13 +64,13 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
         )}
 
         <h1 className="mt-6 mb-5 text-center font-medium text-4xl tracking-[-0.12rem] md:text-6xl">
-          <span className="font-semibold font-serif text-7xl italic">
+          <span className="mr-1 font-semibold font-serif text-5xl italic md:text-7xl">
             Visualize
           </span>{' '}
           your AI workflows
         </h1>
 
-        <p className="max-w-2xl text-center text-lg text-muted-foreground tracking-[-0.01rem]">
+        <p className="max-w-2xl text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
           Tersa is an open source canvas for building AI workflows. Drag, drop
           connect and run nodes to build your own workflows powered by various
           industry-leading AI models.
@@ -98,6 +98,7 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
             variant={index === 0 ? 'default' : 'outline'}
             asChild
             size="lg"
+            className="w-full sm:w-auto"
           >
             <Link href={button.link}>{button.title}</Link>
           </Button>

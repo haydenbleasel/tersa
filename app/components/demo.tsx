@@ -2,7 +2,7 @@ import { Canvas } from '@/components/canvas';
 import { sampleEdges, sampleNodes, sampleViewport } from '@/lib/demo';
 
 export const Demo = () => (
-  <section className="container mx-auto">
+  <section className="container mx-auto px-4 sm:px-8">
     <div className="rounded-lg bg-gradient-to-b from-primary to-border p-px">
       <div className="aspect-video overflow-hidden rounded-[9px]">
         <Canvas

@@ -40,17 +40,17 @@ export const Features = () => (
       {/* Main content */}
       <div className="grid items-center justify-center px-5 py-8">
         <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] sm:text-4xl md:text-5xl">
-          <MoveIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
+          <MoveIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
           Drag,{' '}
-          <GrabIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
+          <GrabIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
           drop,
-          <CableIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
+          <CableIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
           connect and{' '}
-          <PlayIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
+          <PlayIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
           run
         </h2>
 
-        <p className="mx-auto max-w-lg text-center text-lg text-muted-foreground tracking-[-0.01rem]">
+        <p className="mx-auto max-w-lg text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
           Tersa uses a drag and drop interface to build workflows, making it
           super easy to create complex workflows with ease.
         </p>
@@ -70,14 +70,16 @@ export const Features = () => (
       </div>
 
       {/* Buttons */}
-      <div className="grid w-full grid-cols-2">
-        <div className="grid gap-4 border-r border-dotted p-8">
+      <div className="grid w-full sm:grid-cols-2">
+        <div className="grid gap-4 border-b border-dotted p-8 sm:border-r sm:border-b-0">
           <div className="aspect-video w-full overflow-hidden rounded-lg border">
             <TextDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">Synthesize answers</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium text-xl sm:text-2xl">
+              Synthesize answers
+            </h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Use models like GPT-4o, Claude 3.5 Sonnet and more to generate
               text from incoming nodes. Connect text nodes for prompts and image
               nodes for attachments.
@@ -90,8 +92,8 @@ export const Features = () => (
             <ImageDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">Generate images</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium text-xl sm:text-2xl">Generate images</h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Use models like DALL-E 3 to generate images from text prompts and
               audio transcriptions, or gpt-image-1 to create variations of
               existing images.
@@ -99,13 +101,13 @@ export const Features = () => (
           </div>
         </div>
 
-        <div className="col-span-2 grid grid-cols-3 items-start gap-8 border-y border-dotted p-8">
-          <div className="col-span-2 aspect-video w-full overflow-hidden rounded-lg border">
+        <div className="grid items-start gap-8 border-y border-dotted p-8 sm:col-span-2 sm:grid-cols-3">
+          <div className="aspect-video w-full overflow-hidden rounded-lg border sm:col-span-2">
             <VideoDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">Create videos</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium text-xl sm:text-2xl">Create videos</h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Use models like Minimax's T2V-01-Director to create videos from
               text prompts, or connect an image node to create a video from an
               existing image.
@@ -113,13 +115,15 @@ export const Features = () => (
           </div>
         </div>
 
-        <div className="grid gap-4 border-r border-dotted p-8">
+        <div className="grid gap-4 border-b border-dotted p-8 sm:border-r sm:border-b-0">
           <div className="aspect-video w-full overflow-hidden rounded-lg border">
             <SpeechDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">Capture and narrate speech</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium text-xl sm:text-2xl">
+              Capture and narrate speech
+            </h3>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Use models like OpenAI's Whisper to transcribe audio from incoming
               nodes. Connect text nodes to provide prompts and audio nodes to
               attach them to the request.
@@ -132,10 +136,10 @@ export const Features = () => (
             <CodeDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">
+            <h3 className="font-medium text-xl sm:text-2xl">
               Transform and refactor code
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm sm:text-base">
               Use AI models to analyze, refactor, and optimize your code.
               Connect code nodes to provide source files and text nodes to
               specify transformation instructions or requirements.

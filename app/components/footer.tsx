@@ -58,6 +58,7 @@ export const Footer = ({ buttons }: FooterProps) => (
               variant={index === 0 ? 'default' : 'outline'}
               asChild
               size="lg"
+              className="w-full sm:w-auto"
             >
               <Link href={button.link}>{button.title}</Link>
             </Button>

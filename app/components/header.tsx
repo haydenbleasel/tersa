@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export const Header = () => (
-  <header className="flex items-center justify-between">
+  <header className="flex items-center justify-between px-8">
     <Link href="/">
       <Logo className="h-6 w-auto" />
     </Link>
