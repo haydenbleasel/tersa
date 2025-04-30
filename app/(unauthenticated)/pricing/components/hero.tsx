@@ -13,7 +13,6 @@ import { Switch } from '@/components/ui/switch';
 import NumberFlow from '@number-flow/react';
 import {
   CheckIcon,
-  CloverIcon,
   Flower2Icon,
   FlowerIcon,
   LeafIcon,
@@ -34,7 +33,11 @@ type Plan = {
   description: string;
   monthlyPrice: number;
   yearlyPrice: number;
-  features: Record<string, boolean>;
+  features: {
+    credits: number;
+    ai: boolean;
+    'advanced-ai': boolean;
+  };
   ctaLink: string;
   ctaText: string;
   variant: ComponentProps<typeof Button>['variant'];
@@ -46,28 +49,14 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
   const plans = useMemo(() => {
     const free: Plan = {
       icon: LeafIcon,
-      name: 'Free',
-      description: 'For personal use',
+      name: 'Hobby',
+      description: 'For personal use and testing.',
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: {
         ai: false,
         'advanced-ai': false,
-      },
-      ctaLink: '/signup',
-      ctaText: 'Get Started',
-      variant: 'outline',
-    };
-
-    const hobby: Plan = {
-      icon: FlowerIcon,
-      name: 'Hobby',
-      description: 'For hobbyists',
-      monthlyPrice: 10,
-      yearlyPrice: 8,
-      features: {
-        ai: true,
-        'advanced-ai': false,
+        credits: 500,
       },
       ctaLink: '/signup',
       ctaText: 'Get Started',
@@ -75,14 +64,15 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
     };
 
     const pro: Plan = {
-      icon: CloverIcon,
+      icon: FlowerIcon,
       name: 'Pro',
-      description: 'For professional use',
-      monthlyPrice: 16,
-      yearlyPrice: 12,
+      description: 'For professional use or small teams.',
+      monthlyPrice: 8,
+      yearlyPrice: 6,
       features: {
         ai: true,
         'advanced-ai': true,
+        credits: 1000,
       },
       ctaLink: '/signup',
       ctaText: 'Get Started',
@@ -92,56 +82,39 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
     const enterprise: Plan = {
       icon: Flower2Icon,
       name: 'Enterprise',
-      description: 'For large scale use',
+      description: 'For large teams or enterprise use.',
       monthlyPrice: -1,
       yearlyPrice: -1,
       features: {
         ai: true,
         'advanced-ai': true,
+        credits: 1000,
       },
       ctaLink: '/signup',
-      ctaText: 'Get Started',
+      ctaText: 'Get in Touch',
       variant: 'outline',
     };
 
     if (currentPlan) {
-      for (const plan of [free, hobby, pro, enterprise]) {
+      for (const plan of [free, pro, enterprise]) {
         plan.ctaLink = '/api/stripe/portal';
       }
     }
 
     if (currentPlan === 'free') {
       free.ctaText = 'Manage';
-
-      for (const plan of [hobby, pro, enterprise]) {
-        plan.ctaText = 'Upgrade';
-        plan.variant = 'default';
-      }
-    } else if (currentPlan === 'hobby') {
-      free.ctaText = 'Downgrade';
-      hobby.ctaText = 'Manage';
-
-      for (const plan of [pro, enterprise]) {
-        plan.ctaText = 'Upgrade';
-        plan.variant = 'default';
-      }
+      pro.ctaText = 'Upgrade';
+      pro.variant = 'default';
     } else if (currentPlan === 'pro') {
-      free.ctaText = 'Downgrade';
-      hobby.ctaText = 'Downgrade';
       pro.ctaText = 'Manage';
-
-      for (const plan of [enterprise]) {
-        plan.ctaText = 'Upgrade';
-        plan.variant = 'default';
-      }
-    } else if (currentPlan === 'enterprise') {
       free.ctaText = 'Downgrade';
-      hobby.ctaText = 'Downgrade';
-      pro.ctaText = 'Downgrade';
+    } else if (currentPlan === 'enterprise') {
       enterprise.ctaText = 'Manage';
+      free.ctaText = 'Downgrade';
+      pro.ctaText = 'Downgrade';
     }
 
-    return [free, hobby, pro, enterprise];
+    return [free, pro, enterprise];
   }, [currentPlan]);
 
   return (
@@ -184,10 +157,10 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
             pricing
           </h1>
 
-          <p className="max-w-2xl text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
-            Tersa is an open source canvas for building AI workflows. Drag, drop
-            connect and run nodes to build your own workflows powered by various
-            industry-leading AI models.
+          <p className="max-w-3xl text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
+            Tersa uses a flat fee and overage pricing model. This means you pay
+            a flat monthly cost which includes a certain amount of credits. If
+            you exceed your credits, you just pay for the extra usage.
           </p>
 
           {/* Pricing Toggle */}
@@ -228,7 +201,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid w-full grid-cols-1 divide-x divide-dotted md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid w-full grid-cols-1 divide-x divide-dotted xl:grid-cols-3">
           {plans.map((plan) => (
             <div key={plan.name} className="p-12">
               <Card key={plan.name} className="border-none p-0 shadow-none">
@@ -236,17 +209,27 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
                   <div className="inline-flex w-fit items-center justify-center rounded bg-primary/10 p-3">
                     <plan.icon size={16} className="text-primary" />
                   </div>
-                  <CardTitle className="mt-4">{plan.name}</CardTitle>
+                  <CardTitle className="mt-4 font-medium text-xl">
+                    {plan.name}
+                  </CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow p-0">
-                  {plan.monthlyPrice === -1 ? (
+                  {plan.monthlyPrice === -1 && (
                     <div className="mb-4 h-[45px]">
-                      <span className="font-bold text-3xl">Custom</span>
+                      <span className="font-medium text-3xl">Custom</span>
                     </div>
-                  ) : (
+                  )}
+
+                  {plan.monthlyPrice === 0 && (
+                    <div className="mb-4 h-[45px]">
+                      <span className="font-medium text-3xl">Free</span>
+                    </div>
+                  )}
+
+                  {plan.monthlyPrice > 0 && (
                     <div className="mb-4">
-                      <span className="font-bold text-3xl">
+                      <span className="font-medium text-3xl">
                         <NumberFlow
                           value={yearly ? plan.yearlyPrice : plan.monthlyPrice}
                           format={{
