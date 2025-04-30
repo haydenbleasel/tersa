@@ -52,17 +52,6 @@ const getHandleCoordsByPosition = (
   return [x, y];
 };
 
-const getNodeCenter = (node: InternalNode<Node>) => {
-  if (!node.measured.width || !node.measured.height) {
-    throw new Error('Node has no measured dimensions');
-  }
-
-  return {
-    x: node.internals.positionAbsolute.x + node.measured.width / 2,
-    y: node.internals.positionAbsolute.y + node.measured.height / 2,
-  };
-};
-
 const getEdgeParams = (
   source: InternalNode<Node>,
   target: InternalNode<Node>
@@ -100,8 +89,6 @@ export const AnimatedEdge = ({
     sourceNode,
     targetNode
   );
-
-  // console.log(sx, sy, tx, ty);
 
   const [edgePath] = getBezierPath({
     sourceX: sx,
