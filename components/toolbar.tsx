@@ -2,6 +2,7 @@ import { type Node, Panel, useReactFlow } from '@xyflow/react';
 import {
   AudioWaveformIcon,
   CodeIcon,
+  FileIcon,
   ImageIcon,
   MessageSquareIcon,
   TextIcon,
@@ -79,6 +80,12 @@ export const Toolbar = () => {
           width: 400,
           height: 200,
         }),
+    },
+    {
+      id: 'file',
+      label: 'File',
+      icon: FileIcon,
+      onClick: () => addNode('file'),
     },
     {
       id: 'comment',

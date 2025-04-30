@@ -178,14 +178,16 @@ export const NodeLayout = ({
               <p className="font-mono text-muted-foreground text-xs tracking-tighter">
                 {title}
               </p>
-              <div className="flex items-center gap-2">
-                <UserIcon size={12} className="text-muted-foreground" />
-                <Switch
-                  checked={data?.source === 'transform'}
-                  onCheckedChange={handleSourceChange}
-                />
-                <BrainIcon size={12} className="text-muted-foreground" />
-              </div>
+              {type !== 'file' && (
+                <div className="flex items-center gap-2">
+                  <UserIcon size={12} className="text-muted-foreground" />
+                  <Switch
+                    checked={data?.source === 'transform'}
+                    onCheckedChange={handleSourceChange}
+                  />
+                  <BrainIcon size={12} className="text-muted-foreground" />
+                </div>
+              )}
             </div>
           )}
           <div className="node-container flex size-full flex-col divide-y rounded-lg bg-card ring-1 ring-border transition-all">

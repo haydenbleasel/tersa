@@ -31,23 +31,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
-import { AudioNode } from '../nodes/audio';
-import { CodeNode } from '../nodes/code';
-import { CommentNode } from '../nodes/comment';
-import { DropNode } from '../nodes/drop';
-import { ImageNode } from '../nodes/image';
-import { TextNode } from '../nodes/text';
-import { VideoNode } from '../nodes/video';
-
-const nodeTypes = {
-  image: ImageNode,
-  text: TextNode,
-  drop: DropNode,
-  video: VideoNode,
-  audio: AudioNode,
-  comment: CommentNode,
-  code: CodeNode,
-};
+import { nodeTypes } from '../nodes';
 
 const edgeTypes = {
   animated: AnimatedEdge,
