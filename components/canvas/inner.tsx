@@ -1,7 +1,6 @@
 'use client';
-
-import { updateProjectAction } from '@/app/actions/project/update';
-import { handleError } from '@/lib/error/handle';
+import { useSaveProject } from '@/hooks/use-save-project';
+import { useUser } from '@/hooks/use-user';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import type { projects } from '@/schema';
 import {
@@ -13,26 +12,20 @@ import {
   type Node,
   type NodeChange,
   ReactFlow,
-  type ReactFlowInstance,
   type ReactFlowProps,
   type Viewport,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   getOutgoers,
-  getViewportForBounds,
   useReactFlow,
 } from '@xyflow/react';
-import { toPng } from 'html-to-image';
 import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
-
-const SAVE_TIMEOUT = 1000;
 
 type ProjectData = {
   content?:
@@ -47,7 +40,6 @@ type ProjectData = {
 export type CanvasProps = {
   projects: (typeof projects.$inferSelect)[];
   data: typeof projects.$inferSelect;
-  userId?: string | undefined;
   defaultContent?: {
     nodes: Node[];
     edges: Edge[];
@@ -88,7 +80,6 @@ const Projects = dynamic(
 export const CanvasInner = ({
   projects,
   data,
-  userId,
   defaultContent,
   canvasProps,
 }: CanvasProps) => {
@@ -102,64 +93,9 @@ export const CanvasInner = ({
   const [viewport, setViewport] = useState<Viewport>(
     content?.viewport ?? defaultContent?.viewport ?? { x: 0, y: 0, zoom: 1 }
   );
-  const { getEdges, screenToFlowPosition, getNodes, getNodesBounds } =
-    useReactFlow();
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
-
-  const getScreenshot = async () => {
-    const nodes = getNodes();
-    const nodesBounds = getNodesBounds(nodes);
-    const viewport = getViewportForBounds(nodesBounds, 1200, 630, 0.5, 2, 16);
-
-    const image = await toPng(
-      document.querySelector('.react-flow__viewport') as HTMLElement,
-      {
-        backgroundColor: 'transparent',
-        width: 1200,
-        height: 630,
-        style: {
-          width: '1200px',
-          height: '630px',
-          transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
-        },
-      }
-    );
-
-    return image;
-  };
-
-  const save = useDebouncedCallback(async () => {
-    if (isSaving || !userId || !data.id) {
-      return;
-    }
-
-    try {
-      if (!rfInstance) {
-        throw new Error('No instance found');
-      }
-
-      setIsSaving(true);
-
-      const content = rfInstance.toObject();
-      // const image = await getScreenshot();
-      const response = await updateProjectAction(data.id, {
-        // image,
-        content,
-      });
-
-      if ('error' in response) {
-        throw new Error(response.error);
-      }
-
-      setLastSaved(new Date());
-    } catch (error) {
-      handleError('Error saving project', error);
-    } finally {
-      setIsSaving(false);
-    }
-  }, SAVE_TIMEOUT);
+  const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
+  const { isSaving, lastSaved, save } = useSaveProject(data.id);
+  const user = useUser();
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
@@ -321,7 +257,6 @@ export const CanvasInner = ({
         edgeTypes={edgeTypes}
         isValidConnection={isValidConnection}
         connectionLineComponent={ConnectionLine}
-        onInit={setRfInstance}
         fitView
         panOnScroll
         viewport={viewport}
@@ -329,7 +264,7 @@ export const CanvasInner = ({
         {...canvasProps}
       >
         <Background />
-        {userId && (
+        {user && (
           <>
             <Controls />
             <Toolbar />
