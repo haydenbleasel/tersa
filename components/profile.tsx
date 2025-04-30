@@ -7,13 +7,20 @@ import {
 } from '@/components/ui/dialog';
 import { handleError } from '@/lib/error/handle';
 import { createClient } from '@/lib/supabase/client';
+import { uploadFile } from '@/lib/upload';
 import type { UserAttributes } from '@supabase/supabase-js';
+import { Loader2Icon } from 'lucide-react';
+import Image from 'next/image';
 import { type FormEventHandler, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from './ui/kibo-ui/dropzone';
 import { Label } from './ui/label';
-import { Uploader } from './uploader';
 
 type ProfileProps = {
   open: boolean;
@@ -98,10 +105,19 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
     }
   };
 
-  const handleUploadCompleted = async (url: string) => {
-    setIsUpdating(true);
+  const handleDrop = async (files: File[]) => {
+    if (isUpdating) {
+      return;
+    }
 
     try {
+      if (!files.length) {
+        throw new Error('No file selected');
+      }
+
+      setIsUpdating(true);
+
+      const { url } = await uploadFile(files[0], 'avatars');
       const client = createClient();
 
       const response = await client.auth.updateUser({
@@ -115,6 +131,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
       }
 
       toast.success('Avatar updated successfully');
+      setImage(url);
     } catch (error) {
       handleError('Error updating avatar', error);
     } finally {
@@ -133,13 +150,36 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
         </DialogHeader>
         <div className="grid gap-2">
           <Label htmlFor="avatar">Avatar</Label>
-          <Uploader
-            onUploadCompleted={handleUploadCompleted}
-            accept={{
-              'image/*': [],
-            }}
-            bucket="avatars"
-          />
+          <Dropzone
+            maxSize={1024 * 1024 * 10}
+            minSize={1024}
+            maxFiles={1}
+            multiple={false}
+            accept={{ 'image/*': [] }}
+            onDrop={handleDrop}
+            src={[new File([], image)]}
+            onError={console.error}
+            className="relative aspect-square h-36 w-auto"
+          >
+            <DropzoneEmptyState />
+            <DropzoneContent>
+              {image && (
+                <Image
+                  src={image}
+                  alt="Image preview"
+                  className="absolute top-0 left-0 h-full w-full object-cover"
+                  unoptimized
+                  width={100}
+                  height={100}
+                />
+              )}
+              {isUpdating && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center">
+                  <Loader2Icon size={24} className="animate-spin" />
+                </div>
+              )}
+            </DropzoneContent>
+          </Dropzone>
         </div>
         <form
           onSubmit={handleUpdateUser}

@@ -5,16 +5,16 @@ import {
   type DropzoneProps,
 } from '@/components/ui/kibo-ui/dropzone';
 import { handleError } from '@/lib/error/handle';
-import { createClient } from '@/lib/supabase/client';
-import { nanoid } from 'nanoid';
+import { uploadFile } from '@/lib/upload';
 import Image from 'next/image';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 type UploaderProps = {
   accept?: DropzoneProps['accept'];
   onUploadCompleted: (url: string, type: string) => void;
   className?: string;
   bucket?: 'avatars' | 'files';
+  children?: ReactNode;
 };
 
 export const Uploader = ({
@@ -22,6 +22,7 @@ export const Uploader = ({
   accept,
   className,
   bucket = 'files',
+  children,
 }: UploaderProps) => {
   const [files, setFiles] = useState<File[] | undefined>();
 
@@ -31,33 +32,11 @@ export const Uploader = ({
         throw new Error('No file selected');
       }
 
-      const client = createClient();
-      const { data } = await client.auth.getUser();
-
-      if (!data?.user) {
-        throw new Error('You need to be logged in to upload a file!');
-      }
-
       setFiles(files);
 
-      const file = files[0];
-      const extension = file.name.split('.').pop();
+      const { url, type } = await uploadFile(files, bucket);
 
-      const blob = await client.storage
-        .from(bucket)
-        .upload(`${data.user.id}/${nanoid()}.${extension}`, file, {
-          contentType: file.type,
-        });
-
-      if (blob.error) {
-        throw new Error(blob.error.message);
-      }
-
-      const { data: downloadUrl } = client.storage
-        .from(bucket)
-        .getPublicUrl(blob.data.path);
-
-      onUploadCompleted(downloadUrl.publicUrl, file.type);
+      onUploadCompleted(url, type);
     } catch (error) {
       handleError('Error uploading file', error);
     }
@@ -75,21 +54,25 @@ export const Uploader = ({
       onError={console.error}
       className={className}
     >
-      <DropzoneEmptyState />
-      <DropzoneContent>
-        {files && files.length > 0 && (
-          <div className="h-[102px] w-full">
-            <Image
-              src={URL.createObjectURL(files[0])}
-              alt="Image preview"
-              className="absolute top-0 left-0 h-full w-full object-cover"
-              unoptimized
-              width={100}
-              height={100}
-            />
-          </div>
-        )}
-      </DropzoneContent>
+      {children ?? (
+        <>
+          <DropzoneEmptyState />
+          <DropzoneContent>
+            {files && files.length > 0 && (
+              <div className="h-[102px] w-full">
+                <Image
+                  src={URL.createObjectURL(files[0])}
+                  alt="Image preview"
+                  className="absolute top-0 left-0 h-full w-full object-cover"
+                  unoptimized
+                  width={100}
+                  height={100}
+                />
+              </div>
+            )}
+          </DropzoneContent>
+        </>
+      )}
     </Dropzone>
   );
 };
