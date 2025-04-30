@@ -8,7 +8,6 @@ const nodes: Node[] = [
     position: { x: 0, y: 0 },
     data: {
       source: 'primitive',
-      text: 'Say hello',
       content: {
         type: 'doc',
         content: [
@@ -23,27 +22,19 @@ const nodes: Node[] = [
                     attrs: { color: 'rgb(31, 31, 31)' },
                   },
                 ],
-                text: 'Say hello',
+                text: 'Delphiniums generally symbolize ',
               },
-            ],
-          },
-        ],
-      },
-    },
-  },
-  {
-    id: 'primitive-2',
-    type: 'text',
-    position: { x: 0, y: 200 },
-    data: {
-      source: 'primitive',
-      text: 'In French',
-      content: {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
+              {
+                type: 'text',
+                marks: [
+                  {
+                    type: 'textStyle',
+                    attrs: { color: 'rgb(31, 31, 31)' },
+                  },
+                  { type: 'bold' },
+                ],
+                text: 'cheerfulness, goodwill, and protection',
+              },
               {
                 type: 'text',
                 marks: [
@@ -52,24 +43,33 @@ const nodes: Node[] = [
                     attrs: { color: 'rgb(31, 31, 31)' },
                   },
                 ],
-                text: 'In French',
+                text: '. Specifically, they can represent striving for success, enjoying life, and celebrating important occasions. Blue delphiniums are also often associated with dignity and grace.',
               },
             ],
           },
         ],
       },
+      text: 'Delphiniums generally symbolize cheerfulness, goodwill, and protection. Specifically, they can represent striving for success, enjoying life, and celebrating important occasions. Blue delphiniums are also often associated with dignity and grace.',
     },
+    origin: [0, 0.5],
+    measured: { width: 400, height: 203 },
+    width: 400,
+    height: 203,
   },
   {
     id: 'transform-1',
-    type: 'text',
-    position: { x: 200, y: 100 },
+    type: 'audio',
     data: {
       source: 'transform',
-      model: 'gpt-4o',
-      instructions: 'Add some flair to the text',
-      generated: ['Bonjour!'],
+      generated: {
+        url: '/demo/delphiniums-transform.mp3',
+        type: 'audio/mpeg',
+      },
     },
+    position: { x: 600, y: 0 },
+    origin: [0, 0.5],
+    measured: { width: 284, height: 52 },
+    dragging: false,
   },
 ];
 
@@ -80,15 +80,9 @@ const edges: Edge[] = [
     target: 'transform-1',
     type: 'animated',
   },
-  {
-    id: 'edge-2',
-    source: 'primitive-2',
-    target: 'transform-1',
-    type: 'animated',
-  },
 ];
 
-export const TextDemo = () => (
+export const SpeechDemo = () => (
   <Canvas
     projects={[]}
     data={{
@@ -111,7 +105,7 @@ export const TextDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.5,
+        padding: 0.2,
       },
     }}
   />

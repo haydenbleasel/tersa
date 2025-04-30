@@ -8,7 +8,7 @@ const nodes: Node[] = [
     position: { x: 0, y: 0 },
     data: {
       source: 'primitive',
-      text: 'Say hello',
+      text: 'A wild orchard of delphiniums',
       content: {
         type: 'doc',
         content: [
@@ -23,36 +23,7 @@ const nodes: Node[] = [
                     attrs: { color: 'rgb(31, 31, 31)' },
                   },
                 ],
-                text: 'Say hello',
-              },
-            ],
-          },
-        ],
-      },
-    },
-  },
-  {
-    id: 'primitive-2',
-    type: 'text',
-    position: { x: 0, y: 200 },
-    data: {
-      source: 'primitive',
-      text: 'In French',
-      content: {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
-                text: 'In French',
+                text: 'A wild orchard of delphiniums',
               },
             ],
           },
@@ -62,14 +33,20 @@ const nodes: Node[] = [
   },
   {
     id: 'transform-1',
-    type: 'text',
-    position: { x: 200, y: 100 },
+    type: 'image',
+    position: { x: 400, y: 0 },
     data: {
       source: 'transform',
-      model: 'gpt-4o',
-      instructions: 'Add some flair to the text',
-      generated: ['Bonjour!'],
+      generated: {
+        url: '/demo/delphiniums-anime.jpg',
+        type: 'image/jpeg',
+      },
+      instructions: 'Make it anime style.',
     },
+    origin: [0, 0.5],
+    measured: { width: 400, height: 290 },
+    width: 400,
+    height: 290,
   },
 ];
 
@@ -80,15 +57,9 @@ const edges: Edge[] = [
     target: 'transform-1',
     type: 'animated',
   },
-  {
-    id: 'edge-2',
-    source: 'primitive-2',
-    target: 'transform-1',
-    type: 'animated',
-  },
 ];
 
-export const TextDemo = () => (
+export const ImageDemo = () => (
   <Canvas
     projects={[]}
     data={{
@@ -111,7 +82,7 @@ export const TextDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.5,
+        padding: 0.2,
       },
     }}
   />

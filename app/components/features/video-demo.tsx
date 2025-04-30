@@ -8,7 +8,7 @@ const nodes: Node[] = [
     position: { x: 0, y: 0 },
     data: {
       source: 'primitive',
-      text: 'Say hello',
+      text: 'A wild orchard of delphiniums',
       content: {
         type: 'doc',
         content: [
@@ -23,7 +23,7 @@ const nodes: Node[] = [
                     attrs: { color: 'rgb(31, 31, 31)' },
                   },
                 ],
-                text: 'Say hello',
+                text: 'A wild orchard of delphiniums',
               },
             ],
           },
@@ -33,43 +33,37 @@ const nodes: Node[] = [
   },
   {
     id: 'primitive-2',
-    type: 'text',
-    position: { x: 0, y: 200 },
+    type: 'image',
+    position: { x: 0, y: 300 },
     data: {
       source: 'primitive',
-      text: 'In French',
       content: {
-        type: 'doc',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                marks: [
-                  {
-                    type: 'textStyle',
-                    attrs: { color: 'rgb(31, 31, 31)' },
-                  },
-                ],
-                text: 'In French',
-              },
-            ],
-          },
-        ],
+        url: '/demo/delphiniums-anime.jpg',
+        type: 'image/jpeg',
       },
     },
+    origin: [0, 0.5],
+    measured: { width: 400, height: 290 },
+    dragging: false,
+    width: 400,
+    height: 290,
   },
   {
     id: 'transform-1',
-    type: 'text',
-    position: { x: 200, y: 100 },
+    type: 'video',
+    position: { x: 600, y: 200 },
     data: {
       source: 'transform',
-      model: 'gpt-4o',
-      instructions: 'Add some flair to the text',
-      generated: ['Bonjour!'],
+      generated: {
+        url: '/demo/delphiniums.mp4',
+        type: 'video/mp4',
+      },
+      instructions: 'Make the flowers move softly in the wind.',
     },
+    origin: [0, 0.5],
+    measured: { width: 400, height: 290 },
+    width: 400,
+    height: 290,
   },
 ];
 
@@ -88,7 +82,7 @@ const edges: Edge[] = [
   },
 ];
 
-export const TextDemo = () => (
+export const VideoDemo = () => (
   <Canvas
     projects={[]}
     data={{
@@ -111,7 +105,7 @@ export const TextDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.5,
+        padding: 0.2,
       },
     }}
   />

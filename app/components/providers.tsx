@@ -80,7 +80,7 @@ export const Providers = () => (
       {/* Main content */}
       <div className="grid items-center justify-center py-8">
         <div className="px-5">
-          <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] md:text-5xl">
+          <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] sm:text-4xl md:text-5xl">
             Powered by the world's leading AI providers
           </h2>
 

@@ -1,6 +1,9 @@
-import { Background, ReactFlow } from '@xyflow/react';
 import { CableIcon, GrabIcon, MoveIcon, PlayIcon } from 'lucide-react';
+import { CodeDemo } from './code-demo';
+import { ImageDemo } from './image-demo';
+import { SpeechDemo } from './speech-demo';
 import { TextDemo } from './text-demo';
+import { VideoDemo } from './video-demo';
 
 export const Features = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -36,7 +39,7 @@ export const Features = () => (
 
       {/* Main content */}
       <div className="grid items-center justify-center px-5 py-8">
-        <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] md:text-5xl">
+        <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] sm:text-4xl md:text-5xl">
           <MoveIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
           Drag,{' '}
           <GrabIcon className="ml-3 inline-block align-baseline" size={32} />{' '}
@@ -69,7 +72,7 @@ export const Features = () => (
       {/* Buttons */}
       <div className="grid w-full grid-cols-2">
         <div className="grid gap-4 border-r border-dotted p-8">
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
+          <div className="aspect-video w-full overflow-hidden rounded-lg border">
             <TextDemo />
           </div>
           <div className="grid gap-2">
@@ -83,10 +86,8 @@ export const Features = () => (
         </div>
 
         <div className="grid gap-4 p-8">
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <ReactFlow>
-              <Background bgColor="var(--secondary)" />
-            </ReactFlow>
+          <div className="aspect-video w-full overflow-hidden rounded-lg border">
+            <ImageDemo />
           </div>
           <div className="grid gap-2">
             <h3 className="font-medium text-2xl">Generate images</h3>
@@ -99,10 +100,8 @@ export const Features = () => (
         </div>
 
         <div className="col-span-2 grid grid-cols-3 items-start gap-8 border-y border-dotted p-8">
-          <div className="col-span-2 aspect-video w-full overflow-hidden rounded-lg">
-            <ReactFlow>
-              <Background bgColor="var(--secondary)" />
-            </ReactFlow>
+          <div className="col-span-2 aspect-video w-full overflow-hidden rounded-lg border">
+            <VideoDemo />
           </div>
           <div className="grid gap-2">
             <h3 className="font-medium text-2xl">Create videos</h3>
@@ -115,15 +114,11 @@ export const Features = () => (
         </div>
 
         <div className="grid gap-4 border-r border-dotted p-8">
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <ReactFlow>
-              <Background bgColor="var(--secondary)" />
-            </ReactFlow>
+          <div className="aspect-video w-full overflow-hidden rounded-lg border">
+            <SpeechDemo />
           </div>
           <div className="grid gap-2">
-            <h3 className="font-medium text-2xl">
-              Capture and synthesize speech
-            </h3>
+            <h3 className="font-medium text-2xl">Capture and narrate speech</h3>
             <p className="text-muted-foreground">
               Use models like OpenAI's Whisper to transcribe audio from incoming
               nodes. Connect text nodes to provide prompts and audio nodes to
@@ -133,19 +128,17 @@ export const Features = () => (
         </div>
 
         <div className="grid gap-4 p-8">
-          <div className="aspect-video w-full overflow-hidden rounded-lg">
-            <ReactFlow>
-              <Background bgColor="var(--secondary)" />
-            </ReactFlow>
+          <div className="aspect-video w-full overflow-hidden rounded-lg border">
+            <CodeDemo />
           </div>
           <div className="grid gap-2">
             <h3 className="font-medium text-2xl">
-              Generate descriptions from images
+              Transform and refactor code
             </h3>
             <p className="text-muted-foreground">
-              Use models like OpenAI's DALL-E 3 to generate text from images.
-              Connect image nodes to provide images and text nodes to provide
-              prompts.
+              Use AI models to analyze, refactor, and optimize your code.
+              Connect code nodes to provide source files and text nodes to
+              specify transformation instructions or requirements.
             </p>
           </div>
         </div>
