@@ -28,7 +28,6 @@ export const CommentNode = ({ data, id }: CommentNodeProps) => {
   return (
     <>
       <EditorProvider
-        autofocus
         immediatelyRender={false}
         content={content}
         placeholder="Start typing..."

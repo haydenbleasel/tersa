@@ -33,7 +33,6 @@ export const TextPrimitive = ({
     <NodeLayout id={id} data={data} title={title} type={type}>
       <div className="p-4">
         <EditorProvider
-          autofocus
           immediatelyRender={false}
           content={content}
           placeholder="Start typing..."
