@@ -2,14 +2,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { LocalTime } from './local-time';
 
-type FooterProps = {
-  buttons: {
-    title: string;
-    link: string;
-  }[];
-};
-
-export const Footer = ({ buttons }: FooterProps) => (
+export const Footer = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
     {/* Gradient overlays */}
     <div className="pointer-events-none absolute inset-0">
@@ -52,17 +45,17 @@ export const Footer = ({ buttons }: FooterProps) => (
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
-          {buttons.map((button, index) => (
-            <Button
-              key={button.title}
-              variant={index === 0 ? 'default' : 'outline'}
-              asChild
-              size="lg"
-              className="w-full sm:w-auto"
-            >
-              <Link href={button.link}>{button.title}</Link>
-            </Button>
-          ))}
+          <Button asChild size="lg" className="w-full sm:w-auto">
+            <Link href="/auth/sign-up">Get started for free</Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full sm:w-auto"
+          >
+            <Link href="/auth/login">Login</Link>
+          </Button>
         </div>
       </div>
     </div>

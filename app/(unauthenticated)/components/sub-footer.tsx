@@ -9,14 +9,15 @@ export const SubFooter = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="grid grid-cols-3 gap-4 text-muted-foreground text-sm">
-      <div className="flex items-center gap-4">
-        <Link href="/">Home</Link>
-        <Link href="/privacy">Privacy</Link>
-        <Link href="/terms">Terms</Link>
-      </div>
-      <div className="flex items-center">
-        <Logo className="mx-auto h-4 w-auto" />
+    <div className="flex items-start justify-between gap-4 text-muted-foreground text-sm">
+      <div className="grid gap-4">
+        <Logo className="h-4 w-auto" />
+        <div className="flex items-center gap-8">
+          <Link href="/">Home</Link>
+          <Link href="/pricing">Pricing</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
+        </div>
       </div>
       <div className="flex items-center justify-end">
         <ThemeSwitcher

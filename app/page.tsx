@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Home from './(unauthenticated)/home/page';
+import UnauthenticatedLayout from './(unauthenticated)/layout';
 import { createProjectAction } from './actions/project/create';
 
 export const metadata: Metadata = {
@@ -17,7 +18,11 @@ const Index = async () => {
   const { data } = await client.auth.getUser();
 
   if (!data?.user) {
-    return <Home />;
+    return (
+      <UnauthenticatedLayout>
+        <Home />
+      </UnauthenticatedLayout>
+    );
   }
 
   const allProjects = await database

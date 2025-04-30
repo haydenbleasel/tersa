@@ -8,10 +8,13 @@ export const Header = () => (
       <Logo className="h-6 w-auto" />
     </Link>
     <div className="flex items-center gap-2">
-      <Button variant="outline">
+      <Button variant="link" asChild className="text-muted-foreground">
+        <Link href="/pricing">Pricing</Link>
+      </Button>
+      <Button variant="outline" asChild>
         <Link href="/auth/login">Login</Link>
       </Button>
-      <Button>
+      <Button asChild>
         <Link href="/auth/sign-up">Sign up</Link>
       </Button>
     </div>

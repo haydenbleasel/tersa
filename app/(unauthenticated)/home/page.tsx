@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
 import { Demo } from './components/demo';
 import { Features } from './components/features';
-import { Footer } from './components/footer';
-import { Header } from './components/header';
 import { Hero } from './components/hero';
 import { Providers } from './components/providers';
-import { SubFooter } from './components/sub-footer';
 import { Tweets } from './components/tweets';
 
 export const metadata: Metadata = {
@@ -25,8 +22,7 @@ const buttons = [
 ];
 
 const Home = () => (
-  <div className="container mx-auto py-8">
-    <Header />
+  <>
     <Hero
       announcement={{
         title: 'Tersa is now open source!',
@@ -51,9 +47,7 @@ const Home = () => (
         '1916494270262813000',
       ]}
     />
-    <Footer buttons={buttons} />
-    <SubFooter />
-  </div>
+  </>
 );
 
 export default Home;
