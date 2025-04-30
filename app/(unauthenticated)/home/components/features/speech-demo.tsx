@@ -69,7 +69,7 @@ export const SpeechDemo = () => (
     projects={[]}
     data={{
       createdAt: new Date(),
-      id: 'demo',
+      id: 'speech-demo',
       name: 'Demo Project',
       userId: 'test',
       transcriptionModel: 'gpt-4o-mini-transcribe',

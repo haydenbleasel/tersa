@@ -81,7 +81,7 @@ export const TextDemo = () => (
     projects={[]}
     data={{
       createdAt: new Date(),
-      id: 'demo',
+      id: 'text-demo',
       name: 'Demo Project',
       userId: 'test',
       transcriptionModel: 'gpt-4o-mini-transcribe',

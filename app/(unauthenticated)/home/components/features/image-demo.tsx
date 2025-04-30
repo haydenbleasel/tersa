@@ -58,7 +58,7 @@ export const ImageDemo = () => (
     projects={[]}
     data={{
       createdAt: new Date(),
-      id: 'demo',
+      id: 'image-demo',
       name: 'Demo Project',
       userId: 'test',
       transcriptionModel: 'gpt-4o-mini-transcribe',

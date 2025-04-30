@@ -81,7 +81,7 @@ export const VideoDemo = () => (
     projects={[]}
     data={{
       createdAt: new Date(),
-      id: 'demo',
+      id: 'video-demo',
       name: 'Demo Project',
       userId: 'test',
       transcriptionModel: 'gpt-4o-mini-transcribe',

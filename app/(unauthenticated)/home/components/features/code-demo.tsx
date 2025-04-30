@@ -51,7 +51,7 @@ export const CodeDemo = () => (
     projects={[]}
     data={{
       createdAt: new Date(),
-      id: 'demo',
+      id: 'code-demo',
       name: 'Demo Project',
       userId: 'test',
       transcriptionModel: 'gpt-4o-mini-transcribe',
