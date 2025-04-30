@@ -17,76 +17,132 @@ import {
   Flower2Icon,
   FlowerIcon,
   LeafIcon,
+  type LucideIcon,
   XIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { type ComponentProps, useMemo, useState } from 'react';
 
 type HeroProps = {
   userId?: string | undefined;
   currentPlan?: string | undefined;
 };
 
+type Plan = {
+  icon: LucideIcon;
+  name: string;
+  description: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
+  features: Record<string, boolean>;
+  ctaLink: string;
+  ctaText: string;
+  variant: ComponentProps<typeof Button>['variant'];
+};
+
 export const Hero = ({ userId, currentPlan }: HeroProps) => {
   const [yearly, setYearly] = useState(true);
 
-  const plans = useMemo(
-    () => [
-      {
-        icon: LeafIcon,
-        name: 'Free',
-        description: 'For personal use',
-        monthlyPrice: 0,
-        yearlyPrice: 0,
-        features: {
-          ai: false,
-          'advanced-ai': false,
-        },
-        ctaLink: '/signup',
-        ctaText: userId ? 'Manage' : 'Get Started',
+  const plans = useMemo(() => {
+    const free: Plan = {
+      icon: LeafIcon,
+      name: 'Free',
+      description: 'For personal use',
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      features: {
+        ai: false,
+        'advanced-ai': false,
       },
-      {
-        icon: FlowerIcon,
-        name: 'Hobby',
-        description: 'For hobbyists',
-        monthlyPrice: 10,
-        yearlyPrice: 8,
-        features: {
-          ai: true,
-          'advanced-ai': false,
-        },
-        ctaLink: '/signup',
-        ctaText: userId ? 'Upgrade' : 'Get Started',
+      ctaLink: '/signup',
+      ctaText: 'Get Started',
+      variant: 'outline',
+    };
+
+    const hobby: Plan = {
+      icon: FlowerIcon,
+      name: 'Hobby',
+      description: 'For hobbyists',
+      monthlyPrice: 10,
+      yearlyPrice: 8,
+      features: {
+        ai: true,
+        'advanced-ai': false,
       },
-      {
-        icon: CloverIcon,
-        name: 'Pro',
-        description: 'For professional use',
-        monthlyPrice: 16,
-        yearlyPrice: 12,
-        features: {
-          ai: true,
-          'advanced-ai': true,
-        },
-        ctaLink: '/signup',
-        ctaText: userId ? 'Upgrade' : 'Get Started',
+      ctaLink: '/signup',
+      ctaText: 'Get Started',
+      variant: 'outline',
+    };
+
+    const pro: Plan = {
+      icon: CloverIcon,
+      name: 'Pro',
+      description: 'For professional use',
+      monthlyPrice: 16,
+      yearlyPrice: 12,
+      features: {
+        ai: true,
+        'advanced-ai': true,
       },
-      {
-        icon: Flower2Icon,
-        name: 'Enterprise',
-        description: 'For large scale use',
-        monthlyPrice: -1,
-        yearlyPrice: -1,
-        features: {
-          ai: true,
-          'advanced-ai': true,
-        },
-        ctaLink: '/signup',
-        ctaText: userId ? 'Upgrade' : 'Get Started',
+      ctaLink: '/signup',
+      ctaText: 'Get Started',
+      variant: 'outline',
+    };
+
+    const enterprise: Plan = {
+      icon: Flower2Icon,
+      name: 'Enterprise',
+      description: 'For large scale use',
+      monthlyPrice: -1,
+      yearlyPrice: -1,
+      features: {
+        ai: true,
+        'advanced-ai': true,
       },
-    ],
-    [userId]
-  );
+      ctaLink: '/signup',
+      ctaText: 'Get Started',
+      variant: 'outline',
+    };
+
+    if (currentPlan) {
+      for (const plan of [free, hobby, pro, enterprise]) {
+        plan.ctaLink = '/api/stripe/portal';
+      }
+    }
+
+    if (currentPlan === 'free') {
+      free.ctaText = 'Manage';
+
+      for (const plan of [hobby, pro, enterprise]) {
+        plan.ctaText = 'Upgrade';
+        plan.variant = 'default';
+      }
+    } else if (currentPlan === 'hobby') {
+      free.ctaText = 'Downgrade';
+      hobby.ctaText = 'Manage';
+
+      for (const plan of [pro, enterprise]) {
+        plan.ctaText = 'Upgrade';
+        plan.variant = 'default';
+      }
+    } else if (currentPlan === 'pro') {
+      free.ctaText = 'Downgrade';
+      hobby.ctaText = 'Downgrade';
+      pro.ctaText = 'Manage';
+
+      for (const plan of [enterprise]) {
+        plan.ctaText = 'Upgrade';
+        plan.variant = 'default';
+      }
+    } else if (currentPlan === 'enterprise') {
+      free.ctaText = 'Downgrade';
+      hobby.ctaText = 'Downgrade';
+      pro.ctaText = 'Downgrade';
+      enterprise.ctaText = 'Manage';
+    }
+
+    return [free, hobby, pro, enterprise];
+  }, [currentPlan]);
 
   return (
     <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -172,7 +228,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid w-full grid-cols-1 divide-x divide-dotted md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid w-full grid-cols-1 divide-x divide-dotted md:grid-cols-2 xl:grid-cols-4">
           {plans.map((plan) => (
             <div key={plan.name} className="p-12">
               <Card key={plan.name} className="border-none p-0 shadow-none">
@@ -217,7 +273,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
                   </ul>
                 </CardContent>
                 <CardFooter className="p-0">
-                  <Button className="w-full" asChild>
+                  <Button className="w-full" variant={plan.variant} asChild>
                     <Link href={plan.ctaLink}>{plan.ctaText}</Link>
                   </Button>
                 </CardFooter>
