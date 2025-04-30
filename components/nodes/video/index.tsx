@@ -16,13 +16,15 @@ export type VideoNodeProps = {
     updatedAt?: string;
     model?: string;
     instructions?: string;
+    width?: number;
+    height?: number;
   };
   id: string;
 };
 
-export const VideoNode = ({ data, id, type }: VideoNodeProps) => {
+export const VideoNode = (props: VideoNodeProps) => {
   const Component =
-    data.source === 'primitive' ? VideoPrimitive : VideoTransform;
+    props.data.source === 'primitive' ? VideoPrimitive : VideoTransform;
 
-  return <Component data={data} id={id} type={type} title="Video" />;
+  return <Component {...props} title="Video" />;
 };

@@ -20,9 +20,9 @@ export type AudioNodeProps = {
   id: string;
 };
 
-export const AudioNode = ({ data, id, type }: AudioNodeProps) => {
+export const AudioNode = (props: AudioNodeProps) => {
   const Component =
-    data.source === 'primitive' ? AudioPrimitive : AudioTransform;
+    props.data.source === 'primitive' ? AudioPrimitive : AudioTransform;
 
-  return <Component data={data} id={id} type={type} title="Audio" />;
+  return <Component {...props} title="Audio" />;
 };

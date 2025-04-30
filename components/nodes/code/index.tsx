@@ -20,8 +20,9 @@ export type CodeNodeProps = {
   id: string;
 };
 
-export const CodeNode = ({ data, id, type }: CodeNodeProps) => {
-  const Component = data.source === 'primitive' ? CodePrimitive : CodeTransform;
+export const CodeNode = (props: CodeNodeProps) => {
+  const Component =
+    props.data.source === 'primitive' ? CodePrimitive : CodeTransform;
 
-  return <Component data={data} id={id} type={type} title="Code" />;
+  return <Component {...props} title="Code" />;
 };

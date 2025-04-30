@@ -23,9 +23,9 @@ export type ImageNodeProps = {
   id: string;
 };
 
-export const ImageNode = ({ data, id, type }: ImageNodeProps) => {
+export const ImageNode = (props: ImageNodeProps) => {
   const Component =
-    data.source === 'primitive' ? ImagePrimitive : ImageTransform;
+    props.data.source === 'primitive' ? ImagePrimitive : ImageTransform;
 
-  return <Component data={data} id={id} type={type} title="Image" />;
+  return <Component {...props} title="Image" />;
 };
