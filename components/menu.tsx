@@ -9,13 +9,12 @@ import {
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import { Panel } from '@xyflow/react';
-import { MenuIcon } from 'lucide-react';
+import { ArrowUpRight, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { type MouseEventHandler, useEffect, useState } from 'react';
 import { Feedback } from './feedback';
 import { Profile } from './profile';
-import { Subscribe } from './subscribe';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
@@ -25,7 +24,6 @@ export const Menu = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const user = useUser();
 
@@ -42,16 +40,6 @@ export const Menu = () => {
     // shadcn/ui issue: dropdown animation causes profile modal to close immediately after opening
     setTimeout(() => {
       setProfileOpen(true);
-    }, 200);
-  };
-
-  const handleOpenSubscribe: MouseEventHandler<HTMLDivElement> = (event) => {
-    event.preventDefault();
-    setDropdownOpen(false);
-
-    // shadcn/ui issue: dropdown animation causes profile modal to close immediately after opening
-    setTimeout(() => {
-      setSubscribeOpen(true);
     }, 200);
   };
 
@@ -128,8 +116,14 @@ export const Menu = () => {
                   <Link href="/api/stripe/portal">Billing</Link>
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={handleOpenSubscribe} disabled>
-                  Subscribe
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/pricing"
+                    className="flex items-center justify-between"
+                  >
+                    <span>Upgrade</span>
+                    <ArrowUpRight size={16} className="text-muted-foreground" />
+                  </Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -142,7 +136,6 @@ export const Menu = () => {
         </div>
       </Panel>
       <Profile open={profileOpen} setOpen={setProfileOpen} />
-      <Subscribe open={subscribeOpen} setOpen={setSubscribeOpen} />
       <Feedback open={feedbackOpen} setOpen={setFeedbackOpen} />
     </>
   );

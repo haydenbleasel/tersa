@@ -31,6 +31,7 @@
     "@icons-pack/react-simple-icons": "^12.7.0",
     "@marsidev/react-turnstile": "^1.1.0",
     "@monaco-editor/react": "4.7.0-rc.0",
+    "@number-flow/react": "^0.5.9",
     "@radix-ui/react-accordion": "^1.2.7",
     "@radix-ui/react-alert-dialog": "^1.1.10",
     "@radix-ui/react-aspect-ratio": "^1.1.4",
