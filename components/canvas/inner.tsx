@@ -348,10 +348,10 @@ export const CanvasInner = ({
         onViewportChange={onViewportChange}
         {...canvasProps}
       >
-        <Controls />
         <Background bgColor="var(--secondary)" />
         {userId && (
           <>
+            <Controls />
             <Toolbar />
             <Projects projects={projects} currentProject={data.id} />
             <Menu />

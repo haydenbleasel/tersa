@@ -50,7 +50,7 @@ export const Providers = () => (
     {/* Gradient overlays */}
     <div className="pointer-events-none absolute inset-0">
       <div className="absolute top-0 right-0 left-0 h-8 bg-gradient-to-b from-background to-transparent" />
-      <div className="absolute right-0 bottom-0 left-0 h-6 bg-gradient-to-t from-background to-transparent" />
+      {/* <div className="absolute right-0 bottom-0 left-0 h-6 bg-gradient-to-t from-background to-transparent" /> */}
       <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent" />
       <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent" />
     </div>
@@ -78,21 +78,22 @@ export const Providers = () => (
       </div>
 
       {/* Main content */}
-      <div className="grid items-center justify-center px-5 py-8">
-        <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] md:text-5xl">
-          Powered by the world's leading AI providers
-        </h2>
+      <div className="grid items-center justify-center py-8">
+        <div className="px-5">
+          <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] md:text-5xl">
+            Powered by the world's leading AI providers
+          </h2>
 
-        <p className="mx-auto max-w-2xl text-center text-lg text-muted-foreground tracking-[-0.01rem]">
-          Tersa uses a drag and drop interface to build AI workflows. You can
-          connect nodes to build your own workflows powered by various
-          industry-leading AI models.
-        </p>
+          <p className="mx-auto max-w-lg text-center text-lg text-muted-foreground tracking-[-0.01rem]">
+            Connect your workflows to leading models from the world's top AI
+            providers, including OpenAI, Anthropic, and more.
+          </p>
+        </div>
 
-        <Marquee className="mt-16">
+        <Marquee className="mt-12">
           <MarqueeFade side="left" />
           <MarqueeFade side="right" />
-          <MarqueeContent>
+          <MarqueeContent pauseOnHover={false}>
             {icons.map((Icon, index) => (
               <MarqueeItem key={index} className="h-32 w-32 p-8">
                 <Icon className="size-full" />
