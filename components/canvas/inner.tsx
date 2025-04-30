@@ -16,7 +16,6 @@ import {
   type ReactFlowInstance,
   type ReactFlowProps,
   type Viewport,
-  type XYPosition,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
@@ -33,6 +32,7 @@ import { ConnectionLine } from '../connection-line';
 import { AnimatedEdge } from '../edges/animated';
 import { TemporaryEdge } from '../edges/temporary';
 import { AudioNode } from '../nodes/audio';
+import { CodeNode } from '../nodes/code';
 import { CommentNode } from '../nodes/comment';
 import { DropNode } from '../nodes/drop';
 import { ImageNode } from '../nodes/image';
@@ -46,6 +46,7 @@ const nodeTypes = {
   video: VideoNode,
   audio: AudioNode,
   comment: CommentNode,
+  code: CodeNode,
 };
 
 const edgeTypes = {
@@ -183,16 +184,18 @@ export const CanvasInner = ({
   }, SAVE_TIMEOUT);
 
   const addNode = useCallback(
-    (type: string, position?: XYPosition, data?: Record<string, unknown>) => {
+    (type: string, options?: Record<string, unknown>) => {
+      const { data: nodeData, ...rest } = options ?? {};
       const newNode: Node = {
         id: nanoid(),
         type,
         data: {
           source: 'primitive',
-          ...data,
+          ...(nodeData ? nodeData : {}),
         },
-        position: position ?? { x: 0, y: 0 },
+        position: { x: 0, y: 0 },
         origin: [0, 0.5],
+        ...rest,
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -219,10 +222,9 @@ export const CanvasInner = ({
         const { clientX, clientY } =
           'changedTouches' in event ? event.changedTouches[0] : event;
 
-        const newNodeId = addNode(
-          'drop',
-          screenToFlowPosition({ x: clientX, y: clientY })
-        );
+        const newNodeId = addNode('drop', {
+          position: screenToFlowPosition({ x: clientX, y: clientY }),
+        });
 
         setEdges((eds) =>
           eds.concat({

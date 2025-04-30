@@ -1,6 +1,7 @@
 import { type Node, Panel, useReactFlow } from '@xyflow/react';
 import {
   AudioWaveformIcon,
+  CodeIcon,
   ImageIcon,
   MessageSquareIcon,
   TextIcon,
@@ -13,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 export const Toolbar = () => {
   const { addNodes, getViewport } = useReactFlow();
 
-  const addNode = (type: string) => {
+  const addNode = (type: string, options?: Record<string, unknown>) => {
     // Get the current viewport
     const viewport = getViewport();
 
@@ -24,15 +25,18 @@ export const Toolbar = () => {
       -viewport.y / viewport.zoom + window.innerHeight / 2 / viewport.zoom;
 
     const position = { x: centerX, y: centerY };
+    const { data: nodeData, ...rest } = options ?? {};
 
     const newNode: Node = {
       id: nanoid(),
       type,
       data: {
+        ...(nodeData ? nodeData : {}),
         source: 'primitive',
       },
       position,
       origin: [0, 0.5],
+      ...rest,
     };
 
     addNodes([newNode]);
@@ -62,6 +66,19 @@ export const Toolbar = () => {
       label: 'Video',
       icon: VideoIcon,
       onClick: () => addNode('video'),
+    },
+    {
+      id: 'code',
+      label: 'Code',
+      icon: CodeIcon,
+      onClick: () =>
+        addNode('code', {
+          data: {
+            content: { language: 'javascript' },
+          },
+          width: 400,
+          height: 200,
+        }),
     },
     {
       id: 'comment',

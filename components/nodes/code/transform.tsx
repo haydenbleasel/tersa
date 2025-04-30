@@ -4,99 +4,113 @@ import { Textarea } from '@/components/ui/textarea';
 import { handleError } from '@/lib/error/handle';
 import { chatModels } from '@/lib/models';
 import {
-  getDescriptionsFromImageNodes,
-  getImagesFromImageNodes,
+  getCodeFromCodeNodes,
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
-import { useChat } from '@ai-sdk/react';
+import { experimental_useObject as useObject } from '@ai-sdk/react';
+import Editor from '@monaco-editor/react';
+import { useMeasure } from '@uidotdev/usehooks';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import {
-  ClockIcon,
-  Loader2Icon,
-  PlayIcon,
-  RotateCcwIcon,
-  SquareIcon,
-} from 'lucide-react';
-import { nanoid } from 'nanoid';
+import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
-import ReactMarkdown from 'react-markdown';
-import type { TextNodeProps } from '.';
+import { z } from 'zod';
+import type { CodeNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
+import { LanguageSelector } from './language-selector';
 
-type TextTransformProps = TextNodeProps & {
+type CodeTransformProps = CodeNodeProps & {
   title: string;
 };
 
-export const TextTransform = ({
+export const CodeTransform = ({
   data,
   id,
   type,
   title,
-}: TextTransformProps) => {
+}: CodeTransformProps) => {
+  const [ref, { width, height }] = useMeasure();
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
-  const { append, messages, setMessages, status, stop } = useChat({
-    body: {
-      modelId: data.model ?? 'gpt-4',
+  const { isLoading, object, stop, submit } = useObject({
+    api: '/api/code',
+    schema: z.object({
+      text: z.string(),
+      language: z.string(),
+    }),
+    headers: {
+      'tersa-language': data.generated?.language ?? 'javascript',
+      'tersa-model': data.model ?? 'gpt-4',
     },
-    onError: (error) => handleError('Error generating text', error),
-    onFinish: () => {
+    onError: (error) => handleError('Error generating code', error),
+    onFinish: (generated) => {
       updateNodeData(id, {
-        generated: messages
-          .filter((message) => message.role !== 'user')
-          .map((message) => message.content),
+        generated: generated.object,
         updatedAt: new Date().toISOString(),
       });
     },
   });
 
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
     const audioPrompts = getTranscriptionFromAudioNodes(incomers);
-    const images = getImagesFromImageNodes(incomers);
-    const imageDescriptions = getDescriptionsFromImageNodes(incomers);
+    const codePrompts = getCodeFromCodeNodes(incomers);
 
-    if (!textPrompts.length && !audioPrompts.length) {
-      handleError('Error generating text', 'No prompts found');
+    if (!textPrompts.length && !audioPrompts.length && !codePrompts.length) {
+      handleError('Error generating code', 'No prompts found');
       return;
     }
 
-    setMessages([]);
-    append({
-      role: 'user',
-      content: [
+    submit(
+      [
         '--- Instructions ---',
         data.instructions ?? 'None.',
         '--- Text Prompts ---',
         ...textPrompts,
         '--- Audio Prompts ---',
         ...audioPrompts,
-        '--- Image Descriptions ---',
-        ...imageDescriptions,
-      ].join('\n'),
-      experimental_attachments: images.map((image) => ({
-        url: image.url,
-      })),
-    });
+        '--- Code Prompts ---',
+        ...codePrompts.map(
+          (code, index) =>
+            `--- Prompt ${index + 1} ---
+            Language: ${code.language}
+            Code: ${code.text}
+            `
+        ),
+      ].join('\n')
+    );
   };
 
   const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
-  const nonUserMessages = messages.length
-    ? messages.filter((message) => message.role !== 'user')
-    : data.generated?.map((message) => ({
-        id: nanoid(),
-        role: 'system',
-        content: message,
-      }));
+  const handleCodeChange = (value: string | undefined) => {
+    updateNodeData(id, {
+      generated: { text: value, language: data.generated?.language },
+    });
+  };
+
+  const handleLanguageChange = (value: string) => {
+    updateNodeData(id, {
+      generated: { text: data.generated?.text, language: value },
+    });
+  };
 
   const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
-    const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
+    const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
+      {
+        children: (
+          <LanguageSelector
+            value={data.generated?.language ?? 'javascript'}
+            onChange={handleLanguageChange}
+            className="w-[200px] rounded-full"
+          />
+        ),
+      },
+    ];
 
     toolbar.push({
       children: (
@@ -110,7 +124,7 @@ export const TextTransform = ({
       ),
     });
 
-    if (status === 'submitted') {
+    if (isLoading) {
       toolbar.push({
         tooltip: 'Stop',
         children: (
@@ -124,7 +138,7 @@ export const TextTransform = ({
           </Button>
         ),
       });
-    } else if (nonUserMessages?.length || data.generated?.length) {
+    } else if (object?.text || data.generated?.text) {
       toolbar.push({
         tooltip: 'Regenerate',
         children: (
@@ -140,7 +154,7 @@ export const TextTransform = ({
       });
     } else {
       toolbar.push({
-        tooltip: 'Generate',
+        tooltip: data.generated?.text ? 'Regenerate' : 'Generate',
         children: (
           <Button
             size="icon"
@@ -148,7 +162,11 @@ export const TextTransform = ({
             onClick={handleGenerate}
             disabled={!projectId}
           >
-            <PlayIcon size={12} />
+            {data.generated?.text ? (
+              <RotateCcwIcon size={12} />
+            ) : (
+              <PlayIcon size={12} />
+            )}
           </Button>
         ),
       });
@@ -179,22 +197,22 @@ export const TextTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div className="flex-1 p-4">
-        {status === 'streaming' && (
-          <div className="flex items-center justify-center">
-            <Loader2Icon size={16} className="animate-spin" />
-          </div>
-        )}
-        {!nonUserMessages?.length && status !== 'streaming' && (
-          <div className="flex items-center justify-center">
-            <p className="text-muted-foreground text-sm">
-              Press "Generate" to generate text
-            </p>
-          </div>
-        )}
-        {nonUserMessages?.map((message, index) => (
-          <ReactMarkdown key={index}>{message.content}</ReactMarkdown>
-        ))}
+      <div ref={ref} className="size-full overflow-hidden rounded-t-lg">
+        <Editor
+          height={height ?? '100%'}
+          width={width ?? '100%'}
+          className="size-full"
+          language={data.generated?.language}
+          value={object?.text ?? data.generated?.text}
+          onChange={handleCodeChange}
+          theme="vs-dark"
+          options={{
+            readOnly: true,
+            minimap: {
+              enabled: false,
+            },
+          }}
+        />
       </div>
       <Textarea
         value={data.instructions ?? ''}

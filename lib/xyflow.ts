@@ -1,4 +1,5 @@
 import type { AudioNodeProps } from '@/components/nodes/audio';
+import type { CodeNodeProps } from '@/components/nodes/code';
 import type { ImageNodeProps } from '@/components/nodes/image';
 import type { TextNodeProps } from '@/components/nodes/text';
 import type { Node } from '@xyflow/react';
@@ -48,4 +49,13 @@ export const isValidSourceTarget = (source: Node, target: Node) => {
   }
 
   return true;
+};
+
+export const getCodeFromCodeNodes = (nodes: Node[]) => {
+  const codes = nodes
+    .filter((node) => node.type === 'code')
+    .map((node) => (node.data as CodeNodeProps['data']).content)
+    .filter(Boolean) as { text: string; language: string }[];
+
+  return codes;
 };

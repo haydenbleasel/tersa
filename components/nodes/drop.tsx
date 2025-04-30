@@ -9,6 +9,7 @@ import {
 import { type XYPosition, useReactFlow } from '@xyflow/react';
 import {
   AudioWaveformIcon,
+  CodeIcon,
   ImageIcon,
   TextIcon,
   VideoIcon,
@@ -45,13 +46,23 @@ const buttons = [
     label: 'Video',
     icon: VideoIcon,
   },
+  {
+    id: 'code',
+    label: 'Code',
+    icon: CodeIcon,
+    options: {
+      data: { content: { language: 'javascript' } },
+      width: 400,
+      height: 200,
+    },
+  },
 ];
 
 export const DropNode = ({ data, id }: DropNodeProps) => {
   const { addNodes, deleteElements, getNode, addEdges, getNodeConnections } =
     useReactFlow();
 
-  const handleSelect = (type: string) => {
+  const handleSelect = (type: string, options?: Record<string, unknown>) => {
     // Get the position of the current node
     const currentNode = getNode(id);
     const position = currentNode?.position || { x: 0, y: 0 };
@@ -65,6 +76,7 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
     });
 
     const newNodeId = nanoid();
+    const { data: nodeData, ...rest } = options ?? {};
 
     // Add the new node of the selected type
     addNodes({
@@ -73,8 +85,10 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
       position,
       data: {
         source: 'transform',
+        ...(nodeData ? nodeData : {}),
       },
       origin: [0, 0.5],
+      ...rest,
     });
 
     for (const sourceNode of sourceNodes) {
@@ -116,7 +130,7 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
             {buttons.map((button) => (
               <CommandItem
                 key={button.id}
-                onSelect={() => handleSelect(button.id)}
+                onSelect={() => handleSelect(button.id, button.options)}
               >
                 <button.icon size={16} />
                 {button.label}
