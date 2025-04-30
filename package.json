@@ -111,6 +111,7 @@
     "react-hook-form": "^7.56.0",
     "react-markdown": "^10.1.0",
     "react-resizable-panels": "^2.1.8",
+    "react-tweet": "^3.2.2",
     "recharts": "^2.15.3",
     "resend": "^4.4.1",
     "sonner": "^2.0.3",
