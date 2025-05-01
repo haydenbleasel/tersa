@@ -74,7 +74,11 @@ export const VideoTransform = ({
     if (data.generated?.url) {
       const link = document.createElement('a');
       link.href = data.generated.url;
-      link.download = `video-${id}.mp4`;
+
+      const filename = `tersa-${id}`;
+      const extension = data.generated.type.split('/').at(-1) ?? 'mp4';
+
+      link.download = `${filename}.${extension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -116,7 +120,12 @@ export const VideoTransform = ({
     toolbar.push({
       tooltip: 'Download Image',
       children: (
-        <Button size="icon" className="rounded-full" onClick={handleDownload}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={handleDownload}
+        >
           <DownloadIcon size={12} />
         </Button>
       ),

@@ -92,7 +92,11 @@ export const ImageTransform = ({
     if (data.generated?.url) {
       const link = document.createElement('a');
       link.href = data.generated.url;
-      link.download = `image-${id}.${data.generated.type.split('/')[1] || 'png'}`;
+
+      const filename = `tersa-${id}`;
+      const extension = data.generated.type.split('/').at(-1) ?? 'png';
+
+      link.download = `${filename}.${extension}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -138,7 +142,12 @@ export const ImageTransform = ({
     toolbar.push({
       tooltip: 'Download Image',
       children: (
-        <Button size="icon" className="rounded-full" onClick={handleDownload}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={handleDownload}
+        >
           <DownloadIcon size={12} />
         </Button>
       ),
