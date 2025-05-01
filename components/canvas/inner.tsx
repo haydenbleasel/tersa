@@ -297,6 +297,7 @@ export const CanvasInner = ({
         panOnScroll
         viewport={viewport}
         onViewportChange={onViewportChange}
+        zoomOnDoubleClick={false}
         {...canvasProps}
       >
         <Background />
