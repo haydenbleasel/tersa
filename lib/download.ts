@@ -12,14 +12,22 @@ export const download = (data: Downloadable | undefined, id: string) => {
   }
 
   const link = document.createElement('a');
-  const filename = `tersa-${id}`;
   const extension = data.type.split('/').at(-1) ?? 'png';
+  const filename = `tersa-${id}.${extension}`;
 
-  link.href = data.url;
-  link.download = `${filename}.${extension}`;
-  document.body.appendChild(link);
-
-  link.click();
-
-  document.body.removeChild(link);
+  // Create a blob URL from the data URL
+  fetch(data.url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const blobUrl = URL.createObjectURL(blob);
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    })
+    .catch((error) => {
+      handleError('Error downloading file', error.message);
+    });
 };
