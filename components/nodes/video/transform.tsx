@@ -6,7 +6,13 @@ import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import { ClockIcon, Loader2Icon, PlayIcon, RotateCcwIcon } from 'lucide-react';
+import {
+  ClockIcon,
+  DownloadIcon,
+  Loader2Icon,
+  PlayIcon,
+  RotateCcwIcon,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import type { VideoNodeProps } from '.';
@@ -64,6 +70,17 @@ export const VideoTransform = ({
     }
   };
 
+  const handleDownload = () => {
+    if (data.generated?.url) {
+      const link = document.createElement('a');
+      link.href = data.generated.url;
+      link.download = `video-${id}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
     {
       children: (
@@ -94,6 +111,17 @@ export const VideoTransform = ({
       ),
     },
   ];
+
+  if (data.generated?.url) {
+    toolbar.push({
+      tooltip: 'Download Image',
+      children: (
+        <Button size="icon" className="rounded-full" onClick={handleDownload}>
+          <DownloadIcon size={12} />
+        </Button>
+      ),
+    });
+  }
 
   if (data.updatedAt) {
     toolbar.push({
