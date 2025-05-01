@@ -38,7 +38,7 @@ export const ThemeSwitcher = ({
   className,
 }: ThemeSwitcherProps) => {
   const [theme, setTheme] = useControllableState({
-    defaultProp: defaultValue,
+    defaultProp: defaultValue ?? 'system',
     prop: value,
     onChange,
   });
