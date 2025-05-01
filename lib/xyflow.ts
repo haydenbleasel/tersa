@@ -62,12 +62,17 @@ export const isValidSourceTarget = (source: Node, target: Node) => {
 };
 
 export const getCodeFromCodeNodes = (nodes: Node[]) => {
-  const codes = nodes
+  const sourceCodes = nodes
     .filter((node) => node.type === 'code')
     .map((node) => (node.data as CodeNodeProps['data']).content)
     .filter(Boolean) as { text: string; language: string }[];
 
-  return codes;
+  const generatedCodes = nodes
+    .filter((node) => node.type === 'code' && node.data.generated)
+    .map((node) => (node.data as CodeNodeProps['data']).generated)
+    .filter(Boolean) as { text: string; language: string }[];
+
+  return [...sourceCodes, ...generatedCodes];
 };
 
 export const getFilesFromFileNodes = (nodes: Node[]) => {
