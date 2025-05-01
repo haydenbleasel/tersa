@@ -9,7 +9,7 @@ export const RealtimeAvatarStack = ({ roomName }: { roomName: string }) => {
   const avatars = useMemo(() => {
     return Object.values(usersMap).map((user) => ({
       name: user.name,
-      image: user.image,
+      image: user.avatar,
     }))
   }, [usersMap])
 
