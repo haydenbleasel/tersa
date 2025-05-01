@@ -119,11 +119,11 @@ export const CanvasInner = ({
             content: ProjectData['content'];
           };
 
-          if (content) {
-            setNodes(content.nodes);
-            setEdges(content.edges);
-            setViewport(content.viewport);
-          }
+          // if (content) {
+          //   setNodes(content.nodes);
+          //   setEdges(content.edges);
+          //   setViewport(content.viewport);
+          // }
         }
       )
       .subscribe();
