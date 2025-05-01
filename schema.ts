@@ -13,4 +13,5 @@ export const projects = pgTable('project', {
   content: json('content'),
   userId: varchar('user_id').notNull(),
   image: varchar('image'),
+  members: text('members').array(),
 });

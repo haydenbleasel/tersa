@@ -2,7 +2,7 @@ import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { eq } from 'drizzle-orm';
+import { arrayContains, eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
@@ -31,7 +31,12 @@ const Project = async ({ params }: ProjectProps) => {
   const allProjects = await database
     .select()
     .from(projects)
-    .where(eq(projects.userId, data.user.id));
+    .where(
+      or(
+        eq(projects.userId, data.user.id),
+        arrayContains(projects.members, [data.user.id])
+      )
+    );
 
   if (!allProjects.length) {
     notFound();

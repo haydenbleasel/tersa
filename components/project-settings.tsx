@@ -20,6 +20,7 @@ import { ModelSelector } from './nodes/model-selector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
 
 type ProjectSettingsProps = {
   data: typeof projects.$inferSelect;
@@ -33,6 +34,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
     data.transcriptionModel
   );
   const [visionModel, setVisionModel] = useState(data.visionModel);
+  const [members, setMembers] = useState(data.members ?? []);
   const router = useRouter();
 
   const handleUpdateProject: FormEventHandler<HTMLFormElement> = async (
@@ -51,6 +53,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
         name,
         transcriptionModel,
         visionModel,
+        members,
       });
 
       if ('error' in response) {
@@ -127,6 +130,17 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               onChange={setVisionModel}
               width={462}
             />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="members">Members</Label>
+            <Textarea
+              id="members"
+              value={members.join('\n')}
+              onChange={({ target }) => setMembers(target.value.split('\n'))}
+            />
+            <p className="text-muted-foreground text-sm">
+              Add a list of IDs separated by new lines.
+            </p>
           </div>
           <Button type="submit" disabled={isUpdating || !name.trim()}>
             Update
