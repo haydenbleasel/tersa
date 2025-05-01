@@ -92,6 +92,7 @@ export const VideoDemo = () => (
         nodes,
         edges,
       },
+      members: [],
     }}
     canvasProps={{
       panOnScroll: false,

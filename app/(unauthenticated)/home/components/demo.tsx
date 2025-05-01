@@ -21,6 +21,7 @@ export const Demo = () => (
               edges: sampleEdges,
               viewport: sampleViewport,
             },
+            members: [],
           }}
           canvasProps={{
             panOnScroll: false,

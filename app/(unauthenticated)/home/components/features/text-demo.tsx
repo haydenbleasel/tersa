@@ -92,6 +92,7 @@ export const TextDemo = () => (
         nodes,
         edges,
       },
+      members: [],
     }}
     canvasProps={{
       panOnScroll: false,

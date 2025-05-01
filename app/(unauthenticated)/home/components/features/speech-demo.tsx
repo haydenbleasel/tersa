@@ -80,6 +80,7 @@ export const SpeechDemo = () => (
         nodes,
         edges,
       },
+      members: [],
     }}
     canvasProps={{
       panOnScroll: false,

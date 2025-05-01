@@ -69,6 +69,7 @@ export const ImageDemo = () => (
         nodes,
         edges,
       },
+      members: [],
     }}
     canvasProps={{
       panOnScroll: false,
