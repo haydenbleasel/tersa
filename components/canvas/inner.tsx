@@ -310,10 +310,7 @@ export const CanvasInner = ({
               lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
               saving={isSaving}
             />
-            <RealtimeCursors
-              roomName={data.id}
-              username={user.user_metadata.name ?? user.email ?? user.id}
-            />
+            <RealtimeCursors roomName={`${data.id}-cursors`} />
           </>
         )}
       </ReactFlow>
