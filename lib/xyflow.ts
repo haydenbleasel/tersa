@@ -32,12 +32,17 @@ export const getDescriptionsFromImageNodes = (nodes: Node[]) => {
 };
 
 export const getImagesFromImageNodes = (nodes: Node[]) => {
-  const images = nodes
+  const sourceImages = nodes
     .filter((node) => node.type === 'image')
     .map((node) => (node.data as ImageNodeProps['data']).content)
     .filter(Boolean) as { url: string; type: string }[];
 
-  return images;
+  const generatedImages = nodes
+    .filter((node) => node.type === 'image' && node.data.generated)
+    .map((node) => (node.data as ImageNodeProps['data']).generated)
+    .filter(Boolean) as { url: string; type: string }[];
+
+  return [...sourceImages, ...generatedImages];
 };
 
 export const isValidSourceTarget = (source: Node, target: Node) => {
