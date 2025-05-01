@@ -1,6 +1,7 @@
 'use client';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
+import { createClient } from '@/lib/supabase/client';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import type { projects } from '@/schema';
 import {
@@ -22,7 +23,7 @@ import {
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
 import dynamic from 'next/dynamic';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ConnectionLine } from '../connection-line';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
@@ -97,6 +98,40 @@ export const CanvasInner = ({
   const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const channel = supabase
+      .channel(`${data.id}-changes`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'project',
+          filter: `id=eq.${data.id}`,
+        },
+        (payload) => {
+          console.log('🔄 Syncing project', payload);
+
+          const { content } = payload.new as {
+            content: ProjectData['content'];
+          };
+
+          if (content) {
+            setNodes(content.nodes);
+            setEdges(content.edges);
+            setViewport(content.viewport);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [data.id]);
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
