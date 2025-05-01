@@ -2,6 +2,7 @@ import { generateVideoAction } from '@/app/actions/generate/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
@@ -70,21 +71,6 @@ export const VideoTransform = ({
     }
   };
 
-  const handleDownload = () => {
-    if (data.generated?.url) {
-      const link = document.createElement('a');
-      link.href = data.generated.url;
-
-      const filename = `tersa-${id}`;
-      const extension = data.generated.type.split('/').at(-1) ?? 'mp4';
-
-      link.download = `${filename}.${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
   const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
     {
       children: (
@@ -124,7 +110,7 @@ export const VideoTransform = ({
           variant="ghost"
           size="icon"
           className="rounded-full"
-          onClick={handleDownload}
+          onClick={() => download(data.generated, id)}
         >
           <DownloadIcon size={12} />
         </Button>
