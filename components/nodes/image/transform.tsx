@@ -126,13 +126,13 @@ export const ImageTransform = ({
 
   if (data.generated) {
     toolbar.push({
-      tooltip: 'Download Image',
+      tooltip: 'Download',
       children: (
         <Button
           variant="ghost"
           size="icon"
           className="rounded-full"
-          onClick={() => download(data.generated, id)}
+          onClick={() => download(data.generated, id, 'png')}
         >
           <DownloadIcon size={12} />
         </Button>

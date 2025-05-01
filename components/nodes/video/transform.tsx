@@ -104,13 +104,13 @@ export const VideoTransform = ({
 
   if (data.generated?.url) {
     toolbar.push({
-      tooltip: 'Download Image',
+      tooltip: 'Download',
       children: (
         <Button
           variant="ghost"
           size="icon"
           className="rounded-full"
-          onClick={() => download(data.generated, id)}
+          onClick={() => download(data.generated, id, 'mp4')}
         >
           <DownloadIcon size={12} />
         </Button>

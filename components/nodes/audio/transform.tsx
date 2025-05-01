@@ -1,11 +1,18 @@
 import { generateSpeechAction } from '@/app/actions/generate/speech/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
 import { getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import { ClockIcon, Loader2Icon, PlayIcon, RotateCcwIcon } from 'lucide-react';
+import {
+  ClockIcon,
+  DownloadIcon,
+  Loader2Icon,
+  PlayIcon,
+  RotateCcwIcon,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ComponentProps, useState } from 'react';
 import type { AudioNodeProps } from '.';
@@ -93,6 +100,22 @@ export const AudioTransform = ({
       ),
     },
   ];
+
+  if (data.generated) {
+    toolbar.push({
+      tooltip: 'Download',
+      children: (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full"
+          onClick={() => download(data.generated, id, 'mp3')}
+        >
+          <DownloadIcon size={12} />
+        </Button>
+      ),
+    });
+  }
 
   if (data.updatedAt) {
     toolbar.push({

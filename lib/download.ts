@@ -5,14 +5,18 @@ type Downloadable = {
   type: string;
 };
 
-export const download = (data: Downloadable | undefined, id: string) => {
+export const download = (
+  data: Downloadable | undefined,
+  id: string,
+  defaultExtension: string
+) => {
   if (!data) {
     handleError('Error downloading file', 'No data to download.');
     return;
   }
 
   const link = document.createElement('a');
-  const extension = data.type.split('/').at(-1) ?? 'png';
+  const extension = data.type.split('/').at(-1) ?? defaultExtension;
   const filename = `tersa-${id}.${extension}`;
 
   // Create a blob URL from the data URL
