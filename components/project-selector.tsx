@@ -85,7 +85,7 @@ export const ProjectSelector = ({
         <Button
           variant="outline"
           aria-expanded={open}
-          className="w-[200px] justify-between rounded-full border-none shadow-none"
+          className="w-[200px] justify-between rounded-full border-none bg-transparent shadow-none"
         >
           {value
             ? projects.find((project) => project.id === value)?.name
