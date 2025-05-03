@@ -1,14 +1,5 @@
 import { createProjectAction } from '@/app/actions/project/create';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -17,14 +8,20 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxSeparator,
+  ComboboxTrigger,
+} from '@/components/ui/kibo-ui/combobox';
 import { handleError } from '@/lib/error/handle';
 import { cn } from '@/lib/utils';
 import type { projects } from '@/schema';
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
+import { CheckIcon, PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type FormEventHandler, useState } from 'react';
 import { Button } from './ui/button';
@@ -74,88 +71,80 @@ export const ProjectSelector = ({
   };
 
   const handleSelect = (projectId: string) => {
-    setValue(projectId);
-    setOpen(false);
-    router.push(`/projects/${projectId}`);
+    if (projectId !== 'new') {
+      setValue(projectId);
+      setOpen(false);
+      router.push(`/projects/${projectId}`);
+    }
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          aria-expanded={open}
-          className="w-[200px] justify-between rounded-full border-none bg-transparent shadow-none"
-        >
-          {value
-            ? projects.find((project) => project.id === value)?.name
-            : 'Select project...'}
-          <ChevronsUpDownIcon className="opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0" sideOffset={8}>
-        <Command>
-          <CommandInput placeholder="Search project..." className="h-9" />
-          <CommandList>
-            <CommandEmpty>No project found.</CommandEmpty>
-            <CommandGroup>
-              {projects.map((project) => (
-                <CommandItem
-                  key={project.id}
-                  value={project.id}
-                  onSelect={() => handleSelect(project.id)}
-                >
-                  {project.name}
-                  <CheckIcon
-                    className={cn(
-                      'ml-auto',
-                      value === project.id ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            <CommandSeparator />
-            <CommandGroup>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div>
-                    <CommandItem>
-                      <PlusIcon size={16} />
-                      Create new project
-                    </CommandItem>
-                  </div>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create new project</DialogTitle>
-                    <DialogDescription>
-                      What would you like to call your new project?
-                    </DialogDescription>
-                    <form
-                      onSubmit={handleCreateProject}
-                      className="mt-2 flex items-center gap-2"
-                      aria-disabled={isCreating}
-                    >
-                      <Input
-                        placeholder="My new project"
-                        value={name}
-                        onChange={({ target }) => setName(target.value)}
-                      />
-                      <Button
-                        type="submit"
-                        disabled={isCreating || !name.trim()}
-                      >
-                        Create
-                      </Button>
-                    </form>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Combobox
+      open={open}
+      onOpenChange={setOpen}
+      data={projects.map((project) => ({
+        label: project.name,
+        value: project.id,
+      }))}
+      type="project"
+      value={value}
+      onValueChange={handleSelect}
+    >
+      <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
+      <ComboboxContent className="p-0">
+        <ComboboxInput />
+        <ComboboxList>
+          <ComboboxEmpty />
+          <ComboboxGroup>
+            {projects.map((project) => (
+              <ComboboxItem key={project.id} value={project.id}>
+                {project.name}
+                <CheckIcon
+                  className={cn(
+                    'ml-auto',
+                    value === project.id ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+              </ComboboxItem>
+            ))}
+          </ComboboxGroup>
+          <ComboboxSeparator />
+          <ComboboxGroup>
+            <Dialog>
+              <DialogTrigger asChild>
+                <div>
+                  <ComboboxItem value="new">
+                    <PlusIcon size={16} />
+                    Create new project
+                  </ComboboxItem>
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create new project</DialogTitle>
+                  <DialogDescription>
+                    What would you like to call your new project?
+                  </DialogDescription>
+                  <form
+                    onSubmit={handleCreateProject}
+                    className="mt-2 flex items-center gap-2"
+                    aria-disabled={isCreating}
+                  >
+                    <Input
+                      placeholder="My new project"
+                      value={name}
+                      onChange={({ target }) => setName(target.value)}
+                    />
+                    <Button type="submit" disabled={isCreating || !name.trim()}>
+                      Create
+                    </Button>
+                  </form>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </ComboboxGroup>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 };
