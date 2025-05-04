@@ -3,6 +3,7 @@ import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import { isValidSourceTarget } from '@/lib/xyflow';
+import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import type { projects } from '@/schema';
 import {
   Background,
@@ -279,7 +280,7 @@ export const CanvasInner = ({
   );
 
   return (
-    <>
+    <NodeDropzoneProvider addNode={addNode}>
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -315,6 +316,6 @@ export const CanvasInner = ({
           </>
         )}
       </ReactFlow>
-    </>
+    </NodeDropzoneProvider>
   );
 };
