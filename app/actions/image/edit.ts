@@ -1,21 +1,32 @@
 'use server';
 
+import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
+import { projects } from '@/schema';
+import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import OpenAI, { toFile } from 'openai';
 
-export const editImageAction = async (
+type EditImageActionProps = {
   images: {
     url: string;
     type: string;
-  }[],
-  instructions?: string
-): Promise<
+  }[];
+  instructions?: string;
+  nodeId: string;
+  projectId: string;
+};
+
+export const editImageAction = async ({
+  images,
+  instructions,
+  nodeId,
+  projectId,
+}: EditImageActionProps): Promise<
   | {
-      url: string;
-      type: string;
+      nodeData: object;
     }
   | {
       error: string;
@@ -24,7 +35,6 @@ export const editImageAction = async (
   try {
     const client = await createClient();
     const user = await getSubscribedUser();
-
     const openai = new OpenAI();
 
     const promptImages = await Promise.all(
@@ -73,9 +83,58 @@ export const editImageAction = async (
       .from('files')
       .getPublicUrl(blob.data.path);
 
+    const allProjects = await database
+      .select()
+      .from(projects)
+      .where(eq(projects.id, projectId));
+    const project = allProjects.at(0);
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    const content = project.content as {
+      nodes: {
+        id: string;
+        type: string;
+        data: object;
+      }[];
+    };
+
+    const existingNode = content.nodes.find((n) => n.id === nodeId);
+
+    if (!existingNode) {
+      throw new Error('Node not found');
+    }
+
+    const newData = {
+      ...(existingNode.data ?? {}),
+      updatedAt: new Date().toISOString(),
+      generated: {
+        url: downloadUrl.publicUrl,
+        type: contentType,
+      },
+      description: instructions ?? defaultPrompt,
+    };
+
+    const updatedNodes = content.nodes.map((existingNode) => {
+      if (existingNode.id === nodeId) {
+        return {
+          ...existingNode,
+          data: newData,
+        };
+      }
+
+      return existingNode;
+    });
+
+    await database
+      .update(projects)
+      .set({ content: { nodes: updatedNodes } })
+      .where(eq(projects.id, projectId));
+
     return {
-      url: downloadUrl.publicUrl,
-      type: contentType,
+      nodeData: newData,
     };
   } catch (error) {
     const message = parseError(error);

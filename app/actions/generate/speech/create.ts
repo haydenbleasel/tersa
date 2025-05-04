@@ -1,18 +1,28 @@
 'use server';
 
+import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
+import { projects } from '@/schema';
 import { openai } from '@ai-sdk/openai';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
+import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
-export const generateSpeechAction = async (
-  text: string
-): Promise<
+type GenerateSpeechActionProps = {
+  text: string;
+  nodeId: string;
+  projectId: string;
+};
+
+export const generateSpeechAction = async ({
+  text,
+  nodeId,
+  projectId,
+}: GenerateSpeechActionProps): Promise<
   | {
-      url: string;
-      type: string;
+      nodeData: object;
     }
   | {
       error: string;
@@ -42,7 +52,58 @@ export const generateSpeechAction = async (
       .from('files')
       .getPublicUrl(blob.data.path);
 
-    return { url: downloadUrl.publicUrl, type: 'audio/mpeg' };
+    const allProjects = await database
+      .select()
+      .from(projects)
+      .where(eq(projects.id, projectId));
+    const project = allProjects.at(0);
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    const content = project.content as {
+      nodes: {
+        id: string;
+        type: string;
+        data: object;
+      }[];
+    };
+
+    const existingNode = content.nodes.find((n) => n.id === nodeId);
+
+    if (!existingNode) {
+      throw new Error('Node not found');
+    }
+
+    const newData = {
+      ...(existingNode.data ?? {}),
+      updatedAt: new Date().toISOString(),
+      generated: {
+        url: downloadUrl,
+        type: audio.mimeType,
+      },
+    };
+
+    const updatedNodes = content.nodes.map((existingNode) => {
+      if (existingNode.id === nodeId) {
+        return {
+          ...existingNode,
+          data: newData,
+        };
+      }
+
+      return existingNode;
+    });
+
+    await database
+      .update(projects)
+      .set({ content: { nodes: updatedNodes } })
+      .where(eq(projects.id, projectId));
+
+    return {
+      nodeData: newData,
+    };
   } catch (error) {
     const message = parseError(error);
 

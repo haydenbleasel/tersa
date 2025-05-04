@@ -1,5 +1,4 @@
 import { generateImageAction } from '@/app/actions/image/create';
-import { describeAction } from '@/app/actions/image/describe';
 import { editImageAction } from '@/app/actions/image/edit';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
@@ -10,10 +9,17 @@ import { handleError } from '@/lib/error/handle';
 import { imageModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
+import {
+  ClockIcon,
+  DownloadIcon,
+  Loader2Icon,
+  PlayIcon,
+  RotateCcwIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
+import { toast } from 'sonner';
 import type { ImageNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -28,14 +34,11 @@ export const ImageTransform = ({
   title,
 }: ImageTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [image, setImage] = useState<string | null>(
-    data.generated?.url ?? null
-  );
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
 
   const handleGenerate = async () => {
-    if (loading) {
+    if (loading || typeof projectId !== 'string') {
       return;
     }
 
@@ -47,36 +50,27 @@ export const ImageTransform = ({
       setLoading(true);
 
       const response = imageNodes.length
-        ? await editImageAction(imageNodes, data.instructions)
-        : await generateImageAction(
-            [...textNodes, ...imageNodes].join('\n'),
-            data.model ?? 'dall-e-3',
-            data.instructions
-          );
+        ? await editImageAction({
+            images: imageNodes,
+            instructions: data.instructions,
+            nodeId: id,
+            projectId,
+          })
+        : await generateImageAction({
+            prompt: [...textNodes, ...imageNodes].join('\n'),
+            modelId: data.model ?? 'dall-e-3',
+            instructions: data.instructions,
+            projectId,
+            nodeId: id,
+          });
 
       if ('error' in response) {
         throw new Error(response.error);
       }
 
-      setImage(response.url);
+      updateNodeData(id, response.nodeData);
 
-      const description = await describeAction(
-        response.url,
-        projectId as string
-      );
-
-      if ('error' in description) {
-        throw new Error(description.error);
-      }
-
-      updateNodeData(id, {
-        updatedAt: new Date().toISOString(),
-        generated: {
-          url: response.url,
-          type: response.type,
-        },
-        description: description.description,
-      });
+      toast.success('Image generated successfully');
     } catch (error) {
       handleError('Error generating image', error);
     } finally {
@@ -100,23 +94,32 @@ export const ImageTransform = ({
         />
       ),
     },
-    {
-      tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
-      children: (
-        <Button
-          size="icon"
-          className="rounded-full"
-          onClick={handleGenerate}
-          disabled={loading || !projectId}
-        >
-          {data.generated?.url ? (
-            <RotateCcwIcon size={12} />
-          ) : (
-            <PlayIcon size={12} />
-          )}
-        </Button>
-      ),
-    },
+    loading
+      ? {
+          tooltip: 'Generating...',
+          children: (
+            <Button size="icon" className="rounded-full" disabled={loading}>
+              <Loader2Icon className="animate-spin" size={12} />
+            </Button>
+          ),
+        }
+      : {
+          tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
+          children: (
+            <Button
+              size="icon"
+              className="rounded-full"
+              onClick={handleGenerate}
+              disabled={loading || !projectId}
+            >
+              {data.generated?.url ? (
+                <RotateCcwIcon size={12} />
+              ) : (
+                <PlayIcon size={12} />
+              )}
+            </Button>
+          ),
+        },
   ];
 
   if (data.generated) {
@@ -161,16 +164,16 @@ export const ImageTransform = ({
             }}
           />
         )}
-        {!loading && !image && (
+        {!loading && !data.generated?.url && (
           <div className="flex items-center justify-center p-4">
             <p className="text-muted-foreground text-sm">
               Press "Generate" to create an image
             </p>
           </div>
         )}
-        {image && !loading && (
+        {!loading && data.generated?.url && (
           <Image
-            src={image}
+            src={data.generated.url}
             alt="Generated image"
             width={data.width ?? 800}
             height={data.height ?? 450}

@@ -11,6 +11,7 @@ import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
+import { toast } from 'sonner';
 import type { VideoNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -25,13 +26,14 @@ export const VideoTransform = ({
   title,
 }: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [video, setVideo] = useState<string | null>(
-    data.generated?.url ?? null
-  );
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
 
   const handleGenerate = async () => {
+    if (loading || typeof projectId !== 'string') {
+      return;
+    }
+
     try {
       const incomers = getIncomers({ id }, getNodes(), getEdges());
       const textPrompts = getTextFromTextNodes(incomers);
@@ -43,22 +45,21 @@ export const VideoTransform = ({
 
       setLoading(true);
 
-      const response = await generateVideoAction(
-        data.model ?? 'T2V-01-Director',
-        [data.instructions ?? '', ...textPrompts].join('\n'),
-        images.slice(0, 1)
-      );
+      const response = await generateVideoAction({
+        modelId: data.model ?? 'T2V-01-Director',
+        prompt: [data.instructions ?? '', ...textPrompts].join('\n'),
+        images: images.slice(0, 1),
+        nodeId: id,
+        projectId,
+      });
 
       if ('error' in response) {
         throw new Error(response.error);
       }
 
-      setVideo(response.url);
+      updateNodeData(id, response.nodeData);
 
-      updateNodeData(id, {
-        updatedAt: new Date().toISOString(),
-        generated: response,
-      });
+      toast.success('Video generated successfully');
     } catch (error) {
       handleError('Error generating video', error);
     } finally {
@@ -143,16 +144,16 @@ export const VideoTransform = ({
             }}
           />
         )}
-        {!loading && !video && (
+        {!loading && !data.generated?.url && (
           <div className="flex items-center justify-center p-4">
             <p className="text-muted-foreground text-sm">
               Press "Generate" to create a video
             </p>
           </div>
         )}
-        {video && (
+        {data.generated?.url && (
           <video
-            src={video}
+            src={data.generated.url}
             width={data.width ?? 800}
             height={data.height ?? 450}
             autoPlay

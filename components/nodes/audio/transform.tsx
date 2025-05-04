@@ -10,6 +10,7 @@ import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ComponentProps, useState } from 'react';
+import { toast } from 'sonner';
 import type { AudioNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -24,14 +25,11 @@ export const AudioTransform = ({
   title,
 }: AudioTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const [audio, setAudio] = useState<string | null>(
-    data.generated?.url ?? null
-  );
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
 
   const handleGenerate = async () => {
-    if (loading) {
+    if (loading || typeof projectId !== 'string') {
       return;
     }
 
@@ -45,19 +43,19 @@ export const AudioTransform = ({
 
       setLoading(true);
 
-      const response = await generateSpeechAction(textPrompts);
+      const response = await generateSpeechAction({
+        text: textPrompts,
+        nodeId: id,
+        projectId,
+      });
 
       if ('error' in response) {
         throw new Error(response.error);
       }
 
-      setAudio(response.url);
+      updateNodeData(id, response.nodeData);
 
-      updateNodeData(id, {
-        updatedAt: new Date().toISOString(),
-        generated: response,
-        transcript: textPrompts,
-      });
+      toast.success('Audio generated successfully');
     } catch (error) {
       handleError('Error generating audio', error);
     } finally {
@@ -132,17 +130,17 @@ export const AudioTransform = ({
         {loading && (
           <Skeleton className="h-[108px] w-[600px] animate-pulse rounded-full" />
         )}
-        {!loading && !audio && (
+        {!loading && !data.generated?.url && (
           <div className="flex items-center justify-center p-4">
             <p className="text-muted-foreground text-sm">
               Press "Generate" to synthesize speech
             </p>
           </div>
         )}
-        {audio && (
+        {!loading && data.generated?.url && (
           <div className="flex items-center justify-center p-4">
             {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-            <audio src={audio} controls />
+            <audio src={data.generated.url} controls />
           </div>
         )}
       </div>

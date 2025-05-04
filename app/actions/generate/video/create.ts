@@ -1,10 +1,13 @@
 'use server';
 
+import { database } from '@/lib/database';
 import { env } from '@/lib/env';
 import { parseError } from '@/lib/error/parse';
 import { videoModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
+import { projects } from '@/schema';
+import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
 type CreateJobProps = {
@@ -58,17 +61,26 @@ type RetrieveUrlResponse = {
 
 const baseUrl = 'https://api.minimaxi.chat/';
 
-export const generateVideoAction = async (
-  modelId: string,
-  prompt: string,
+type GenerateVideoActionProps = {
+  modelId: string;
+  prompt: string;
   images: {
     url: string;
     type: string;
-  }[]
-): Promise<
+  }[];
+  nodeId: string;
+  projectId: string;
+};
+
+export const generateVideoAction = async ({
+  modelId,
+  prompt,
+  images,
+  nodeId,
+  projectId,
+}: GenerateVideoActionProps): Promise<
   | {
-      url: string;
-      type: string;
+      nodeData: object;
     }
   | {
       error: string;
@@ -77,7 +89,6 @@ export const generateVideoAction = async (
   try {
     const client = await createClient();
     const user = await getSubscribedUser();
-
     const model = videoModels
       .flatMap((model) => model.models)
       .find((model) => model.id === modelId);
@@ -191,7 +202,58 @@ export const generateVideoAction = async (
       .from('files')
       .getPublicUrl(blob.data.path);
 
-    return { url: supabaseDownloadUrl.publicUrl, type: 'video/mp4' };
+    const allProjects = await database
+      .select()
+      .from(projects)
+      .where(eq(projects.id, projectId));
+    const project = allProjects.at(0);
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    const content = project.content as {
+      nodes: {
+        id: string;
+        type: string;
+        data: object;
+      }[];
+    };
+
+    const existingNode = content.nodes.find((n) => n.id === nodeId);
+
+    if (!existingNode) {
+      throw new Error('Node not found');
+    }
+
+    const newData = {
+      ...(existingNode.data ?? {}),
+      updatedAt: new Date().toISOString(),
+      generated: {
+        url: supabaseDownloadUrl.publicUrl,
+        type: 'video/mp4',
+      },
+    };
+
+    const updatedNodes = content.nodes.map((existingNode) => {
+      if (existingNode.id === nodeId) {
+        return {
+          ...existingNode,
+          data: newData,
+        };
+      }
+
+      return existingNode;
+    });
+
+    await database
+      .update(projects)
+      .set({ content: { nodes: updatedNodes } })
+      .where(eq(projects.id, projectId));
+
+    return {
+      nodeData: newData,
+    };
   } catch (error) {
     const message = parseError(error);
 
