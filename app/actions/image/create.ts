@@ -73,11 +73,10 @@ export const generateImageAction = async ({
 
     const openai = new OpenAI();
 
-    let url = downloadUrl.publicUrl;
-
-    if (process.env.NODE_ENV === 'development') {
-      url = `data:image/${image.mimeType};base64,${Buffer.from(image.uint8Array).toString('base64')}`;
-    }
+    const url =
+      process.env.NODE_ENV === 'production'
+        ? downloadUrl.publicUrl
+        : `data:${image.mimeType};base64,${Buffer.from(image.uint8Array).toString('base64')}`;
 
     const allProjects = await database
       .select()

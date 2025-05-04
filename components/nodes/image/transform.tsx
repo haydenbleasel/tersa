@@ -98,7 +98,7 @@ export const ImageTransform = ({
       ? {
           tooltip: 'Generating...',
           children: (
-            <Button size="icon" className="rounded-full" disabled={loading}>
+            <Button size="icon" className="rounded-full" disabled>
               <Loader2Icon className="animate-spin" size={12} />
             </Button>
           ),
@@ -159,7 +159,7 @@ export const ImageTransform = ({
           <Skeleton className="aspect-square w-full animate-pulse rounded-tl-lg" />
         )}
         {!loading && !data.generated?.url && (
-          <div className="flex items-center justify-center p-4">
+          <div className="flex aspect-square w-full items-center justify-center p-4">
             <p className="text-muted-foreground text-sm">
               Press "Generate" to create an image
             </p>
@@ -169,8 +169,8 @@ export const ImageTransform = ({
           <Image
             src={data.generated.url}
             alt="Generated image"
-            width={data.width ?? 800}
-            height={data.height ?? 450}
+            width={1000}
+            height={1000}
             className="w-full rounded-t-lg object-cover"
           />
         )}

@@ -97,10 +97,23 @@ export const generateVideoAction = async ({
       throw new Error('Model not found');
     }
 
+    let firstFrameImage = images.at(0)?.url;
+
+    if (firstFrameImage && process.env.NODE_ENV !== 'production') {
+      const response = await fetch(firstFrameImage);
+      const blob = await response.blob();
+      const uint8Array = new Uint8Array(await blob.arrayBuffer());
+      const base64 = Buffer.from(uint8Array).toString('base64');
+
+      firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
+    }
+
+    console.log(firstFrameImage, 'x');
+
     const props: CreateJobProps = {
       model: model.id as CreateJobProps['model'],
       prompt,
-      first_frame_image: images.at(0)?.url,
+      first_frame_image: firstFrameImage,
     };
 
     // Create job
