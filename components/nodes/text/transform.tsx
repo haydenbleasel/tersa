@@ -191,7 +191,7 @@ export const TextTransform = ({
       toolbar={createToolbar()}
     >
       <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50 p-4">
-        {status === 'streaming' && (
+        {!nonUserMessages?.length && status === 'streaming' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
             <Skeleton className="h-4 w-40 animate-pulse rounded-lg" />
