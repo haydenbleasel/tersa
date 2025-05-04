@@ -45,7 +45,10 @@ export const CodePrimitive = ({
 
   return (
     <NodeLayout id={id} data={data} title={title} type={type} toolbar={toolbar}>
-      <div ref={ref} className="size-full overflow-hidden rounded-lg">
+      <div
+        ref={ref}
+        className="aspect-square size-full overflow-hidden rounded-lg"
+      >
         <Editor
           height={height ?? '100%'}
           width={width ?? '100%'}

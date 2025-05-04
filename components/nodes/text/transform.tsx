@@ -190,7 +190,7 @@ export const TextTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50 p-4">
+      <div className="flex flex-1 rounded-t-lg bg-secondary/50 p-4">
         {!nonUserMessages?.length && status === 'streaming' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
@@ -199,7 +199,7 @@ export const TextTransform = ({
           </div>
         )}
         {!nonUserMessages?.length && status !== 'streaming' && (
-          <div className="flex items-center justify-center">
+          <div className="flex aspect-video w-full items-center justify-center">
             <p className="text-muted-foreground text-sm">
               Press "Generate" to generate text
             </p>

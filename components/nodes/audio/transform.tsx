@@ -128,19 +128,23 @@ export const AudioTransform = ({
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       <div className="flex flex-1 items-center justify-center rounded-lg bg-secondary/50">
         {loading && (
-          <Skeleton className="h-[108px] w-[600px] animate-pulse rounded-full" />
+          <div className="w-full p-4">
+            <Skeleton className="h-[50px] w-full animate-pulse rounded-full" />
+          </div>
         )}
         {!loading && !data.generated?.url && (
-          <div className="flex items-center justify-center p-4">
-            <p className="text-muted-foreground text-sm">
-              Press "Generate" to synthesize speech
-            </p>
+          <div className="w-full p-4">
+            <div className="flex h-[50px] w-full items-center justify-center">
+              <p className="text-muted-foreground text-sm">
+                Press "Generate" to generate text
+              </p>
+            </div>
           </div>
         )}
         {!loading && data.generated?.url && (
-          <div className="flex items-center justify-center p-4">
+          <div className="w-full p-4">
             {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-            <audio src={data.generated.url} controls />
+            <audio src={data.generated.url} controls className="w-full" />
           </div>
         )}
       </div>

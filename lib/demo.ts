@@ -33,9 +33,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: -258, y: -100 },
     origin: [0, 0.5],
-    measured: { width: 400, height: 203 },
-    width: 400,
-    height: 203,
   },
   {
     id: 'JJzrv-IFLZADn1asQfMOU',
@@ -49,9 +46,6 @@ export const sampleNodes: Node[] = [
       instructions: 'How do you care for them?',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 270 },
-    width: 400,
-    height: 270,
   },
   {
     id: 'wiHfpZJA_mGy1vQOULuOA',
@@ -66,9 +60,6 @@ export const sampleNodes: Node[] = [
       instructions: 'Make it anime style.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    width: 400,
-    height: 290,
   },
   {
     id: 'LChjpwMpTwx4CaEypTsAr',
@@ -82,7 +73,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: -256, y: 245 },
     origin: [0, 0.5],
-    measured: { width: 302, height: 156 },
   },
   {
     id: 'lMrWEm_K9EbGledg2JzAY',
@@ -98,9 +88,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: 800, y: -350 },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    width: 400,
-    height: 290,
   },
   {
     id: 'bKrEf7e5GPMu0-uphit6D',
@@ -114,9 +101,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: 800, y: 0 },
     origin: [0, 0.5],
-    measured: { width: 400, height: 315 },
-    width: 400,
-    height: 315,
   },
   {
     id: 'bS3iDAT96T6tlUD549HI4',
@@ -131,9 +115,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: 800, y: 350 },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    width: 400,
-    height: 290,
   },
   {
     id: '-UWhefN0_XOKHo7XbN2pY',
@@ -147,7 +128,6 @@ export const sampleNodes: Node[] = [
     },
     position: { x: 259, y: 350 },
     origin: [0, 0.5],
-    measured: { width: 284, height: 52 },
   },
 ];
 

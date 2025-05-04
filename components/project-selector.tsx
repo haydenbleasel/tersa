@@ -5,7 +5,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Combobox,
@@ -40,6 +39,7 @@ export const ProjectSelector = ({
   const [value, setValue] = useState(currentProject);
   const [name, setName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const router = useRouter();
 
   const handleCreateProject: FormEventHandler<HTMLFormElement> = async (
@@ -71,80 +71,81 @@ export const ProjectSelector = ({
   };
 
   const handleSelect = (projectId: string) => {
-    if (projectId !== 'new') {
-      setValue(projectId);
-      setOpen(false);
-      router.push(`/projects/${projectId}`);
+    if (projectId === 'new') {
+      setCreateOpen(true);
+      return;
     }
+
+    setValue(projectId);
+    setOpen(false);
+    router.push(`/projects/${projectId}`);
   };
 
   return (
-    <Combobox
-      open={open}
-      onOpenChange={setOpen}
-      data={projects.map((project) => ({
-        label: project.name,
-        value: project.id,
-      }))}
-      type="project"
-      value={value}
-      onValueChange={handleSelect}
-    >
-      <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
-      <ComboboxContent className="p-0">
-        <ComboboxInput />
-        <ComboboxList>
-          <ComboboxEmpty />
-          <ComboboxGroup>
-            {projects.map((project) => (
-              <ComboboxItem key={project.id} value={project.id}>
-                {project.name}
-                <CheckIcon
-                  className={cn(
-                    'ml-auto',
-                    value === project.id ? 'opacity-100' : 'opacity-0'
-                  )}
-                />
+    <>
+      <Combobox
+        open={open}
+        onOpenChange={setOpen}
+        data={projects.map((project) => ({
+          label: project.name,
+          value: project.id,
+        }))}
+        type="project"
+        value={value}
+        onValueChange={handleSelect}
+      >
+        <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
+        <ComboboxContent className="p-0">
+          <ComboboxInput />
+          <ComboboxList>
+            <ComboboxEmpty />
+            <ComboboxGroup>
+              {projects.map((project) => (
+                <ComboboxItem key={project.id} value={project.id}>
+                  {project.name}
+                  <CheckIcon
+                    className={cn(
+                      'ml-auto',
+                      value === project.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                </ComboboxItem>
+              ))}
+            </ComboboxGroup>
+            <ComboboxSeparator />
+            <ComboboxGroup>
+              <ComboboxItem value="new">
+                <PlusIcon size={16} />
+                Create new project
               </ComboboxItem>
-            ))}
-          </ComboboxGroup>
-          <ComboboxSeparator />
-          <ComboboxGroup>
-            <Dialog>
-              <DialogTrigger asChild>
-                <div>
-                  <ComboboxItem value="new">
-                    <PlusIcon size={16} />
-                    Create new project
-                  </ComboboxItem>
-                </div>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create new project</DialogTitle>
-                  <DialogDescription>
-                    What would you like to call your new project?
-                  </DialogDescription>
-                  <form
-                    onSubmit={handleCreateProject}
-                    className="mt-2 flex items-center gap-2"
-                    aria-disabled={isCreating}
-                  >
-                    <Input
-                      placeholder="My new project"
-                      value={name}
-                      onChange={({ target }) => setName(target.value)}
-                    />
-                    <Button type="submit" disabled={isCreating || !name.trim()}>
-                      Create
-                    </Button>
-                  </form>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </ComboboxGroup>
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+            </ComboboxGroup>
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      <Dialog open={createOpen} onOpenChange={setCreateOpen} modal={false}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create new project</DialogTitle>
+            <DialogDescription>
+              What would you like to call your new project?
+            </DialogDescription>
+            <form
+              onSubmit={handleCreateProject}
+              className="mt-2 flex items-center gap-2"
+              aria-disabled={isCreating}
+            >
+              <Input
+                placeholder="My new project"
+                value={name}
+                onChange={({ target }) => setName(target.value)}
+              />
+              <Button type="submit" disabled={isCreating || !name.trim()}>
+                Create
+              </Button>
+            </form>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };

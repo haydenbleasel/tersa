@@ -15,20 +15,6 @@ type VideoPrimitiveProps = VideoNodeProps & {
   title: string;
 };
 
-const getVideoDimensions = (file: File) =>
-  new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const video = document.createElement('video');
-    video.src = URL.createObjectURL(file);
-
-    video.onloadedmetadata = () => {
-      resolve({ width: video.videoWidth, height: video.videoHeight });
-    };
-
-    video.onerror = () => {
-      reject(new Error('Failed to load video'));
-    };
-  });
-
 export const VideoPrimitive = ({
   data,
   id,
@@ -51,15 +37,8 @@ export const VideoPrimitive = ({
 
       setIsUploading(true);
       setFiles(files);
+
       const [file] = files;
-
-      const dimensions = await getVideoDimensions(file);
-
-      updateNodeData(id, {
-        width: dimensions.width,
-        height: dimensions.height,
-      });
-
       const { url, type } = await uploadFile(file, 'files');
 
       updateNodeData(id, {
@@ -80,8 +59,6 @@ export const VideoPrimitive = ({
       {data.content ? (
         <video
           src={data.content.url}
-          width={data.width ?? 1600}
-          height={data.height ?? 900}
           className="h-auto w-full rounded-lg"
           autoPlay
           muted
@@ -99,23 +76,15 @@ export const VideoPrimitive = ({
           onDrop={handleDrop}
           src={files}
           onError={console.error}
-          className="rounded-none border-none bg-transparent p-0 shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+          className="rounded-none border-none bg-transparent shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
         >
           <DropzoneEmptyState className="p-4" />
           <DropzoneContent>
             {files && files.length > 0 && (
-              <div
-                style={{
-                  width: data.width ?? 1600,
-                  height: data.height ?? 900,
-                }}
-                className="relative"
-              >
+              <div className="relative size-full">
                 <video
                   src={URL.createObjectURL(files[0])}
                   className="absolute top-0 left-0 h-full w-full rounded-lg object-cover"
-                  width={data.width ?? 1600}
-                  height={data.height ?? 900}
                   autoPlay
                   muted
                   loop

@@ -34,9 +34,6 @@ const nodes: Node[] = [
       text: 'Delphiniums generally symbolize cheerfulness, goodwill, and protection. Specifically, they can represent striving for success, enjoying life, and celebrating important occasions. Blue delphiniums are also often associated with dignity and grace.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 203 },
-    width: 400,
-    height: 203,
   },
   {
     id: 'transform-1',
@@ -50,8 +47,6 @@ const nodes: Node[] = [
     },
     position: { x: 600, y: 0 },
     origin: [0, 0.5],
-    measured: { width: 284, height: 52 },
-    dragging: false,
   },
 ];
 

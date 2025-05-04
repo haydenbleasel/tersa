@@ -197,10 +197,13 @@ export const CodeTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div ref={ref} className="size-full overflow-hidden rounded-t-lg">
+      <div
+        ref={ref}
+        className="aspect-square w-full overflow-hidden rounded-t-lg"
+      >
         <Editor
-          height={height ?? '100%'}
-          width={width ?? '100%'}
+          height="100%"
+          width="100%"
           className="size-full"
           language={data.generated?.language}
           value={object?.text ?? data.generated?.text}

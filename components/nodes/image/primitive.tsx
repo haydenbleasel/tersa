@@ -16,20 +16,6 @@ type ImagePrimitiveProps = ImageNodeProps & {
   title: string;
 };
 
-const getImageDimensions = (file: File) =>
-  new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const image = new window.Image();
-    image.src = URL.createObjectURL(file);
-
-    image.onload = () => {
-      resolve({ width: image.width, height: image.height });
-    };
-
-    image.onerror = () => {
-      reject(new Error('Failed to load image'));
-    };
-  });
-
 export const ImagePrimitive = ({
   data,
   id,
@@ -54,14 +40,6 @@ export const ImagePrimitive = ({
       setIsUploading(true);
       setFiles(files);
       const [file] = files;
-
-      const dimensions = await getImageDimensions(file);
-
-      updateNodeData(id, {
-        width: dimensions.width,
-        height: dimensions.height,
-      });
-
       const { url, type } = await uploadFile(file, 'files');
 
       updateNodeData(id, {
@@ -114,13 +92,7 @@ export const ImagePrimitive = ({
           <DropzoneEmptyState className="p-4" />
           <DropzoneContent>
             {files && files.length > 0 && (
-              <div
-                style={{
-                  width: data.width ?? 1000,
-                  height: data.height ?? 1000,
-                }}
-                className="relative"
-              >
+              <div className="relative size-full">
                 <Image
                   src={URL.createObjectURL(files[0])}
                   alt="Image preview"

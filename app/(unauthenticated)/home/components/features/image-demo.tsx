@@ -38,9 +38,6 @@ const nodes: Node[] = [
       instructions: 'Make it anime style.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    width: 400,
-    height: 290,
   },
 ];
 

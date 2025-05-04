@@ -14,9 +14,6 @@ const nodes: Node[] = [
       },
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 200 },
-    width: 400,
-    height: 200,
   },
   {
     id: 'transform-1',
@@ -31,9 +28,6 @@ const nodes: Node[] = [
       instructions: 'Write unit tests.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 400 },
-    width: 400,
-    height: 400,
   },
 ];
 

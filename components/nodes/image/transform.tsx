@@ -156,13 +156,7 @@ export const ImageTransform = ({
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50">
         {loading && (
-          <Skeleton
-            className="h-full w-full animate-pulse rounded-tl-lg"
-            style={{
-              width: data.width ?? 800,
-              height: data.height ?? 450,
-            }}
-          />
+          <Skeleton className="aspect-square w-full animate-pulse rounded-tl-lg" />
         )}
         {!loading && !data.generated?.url && (
           <div className="flex items-center justify-center p-4">

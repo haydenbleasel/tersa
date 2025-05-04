@@ -4,7 +4,6 @@ import {
   CodeIcon,
   FileIcon,
   ImageIcon,
-  MessageSquareIcon,
   TextIcon,
   VideoIcon,
 } from 'lucide-react';
@@ -77,8 +76,6 @@ export const Toolbar = () => {
           data: {
             content: { language: 'javascript' },
           },
-          width: 400,
-          height: 200,
         }),
     },
     {
@@ -86,12 +83,6 @@ export const Toolbar = () => {
       label: 'File',
       icon: FileIcon,
       onClick: () => addNode('file'),
-    },
-    {
-      id: 'comment',
-      label: 'Comment',
-      icon: MessageSquareIcon,
-      onClick: () => addNode('comment'),
     },
   ];
 

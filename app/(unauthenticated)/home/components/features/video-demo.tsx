@@ -37,10 +37,6 @@ const nodes: Node[] = [
       },
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    dragging: false,
-    width: 400,
-    height: 290,
   },
   {
     id: 'transform-1',
@@ -55,9 +51,6 @@ const nodes: Node[] = [
       instructions: 'Make the flowers move softly in the wind.',
     },
     origin: [0, 0.5],
-    measured: { width: 400, height: 290 },
-    width: 400,
-    height: 290,
   },
 ];
 

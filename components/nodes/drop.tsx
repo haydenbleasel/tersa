@@ -52,8 +52,6 @@ const buttons = [
     icon: CodeIcon,
     options: {
       data: { content: { language: 'javascript' } },
-      width: 400,
-      height: 200,
     },
   },
 ];

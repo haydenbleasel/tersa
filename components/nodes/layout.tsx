@@ -8,7 +8,6 @@ import { ContextMenuSeparator } from '@radix-ui/react-context-menu';
 import {
   Handle,
   type Node,
-  NodeResizeControl,
   NodeToolbar,
   Position,
   useReactFlow,
@@ -166,15 +165,10 @@ export const NodeLayout = ({
             )}
           </NodeToolbar>
         )}
-        <NodeResizeControl
-          minWidth={400}
-          minHeight={170}
-          keepAspectRatio={type === 'image' || type === 'video'}
-        />
         {type !== 'drop' && type !== 'file' && (
           <Handle type="target" position={Position.Left} />
         )}
-        <div className="relative size-full">
+        <div className="relative size-full h-auto w-sm">
           {type !== 'drop' && (
             <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
               <p className="font-mono text-muted-foreground text-xs tracking-tighter">
