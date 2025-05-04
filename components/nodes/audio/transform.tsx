@@ -1,18 +1,13 @@
 import { generateSpeechAction } from '@/app/actions/generate/speech/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
 import { getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import {
-  ClockIcon,
-  DownloadIcon,
-  Loader2Icon,
-  PlayIcon,
-  RotateCcwIcon,
-} from 'lucide-react';
+import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ComponentProps, useState } from 'react';
 import type { AudioNodeProps } from '.';
@@ -134,10 +129,8 @@ export const AudioTransform = ({
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       <div className="flex flex-1 items-center justify-center rounded-lg bg-secondary/50">
-        {loading && !audio && (
-          <div className="flex items-center justify-center p-4">
-            <Loader2Icon size={16} className="animate-spin" />
-          </div>
+        {loading && (
+          <Skeleton className="h-[108px] w-[600px] animate-pulse rounded-full" />
         )}
         {!loading && !audio && (
           <div className="flex items-center justify-center p-4">

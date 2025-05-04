@@ -1,19 +1,14 @@
 import { generateVideoAction } from '@/app/actions/generate/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import {
-  ClockIcon,
-  DownloadIcon,
-  Loader2Icon,
-  PlayIcon,
-  RotateCcwIcon,
-} from 'lucide-react';
+import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import type { VideoNodeProps } from '.';
@@ -139,10 +134,14 @@ export const VideoTransform = ({
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50">
-        {loading && !video && (
-          <div className="flex items-center justify-center p-4">
-            <Loader2Icon size={16} className="animate-spin" />
-          </div>
+        {loading && (
+          <Skeleton
+            className="h-full w-full animate-pulse rounded-tl-lg"
+            style={{
+              width: data.width ?? 800,
+              height: data.height ?? 450,
+            }}
+          />
         )}
         {!loading && !video && (
           <div className="flex items-center justify-center p-4">
@@ -154,8 +153,8 @@ export const VideoTransform = ({
         {video && (
           <video
             src={video}
-            width={data.width ?? 1600}
-            height={data.height ?? 900}
+            width={data.width ?? 800}
+            height={data.height ?? 450}
             autoPlay
             muted
             loop

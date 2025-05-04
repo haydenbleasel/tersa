@@ -1,5 +1,6 @@
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { handleError } from '@/lib/error/handle';
 import { chatModels } from '@/lib/models';
@@ -12,13 +13,7 @@ import {
 } from '@/lib/xyflow';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import {
-  ClockIcon,
-  Loader2Icon,
-  PlayIcon,
-  RotateCcwIcon,
-  SquareIcon,
-} from 'lucide-react';
+import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
@@ -188,8 +183,10 @@ export const TextTransform = ({
     >
       <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50 p-4">
         {status === 'streaming' && (
-          <div className="flex items-center justify-center">
-            <Loader2Icon size={16} className="animate-spin" />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
+            <Skeleton className="h-4 w-40 animate-pulse rounded-lg" />
+            <Skeleton className="h-4 w-50 animate-pulse rounded-lg" />
           </div>
         )}
         {!nonUserMessages?.length && status !== 'streaming' && (
