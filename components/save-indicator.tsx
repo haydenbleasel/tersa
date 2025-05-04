@@ -6,36 +6,37 @@ type SaveIndicatorProps = {
   saving: boolean;
 };
 
-const getFormattedTime = (millisecondsAgo: number) => {
+const getFormattedTime = (date: Date) => {
   let unit: Intl.RelativeTimeFormatUnit = 'seconds';
-  let value = Math.round((millisecondsAgo - Date.now()) / 1000);
+  let value = Math.round((date.getTime() - Date.now()) / 1000);
+  const absoluteValue = Math.abs(value);
 
-  if (value > 60) {
+  if (absoluteValue > 60) {
     unit = 'minutes';
     value = Math.round(value / 60);
   }
 
-  if (value > 60) {
+  if (absoluteValue > 3600) {
     unit = 'hours';
     value = Math.round(value / 60);
   }
 
-  if (value > 24) {
+  if (absoluteValue > 86400) {
     unit = 'days';
     value = Math.round(value / 24);
   }
 
-  if (value > 7) {
+  if (absoluteValue > 604800) {
     unit = 'weeks';
     value = Math.round(value / 7);
   }
 
-  if (value > 4) {
+  if (absoluteValue > 2592000) {
     unit = 'months';
     value = Math.round(value / 4);
   }
 
-  if (value > 12) {
+  if (absoluteValue > 31536000) {
     unit = 'years';
     value = Math.round(value / 12);
   }
@@ -53,7 +54,7 @@ export const SaveIndicator = ({ lastSaved, saving }: SaveIndicatorProps) => (
   >
     {lastSaved && (
       <span className="mx-1 hidden text-muted-foreground text-sm sm:block">
-        Last saved: {getFormattedTime(lastSaved.getTime())}
+        Last saved: {getFormattedTime(lastSaved)}
       </span>
     )}
     {saving && <Loader2Icon size={16} className="animate-spin text-primary" />}
