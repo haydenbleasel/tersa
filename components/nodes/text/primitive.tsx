@@ -33,6 +33,9 @@ export const TextPrimitive = ({
     <NodeLayout id={id} data={data} title={title} type={type}>
       <div className="p-4">
         <EditorProvider
+          onCreate={(props) => {
+            props.editor.chain().focus().run();
+          }}
           immediatelyRender={false}
           content={content}
           placeholder="Start typing..."
