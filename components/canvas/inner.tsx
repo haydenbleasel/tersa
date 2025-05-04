@@ -102,6 +102,43 @@ export const CanvasInner = ({
   const user = useUser();
 
   useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if the event target is an input, textarea, or contenteditable element
+      const target = event.target as HTMLElement;
+      const isEditableTarget =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
+
+      if (isEditableTarget) {
+        // Skip if we're in an editable element
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && event.key === 'a') {
+        event.preventDefault();
+
+        const allNodes = getNodes();
+        if (allNodes.length > 0) {
+          const newNodes = [...allNodes];
+
+          for (const node of newNodes) {
+            node.selected = true;
+          }
+
+          setNodes(newNodes);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [getNodes]);
+
+  useEffect(() => {
     if (data.userId === user?.id) {
       return;
     }
