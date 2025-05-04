@@ -61,19 +61,28 @@ export const TextTransform = ({
       return;
     }
 
+    const content: string[] = [];
+
+    if (data.instructions) {
+      content.push('--- Instructions ---', data.instructions);
+    }
+
+    if (textPrompts.length) {
+      content.push('--- Text Prompts ---', ...textPrompts);
+    }
+
+    if (audioPrompts.length) {
+      content.push('--- Audio Prompts ---', ...audioPrompts);
+    }
+
+    if (imageDescriptions.length) {
+      content.push('--- Image Descriptions ---', ...imageDescriptions);
+    }
+
     setMessages([]);
     append({
       role: 'user',
-      content: [
-        '--- Instructions ---',
-        data.instructions ?? 'None.',
-        '--- Text Prompts ---',
-        ...textPrompts,
-        '--- Audio Prompts ---',
-        ...audioPrompts,
-        '--- Image Descriptions ---',
-        ...imageDescriptions,
-      ].join('\n'),
+      content: content.join('\n'),
       experimental_attachments: [
         ...images.map((image) => ({
           url: image.url,
