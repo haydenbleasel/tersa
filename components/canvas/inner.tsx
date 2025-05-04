@@ -102,8 +102,13 @@ export const CanvasInner = ({
   const user = useUser();
 
   useEffect(() => {
-    const supabase = createClient();
+    if (data.userId === user?.id) {
+      return;
+    }
 
+    console.log('🔄 Initializing sync engine');
+
+    const supabase = createClient();
     const channel = supabase
       .channel(`${data.id}-changes`)
       .on(
@@ -121,11 +126,13 @@ export const CanvasInner = ({
             content: ProjectData['content'];
           };
 
-          // if (content) {
-          //   setNodes(content.nodes);
-          //   setEdges(content.edges);
-          //   setViewport(content.viewport);
-          // }
+          console.log('🔄 Setting nodes', content);
+
+          if (content) {
+            setNodes(content.nodes);
+            setEdges(content.edges);
+            setViewport(content.viewport);
+          }
         }
       )
       .subscribe();
@@ -133,7 +140,7 @@ export const CanvasInner = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [data.id]);
+  }, [data.id, data.userId, user?.id]);
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
