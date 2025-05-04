@@ -139,7 +139,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               onChange={({ target }) => setMembers(target.value.split('\n'))}
             />
             <p className="text-muted-foreground text-sm">
-              Add a list of IDs separated by new lines.
+              Add a list of emails separated by new lines.
             </p>
           </div>
           <Button type="submit" disabled={isUpdating || !name.trim()}>

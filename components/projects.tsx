@@ -1,3 +1,4 @@
+import { useUser } from '@/hooks/use-user';
 import type { projects } from '@/schema';
 import { Panel } from '@xyflow/react';
 import { ProjectSelector } from './project-selector';
@@ -9,6 +10,8 @@ type ProjectsProps = {
 };
 
 export const Projects = ({ projects, currentProject }: ProjectsProps) => {
+  const user = useUser();
+
   const currentProjectData = projects.find(
     (project) => project.id === currentProject
   );
@@ -25,9 +28,11 @@ export const Projects = ({ projects, currentProject }: ProjectsProps) => {
       <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
         <ProjectSelector projects={projects} currentProject={currentProject} />
       </div>
-      <div className="flex shrink-0 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
-        <ProjectSettings data={currentProjectData} />
-      </div>
+      {user?.id === currentProjectData.userId && (
+        <div className="flex shrink-0 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
+          <ProjectSettings data={currentProjectData} />
+        </div>
+      )}
     </Panel>
   );
 };

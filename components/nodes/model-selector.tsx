@@ -52,7 +52,7 @@ export const ModelSelector = ({
         }))}
       type="model"
     >
-      <ComboboxTrigger className="rounded-full" id={id} style={{ width }} />
+      <ComboboxTrigger className={className} id={id} style={{ width }} />
       <ComboboxContent className={cn('p-0', className)}>
         <ComboboxInput />
         <ComboboxList>

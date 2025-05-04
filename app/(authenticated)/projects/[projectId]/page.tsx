@@ -34,7 +34,9 @@ const Project = async ({ params }: ProjectProps) => {
     .where(
       or(
         eq(projects.userId, data.user.id),
-        arrayContains(projects.members, [data.user.id])
+        data.user.email
+          ? arrayContains(projects.members, [data.user.email])
+          : undefined
       )
     );
 

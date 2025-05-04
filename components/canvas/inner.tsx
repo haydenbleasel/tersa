@@ -1,4 +1,5 @@
 'use client';
+
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
@@ -159,9 +160,12 @@ export const CanvasInner = ({
   const onConnect = useCallback(
     (connection: Connection) => {
       setEdges((eds) => addEdge({ ...connection, type: 'animated' }, eds));
-      save();
+
+      if (data.userId === user?.id) {
+        save();
+      }
     },
-    [save]
+    [save, data.userId, user?.id]
   );
 
   const onConnectEnd = useCallback(
@@ -254,9 +258,11 @@ export const CanvasInner = ({
         return;
       }
 
-      save();
+      if (data.userId === user?.id) {
+        save();
+      }
     },
-    [save]
+    [save, data.userId, user?.id]
   );
 
   const onNodeDragStop = useCallback(() => {
@@ -266,17 +272,23 @@ export const CanvasInner = ({
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
       setEdges((eds) => applyEdgeChanges(changes, eds));
-      save();
+
+      if (data.userId === user?.id) {
+        save();
+      }
     },
-    [save]
+    [save, data.userId, user?.id]
   );
 
   const onViewportChange = useCallback(
     (viewport: Viewport) => {
       setViewport(viewport);
-      save();
+
+      if (data.userId === user?.id) {
+        save();
+      }
     },
-    [save]
+    [save, data.userId, user?.id]
   );
 
   return (
@@ -299,19 +311,26 @@ export const CanvasInner = ({
         viewport={viewport}
         onViewportChange={onViewportChange}
         zoomOnDoubleClick={false}
+        elementsSelectable={data.userId === user?.id}
+        nodesConnectable={data.userId === user?.id}
+        nodesDraggable={data.userId === user?.id}
         {...canvasProps}
       >
         <Background />
         {user && (
           <>
             <Controls />
-            <Toolbar />
             <Projects projects={projects} currentProject={data.id} />
             <Menu />
-            <SaveIndicator
-              lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
-              saving={isSaving}
-            />
+            {data.userId === user?.id && (
+              <>
+                <Toolbar />
+                <SaveIndicator
+                  lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
+                  saving={isSaving}
+                />
+              </>
+            )}
             <RealtimeCursors roomName={`${data.id}-cursors`} />
           </>
         )}
