@@ -2,7 +2,7 @@ import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { arrayContains, eq, or } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
@@ -33,10 +33,10 @@ const Project = async ({ params }: ProjectProps) => {
     .from(projects)
     .where(
       or(
-        eq(projects.userId, data.user.id),
-        data.user.email
-          ? arrayContains(projects.members, [data.user.email])
-          : undefined
+        eq(projects.userId, data.user.id)
+        // data.user.email
+        //   ? arrayContains(projects.members, [data.user.email])
+        //   : undefined
       )
     );
 

@@ -20,7 +20,6 @@ import { ModelSelector } from './nodes/model-selector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
 
 type ProjectSettingsProps = {
   data: typeof projects.$inferSelect;
@@ -34,7 +33,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
     data.transcriptionModel
   );
   const [visionModel, setVisionModel] = useState(data.visionModel);
-  const [members, setMembers] = useState(data.members ?? []);
+  // const [members, setMembers] = useState(data.members ?? []);
   const router = useRouter();
 
   const handleUpdateProject: FormEventHandler<HTMLFormElement> = async (
@@ -53,7 +52,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
         name,
         transcriptionModel,
         visionModel,
-        members,
+        // members,
       });
 
       if ('error' in response) {
@@ -131,7 +130,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               width={462}
             />
           </div>
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <Label htmlFor="members">Members</Label>
             <Textarea
               id="members"
@@ -141,7 +140,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
             <p className="text-muted-foreground text-sm">
               Add a list of emails separated by new lines.
             </p>
-          </div>
+          </div> */}
           <Button type="submit" disabled={isUpdating || !name.trim()}>
             Update
           </Button>

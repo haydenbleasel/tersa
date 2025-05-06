@@ -29,7 +29,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { ConnectionLine } from '../connection-line';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
-import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 
 type ProjectData = {
   content?:
@@ -375,7 +374,7 @@ export const CanvasInner = ({
                 />
               </>
             )}
-            <RealtimeCursors roomName={`${data.id}-cursors`} />
+            {/* <RealtimeCursors roomName={`${data.id}-cursors`} /> */}
           </>
         )}
       </ReactFlow>
