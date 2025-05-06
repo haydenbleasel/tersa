@@ -38,13 +38,9 @@ export const TextTransform = ({
       modelId: data.model ?? 'gpt-4',
     },
     onError: (error) => handleError('Error generating text', error),
-    onFinish: () => {
-      const nonUserMessages = messages
-        .filter((message) => message.role !== 'user')
-        .map((message) => message.content);
-
+    onFinish: (message) => {
       updateNodeData(id, {
-        generated: nonUserMessages,
+        generated: message.content,
         updatedAt: new Date().toISOString(),
       });
     },
