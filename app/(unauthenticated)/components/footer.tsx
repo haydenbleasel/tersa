@@ -6,7 +6,7 @@ export const Footer = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
     {/* Gradient overlays */}
     <div className="pointer-events-none absolute inset-0">
-      <div className="absolute top-0 right-0 left-0 h-8 bg-gradient-to-b from-background to-transparent" />
+      {/* <div className="absolute top-0 right-0 left-0 h-8 bg-gradient-to-b from-background to-transparent" /> */}
       <div className="absolute right-0 bottom-0 left-0 h-6 bg-gradient-to-t from-background to-transparent" />
       <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-background to-transparent" />
       <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent" />

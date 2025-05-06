@@ -40,7 +40,7 @@ export const TextPrimitive = ({
           content={content}
           placeholder="Start typing..."
           className={cn(
-            'prose dark:prose-invert size-full',
+            'prose prose-sm dark:prose-invert size-full',
             '[&_p:first-child]:mt-0',
             '[&_p:last-child]:mb-0'
           )}
