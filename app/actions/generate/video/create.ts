@@ -108,8 +108,6 @@ export const generateVideoAction = async ({
       firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
     }
 
-    console.log(firstFrameImage, 'x');
-
     const props: CreateJobProps = {
       model: model.id as CreateJobProps['model'],
       prompt,

@@ -42,8 +42,6 @@ export const useSaveProject = (projectId: string) => {
   const rfInstance = useReactFlow();
 
   const save = useDebouncedCallback(async () => {
-    console.log('💾 Saving project', isSaving, user?.id, projectId);
-
     if (isSaving || !user?.id || !projectId) {
       return;
     }

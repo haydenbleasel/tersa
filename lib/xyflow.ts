@@ -14,11 +14,11 @@ export const getTextFromTextNodes = (nodes: Node[]) => {
 
   const generatedText = nodes
     .filter((node) => node.type === 'text' && node.data.generated)
-    .map((node) => (node.data as TextNodeProps['data']).generated)
+    .map((node) => (node.data as TextNodeProps['data']).generated?.join('\n'))
     .filter(Boolean)
     .join('\n');
 
-  return [sourceText, generatedText];
+  return [sourceText, generatedText].filter(Boolean).join('\n');
 };
 
 export const getTranscriptionFromAudioNodes = (nodes: Node[]) => {
