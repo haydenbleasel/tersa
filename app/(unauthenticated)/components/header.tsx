@@ -4,8 +4,9 @@ import Link from 'next/link';
 
 export const Header = () => (
   <header className="flex items-center justify-between px-8">
-    <Link href="/">
+    <Link href="/" className="flex items-center gap-2">
       <Logo className="h-6 w-auto" />
+      <span className="font-medium text-xl tracking-tight">Tersa</span>
     </Link>
     <div className="flex items-center gap-2">
       <Button variant="link" asChild className="text-muted-foreground">
