@@ -6,7 +6,8 @@
     "dev": "concurrently -n \"Next.js,Supabase\" \"next dev --turbopack\" \"npx supabase start\"",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "ngrok": "ngrok http 3000"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^2.2.8",

@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { env } from '@/lib/env';
 import NumberFlow from '@number-flow/react';
 import {
   CheckIcon,
@@ -58,7 +59,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': false,
         credits: 500,
       },
-      ctaLink: '/signup',
+      ctaLink: `/api/checkout?product_id=${env.POLAR_HOBBY_PRODUCT_ID}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -74,7 +75,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': true,
         credits: 1000,
       },
-      ctaLink: '/signup',
+      ctaLink: `/api/checkout?product_id=${env.POLAR_PRO_PRODUCT_ID}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -90,14 +91,14 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': true,
         credits: 1000,
       },
-      ctaLink: '/signup',
+      ctaLink: '/contact',
       ctaText: 'Get in Touch',
       variant: 'outline',
     };
 
     if (currentPlan) {
       for (const plan of [free, pro, enterprise]) {
-        plan.ctaLink = '/api/stripe/portal';
+        plan.ctaLink = '/api/portal';
       }
     }
 
