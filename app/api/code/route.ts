@@ -66,6 +66,7 @@ export const POST = async (req: Request) => {
       '------ System ------',
       `Output the code in the language specified: ${language ?? 'javascript'}`,
       'If the user specifies an output language in the context below, ignore it.',
+      'Respond with the code only, no other text.',
       '------ User ------',
       context,
     ].join('\n'),
