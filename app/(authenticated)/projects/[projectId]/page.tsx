@@ -1,5 +1,6 @@
 import { Canvas } from '@/components/canvas';
 import { database } from '@/lib/database';
+import { polar } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq, or } from 'drizzle-orm';
@@ -26,6 +27,19 @@ const Project = async ({ params }: ProjectProps) => {
 
   if (!data?.user) {
     return redirect('/sign-in');
+  }
+
+  if (!data.user.user_metadata.polar_customer_id && data.user.email) {
+    const customer = await polar.customers.create({
+      email: data.user.email,
+      externalId: data.user.id,
+    });
+
+    await client.auth.updateUser({
+      data: {
+        polar_customer_id: customer.id,
+      },
+    });
   }
 
   const allProjects = await database

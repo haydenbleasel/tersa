@@ -13,6 +13,7 @@ import { ArrowUpRight, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { type MouseEventHandler, useEffect, useState } from 'react';
+import { ClaimButton } from './claim-button';
 import { Feedback } from './feedback';
 import { Profile } from './profile';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -74,6 +75,11 @@ export const Menu = () => {
             <RealtimeAvatarStack roomName={projectId} />
           </div>
         )} */}
+        {!user?.user_metadata.polar_subscription_id && (
+          <div className="flex flex-1 items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
+            <ClaimButton />
+          </div>
+        )}
         <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>

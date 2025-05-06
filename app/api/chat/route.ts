@@ -1,5 +1,6 @@
 import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
+import { polar } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamText } from 'ai';
@@ -14,8 +15,12 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
+  let customerId: string;
+
   try {
-    await getSubscribedUser();
+    const user = await getSubscribedUser();
+
+    customerId = user.user_metadata.polar_customer_id;
   } catch (error) {
     const message = parseError(error);
 
@@ -62,6 +67,20 @@ export const POST = async (req: Request) => {
       'The output should be a concise summary of the content, no more than 100 words.',
     ].join('\n'),
     messages,
+    onFinish: async (result) => {
+      await polar.events.ingest({
+        events: [
+          {
+            name: 'credit_usage',
+            externalCustomerId: customerId,
+            metadata: {
+              route: '/api/metered-route',
+              method: 'GET',
+            },
+          },
+        ],
+      });
+    },
   });
 
   return result.toDataStreamResponse();

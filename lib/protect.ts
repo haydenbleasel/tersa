@@ -8,14 +8,9 @@ export const getSubscribedUser = async () => {
     throw new Error('Create an account to use AI features.');
   }
 
-  if (data.user.user_metadata.isBanned) {
-    throw new Error('You are banned from using AI features.');
+  if (!data.user.user_metadata.stripeSubscriptionId) {
+    throw new Error('Please claim your free AI credits to use AI features.');
   }
-
-  // Should be temporarily disabled during beta
-  // if (!data.user.user_metadata.stripeSubscriptionId) {
-  //   throw new Error('Please upgrade to a paid plan to use AI features.');
-  // }
 
   return data.user;
 };

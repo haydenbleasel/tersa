@@ -45,6 +45,7 @@ export const SignUpForm = () => {
           captchaToken,
         },
       });
+
       if (error) {
         throw error;
       }
