@@ -1141,13 +1141,13 @@ export const speechModels: {
         model: openai.speech('tts-1-hd'),
         getCost: (characters: number) => (characters / million) * 30,
       },
-      {
-        icon: OpenAiIcon,
-        id: 'gpt-4o-mini-tts',
-        label: 'GPT-4o Mini TTS',
-        model: openai.speech('gpt-4o-mini-tts'),
-        getCost: (tokens: number) => (tokens / million) * 0.6,
-      },
+      // {
+      //   icon: OpenAiIcon,
+      //   id: 'gpt-4o-mini-tts',
+      //   label: 'GPT-4o Mini TTS',
+      //   model: openai.speech('gpt-4o-mini-tts'),
+      //   getCost: (tokens: number) => (tokens / million) * 0.6,
+      // },
     ],
   },
   {

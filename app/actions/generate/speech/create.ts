@@ -52,10 +52,7 @@ export const generateSpeechAction = async ({
     await trackCreditUsage({
       userId: user.id,
       action: 'chat',
-      credits: model.getCost({
-        input: usage.promptTokens,
-        output: usage.completionTokens,
-      }),
+      cost: model.getCost(text.length),
     });
 
     const blob = await client.storage
