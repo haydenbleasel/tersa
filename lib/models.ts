@@ -1,6 +1,5 @@
 import { bedrock } from '@ai-sdk/amazon-bedrock';
 import { anthropic } from '@ai-sdk/anthropic';
-import { cerebras } from '@ai-sdk/cerebras';
 import { deepinfra } from '@ai-sdk/deepinfra';
 import { deepseek } from '@ai-sdk/deepseek';
 import { fal } from '@ai-sdk/fal';
@@ -15,10 +14,10 @@ import { openai } from '@ai-sdk/openai';
 import { togetherai } from '@ai-sdk/togetherai';
 import { xai } from '@ai-sdk/xai';
 
+import type { ImageModel, LanguageModelV1 } from 'ai';
 import {
   AmazonIcon,
   AnthropicIcon,
-  CerebrasIcon,
   DeepSeekIcon,
   DeepinfraIcon,
   FalIcon,
@@ -35,7 +34,19 @@ import {
   XaiIcon,
 } from './icons';
 
-export const chatModels = [
+const million = 1000000;
+
+export const chatModels: {
+  label: string;
+  models: {
+    icon: typeof OpenAiIcon;
+    id: string;
+    label: string;
+    model: LanguageModelV1;
+    getCost: ({ input, output }: { input: number; output: number }) => number;
+    legacy?: boolean;
+  }[];
+}[] = [
   {
     label: 'OpenAI',
     models: [
@@ -44,94 +55,221 @@ export const chatModels = [
         id: 'gpt-3.5-turbo',
         label: 'GPT-3.5 Turbo',
         model: openai('gpt-3.5-turbo'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.5;
+          const outputCost = (output / million) * 1.5;
+
+          return inputCost + outputCost;
+        },
       },
-      { icon: OpenAiIcon, id: 'gpt-4', label: 'GPT-4', model: openai('gpt-4') },
+      {
+        icon: OpenAiIcon,
+        id: 'gpt-4',
+        label: 'GPT-4',
+        model: openai('gpt-4'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 30;
+          const outputCost = (output / million) * 60;
+
+          return inputCost + outputCost;
+        },
+      },
       {
         icon: OpenAiIcon,
         id: 'gpt-4.1',
         label: 'GPT-4.1',
         model: openai('gpt-4.1'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 8;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: OpenAiIcon,
         id: 'gpt-4.1-mini',
         label: 'GPT-4.1 Mini',
         model: openai('gpt-4.1-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.4;
+          const outputCost = (output / million) * 1.6;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: OpenAiIcon,
         id: 'gpt-4.1-nano',
         label: 'GPT-4.1 Nano',
         model: openai('gpt-4.1-nano'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.4;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: OpenAiIcon,
         id: 'gpt-4o',
         label: 'GPT-4o',
         model: openai('gpt-4o'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: OpenAiIcon,
         id: 'gpt-4o-mini',
         label: 'GPT-4o Mini',
         model: openai('gpt-4o-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.15;
+          const outputCost = (output / million) * 0.6;
+
+          return inputCost + outputCost;
+        },
       },
-      { icon: OpenAiIcon, id: 'o1', label: 'O1', model: openai('o1') },
+      {
+        icon: OpenAiIcon,
+        id: 'o1',
+        label: 'O1',
+        model: openai('o1'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 15;
+          const outputCost = (output / million) * 60;
+
+          return inputCost + outputCost;
+        },
+      },
       {
         icon: OpenAiIcon,
         id: 'o1-mini',
         label: 'O1 Mini',
         model: openai('o1-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
-      { icon: OpenAiIcon, id: 'o3', label: 'O3', model: openai('o3') },
+      {
+        icon: OpenAiIcon,
+        id: 'o3',
+        label: 'O3',
+        model: openai('o3'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 10;
+          const outputCost = (output / million) * 40;
+
+          return inputCost + outputCost;
+        },
+      },
       {
         icon: OpenAiIcon,
         id: 'o3-mini',
         label: 'O3 Mini',
         model: openai('o3-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: OpenAiIcon,
         id: 'o4-mini',
         label: 'O4 Mini',
         model: openai('o4-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
-
   {
     label: 'xAI',
     models: [
-      { icon: XaiIcon, id: 'grok-3', label: 'Grok-3', model: xai('grok-3') },
+      {
+        icon: XaiIcon,
+        id: 'grok-3',
+        label: 'Grok-3',
+        model: xai('grok-3'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
+      },
       {
         icon: XaiIcon,
         id: 'grok-3-fast',
         label: 'Grok-3 Fast',
         model: xai('grok-3-fast'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 5;
+          const outputCost = (output / million) * 25;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: XaiIcon,
         id: 'grok-3-mini',
         label: 'Grok-3 Mini',
         model: xai('grok-3-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.3;
+          const outputCost = (output / million) * 0.5;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: XaiIcon,
         id: 'grok-3-mini-fast',
         label: 'Grok-3 Mini Fast',
         model: xai('grok-3-mini-fast'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.6;
+          const outputCost = (output / million) * 4;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: XaiIcon,
         id: 'grok-2',
-        label: 'Grok-2',
+        label: 'Grok 2',
         model: xai('grok-2'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: XaiIcon,
         id: 'grok-beta',
         label: 'Grok Beta',
         model: xai('grok-beta'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 5;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
@@ -144,24 +282,62 @@ export const chatModels = [
         id: 'claude-3-5-haiku-latest',
         label: 'Claude 3.5 Haiku',
         model: anthropic('claude-3-5-haiku-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.8;
+          const outputCost = (output / million) * 4;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: AnthropicIcon,
         id: 'claude-3-5-sonnet-latest',
         label: 'Claude 3.5 Sonnet',
         model: anthropic('claude-3-5-sonnet-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
+        legacy: true,
+      },
+      {
+        icon: AnthropicIcon,
+        id: 'claude-3-haiku-20240307',
+        label: 'Claude 3 Haiku',
+        model: anthropic('claude-3-haiku-20240307'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.25;
+          const outputCost = (output / million) * 1.25;
+
+          return inputCost + outputCost;
+        },
+        legacy: true,
       },
       {
         icon: AnthropicIcon,
         id: 'claude-3-7-sonnet-20250219',
         label: 'Claude 3.7 Sonnet',
         model: anthropic('claude-3-7-sonnet-20250219'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: AnthropicIcon,
         id: 'claude-3-opus-latest',
         label: 'Claude 3 Opus',
         model: anthropic('claude-3-opus-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 15;
+          const outputCost = (output / million) * 75;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
@@ -174,24 +350,48 @@ export const chatModels = [
         id: 'pixtral-large-latest',
         label: 'Pixtral Large',
         model: mistral('pixtral-large-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 6;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: MistralIcon,
         id: 'mistral-large-latest',
         label: 'Mistral Large',
         model: mistral('mistral-large-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 6;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: MistralIcon,
-        id: 'mistral-small-latest',
-        label: 'Mistral Small',
-        model: mistral('mistral-small-latest'),
+        id: 'ministral-8b-latest',
+        label: 'Ministral 8B',
+        model: mistral('ministral-8b-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.1;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: MistralIcon,
-        id: 'pixtral-12b-2409',
-        label: 'Pixtral 12B',
-        model: mistral('pixtral-12b-2409'),
+        id: 'ministral-3b-latest',
+        label: 'Ministral 3B',
+        model: mistral('ministral-3b-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.04;
+          const outputCost = (output / million) * 0.04;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
@@ -201,21 +401,39 @@ export const chatModels = [
     models: [
       {
         icon: GoogleIcon,
-        id: 'gemini-2.0-flash-exp',
-        label: 'Gemini 2.0 Flash Exp',
-        model: google('gemini-2.0-flash-exp'),
+        id: 'gemini-2.0-flash',
+        label: 'Gemini 2.0 Flash',
+        model: google('gemini-2.0-flash-001'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.4;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: GoogleIcon,
         id: 'gemini-1.5-flash',
         label: 'Gemini 1.5 Flash',
         model: google('gemini-1.5-flash'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.15;
+          const outputCost = (output / million) * 0.6;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: GoogleIcon,
         id: 'gemini-1.5-pro',
         label: 'Gemini 1.5 Pro',
         model: google('gemini-1.5-pro'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
@@ -228,39 +446,57 @@ export const chatModels = [
         id: 'deepseek-chat',
         label: 'DeepSeek Chat',
         model: deepseek('deepseek-chat'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.27;
+          const outputCost = (output / million) * 1.1;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: DeepSeekIcon,
         id: 'deepseek-reasoner',
         label: 'DeepSeek Reasoner',
         model: deepseek('deepseek-reasoner'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.55;
+          const outputCost = (output / million) * 2.19;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
 
-  {
-    label: 'Cerebras',
-    models: [
-      {
-        icon: CerebrasIcon,
-        id: 'llama3.1-8b',
-        label: 'Llama 3.1 8B',
-        model: cerebras('llama3.1-8b'),
-      },
-      {
-        icon: CerebrasIcon,
-        id: 'llama3.1-70b',
-        label: 'Llama 3.1 70B',
-        model: cerebras('llama3.1-70b'),
-      },
-      {
-        icon: CerebrasIcon,
-        id: 'llama3.3-70b',
-        label: 'Llama 3.3 70B',
-        model: cerebras('llama3.3-70b'),
-      },
-    ],
-  },
+  // {
+  //   label: 'Cerebras',
+  //   models: [
+  //     {
+  //       icon: CerebrasIcon,
+  //       id: 'llama3.1-8b',
+  //       label: 'Llama 3.1 8B',
+  //       model: cerebras('llama3.1-8b'),
+  //       getCost: ({ input, output }: { input: number; output: number }) => {
+  //         const inputCost = (input / million) * 0.1;
+  //         const outputCost = (output / million) * 0.1;
+
+  //         return inputCost + outputCost;
+  //       },
+  //     },
+  //     {
+  //       icon: CerebrasIcon,
+  //       id: 'llama3.3-70b',
+  //       label: 'Llama 3.3 70B',
+  //       model: cerebras('llama3.3-70b'),
+  //       getCost: ({ input, output }: { input: number; output: number }) => {
+  //         const inputCost = (input / million) * 0.85;
+  //         const outputCost = (output / million) * 1.2;
+
+  //         return inputCost + outputCost;
+  //       },
+  //     },
+  //   ],
+  // },
 
   {
     label: 'Groq',
@@ -270,36 +506,112 @@ export const chatModels = [
         id: 'meta-llama/llama-4-scout-17b-16e-instruct',
         label: 'Llama 4 Scout 17B',
         model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.11;
+          const outputCost = (output / million) * 0.34;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: GroqIcon,
         id: 'llama-3.3-70b-versatile',
         label: 'Llama 3.3 70B Versatile',
         model: groq('llama-3.3-70b-versatile'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.59;
+          const outputCost = (output / million) * 0.79;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: GroqIcon,
         id: 'llama-3.1-8b-instant',
         label: 'Llama 3.1 8B Instant',
         model: groq('llama-3.1-8b-instant'),
-      },
-      {
-        icon: GroqIcon,
-        id: 'mixtral-8x7b-32768',
-        label: 'Mixtral 8x7B',
-        model: groq('mixtral-8x7b-32768'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.05;
+          const outputCost = (output / million) * 0.08;
+
+          return inputCost + outputCost;
+        },
       },
       {
         icon: GroqIcon,
         id: 'gemma2-9b-it',
         label: 'Gemma 2 9B',
         model: groq('gemma2-9b-it'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.2;
+          const outputCost = (output / million) * 0.2;
+
+          return inputCost + outputCost;
+        },
+      },
+      {
+        icon: GroqIcon,
+        id: 'deepseek-r1-distill-llama-70b',
+        label: 'DeepSeek R1 Distill Llama 70B',
+        model: groq('deepseek-r1-distill-llama-70b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.75;
+          const outputCost = (output / million) * 0.99;
+
+          return inputCost + outputCost;
+        },
+      },
+      {
+        icon: GroqIcon,
+        id: 'qwen-2.5-32b',
+        label: 'Qwen 2.5 32B',
+        model: groq('qwen-2.5-32b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.29;
+          const outputCost = (output / million) * 0.39;
+
+          return inputCost + outputCost;
+        },
+      },
+      {
+        icon: GroqIcon,
+        id: 'mistral-saba-24b',
+        label: 'Mistral Saba 24B',
+        model: groq('mistral-saba-24b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.79;
+          const outputCost = (output / million) * 0.79;
+
+          return inputCost + outputCost;
+        },
+      },
+      {
+        icon: GroqIcon,
+        id: 'llama-guard-3-8b',
+        label: 'Llama Guard 3 8B',
+        model: groq('llama-guard-3-8b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.2;
+          const outputCost = (output / million) * 0.2;
+
+          return inputCost + outputCost;
+        },
       },
     ],
   },
 ];
 
-export const imageModels = [
+export const imageModels: {
+  label: string;
+  models: {
+    icon: typeof XaiIcon;
+    id: string;
+    label: string;
+    model: ImageModel;
+    dimensions: string[];
+    getCost: () => number;
+  }[];
+}[] = [
   {
     label: 'xAI',
     models: [
@@ -309,6 +621,7 @@ export const imageModels = [
         label: 'Grok',
         model: xai.image('grok-2-image'),
         dimensions: ['1024x768'],
+        getCost: () => 0.07,
       },
     ],
   },
@@ -321,6 +634,9 @@ export const imageModels = [
         label: 'DALL-E 3',
         model: openai.image('dall-e-3'),
         dimensions: ['1024x1024', '1792x1024', '1024x1792'],
+
+        // TODO: depends on quality and size
+        getCost: () => 0.12,
       },
       {
         icon: OpenAiIcon,
@@ -328,6 +644,7 @@ export const imageModels = [
         label: 'DALL-E 2',
         model: openai.image('dall-e-2'),
         dimensions: ['256x256', '512x512', '1024x1024'],
+        getCost: () => 0.02,
       },
     ],
   },
@@ -340,6 +657,9 @@ export const imageModels = [
         label: 'Nova Canvas',
         model: bedrock.image('amazon.nova-canvas-v1:0'),
         dimensions: ['320-4096 (multiples of 16), 1:4 to 4:1, max 4.2M pixels'],
+
+        // TODO: depends on size and quality
+        getCost: () => 0.08,
       },
     ],
   },
