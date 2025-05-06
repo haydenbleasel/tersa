@@ -204,7 +204,10 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         <div className="grid w-full grid-cols-1 divide-x divide-dotted xl:grid-cols-3">
           {plans.map((plan) => (
             <div key={plan.name} className="p-12">
-              <Card key={plan.name} className="border-none p-0 shadow-none">
+              <Card
+                key={plan.name}
+                className="rounded-none border-none bg-transparent p-0 shadow-none"
+              >
                 <CardHeader className="p-0">
                   <div className="inline-flex w-fit items-center justify-center rounded bg-primary/10 p-3">
                     <plan.icon size={16} className="text-primary" />
