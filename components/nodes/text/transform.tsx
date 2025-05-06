@@ -40,7 +40,9 @@ export const TextTransform = ({
     onError: (error) => handleError('Error generating text', error),
     onFinish: (message) => {
       updateNodeData(id, {
-        generated: message.content,
+        generated: {
+          text: message.content,
+        },
         updatedAt: new Date().toISOString(),
       });
     },
@@ -98,11 +100,13 @@ export const TextTransform = ({
 
   const nonUserMessages = messages.length
     ? messages.filter((message) => message.role !== 'user')
-    : data.generated?.map((message) => ({
-        id: nanoid(),
-        role: 'system',
-        content: message,
-      }));
+    : [
+        {
+          id: nanoid(),
+          role: 'system',
+          content: data.generated?.text ?? '',
+        },
+      ];
 
   const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
     const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
@@ -133,7 +137,7 @@ export const TextTransform = ({
           </Button>
         ),
       });
-    } else if (nonUserMessages?.length || data.generated?.length) {
+    } else if (nonUserMessages?.length || data.generated?.text) {
       toolbar.push({
         tooltip: 'Regenerate',
         children: (

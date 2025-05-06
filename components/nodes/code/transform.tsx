@@ -66,9 +66,9 @@ export const CodeTransform = ({
         '--- Instructions ---',
         data.instructions ?? 'None.',
         '--- Text Prompts ---',
-        ...textPrompts,
+        ...textPrompts.join('\n'),
         '--- Audio Prompts ---',
-        ...audioPrompts,
+        ...audioPrompts.join('\n'),
         '--- Code Prompts ---',
         ...codePrompts.map(
           (code, index) =>

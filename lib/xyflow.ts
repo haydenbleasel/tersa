@@ -6,19 +6,15 @@ import type { TextNodeProps } from '@/components/nodes/text';
 import type { Node } from '@xyflow/react';
 
 export const getTextFromTextNodes = (nodes: Node[]) => {
-  const sourceText = nodes
+  const sourceTexts = nodes
     .filter((node) => node.type === 'text')
-    .map((node) => (node.data as TextNodeProps['data']).content?.text)
-    .filter(Boolean)
-    .join('\n');
+    .map((node) => (node.data as TextNodeProps['data']).text);
 
-  const generatedText = nodes
+  const generatedTexts = nodes
     .filter((node) => node.type === 'text' && node.data.generated)
-    .map((node) => (node.data as TextNodeProps['data']).generated?.join('\n'))
-    .filter(Boolean)
-    .join('\n');
+    .map((node) => (node.data as TextNodeProps['data']).generated?.text);
 
-  return [sourceText, generatedText].filter(Boolean).join('\n');
+  return [...sourceTexts, ...generatedTexts].filter(Boolean) as string[];
 };
 
 export const getTranscriptionFromAudioNodes = (nodes: Node[]) => {
@@ -27,7 +23,7 @@ export const getTranscriptionFromAudioNodes = (nodes: Node[]) => {
     .map((node) => (node.data as AudioNodeProps['data']).transcript)
     .filter(Boolean) as string[];
 
-  return transcripts.join('\n');
+  return transcripts;
 };
 
 export const getDescriptionsFromImageNodes = (nodes: Node[]) => {
@@ -36,7 +32,7 @@ export const getDescriptionsFromImageNodes = (nodes: Node[]) => {
     .map((node) => (node.data as ImageNodeProps['data']).description)
     .filter(Boolean) as string[];
 
-  return descriptions.join('\n');
+  return descriptions;
 };
 
 export const getImagesFromImageNodes = (nodes: Node[]) => {

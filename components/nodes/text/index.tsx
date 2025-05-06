@@ -6,7 +6,9 @@ export type TextNodeProps = {
   type: string;
   data: {
     source: 'primitive' | 'transform';
-    generated?: string[];
+    generated?: {
+      text: string;
+    };
     model?: string;
     updatedAt?: string;
     instructions?: string;

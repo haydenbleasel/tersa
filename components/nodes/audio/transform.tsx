@@ -45,7 +45,7 @@ export const AudioTransform = ({
       setLoading(true);
 
       const response = await generateSpeechAction({
-        text: textPrompts,
+        text: textPrompts.join('\n'),
         nodeId: id,
         modelId,
         projectId,
