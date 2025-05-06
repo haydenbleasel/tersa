@@ -2,7 +2,6 @@
 
 import { updateProjectAction } from '@/app/actions/project/update';
 import { handleError } from '@/lib/error/handle';
-import { uploadFile } from '@/lib/upload';
 import {
   type Node,
   getNodesBounds,
@@ -57,15 +56,15 @@ export const useSaveProject = (projectId: string) => {
       setIsSaving(true);
 
       const content = rfInstance.toObject();
-      const image = await getScreenshot(rfInstance.getNodes());
-      const screenshot = await uploadFile(
-        new File([image], 'screenshot.jpg', { type: 'image/jpeg' }),
-        'screenshots',
-        `${projectId}.jpg`
-      );
+      // const image = await getScreenshot(rfInstance.getNodes());
+      // const screenshot = await uploadFile(
+      //   new File([image], 'screenshot.jpg', { type: 'image/jpeg' }),
+      //   'screenshots',
+      //   `${projectId}.jpg`
+      // );
 
       const response = await updateProjectAction(projectId, {
-        image: screenshot.url,
+        // image: screenshot.url,
         content,
       });
 
