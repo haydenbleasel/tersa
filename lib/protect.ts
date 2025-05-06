@@ -22,9 +22,11 @@ export const getSubscribedUser = async () => {
     (m) => m.meterId === env.POLAR_CREDITS_METER_ID
   );
 
-  const balance = meter ? meter.balance : 0;
+  if (!meter) {
+    throw new Error('No credits meter found');
+  }
 
-  if (balance <= 0) {
+  if (meter.balance <= 0) {
     throw new Error(
       'Sorry, you have no credits remaining! Please upgrade for more credits.'
     );

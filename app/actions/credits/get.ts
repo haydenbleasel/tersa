@@ -27,7 +27,7 @@ export const getCredits = async (): Promise<
     });
 
     const creditsMeter = meters.result.items.find(
-      (m) => m.meter.name === env.POLAR_CREDITS_METER_ID
+      (m) => m.meter.id === env.POLAR_CREDITS_METER_ID
     );
 
     return { credits: creditsMeter?.balance ?? 0 };
