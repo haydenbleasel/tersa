@@ -3,6 +3,7 @@
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { imageModels, visionModels } from '@/lib/models';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -38,14 +39,14 @@ export const generateImageAction = async ({
     const user = await getSubscribedUser();
     const model = imageModels
       .flatMap((m) => m.models)
-      .find((m) => m.id === modelId)?.model;
+      .find((m) => m.id === modelId);
 
     if (!model) {
       throw new Error('Model not found');
     }
 
     const { image } = await generateImage({
-      model,
+      model: model.model,
       prompt: [
         'Generate an image based on the following instructions and context.',
         '---',
@@ -55,6 +56,12 @@ export const generateImageAction = async ({
         'Context:',
         prompt,
       ].join('\n'),
+    });
+
+    await trackCreditUsage({
+      userId: user.id,
+      action: 'generate_image',
+      cost: model.getCost(),
     });
 
     const blob = await client.storage

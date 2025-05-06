@@ -1,6 +1,6 @@
 import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
-import { polar } from '@/lib/polar';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamText } from 'ai';
@@ -15,12 +15,12 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
-  let customerId: string;
+  let userId: string;
 
   try {
     const user = await getSubscribedUser();
 
-    customerId = user.user_metadata.polar_customer_id;
+    userId = user.id;
   } catch (error) {
     const message = parseError(error);
 
@@ -68,20 +68,13 @@ export const POST = async (req: Request) => {
     ].join('\n'),
     messages,
     onFinish: async ({ usage }) => {
-      await polar.events.ingest({
-        events: [
-          {
-            name: 'credit_usage',
-            externalCustomerId: customerId,
-            metadata: {
-              action: 'chat',
-              credits: model.getCost({
-                input: usage.promptTokens,
-                output: usage.completionTokens,
-              }),
-            },
-          },
-        ],
+      await trackCreditUsage({
+        userId,
+        action: 'chat',
+        cost: model.getCost({
+          input: usage.promptTokens,
+          output: usage.completionTokens,
+        }),
       });
     },
   });

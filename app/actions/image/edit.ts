@@ -3,6 +3,7 @@
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { imageModels } from '@/lib/models';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -73,6 +74,12 @@ export const editImageAction = async ({
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
       user: user.id,
+    });
+
+    await trackCreditUsage({
+      userId: user.id,
+      action: 'edit_image',
+      cost: model.getCost(),
     });
 
     const json = response.data?.at(0)?.b64_json;

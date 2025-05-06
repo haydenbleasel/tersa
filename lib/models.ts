@@ -9,7 +9,7 @@ import { mistral } from '@ai-sdk/mistral';
 import { openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 
-import type { ImageModel, LanguageModelV1 } from 'ai';
+import type { ImageModel, LanguageModelV1, SpeechModel } from 'ai';
 import {
   AmazonIcon,
   AnthropicIcon,
@@ -1114,7 +1114,16 @@ export const imageModels: {
   // },
 ];
 
-export const speechModels = [
+export const speechModels: {
+  label: string;
+  models: {
+    icon: typeof OpenAiIcon;
+    id: string;
+    label: string;
+    model: SpeechModel;
+    getCost: (tokens: number) => number;
+  }[];
+}[] = [
   {
     label: 'OpenAI',
     models: [
@@ -1122,19 +1131,22 @@ export const speechModels = [
         icon: OpenAiIcon,
         id: 'tts-1',
         label: 'TTS-1',
-        model: openai('tts-1'),
+        model: openai.speech('tts-1'),
+        getCost: (characters: number) => (characters / million) * 15,
       },
       {
         icon: OpenAiIcon,
         id: 'tts-1-hd',
         label: 'TTS-1-HD',
-        model: openai('tts-1-hd'),
+        model: openai.speech('tts-1-hd'),
+        getCost: (characters: number) => (characters / million) * 30,
       },
       {
         icon: OpenAiIcon,
         id: 'gpt-4o-mini-tts',
         label: 'GPT-4o Mini TTS',
-        model: openai('gpt-4o-mini-tts'),
+        model: openai.speech('gpt-4o-mini-tts'),
+        getCost: (tokens: number) => (tokens / million) * 0.6,
       },
     ],
   },
@@ -1145,14 +1157,15 @@ export const speechModels = [
         icon: LmntIcon,
         id: 'aurora',
         label: 'Aurora',
-        model: lmnt('aurora'),
+        model: lmnt.speech('aurora'),
+        getCost: (characters: number) => (characters / 1000) * 0.05,
       },
       {
         icon: LmntIcon,
         id: 'blizzard',
         label: 'Blizzard',
-        // @ts-expect-error typo
-        model: lmnt('blizzard'),
+        model: lmnt.speech('blizzard'),
+        getCost: (characters: number) => (characters / 1000) * 0.05,
       },
     ],
   },
@@ -1163,7 +1176,9 @@ export const speechModels = [
         icon: HumeIcon,
         id: 'default',
         label: 'Default',
-        model: hume('default'),
+        model: hume.speech(),
+        // Creator plan pricing
+        getCost: (characters: number) => (characters / 1000) * 0.2,
       },
     ],
   },

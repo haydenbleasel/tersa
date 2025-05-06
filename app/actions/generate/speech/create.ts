@@ -3,10 +3,10 @@
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { speechModels } from '@/lib/models';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { openai } from '@ai-sdk/openai';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
@@ -47,6 +47,15 @@ export const generateSpeechAction = async ({
       model: model.model,
       text,
       outputFormat: 'mp3',
+    });
+
+    await trackCreditUsage({
+      userId: user.id,
+      action: 'chat',
+      credits: model.getCost({
+        input: usage.promptTokens,
+        output: usage.completionTokens,
+      }),
     });
 
     const blob = await client.storage

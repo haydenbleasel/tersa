@@ -1,5 +1,6 @@
 import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamObject } from 'ai';
@@ -15,8 +16,12 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
+  let userId: string | undefined;
+
   try {
-    await getSubscribedUser();
+    const user = await getSubscribedUser();
+
+    userId = user.id;
   } catch (error) {
     const message = parseError(error);
 
@@ -50,14 +55,14 @@ export const POST = async (req: Request) => {
 
   const model = chatModels
     .flatMap((model) => model.models)
-    .find(({ id }) => id === modelId)?.model;
+    .find(({ id }) => id === modelId);
 
   if (!model) {
     return new Response('Model not found', { status: 400 });
   }
 
   const result = streamObject({
-    model: model,
+    model: model.model,
     schema: z.object({
       text: z.string(),
       language: z.string(),
@@ -70,6 +75,16 @@ export const POST = async (req: Request) => {
       '------ User ------',
       context,
     ].join('\n'),
+    onFinish: async ({ usage }) => {
+      await trackCreditUsage({
+        userId,
+        action: 'chat',
+        cost: model.getCost({
+          input: usage.promptTokens,
+          output: usage.completionTokens,
+        }),
+      });
+    },
   });
 
   return result.toTextStreamResponse();
