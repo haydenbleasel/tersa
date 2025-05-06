@@ -5,10 +5,10 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/kibo-ui/dropzone';
+import { Skeleton } from '@/components/ui/skeleton';
 import { handleError } from '@/lib/error/handle';
 import { uploadFile } from '@/lib/upload';
 import { useReactFlow } from '@xyflow/react';
-import { Loader2Icon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { AudioNodeProps } from '.';
@@ -69,39 +69,31 @@ export const AudioPrimitive = ({
 
   return (
     <NodeLayout id={id} data={data} type={type} title={title}>
-      <div className="p-4">
-        {data.content ? (
-          // biome-ignore lint/a11y/useMediaCaption: <explanation>
-          <audio src={data.content.url} controls />
-        ) : (
-          <Dropzone
-            maxSize={1024 * 1024 * 10}
-            minSize={1024}
-            maxFiles={1}
-            multiple={false}
-            accept={{
-              'audio/*': [],
-            }}
-            onDrop={handleDrop}
-            src={files}
-            onError={console.error}
-            className="rounded-none border-none bg-transparent shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
-          >
-            <DropzoneEmptyState />
-            <DropzoneContent>
-              {files && files.length > 0 && (
-                <div className="relative">
-                  {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-                  <audio src={URL.createObjectURL(files[0])} controls />
-                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-black/50">
-                    <Loader2Icon className="size-12 animate-spin text-white" />
-                  </div>
-                </div>
-              )}
-            </DropzoneContent>
-          </Dropzone>
-        )}
-      </div>
+      {isUploading && (
+        <Skeleton className="h-[50px] w-full animate-pulse rounded-full" />
+      )}
+      {!isUploading && data.content && (
+        // biome-ignore lint/a11y/useMediaCaption: <explanation>
+        <audio src={data.content.url} controls />
+      )}
+      {!isUploading && !data.content && (
+        <Dropzone
+          maxSize={1024 * 1024 * 10}
+          minSize={1024}
+          maxFiles={1}
+          multiple={false}
+          accept={{
+            'audio/*': [],
+          }}
+          onDrop={handleDrop}
+          src={files}
+          onError={console.error}
+          className="rounded-none border-none bg-transparent shadow-none hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+        >
+          <DropzoneEmptyState />
+          <DropzoneContent />
+        </Dropzone>
+      )}
     </NodeLayout>
   );
 };

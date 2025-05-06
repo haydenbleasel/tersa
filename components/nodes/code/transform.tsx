@@ -10,7 +10,6 @@ import {
 } from '@/lib/xyflow';
 import { experimental_useObject as useObject } from '@ai-sdk/react';
 import Editor from '@monaco-editor/react';
-import { useMeasure } from '@uidotdev/usehooks';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -30,7 +29,6 @@ export const CodeTransform = ({
   type,
   title,
 }: CodeTransformProps) => {
-  const [ref, { width, height }] = useMeasure();
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
   const { isLoading, object, stop, submit } = useObject({
@@ -197,31 +195,24 @@ export const CodeTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div
-        ref={ref}
-        className="aspect-square w-full overflow-hidden rounded-t-lg"
-      >
-        <Editor
-          height="100%"
-          width="100%"
-          className="size-full"
-          language={data.generated?.language}
-          value={object?.text ?? data.generated?.text}
-          onChange={handleCodeChange}
-          theme="vs-dark"
-          options={{
-            readOnly: true,
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
-      </div>
+      <Editor
+        className="aspect-square w-full overflow-hidden rounded-b-xl"
+        language={data.generated?.language}
+        value={object?.text ?? data.generated?.text}
+        onChange={handleCodeChange}
+        theme="vs-dark"
+        options={{
+          readOnly: true,
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
       <Textarea
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );

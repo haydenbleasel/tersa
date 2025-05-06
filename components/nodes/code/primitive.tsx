@@ -1,5 +1,4 @@
 import Editor from '@monaco-editor/react';
-import { useMeasure } from '@uidotdev/usehooks';
 import { useReactFlow } from '@xyflow/react';
 import type { ComponentProps } from 'react';
 import type { CodeNodeProps } from '.';
@@ -17,7 +16,6 @@ export const CodePrimitive = ({
   title,
 }: CodePrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const [ref, { width, height }] = useMeasure();
 
   const handleCodeChange = (value: string | undefined) => {
     updateNodeData(id, {
@@ -45,25 +43,18 @@ export const CodePrimitive = ({
 
   return (
     <NodeLayout id={id} data={data} title={title} type={type} toolbar={toolbar}>
-      <div
-        ref={ref}
-        className="aspect-square size-full overflow-hidden rounded-lg"
-      >
-        <Editor
-          height={height ?? '100%'}
-          width={width ?? '100%'}
-          className="size-full"
-          language={data.content?.language}
-          value={data.content?.text}
-          onChange={handleCodeChange}
-          theme="vs-dark"
-          options={{
-            minimap: {
-              enabled: false,
-            },
-          }}
-        />
-      </div>
+      <Editor
+        className="aspect-square w-full"
+        language={data.content?.language}
+        value={data.content?.text}
+        onChange={handleCodeChange}
+        theme="vs-dark"
+        options={{
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
     </NodeLayout>
   );
 };

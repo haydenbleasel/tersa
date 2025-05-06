@@ -37,6 +37,9 @@ export const ModelSelector = ({
   onChange,
 }: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
+  const activeModel = options
+    .flatMap((option) => option.models)
+    .find((model) => model.id === value);
 
   return (
     <Combobox
@@ -52,7 +55,14 @@ export const ModelSelector = ({
         }))}
       type="model"
     >
-      <ComboboxTrigger className={className} id={id} style={{ width }} />
+      <ComboboxTrigger className={className} id={id} style={{ width }}>
+        {activeModel && (
+          <div className="flex w-full items-center gap-2 overflow-hidden">
+            <activeModel.icon className="size-4 shrink-0" />
+            <span className="block truncate">{activeModel.label}</span>
+          </div>
+        )}
+      </ComboboxTrigger>
       <ComboboxContent className={cn('p-0', className)}>
         <ComboboxInput />
         <ComboboxList>

@@ -149,35 +149,33 @@ export const VideoTransform = ({
 
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
-      <div className="flex flex-1 items-center justify-center rounded-t-lg bg-secondary/50">
-        {loading && (
-          <Skeleton className="aspect-video w-full animate-pulse rounded-tl-lg" />
-        )}
-        {!loading && !data.generated?.url && (
-          <div className="flex aspect-video w-full items-center justify-center">
-            <p className="text-muted-foreground text-sm">
-              Press "Generate" to generate video
-            </p>
-          </div>
-        )}
-        {data.generated?.url && (
-          <video
-            src={data.generated.url}
-            width={data.width ?? 800}
-            height={data.height ?? 450}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full rounded-t-lg object-cover"
-          />
-        )}
-      </div>
+      {loading && (
+        <Skeleton className="aspect-video w-full animate-pulse rounded-b-xl" />
+      )}
+      {!loading && !data.generated?.url && (
+        <div className="flex aspect-video w-full items-center justify-center rounded-b-xl bg-secondary">
+          <p className="text-muted-foreground text-sm">
+            Press "Generate" to generate video
+          </p>
+        </div>
+      )}
+      {data.generated?.url && (
+        <video
+          src={data.generated.url}
+          width={data.width ?? 800}
+          height={data.height ?? 450}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full rounded-b-xl object-cover"
+        />
+      )}
       <Textarea
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );

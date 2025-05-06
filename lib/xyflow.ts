@@ -38,7 +38,7 @@ export const getImagesFromImageNodes = (nodes: Node[]) => {
     .filter(Boolean) as { url: string; type: string }[];
 
   const generatedImages = nodes
-    .filter((node) => node.type === 'image' && node.data.generated)
+    .filter((node) => node.type === 'image')
     .map((node) => (node.data as ImageNodeProps['data']).generated)
     .filter(Boolean) as { url: string; type: string }[];
 

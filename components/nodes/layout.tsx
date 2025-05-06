@@ -186,8 +186,10 @@ export const NodeLayout = ({
               )}
             </div>
           )}
-          <div className="node-container flex size-full flex-col divide-y rounded-lg bg-card ring-1 ring-border transition-all">
-            {children}
+          <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-1 shadow-2xl shadow-foreground/10 ring-1 ring-border transition-all">
+            <div className="overflow-hidden rounded-3xl bg-card">
+              {children}
+            </div>
           </div>
         </div>
         {type !== 'drop' && <Handle type="source" position={Position.Right} />}

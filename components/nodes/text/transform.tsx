@@ -39,10 +39,12 @@ export const TextTransform = ({
     },
     onError: (error) => handleError('Error generating text', error),
     onFinish: () => {
+      const nonUserMessages = messages
+        .filter((message) => message.role !== 'user')
+        .map((message) => message.content);
+
       updateNodeData(id, {
-        generated: messages
-          .filter((message) => message.role !== 'user')
-          .map((message) => message.content),
+        generated: nonUserMessages,
         updatedAt: new Date().toISOString(),
       });
     },
@@ -190,7 +192,7 @@ export const TextTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div className="flex flex-1 rounded-t-lg bg-secondary/50 p-4">
+      <div className="flex flex-1 rounded-t-3xl rounded-b-xl bg-secondary p-4">
         {!nonUserMessages?.length && status === 'streaming' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
@@ -213,7 +215,7 @@ export const TextTransform = ({
         value={data.instructions ?? ''}
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none rounded-b-lg border-none shadow-none focus-visible:ring-0"
+        className="shrink-0 resize-none rounded-none border-none shadow-none focus-visible:ring-0"
       />
     </NodeLayout>
   );
