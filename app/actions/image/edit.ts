@@ -2,6 +2,7 @@
 
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
+import { imageModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -14,6 +15,7 @@ type EditImageActionProps = {
     url: string;
     type: string;
   }[];
+  modelId: string;
   instructions?: string;
   nodeId: string;
   projectId: string;
@@ -22,6 +24,7 @@ type EditImageActionProps = {
 export const editImageAction = async ({
   images,
   instructions,
+  modelId,
   nodeId,
   projectId,
 }: EditImageActionProps): Promise<
@@ -36,6 +39,18 @@ export const editImageAction = async ({
     const client = await createClient();
     const user = await getSubscribedUser();
     const openai = new OpenAI();
+
+    const model = imageModels
+      .flatMap((m) => m.models)
+      .find((m) => m.id === modelId);
+
+    if (!model) {
+      throw new Error('Model not found');
+    }
+
+    if (!model.supportsEdit) {
+      throw new Error('Model does not support editing');
+    }
 
     const promptImages = await Promise.all(
       images.map(async (image) => {
@@ -54,7 +69,7 @@ export const editImageAction = async ({
         : 'Create a single variant of the images.';
 
     const response = await openai.images.edit({
-      model: 'gpt-image-1',
+      model: model.id,
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
       user: user.id,

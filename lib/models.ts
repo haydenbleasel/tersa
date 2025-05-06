@@ -1,17 +1,12 @@
 import { bedrock } from '@ai-sdk/amazon-bedrock';
 import { anthropic } from '@ai-sdk/anthropic';
-import { deepinfra } from '@ai-sdk/deepinfra';
 import { deepseek } from '@ai-sdk/deepseek';
-import { fal } from '@ai-sdk/fal';
-import { fireworks } from '@ai-sdk/fireworks';
 import { google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
 import { hume } from '@ai-sdk/hume';
 import { lmnt } from '@ai-sdk/lmnt';
-import { luma } from '@ai-sdk/luma';
 import { mistral } from '@ai-sdk/mistral';
 import { openai } from '@ai-sdk/openai';
-import { togetherai } from '@ai-sdk/togetherai';
 import { xai } from '@ai-sdk/xai';
 
 import type { ImageModel, LanguageModelV1 } from 'ai';
@@ -19,18 +14,13 @@ import {
   AmazonIcon,
   AnthropicIcon,
   DeepSeekIcon,
-  DeepinfraIcon,
-  FalIcon,
-  FireworksIcon,
   GoogleIcon,
   GroqIcon,
   HumeIcon,
   LmntIcon,
-  LumaIcon,
   MinimaxIcon,
   MistralIcon,
   OpenAiIcon,
-  TogetherIcon,
   XaiIcon,
 } from './icons';
 
@@ -45,6 +35,7 @@ export const chatModels: {
     model: LanguageModelV1;
     getCost: ({ input, output }: { input: number; output: number }) => number;
     legacy?: boolean;
+    disabled?: boolean;
   }[];
 }[] = [
   {
@@ -610,6 +601,8 @@ export const imageModels: {
     model: ImageModel;
     dimensions: string[];
     getCost: () => number;
+    supportsEdit?: boolean;
+    disabled?: boolean;
   }[];
 }[] = [
   {
@@ -646,6 +639,15 @@ export const imageModels: {
         dimensions: ['256x256', '512x512', '1024x1024'],
         getCost: () => 0.02,
       },
+      {
+        icon: OpenAiIcon,
+        id: 'gpt-image-1',
+        label: 'GPT Image 1',
+        model: openai.image('gpt-image-1'),
+        dimensions: ['1024x1024'],
+        supportsEdit: true,
+        getCost: () => 0.12, // ???
+      },
     ],
   },
   {
@@ -663,151 +665,151 @@ export const imageModels: {
       },
     ],
   },
-  {
-    label: 'Fal',
-    models: [
-      {
-        icon: FalIcon,
-        id: 'fal-ai/flux/dev',
-        label: 'Flux Dev',
-        model: fal.image('fal-ai/flux/dev'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/flux-lora',
-        label: 'Flux Lora',
-        model: fal.image('fal-ai/flux-lora'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/fast-sdxl',
-        label: 'Fast SDXL',
-        model: fal.image('fal-ai/fast-sdxl'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/flux-pro/v1.1-ultra',
-        label: 'Flux Pro Ultra',
-        model: fal.image('fal-ai/flux-pro/v1.1-ultra'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/ideogram/v2',
-        label: 'Ideogram v2',
-        model: fal.image('fal-ai/ideogram/v2'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/recraft-v3',
-        label: 'Recraft v3',
-        model: fal.image('fal-ai/recraft-v3'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/stable-diffusion-3.5-large',
-        label: 'SD 3.5 Large',
-        model: fal.image('fal-ai/stable-diffusion-3.5-large'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: FalIcon,
-        id: 'fal-ai/hyper-sdxl',
-        label: 'Hyper SDXL',
-        model: fal.image('fal-ai/hyper-sdxl'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-    ],
-  },
-  {
-    label: 'DeepInfra',
-    models: [
-      {
-        icon: DeepinfraIcon,
-        id: 'stabilityai/sd3.5',
-        label: 'SD 3.5',
-        model: deepinfra.image('stabilityai/sd3.5'),
-        dimensions: [
-          '1:1',
-          '16:9',
-          '1:9',
-          '3:2',
-          '2:3',
-          '4:5',
-          '5:4',
-          '9:16',
-          '9:21',
-        ],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'black-forest-labs/FLUX-1.1-pro',
-        label: 'FLUX 1.1 Pro',
-        model: deepinfra.image('black-forest-labs/FLUX-1.1-pro'),
-        dimensions: ['256-1440 (multiples of 32)'],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'black-forest-labs/FLUX-1-schnell',
-        label: 'FLUX 1 Schnell',
-        model: deepinfra.image('black-forest-labs/FLUX-1-schnell'),
-        dimensions: ['256-1440 (multiples of 32)'],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'black-forest-labs/FLUX-1-dev',
-        label: 'FLUX 1 Dev',
-        model: deepinfra.image('black-forest-labs/FLUX-1-dev'),
-        dimensions: ['256-1440 (multiples of 32)'],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'black-forest-labs/FLUX-pro',
-        label: 'FLUX Pro',
-        model: deepinfra.image('black-forest-labs/FLUX-pro'),
-        dimensions: ['256-1440 (multiples of 32)'],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'stabilityai/sd3.5-medium',
-        label: 'SD 3.5 Medium',
-        model: deepinfra.image('stabilityai/sd3.5-medium'),
-        dimensions: [
-          '1:1',
-          '16:9',
-          '1:9',
-          '3:2',
-          '2:3',
-          '4:5',
-          '5:4',
-          '9:16',
-          '9:21',
-        ],
-      },
-      {
-        icon: DeepinfraIcon,
-        id: 'stabilityai/sdxl-turbo',
-        label: 'SDXL Turbo',
-        model: deepinfra.image('stabilityai/sdxl-turbo'),
-        dimensions: [
-          '1:1',
-          '16:9',
-          '1:9',
-          '3:2',
-          '2:3',
-          '4:5',
-          '5:4',
-          '9:16',
-          '9:21',
-        ],
-      },
-    ],
-  },
+  // {
+  //   label: 'Fal',
+  //   models: [
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/flux/dev',
+  //       label: 'Flux Dev',
+  //       model: fal.image('fal-ai/flux/dev'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/flux-lora',
+  //       label: 'Flux Lora',
+  //       model: fal.image('fal-ai/flux-lora'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/fast-sdxl',
+  //       label: 'Fast SDXL',
+  //       model: fal.image('fal-ai/fast-sdxl'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/flux-pro/v1.1-ultra',
+  //       label: 'Flux Pro Ultra',
+  //       model: fal.image('fal-ai/flux-pro/v1.1-ultra'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/ideogram/v2',
+  //       label: 'Ideogram v2',
+  //       model: fal.image('fal-ai/ideogram/v2'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/recraft-v3',
+  //       label: 'Recraft v3',
+  //       model: fal.image('fal-ai/recraft-v3'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/stable-diffusion-3.5-large',
+  //       label: 'SD 3.5 Large',
+  //       model: fal.image('fal-ai/stable-diffusion-3.5-large'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //     {
+  //       icon: FalIcon,
+  //       id: 'fal-ai/hyper-sdxl',
+  //       label: 'Hyper SDXL',
+  //       model: fal.image('fal-ai/hyper-sdxl'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'DeepInfra',
+  //   models: [
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'stabilityai/sd3.5',
+  //       label: 'SD 3.5',
+  //       model: deepinfra.image('stabilityai/sd3.5'),
+  //       dimensions: [
+  //         '1:1',
+  //         '16:9',
+  //         '1:9',
+  //         '3:2',
+  //         '2:3',
+  //         '4:5',
+  //         '5:4',
+  //         '9:16',
+  //         '9:21',
+  //       ],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'black-forest-labs/FLUX-1.1-pro',
+  //       label: 'FLUX 1.1 Pro',
+  //       model: deepinfra.image('black-forest-labs/FLUX-1.1-pro'),
+  //       dimensions: ['256-1440 (multiples of 32)'],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'black-forest-labs/FLUX-1-schnell',
+  //       label: 'FLUX 1 Schnell',
+  //       model: deepinfra.image('black-forest-labs/FLUX-1-schnell'),
+  //       dimensions: ['256-1440 (multiples of 32)'],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'black-forest-labs/FLUX-1-dev',
+  //       label: 'FLUX 1 Dev',
+  //       model: deepinfra.image('black-forest-labs/FLUX-1-dev'),
+  //       dimensions: ['256-1440 (multiples of 32)'],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'black-forest-labs/FLUX-pro',
+  //       label: 'FLUX Pro',
+  //       model: deepinfra.image('black-forest-labs/FLUX-pro'),
+  //       dimensions: ['256-1440 (multiples of 32)'],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'stabilityai/sd3.5-medium',
+  //       label: 'SD 3.5 Medium',
+  //       model: deepinfra.image('stabilityai/sd3.5-medium'),
+  //       dimensions: [
+  //         '1:1',
+  //         '16:9',
+  //         '1:9',
+  //         '3:2',
+  //         '2:3',
+  //         '4:5',
+  //         '5:4',
+  //         '9:16',
+  //         '9:21',
+  //       ],
+  //     },
+  //     {
+  //       icon: DeepinfraIcon,
+  //       id: 'stabilityai/sdxl-turbo',
+  //       label: 'SDXL Turbo',
+  //       model: deepinfra.image('stabilityai/sdxl-turbo'),
+  //       dimensions: [
+  //         '1:1',
+  //         '16:9',
+  //         '1:9',
+  //         '3:2',
+  //         '2:3',
+  //         '4:5',
+  //         '5:4',
+  //         '9:16',
+  //         '9:21',
+  //       ],
+  //     },
+  //   ],
+  // },
   // {
   //   label: 'Replicate',
   //   models: [
@@ -872,232 +874,244 @@ export const imageModels: {
   //     },
   //   ],
   // },
-  {
-    label: 'Fireworks',
-    models: [
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/flux-1-dev-fp8',
-        label: 'Flux 1 Dev FP8',
-        model: fireworks.image('accounts/fireworks/models/flux-1-dev-fp8'),
-        dimensions: [
-          '1:1',
-          '2:3',
-          '3:2',
-          '4:5',
-          '5:4',
-          '16:9',
-          '9:16',
-          '9:21',
-          '21:9',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/flux-1-schnell-fp8',
-        label: 'Flux 1 Schnell FP8',
-        model: fireworks.image('accounts/fireworks/models/flux-1-schnell-fp8'),
-        dimensions: [
-          '1:1',
-          '2:3',
-          '3:2',
-          '4:5',
-          '5:4',
-          '16:9',
-          '9:16',
-          '9:21',
-          '21:9',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/playground-v2-5-1024px-aesthetic',
-        label: 'Playground v2.5',
-        model: fireworks.image(
-          'accounts/fireworks/models/playground-v2-5-1024px-aesthetic'
-        ),
-        dimensions: [
-          '640x1536',
-          '768x1344',
-          '832x1216',
-          '896x1152',
-          '1024x1024',
-          '1152x896',
-          '1216x832',
-          '1344x768',
-          '1536x640',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/japanese-stable-diffusion-xl',
-        label: 'Japanese SDXL',
-        model: fireworks.image(
-          'accounts/fireworks/models/japanese-stable-diffusion-xl'
-        ),
-        dimensions: [
-          '640x1536',
-          '768x1344',
-          '832x1216',
-          '896x1152',
-          '1024x1024',
-          '1152x896',
-          '1216x832',
-          '1344x768',
-          '1536x640',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/playground-v2-1024px-aesthetic',
-        label: 'Playground v2',
-        model: fireworks.image(
-          'accounts/fireworks/models/playground-v2-1024px-aesthetic'
-        ),
-        dimensions: [
-          '640x1536',
-          '768x1344',
-          '832x1216',
-          '896x1152',
-          '1024x1024',
-          '1152x896',
-          '1216x832',
-          '1344x768',
-          '1536x640',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/SSD-1B',
-        label: 'SSD-1B',
-        model: fireworks.image('accounts/fireworks/models/SSD-1B'),
-        dimensions: [
-          '640x1536',
-          '768x1344',
-          '832x1216',
-          '896x1152',
-          '1024x1024',
-          '1152x896',
-          '1216x832',
-          '1344x768',
-          '1536x640',
-        ],
-      },
-      {
-        icon: FireworksIcon,
-        id: 'accounts/fireworks/models/stable-diffusion-xl-1024-v1-0',
-        label: 'SDXL 1.0',
-        model: fireworks.image(
-          'accounts/fireworks/models/stable-diffusion-xl-1024-v1-0'
-        ),
-        dimensions: [
-          '640x1536',
-          '768x1344',
-          '832x1216',
-          '896x1152',
-          '1024x1024',
-          '1152x896',
-          '1216x832',
-          '1344x768',
-          '1536x640',
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Luma',
-    models: [
-      {
-        icon: LumaIcon,
-        id: 'photon-1',
-        label: 'Photon 1',
-        model: luma.image('photon-1'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-      {
-        icon: LumaIcon,
-        id: 'photon-flash-1',
-        label: 'Photon Flash 1',
-        model: luma.image('photon-flash-1'),
-        dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
-      },
-    ],
-  },
-  {
-    label: 'Together.ai',
-    models: [
-      {
-        icon: TogetherIcon,
-        id: 'stabilityai/stable-diffusion-xl-base-1.0',
-        label: 'SDXL Base 1.0',
-        model: togetherai.image('stabilityai/stable-diffusion-xl-base-1.0'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-dev',
-        label: 'FLUX.1 Dev',
-        model: togetherai.image('black-forest-labs/FLUX.1-dev'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-dev-lora',
-        label: 'FLUX.1 Dev Lora',
-        model: togetherai.image('black-forest-labs/FLUX.1-dev-lora'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-schnell',
-        label: 'FLUX.1 Schnell',
-        model: togetherai.image('black-forest-labs/FLUX.1-schnell'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-canny',
-        label: 'FLUX.1 Canny',
-        model: togetherai.image('black-forest-labs/FLUX.1-canny'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-depth',
-        label: 'FLUX.1 Depth',
-        model: togetherai.image('black-forest-labs/FLUX.1-depth'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-redux',
-        label: 'FLUX.1 Redux',
-        model: togetherai.image('black-forest-labs/FLUX.1-redux'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1.1-pro',
-        label: 'FLUX.1.1 Pro',
-        model: togetherai.image('black-forest-labs/FLUX.1.1-pro'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-pro',
-        label: 'FLUX.1 Pro',
-        model: togetherai.image('black-forest-labs/FLUX.1-pro'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-      {
-        icon: TogetherIcon,
-        id: 'black-forest-labs/FLUX.1-schnell-Free',
-        label: 'FLUX.1 Schnell Free',
-        model: togetherai.image('black-forest-labs/FLUX.1-schnell-Free'),
-        dimensions: ['512x512', '768x768', '1024x1024'],
-      },
-    ],
-  },
+  // {
+  //   label: 'Fireworks',
+  //   models: [
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/flux-1-dev-fp8',
+  //       label: 'Flux 1 Dev FP8',
+  //       model: fireworks.image('accounts/fireworks/models/flux-1-dev-fp8'),
+  //       dimensions: [
+  //         '1:1',
+  //         '2:3',
+  //         '3:2',
+  //         '4:5',
+  //         '5:4',
+  //         '16:9',
+  //         '9:16',
+  //         '9:21',
+  //         '21:9',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/flux-1-schnell-fp8',
+  //       label: 'Flux 1 Schnell FP8',
+  //       model: fireworks.image('accounts/fireworks/models/flux-1-schnell-fp8'),
+  //       dimensions: [
+  //         '1:1',
+  //         '2:3',
+  //         '3:2',
+  //         '4:5',
+  //         '5:4',
+  //         '16:9',
+  //         '9:16',
+  //         '9:21',
+  //         '21:9',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/playground-v2-5-1024px-aesthetic',
+  //       label: 'Playground v2.5',
+  //       model: fireworks.image(
+  //         'accounts/fireworks/models/playground-v2-5-1024px-aesthetic'
+  //       ),
+  //       dimensions: [
+  //         '640x1536',
+  //         '768x1344',
+  //         '832x1216',
+  //         '896x1152',
+  //         '1024x1024',
+  //         '1152x896',
+  //         '1216x832',
+  //         '1344x768',
+  //         '1536x640',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/japanese-stable-diffusion-xl',
+  //       label: 'Japanese SDXL',
+  //       model: fireworks.image(
+  //         'accounts/fireworks/models/japanese-stable-diffusion-xl'
+  //       ),
+  //       dimensions: [
+  //         '640x1536',
+  //         '768x1344',
+  //         '832x1216',
+  //         '896x1152',
+  //         '1024x1024',
+  //         '1152x896',
+  //         '1216x832',
+  //         '1344x768',
+  //         '1536x640',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/playground-v2-1024px-aesthetic',
+  //       label: 'Playground v2',
+  //       model: fireworks.image(
+  //         'accounts/fireworks/models/playground-v2-1024px-aesthetic'
+  //       ),
+  //       dimensions: [
+  //         '640x1536',
+  //         '768x1344',
+  //         '832x1216',
+  //         '896x1152',
+  //         '1024x1024',
+  //         '1152x896',
+  //         '1216x832',
+  //         '1344x768',
+  //         '1536x640',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/SSD-1B',
+  //       label: 'SSD-1B',
+  //       model: fireworks.image('accounts/fireworks/models/SSD-1B'),
+  //       dimensions: [
+  //         '640x1536',
+  //         '768x1344',
+  //         '832x1216',
+  //         '896x1152',
+  //         '1024x1024',
+  //         '1152x896',
+  //         '1216x832',
+  //         '1344x768',
+  //         '1536x640',
+  //       ],
+  //     },
+  //     {
+  //       icon: FireworksIcon,
+  //       id: 'accounts/fireworks/models/stable-diffusion-xl-1024-v1-0',
+  //       label: 'SDXL 1.0',
+  //       model: fireworks.image(
+  //         'accounts/fireworks/models/stable-diffusion-xl-1024-v1-0'
+  //       ),
+  //       dimensions: [
+  //         '640x1536',
+  //         '768x1344',
+  //         '832x1216',
+  //         '896x1152',
+  //         '1024x1024',
+  //         '1152x896',
+  //         '1216x832',
+  //         '1344x768',
+  //         '1536x640',
+  //       ],
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Luma',
+  //   models: [
+  //     {
+  //       icon: LumaIcon,
+  //       id: 'photon-1',
+  //       label: 'Photon 1',
+  //       model: luma.image('photon-1'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+
+  //       getCost: (width: number, height: number) => {
+  //         const pixels = width * height;
+
+  //         return (pixels / million) * 0.0073;
+  //       },
+  //     },
+  //     {
+  //       icon: LumaIcon,
+  //       id: 'photon-flash-1',
+  //       label: 'Photon Flash 1',
+  //       model: luma.image('photon-flash-1'),
+  //       dimensions: ['1:1', '3:4', '4:3', '9:16', '16:9', '9:21', '21:9'],
+
+  //       getCost: (width: number, height: number) => {
+  //         const pixels = width * height;
+
+  //         return (pixels / million) * 0.0019;
+  //       },
+  //     },
+  //   ],
+  // },
+  // {
+  //   label: 'Together.ai',
+  //   models: [
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'stabilityai/stable-diffusion-xl-base-1.0',
+  //       label: 'SDXL Base 1.0',
+  //       model: togetherai.image('stabilityai/stable-diffusion-xl-base-1.0'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-dev',
+  //       label: 'FLUX.1 Dev',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-dev'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-dev-lora',
+  //       label: 'FLUX.1 Dev Lora',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-dev-lora'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-schnell',
+  //       label: 'FLUX.1 Schnell',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-schnell'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-canny',
+  //       label: 'FLUX.1 Canny',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-canny'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-depth',
+  //       label: 'FLUX.1 Depth',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-depth'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-redux',
+  //       label: 'FLUX.1 Redux',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-redux'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1.1-pro',
+  //       label: 'FLUX.1.1 Pro',
+  //       model: togetherai.image('black-forest-labs/FLUX.1.1-pro'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-pro',
+  //       label: 'FLUX.1 Pro',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-pro'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //     {
+  //       icon: TogetherIcon,
+  //       id: 'black-forest-labs/FLUX.1-schnell-Free',
+  //       label: 'FLUX.1 Schnell Free',
+  //       model: togetherai.image('black-forest-labs/FLUX.1-schnell-Free'),
+  //       dimensions: ['512x512', '768x768', '1024x1024'],
+  //     },
+  //   ],
+  // },
 ];
 
 export const speechModels = [

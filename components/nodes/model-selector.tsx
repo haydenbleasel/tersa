@@ -24,6 +24,7 @@ type ModelSelectorProps = {
       icon: ComponentType<SVGProps<SVGSVGElement>>;
       id: string;
       label: string;
+      disabled?: boolean;
     }[];
   }[];
 };
@@ -67,35 +68,34 @@ export const ModelSelector = ({
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
-          {options.map((option) => (
-            <ComboboxGroup key={option.label} heading={option.label}>
-              {option.models.map((model) => (
-                <ComboboxItem
-                  key={model.id}
-                  value={model.id}
-                  onSelect={() => {
-                    onChange?.(model.id);
-                    setOpen(false);
-                  }}
-                  // Temporarily disable non-OpenAI / non-Minimax models
-                  disabled={
-                    option.label !== 'OpenAI' && option.label !== 'Minimax'
-                  }
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <model.icon className="size-4 shrink-0" />
-                    <span className="block truncate">{model.label}</span>
-                  </div>
-                  <CheckIcon
-                    className={cn(
-                      'ml-auto size-4',
-                      value === model.id ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                </ComboboxItem>
-              ))}
-            </ComboboxGroup>
-          ))}
+          {options
+            .filter((option) => option.models.length)
+            .map((option) => (
+              <ComboboxGroup key={option.label} heading={option.label}>
+                {option.models.map((model) => (
+                  <ComboboxItem
+                    key={model.id}
+                    value={model.id}
+                    onSelect={() => {
+                      onChange?.(model.id);
+                      setOpen(false);
+                    }}
+                    disabled={model.disabled}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <model.icon className="size-4 shrink-0" />
+                      <span className="block truncate">{model.label}</span>
+                    </div>
+                    <CheckIcon
+                      className={cn(
+                        'ml-auto size-4',
+                        value === model.id ? 'opacity-100' : 'opacity-0'
+                      )}
+                    />
+                  </ComboboxItem>
+                ))}
+              </ComboboxGroup>
+            ))}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>

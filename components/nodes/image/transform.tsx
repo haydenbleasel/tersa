@@ -36,6 +36,20 @@ export const ImageTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
+  const hasIncomingImageNodes =
+    getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
+      .length > 0;
+  const modelId = data.model ?? 'gpt-image-1';
+
+  const availableModels = imageModels.map((provider) => ({
+    ...provider,
+    models: hasIncomingImageNodes
+      ? provider.models.map((model) => ({
+          ...model,
+          disabled: !model.supportsEdit,
+        }))
+      : provider.models,
+  }));
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -55,10 +69,11 @@ export const ImageTransform = ({
             instructions: data.instructions,
             nodeId: id,
             projectId,
+            modelId,
           })
         : await generateImageAction({
             prompt: [...textNodes, ...imageNodes].join('\n'),
-            modelId: data.model ?? 'dall-e-3',
+            modelId,
             instructions: data.instructions,
             projectId,
             nodeId: id,
@@ -86,8 +101,8 @@ export const ImageTransform = ({
     {
       children: (
         <ModelSelector
-          value={data.model ?? 'dall-e-3'}
-          options={imageModels}
+          value={modelId}
+          options={availableModels}
           id={id}
           className="w-[200px] rounded-full"
           onChange={(value) => updateNodeData(id, { model: value })}
