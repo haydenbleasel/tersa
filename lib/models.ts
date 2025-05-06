@@ -25,6 +25,7 @@ import {
 } from './icons';
 
 const million = 1000000;
+const thousand = 1000;
 
 export const chatModels: {
   label: string;
@@ -1158,14 +1159,14 @@ export const speechModels: {
         id: 'aurora',
         label: 'Aurora',
         model: lmnt.speech('aurora'),
-        getCost: (characters: number) => (characters / 1000) * 0.05,
+        getCost: (characters: number) => (characters / thousand) * 0.05,
       },
       {
         icon: LmntIcon,
         id: 'blizzard',
         label: 'Blizzard',
         model: lmnt.speech('blizzard'),
-        getCost: (characters: number) => (characters / 1000) * 0.05,
+        getCost: (characters: number) => (characters / thousand) * 0.05,
       },
     ],
   },
@@ -1178,7 +1179,7 @@ export const speechModels: {
         label: 'Default',
         model: hume.speech(),
         // Creator plan pricing
-        getCost: (characters: number) => (characters / 1000) * 0.2,
+        getCost: (characters: number) => (characters / thousand) * 0.2,
       },
     ],
   },
