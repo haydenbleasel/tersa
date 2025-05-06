@@ -19,13 +19,6 @@ export const describeAction = async (
       error: string;
     }
 > => {
-  if (process.env.NODE_ENV === 'development') {
-    // URLs are local in development so we can't describe them.
-    return {
-      description: 'A beautiful image of a cat',
-    };
-  }
-
   try {
     await getSubscribedUser();
 
@@ -46,6 +39,15 @@ export const describeAction = async (
       throw new Error('Model not found');
     }
 
+    let parsedUrl = url;
+
+    if (process.env.NODE_ENV !== 'production') {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      parsedUrl = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString('base64')}`;
+    }
+
     const response = await openai.chat.completions.create({
       model: model.id,
       messages: [
@@ -56,7 +58,7 @@ export const describeAction = async (
             {
               type: 'image_url',
               image_url: {
-                url,
+                url: parsedUrl,
               },
             },
           ],
