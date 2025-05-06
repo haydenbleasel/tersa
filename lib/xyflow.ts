@@ -6,11 +6,19 @@ import type { TextNodeProps } from '@/components/nodes/text';
 import type { Node } from '@xyflow/react';
 
 export const getTextFromTextNodes = (nodes: Node[]) => {
-  return nodes
+  const sourceText = nodes
     .filter((node) => node.type === 'text')
-    .map((node) => (node.data as TextNodeProps['data']).text)
+    .map((node) => (node.data as TextNodeProps['data']).content?.text)
     .filter(Boolean)
     .join('\n');
+
+  const generatedText = nodes
+    .filter((node) => node.type === 'text' && node.data.generated)
+    .map((node) => (node.data as TextNodeProps['data']).generated)
+    .filter(Boolean)
+    .join('\n');
+
+  return [sourceText, generatedText];
 };
 
 export const getTranscriptionFromAudioNodes = (nodes: Node[]) => {
