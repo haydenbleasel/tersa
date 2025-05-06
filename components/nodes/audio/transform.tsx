@@ -27,6 +27,7 @@ export const AudioTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
+  const modelId = data.model ?? 'tts-1';
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -46,6 +47,7 @@ export const AudioTransform = ({
       const response = await generateSpeechAction({
         text: textPrompts,
         nodeId: id,
+        modelId,
         projectId,
       });
 
@@ -67,7 +69,7 @@ export const AudioTransform = ({
     {
       children: (
         <ModelSelector
-          value={data.model ?? 'tts-1'}
+          value={modelId}
           options={speechModels}
           key={id}
           className="w-[200px] rounded-full"

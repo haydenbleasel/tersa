@@ -2,6 +2,7 @@
 
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
+import { speechModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -12,6 +13,7 @@ import { nanoid } from 'nanoid';
 
 type GenerateSpeechActionProps = {
   text: string;
+  modelId: string;
   nodeId: string;
   projectId: string;
 };
@@ -19,6 +21,7 @@ type GenerateSpeechActionProps = {
 export const generateSpeechAction = async ({
   text,
   nodeId,
+  modelId,
   projectId,
 }: GenerateSpeechActionProps): Promise<
   | {
@@ -32,8 +35,16 @@ export const generateSpeechAction = async ({
     const client = await createClient();
     const user = await getSubscribedUser();
 
+    const model = speechModels
+      .flatMap((m) => m.models)
+      .find((m) => m.id === modelId);
+
+    if (!model) {
+      throw new Error('Model not found');
+    }
+
     const { audio } = await generateSpeech({
-      model: openai.speech('gpt-4o-mini-tts'),
+      model: model.model,
       text,
       outputFormat: 'mp3',
     });
