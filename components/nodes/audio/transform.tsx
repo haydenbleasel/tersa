@@ -138,7 +138,11 @@ export const AudioTransform = ({
       )}
       {!loading && data.generated?.url && (
         // biome-ignore lint/a11y/useMediaCaption: <explanation>
-        <audio src={data.generated.url} controls className="w-full" />
+        <audio
+          src={data.generated.url}
+          controls
+          className="w-full rounded-none"
+        />
       )}
     </NodeLayout>
   );

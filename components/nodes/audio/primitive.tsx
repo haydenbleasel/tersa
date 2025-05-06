@@ -74,7 +74,11 @@ export const AudioPrimitive = ({
       )}
       {!isUploading && data.content && (
         // biome-ignore lint/a11y/useMediaCaption: <explanation>
-        <audio src={data.content.url} controls />
+        <audio
+          src={data.content.url}
+          controls
+          className="w-full rounded-none"
+        />
       )}
       {!isUploading && !data.content && (
         <Dropzone
