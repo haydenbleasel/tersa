@@ -10,7 +10,7 @@ import { createProjectAction } from './actions/project/create';
 
 export const metadata: Metadata = {
   title: 'Tersa',
-  description: 'Join the waitlist to get early access to Tersa.',
+  description: 'Visualize your AI workflows.',
 };
 
 const Index = async () => {

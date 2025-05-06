@@ -16,7 +16,6 @@ export const env = createEnv({
 
     RESEND_TOKEN: z.string().min(1),
     RESEND_EMAIL: z.string().email().min(1),
-    RESEND_WAITLIST_AUDIENCE_ID: z.string().min(1),
 
     POLAR_ACCESS_TOKEN: z.string().min(1),
     POLAR_WEBHOOK_SECRET: z.string().min(1),
@@ -43,7 +42,6 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     RESEND_TOKEN: process.env.RESEND_TOKEN,
     RESEND_EMAIL: process.env.RESEND_EMAIL,
-    RESEND_WAITLIST_AUDIENCE_ID: process.env.RESEND_WAITLIST_AUDIENCE_ID,
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
     POLAR_HOBBY_PRODUCT_ID: process.env.POLAR_HOBBY_PRODUCT_ID,
