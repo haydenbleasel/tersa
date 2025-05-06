@@ -1,11 +1,45 @@
+import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
+import { getSubscribedUser } from '@/lib/protect';
+import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamObject } from 'ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+// Create a rate limiter for the chat API
+const rateLimiter = createRateLimiter({
+  limiter: slidingWindow(10, '1 m'),
+  prefix: 'api-code',
+});
+
 export const POST = async (req: Request) => {
+  try {
+    await getSubscribedUser();
+  } catch (error) {
+    const message = parseError(error);
+
+    return new Response(message, { status: 401 });
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    // Apply rate limiting
+    const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+    const { success, limit, reset, remaining } = await rateLimiter.limit(ip);
+
+    if (!success) {
+      return new Response('Too many requests', {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': reset.toString(),
+        },
+      });
+    }
+  }
+
   const context = await req.json();
   const modelId = req.headers.get('tersa-model');
   const language = req.headers.get('tersa-language');
