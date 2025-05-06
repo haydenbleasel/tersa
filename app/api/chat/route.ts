@@ -1,3 +1,4 @@
+import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
 import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
@@ -16,7 +17,9 @@ export const POST = async (req: Request) => {
   try {
     await getSubscribedUser();
   } catch (error) {
-    return new Response('Unauthorized', { status: 401 });
+    const message = parseError(error);
+
+    return new Response(message, { status: 401 });
   }
 
   // Apply rate limiting
