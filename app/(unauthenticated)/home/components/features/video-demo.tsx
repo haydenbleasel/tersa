@@ -93,7 +93,6 @@ export const VideoDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.2,
       },
     }}
   />

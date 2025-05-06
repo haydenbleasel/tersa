@@ -361,7 +361,7 @@ export const CanvasInner = ({
         {...canvasProps}
       >
         <Background />
-        {user && (
+        {!data.id.includes('demo') && user && (
           <>
             <Controls />
             <Projects projects={projects} currentProject={data.id} />

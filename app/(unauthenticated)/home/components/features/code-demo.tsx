@@ -18,7 +18,7 @@ const nodes: Node[] = [
   {
     id: 'transform-1',
     type: 'code',
-    position: { x: 600, y: 0 },
+    position: { x: 600, y: 100 },
     data: {
       source: 'transform',
       generated: {
@@ -64,7 +64,6 @@ export const CodeDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.2,
       },
     }}
   />

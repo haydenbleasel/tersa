@@ -51,7 +51,7 @@ const nodes: Node[] = [
   {
     id: 'transform-1',
     type: 'text',
-    position: { x: 200, y: 100 },
+    position: { x: 600, y: 100 },
     data: {
       source: 'transform',
       model: 'gpt-4o',
@@ -100,7 +100,6 @@ export const TextDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.5,
       },
     }}
   />

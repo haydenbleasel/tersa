@@ -45,7 +45,7 @@ const nodes: Node[] = [
         type: 'audio/mpeg',
       },
     },
-    position: { x: 600, y: 0 },
+    position: { x: 600, y: 100 },
     origin: [0, 0.5],
   },
 ];
@@ -83,7 +83,6 @@ export const SpeechDemo = () => (
       preventScrolling: false,
       fitViewOptions: {
         minZoom: 0,
-        padding: 0.2,
       },
     }}
   />

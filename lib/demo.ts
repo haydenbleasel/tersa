@@ -37,7 +37,7 @@ export const sampleNodes: Node[] = [
   {
     id: 'JJzrv-IFLZADn1asQfMOU',
     type: 'text',
-    position: { x: 261, y: -220 },
+    position: { x: 261, y: -240 },
     data: {
       source: 'transform',
       generated: [
@@ -86,7 +86,7 @@ export const sampleNodes: Node[] = [
         type: 'video/mp4',
       },
     },
-    position: { x: 800, y: -350 },
+    position: { x: 800, y: -400 },
     origin: [0, 0.5],
   },
   {
@@ -113,7 +113,7 @@ export const sampleNodes: Node[] = [
       },
       instructions: 'Generate a version of this image with a fantasy vibe.',
     },
-    position: { x: 800, y: 350 },
+    position: { x: 800, y: 400 },
     origin: [0, 0.5],
   },
   {
@@ -126,7 +126,7 @@ export const sampleNodes: Node[] = [
         type: 'audio/mpeg',
       },
     },
-    position: { x: 259, y: 350 },
+    position: { x: 259, y: 380 },
     origin: [0, 0.5],
   },
 ];
