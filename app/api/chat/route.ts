@@ -67,15 +67,18 @@ export const POST = async (req: Request) => {
       'The output should be a concise summary of the content, no more than 100 words.',
     ].join('\n'),
     messages,
-    onFinish: async (result) => {
+    onFinish: async ({ usage }) => {
       await polar.events.ingest({
         events: [
           {
             name: 'credit_usage',
             externalCustomerId: customerId,
             metadata: {
-              route: '/api/metered-route',
-              method: 'GET',
+              action: 'chat',
+              credits: model.getCost({
+                input: usage.promptTokens,
+                output: usage.completionTokens,
+              }),
             },
           },
         ],

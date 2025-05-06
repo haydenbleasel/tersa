@@ -12,7 +12,7 @@ import { Panel } from '@xyflow/react';
 import { ArrowUpRight, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { type MouseEventHandler, useEffect, useState } from 'react';
+import { type MouseEventHandler, useState } from 'react';
 import { ClaimButton } from './claim-button';
 import { CreditsCounter } from './credits-counter';
 import { Feedback } from './feedback';
@@ -25,7 +25,6 @@ export const Menu = () => {
   const { projectId } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const user = useUser();
 
@@ -54,16 +53,6 @@ export const Menu = () => {
       setFeedbackOpen(true);
     }, 200);
   };
-
-  useEffect(() => {
-    const loadBillingUrl = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-      setSubscribed(Boolean(data.user?.user_metadata.stripeSubscriptionId));
-    };
-
-    loadBillingUrl();
-  }, []);
 
   return (
     <>
@@ -123,9 +112,9 @@ export const Menu = () => {
               <DropdownMenuItem onClick={handleOpenProfile}>
                 Profile
               </DropdownMenuItem>
-              {subscribed ? (
+              {user?.user_metadata.polar_subscription_id ? (
                 <DropdownMenuItem asChild>
-                  <Link href="/api/stripe/portal">Billing</Link>
+                  <Link href="/api/portal">Billing</Link>
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem asChild>

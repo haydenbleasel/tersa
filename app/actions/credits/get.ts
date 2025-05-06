@@ -1,5 +1,6 @@
 'use server';
 
+import { env } from '@/lib/env';
 import { parseError } from '@/lib/error/parse';
 import { polar } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
@@ -26,7 +27,7 @@ export const getCredits = async (): Promise<
     });
 
     const creditsMeter = meters.result.items.find(
-      (m) => m.meter.name === 'Credits' // Replace with your actual meter name if different
+      (m) => m.meter.name === env.POLAR_CREDITS_METER_ID
     );
 
     return { credits: creditsMeter?.balance ?? 0 };

@@ -22,6 +22,7 @@ export const env = createEnv({
     POLAR_WEBHOOK_SECRET: z.string().min(1),
     POLAR_HOBBY_PRODUCT_ID: z.string().min(1),
     POLAR_PRO_PRODUCT_ID: z.string().min(1),
+    POLAR_CREDITS_METER_ID: z.string().min(1),
 
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   },
@@ -47,6 +48,7 @@ export const env = createEnv({
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
     POLAR_HOBBY_PRODUCT_ID: process.env.POLAR_HOBBY_PRODUCT_ID,
     POLAR_PRO_PRODUCT_ID: process.env.POLAR_PRO_PRODUCT_ID,
+    POLAR_CREDITS_METER_ID: process.env.POLAR_CREDITS_METER_ID,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   },
 });
