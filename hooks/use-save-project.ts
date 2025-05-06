@@ -2,13 +2,14 @@
 
 import { updateProjectAction } from '@/app/actions/project/update';
 import { handleError } from '@/lib/error/handle';
+import { uploadFile } from '@/lib/upload';
 import {
   type Node,
   getNodesBounds,
   getViewportForBounds,
   useReactFlow,
 } from '@xyflow/react';
-import { toPng } from 'html-to-image';
+import { domToJpeg } from 'modern-screenshot';
 import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useUser } from './use-user';
@@ -19,10 +20,9 @@ const getScreenshot = async (nodes: Node[]) => {
   const nodesBounds = getNodesBounds(nodes);
   const viewport = getViewportForBounds(nodesBounds, 1200, 630, 0.5, 2, 16);
 
-  const image = await toPng(
+  const image = await domToJpeg(
     document.querySelector('.react-flow__viewport') as HTMLElement,
     {
-      backgroundColor: 'transparent',
       width: 1200,
       height: 630,
       style: {
@@ -57,9 +57,15 @@ export const useSaveProject = (projectId: string) => {
       setIsSaving(true);
 
       const content = rfInstance.toObject();
-      // const image = await getScreenshot(rfInstance.getNodes());
+      const image = await getScreenshot(rfInstance.getNodes());
+      const screenshot = await uploadFile(
+        new File([image], 'screenshot.jpg', { type: 'image/jpeg' }),
+        'screenshots',
+        `${projectId}.jpg`
+      );
+
       const response = await updateProjectAction(projectId, {
-        // image,
+        image: screenshot.url,
         content,
       });
 

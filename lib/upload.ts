@@ -1,7 +1,11 @@
 import { nanoid } from 'nanoid';
 import { createClient } from './supabase/client';
 
-export const uploadFile = async (file: File, bucket: 'avatars' | 'files') => {
+export const uploadFile = async (
+  file: File,
+  bucket: 'avatars' | 'files' | 'screenshots',
+  filename?: string
+) => {
   const client = createClient();
   const { data } = await client.auth.getUser();
   const extension = file.name.split('.').pop();
@@ -10,10 +14,13 @@ export const uploadFile = async (file: File, bucket: 'avatars' | 'files') => {
     throw new Error('You need to be logged in to upload a file!');
   }
 
+  const name = filename ?? `${nanoid()}.${extension}`;
+
   const blob = await client.storage
     .from(bucket)
-    .upload(`${data.user.id}/${nanoid()}.${extension}`, file, {
+    .upload(`${data.user.id}/${name}`, file, {
       contentType: file.type,
+      upsert: bucket === 'screenshots',
     });
 
   if (blob.error) {
