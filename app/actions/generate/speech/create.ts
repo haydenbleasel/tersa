@@ -51,7 +51,7 @@ export const generateSpeechAction = async ({
 
     await trackCreditUsage({
       userId: user.id,
-      action: 'chat',
+      action: 'generate_speech',
       cost: model.getCost(text.length),
     });
 

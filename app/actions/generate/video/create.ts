@@ -4,6 +4,7 @@ import { database } from '@/lib/database';
 import { env } from '@/lib/env';
 import { parseError } from '@/lib/error/parse';
 import { videoModels } from '@/lib/models';
+import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -132,6 +133,12 @@ export const generateVideoAction = async ({
     if (createJobData.base_resp.status_code !== 0) {
       throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
     }
+
+    await trackCreditUsage({
+      userId: user.id,
+      action: 'generate_video',
+      cost: model.getCost(),
+    });
 
     const taskId = createJobData.task_id;
     // Poll for job completion (max 2 minutes)

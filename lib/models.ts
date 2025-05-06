@@ -1296,7 +1296,16 @@ export const transcriptionModels = [
   },
 ];
 
-export const videoModels = [
+export const videoModels: {
+  label: string;
+  models: {
+    icon: typeof MinimaxIcon;
+    id: string;
+    label: string;
+    model: string;
+    getCost: () => number;
+  }[];
+}[] = [
   {
     label: 'Minimax',
     models: [
@@ -1305,36 +1314,42 @@ export const videoModels = [
         id: 'T2V-01-Director',
         label: 'T2V-01-Director',
         model: 'T2V-01-Director',
+        getCost: () => 0.43,
       },
       {
         icon: MinimaxIcon,
         id: 'I2V-01-Director',
         label: 'I2V-01-Director',
         model: 'I2V-01-Director',
+        getCost: () => 0.43,
       },
       {
         icon: MinimaxIcon,
         id: 'S2V-01',
         label: 'S2V-01',
         model: 'S2V-01',
+        getCost: () => 0.65,
       },
       {
         icon: MinimaxIcon,
         id: 'I2V-01',
         label: 'I2V-01',
         model: 'I2V-01',
+        getCost: () => 0.43,
       },
       {
         icon: MinimaxIcon,
         id: 'I2V-01-live',
         label: 'I2V-01-live',
         model: 'I2V-01-live',
+        getCost: () => 0.43,
       },
       {
         icon: MinimaxIcon,
         id: 'T2V-01',
         label: 'T2V-01',
         model: 'T2V-01',
+        getCost: () => 0.43,
       },
     ],
   },
