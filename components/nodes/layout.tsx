@@ -186,7 +186,7 @@ export const NodeLayout = ({
               )}
             </div>
           )}
-          <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 shadow-2xl shadow-foreground/10 ring-1 ring-border transition-all">
+          <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 shadow-2xl shadow-black/10 ring-1 ring-border transition-all">
             <div className="overflow-hidden rounded-3xl bg-card">
               {children}
             </div>
