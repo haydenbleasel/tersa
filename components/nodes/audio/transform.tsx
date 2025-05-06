@@ -1,4 +1,4 @@
-import { generateSpeechAction } from '@/app/actions/generate/speech/create';
+import { generateSpeechAction } from '@/app/actions/speech/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';

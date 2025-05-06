@@ -1,4 +1,4 @@
-import { transcribeAction } from '@/app/actions/generate/speech/transcribe';
+import { transcribeAction } from '@/app/actions/speech/transcribe';
 import { NodeLayout } from '@/components/nodes/layout';
 import {
   Dropzone,

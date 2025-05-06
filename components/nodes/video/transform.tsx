@@ -1,4 +1,4 @@
-import { generateVideoAction } from '@/app/actions/generate/video/create';
+import { generateVideoAction } from '@/app/actions/video/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
