@@ -24,7 +24,7 @@ export const trackCreditUsage = async ({
         externalCustomerId: userId,
         metadata: {
           action,
-          credits: cost / creditValue,
+          credits: Math.ceil(cost / creditValue),
         },
       },
     ],
