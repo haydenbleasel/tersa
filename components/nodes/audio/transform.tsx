@@ -5,7 +5,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
-import { getTextFromTextNodes } from '@/lib/xyflow';
+import {
+  getDescriptionsFromImageNodes,
+  getTextFromTextNodes,
+} from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -37,15 +40,16 @@ export const AudioTransform = ({
     try {
       const incomers = getIncomers({ id }, getNodes(), getEdges());
       const textPrompts = getTextFromTextNodes(incomers);
+      const imagePrompts = getDescriptionsFromImageNodes(incomers);
 
-      if (!textPrompts.length) {
+      if (!textPrompts.length && !imagePrompts.length) {
         throw new Error('No prompts found');
       }
 
       setLoading(true);
 
       const response = await generateSpeechAction({
-        text: textPrompts.join('\n'),
+        text: [...textPrompts, ...imagePrompts].join('\n'),
         nodeId: id,
         modelId,
         projectId,
