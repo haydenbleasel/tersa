@@ -45,7 +45,6 @@ const generateGptImage1Image = async ({
     size: '1024x1024',
     quality: 'high',
     output_format: 'png',
-    response_format: 'b64_json',
   });
 
   const json = response.data?.at(0)?.b64_json;
