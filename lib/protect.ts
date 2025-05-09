@@ -22,11 +22,15 @@ export const getSubscribedUser = async () => {
     (m) => m.meterId === env.POLAR_CREDITS_METER_ID
   );
 
+  const hasHobbySubscription = state.activeSubscriptions.some(
+    (s) => s.productId === env.POLAR_HOBBY_PRODUCT_ID
+  );
+
   if (!meter) {
     throw new Error('No credits meter found');
   }
 
-  if (meter.balance <= 0) {
+  if (meter.balance <= 0 && hasHobbySubscription) {
     throw new Error(
       'Sorry, you have no credits remaining! Please upgrade for more credits.'
     );
