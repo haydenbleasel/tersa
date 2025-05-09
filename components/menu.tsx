@@ -54,6 +54,10 @@ export const Menu = () => {
     }, 200);
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <>
       <Panel
@@ -65,12 +69,11 @@ export const Menu = () => {
             <RealtimeAvatarStack roomName={projectId} />
           </div>
         )} */}
-        {user?.user_metadata.polar_subscription_id && (
+        {user.user_metadata.polar_subscription_id ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
             <CreditsCounter />
           </div>
-        )}
-        {!user?.user_metadata.polar_subscription_id && (
+        ) : (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
             <ClaimButton />
           </div>
@@ -91,18 +94,18 @@ export const Menu = () => {
             >
               <DropdownMenuLabel>
                 <Avatar>
-                  <AvatarImage src={user?.user_metadata.avatar} />
+                  <AvatarImage src={user.user_metadata.avatar} />
                   <AvatarFallback className="bg-primary text-primary-foreground uppercase">
-                    {(user?.user_metadata.name ?? user?.email ?? user?.id)
+                    {(user.user_metadata.name ?? user.email ?? user.id)
                       ?.split(' ')
                       .map((name: string) => name.at(0))
                       .join('')}
                   </AvatarFallback>
                 </Avatar>
                 <p className="mt-2">
-                  {user?.user_metadata.name ?? user?.email ?? user?.id}
+                  {user.user_metadata.name ?? user.email ?? user.id}
                 </p>
-                {user?.user_metadata.name && user?.email && (
+                {user.user_metadata.name && user.email && (
                   <p className="font-normal text-muted-foreground text-xs">
                     {user.email}
                   </p>
@@ -112,7 +115,7 @@ export const Menu = () => {
               <DropdownMenuItem onClick={handleOpenProfile}>
                 Profile
               </DropdownMenuItem>
-              {user?.user_metadata.polar_subscription_id ? (
+              {user.user_metadata.polar_subscription_id ? (
                 <DropdownMenuItem asChild className="justify-between">
                   <a
                     href="/api/portal"

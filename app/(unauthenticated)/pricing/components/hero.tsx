@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { env } from '@/lib/env';
 import NumberFlow from '@number-flow/react';
 import {
   CheckIcon,
@@ -25,7 +24,7 @@ import { type ComponentProps, useMemo, useState } from 'react';
 
 type HeroProps = {
   userId?: string | undefined;
-  currentPlan?: string | undefined;
+  currentPlan?: 'hobby' | 'pro' | undefined;
 };
 
 type Plan = {
@@ -59,7 +58,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': false,
         credits: 500,
       },
-      ctaLink: `/api/checkout?product_id=${env.POLAR_HOBBY_PRODUCT_ID}`,
+      ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'yearly' : 'monthly'}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -75,7 +74,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': true,
         credits: 1000,
       },
-      ctaLink: `/api/checkout?product_id=${env.POLAR_PRO_PRODUCT_ID}`,
+      ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'yearly' : 'monthly'}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -102,7 +101,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
       }
     }
 
-    if (currentPlan === 'free') {
+    if (currentPlan === 'hobby') {
       free.ctaText = 'Manage';
       pro.ctaText = 'Upgrade';
       pro.variant = 'default';
@@ -116,7 +115,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
     }
 
     return [free, pro, enterprise];
-  }, [currentPlan]);
+  }, [currentPlan, yearly]);
 
   return (
     <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
