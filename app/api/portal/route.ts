@@ -1,4 +1,3 @@
-// app/portal/route.ts
 import { env } from '@/lib/env';
 import { createClient } from '@/lib/supabase/server';
 import { CustomerPortal } from '@polar-sh/nextjs';

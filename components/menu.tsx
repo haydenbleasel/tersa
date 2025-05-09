@@ -9,7 +9,7 @@ import {
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import { Panel } from '@xyflow/react';
-import { ArrowUpRight, MenuIcon } from 'lucide-react';
+import { ArrowUpRight, ArrowUpRightIcon, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { type MouseEventHandler, useState } from 'react';
@@ -113,8 +113,18 @@ export const Menu = () => {
                 Profile
               </DropdownMenuItem>
               {user?.user_metadata.polar_subscription_id ? (
-                <DropdownMenuItem asChild>
-                  <Link href="/api/portal">Billing</Link>
+                <DropdownMenuItem asChild className="justify-between">
+                  <a
+                    href="/api/portal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Billing{' '}
+                    <ArrowUpRightIcon
+                      size={16}
+                      className="text-muted-foreground"
+                    />
+                  </a>
                 </DropdownMenuItem>
               ) : (
                 <DropdownMenuItem asChild>
