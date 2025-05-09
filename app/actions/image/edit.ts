@@ -76,10 +76,18 @@ export const editImageAction = async ({
       user: user.id,
     });
 
+    if (!response.usage) {
+      throw new Error('No usage found');
+    }
+
     await trackCreditUsage({
       userId: user.id,
       action: 'edit_image',
-      cost: model.getCost(),
+      cost: model.getCost({
+        textInput: response.usage.input_tokens_details.text_tokens,
+        imageInput: response.usage.input_tokens_details.image_tokens,
+        output: response.usage.output_tokens,
+      }),
     });
 
     const json = response.data?.at(0)?.b64_json;

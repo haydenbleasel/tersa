@@ -7,7 +7,10 @@ import { trackCreditUsage } from '@/lib/polar';
 import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { experimental_generateImage as generateImage } from 'ai';
+import {
+  type Experimental_GenerateImageResult,
+  experimental_generateImage as generateImage,
+} from 'ai';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import OpenAI from 'openai';
@@ -18,6 +21,57 @@ type GenerateImageActionProps = {
   projectId: string;
   modelId: string;
   instructions?: string;
+};
+
+const generateGptImage1Image = async ({
+  instructions,
+  prompt,
+}: {
+  instructions?: string;
+  prompt: string;
+}) => {
+  const openai = new OpenAI();
+  const response = await openai.images.generate({
+    model: 'gpt-image-1',
+    prompt: [
+      'Generate an image based on the following instructions and context.',
+      '---',
+      'Instructions:',
+      instructions ?? 'None.',
+      '---',
+      'Context:',
+      prompt,
+    ].join('\n'),
+    size: '1024x1024',
+    quality: 'high',
+    output_format: 'png',
+    response_format: 'b64_json',
+  });
+
+  const json = response.data?.at(0)?.b64_json;
+
+  if (!json) {
+    throw new Error('No response JSON found');
+  }
+
+  if (!response.usage) {
+    throw new Error('No usage found');
+  }
+
+  const image: Experimental_GenerateImageResult['image'] = {
+    base64: json,
+    uint8Array: Buffer.from(json, 'base64'),
+    mimeType: 'image/png',
+  };
+
+  return {
+    image,
+    usage: {
+      textInput: response.usage?.input_tokens_details.text_tokens,
+      imageInput: response.usage?.input_tokens_details.image_tokens,
+      output: response.usage?.output_tokens,
+    },
+  };
 };
 
 export const generateImageAction = async ({
@@ -45,24 +99,43 @@ export const generateImageAction = async ({
       throw new Error('Model not found');
     }
 
-    const { image } = await generateImage({
-      model: model.model,
-      prompt: [
-        'Generate an image based on the following instructions and context.',
-        '---',
-        'Instructions:',
-        instructions ?? 'None.',
-        '---',
-        'Context:',
-        prompt,
-      ].join('\n'),
-    });
+    let image: Experimental_GenerateImageResult['image'] | undefined;
 
-    await trackCreditUsage({
-      userId: user.id,
-      action: 'generate_image',
-      cost: model.getCost(),
-    });
+    if (model.id === 'gpt-image-1') {
+      const generatedImageResponse = await generateGptImage1Image({
+        instructions,
+        prompt,
+      });
+
+      await trackCreditUsage({
+        userId: user.id,
+        action: 'generate_image',
+        cost: model.getCost(generatedImageResponse.usage),
+      });
+
+      image = generatedImageResponse.image;
+    } else {
+      const generatedImageResponse = await generateImage({
+        model: model.model,
+        prompt: [
+          'Generate an image based on the following instructions and context.',
+          '---',
+          'Instructions:',
+          instructions ?? 'None.',
+          '---',
+          'Context:',
+          prompt,
+        ].join('\n'),
+      });
+
+      await trackCreditUsage({
+        userId: user.id,
+        action: 'generate_image',
+        cost: model.getCost(),
+      });
+
+      image = generatedImageResponse.image;
+    }
 
     const blob = await client.storage
       .from('files')
@@ -77,8 +150,6 @@ export const generateImageAction = async ({
     const { data: downloadUrl } = client.storage
       .from('files')
       .getPublicUrl(blob.data.path);
-
-    const openai = new OpenAI();
 
     const url =
       process.env.NODE_ENV === 'production'
@@ -103,6 +174,7 @@ export const generateImageAction = async ({
       throw new Error('Vision model not found');
     }
 
+    const openai = new OpenAI();
     const response = await openai.chat.completions.create({
       model: visionModel.id,
       messages: [
