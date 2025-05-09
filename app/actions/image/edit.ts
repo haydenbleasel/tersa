@@ -74,6 +74,8 @@ export const editImageAction = async ({
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
       user: user.id,
+      size: '1024x1024',
+      quality: 'high',
     });
 
     if (!response.usage) {
