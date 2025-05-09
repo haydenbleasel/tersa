@@ -685,8 +685,8 @@ export const imageModels: {
           }
 
           const { textInput, imageInput, output } = props;
-          const textInputCost = (textInput ?? 0 / million) * 5;
-          const imageInputCost = (imageInput ?? 0 / million) * 10;
+          const textInputCost = textInput ? (textInput / million) * 5 : 0;
+          const imageInputCost = imageInput ? (imageInput / million) * 10 : 0;
           const outputCost = (output / million) * 0.167;
 
           return textInputCost + imageInputCost + outputCost;
