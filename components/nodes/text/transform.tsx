@@ -11,7 +11,7 @@ import {
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
-import { useChat } from '@ai-sdk/react';
+import { type Message, useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
@@ -98,15 +98,19 @@ export const TextTransform = ({
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
-  const nonUserMessages = messages.length
-    ? messages.filter((message) => message.role !== 'user')
-    : [
-        {
-          id: nanoid(),
-          role: 'system',
-          content: data.generated?.text ?? '',
-        },
-      ];
+  let nonUserMessages: Message[] = [];
+
+  if (messages.length) {
+    nonUserMessages = messages.filter((message) => message.role !== 'user');
+  }
+
+  if (data.generated?.text) {
+    nonUserMessages.push({
+      id: nanoid(),
+      role: 'system',
+      content: data.generated?.text,
+    });
+  }
 
   const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
     const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
