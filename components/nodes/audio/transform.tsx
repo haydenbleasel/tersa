@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
+import { capitalize } from '@/lib/utils';
 import {
   getDescriptionsFromImageNodes,
   getTextFromTextNodes,
@@ -33,6 +34,9 @@ export const AudioTransform = ({
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
   const modelId = data.model ?? 'tts-1';
+  const model = speechModels.flatMap((model) => model.models).find(
+    (model) => model.id === modelId
+  );
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -55,6 +59,7 @@ export const AudioTransform = ({
         nodeId: id,
         modelId,
         projectId,
+        voice: data.voice,
         instructions: data.instructions,
       });
 
@@ -86,24 +91,46 @@ export const AudioTransform = ({
         />
       ),
     },
-    {
-      tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
-      children: (
-        <Button
-          size="icon"
-          className="rounded-full"
-          onClick={handleGenerate}
-          disabled={loading || !projectId}
-        >
-          {data.generated?.url ? (
-            <RotateCcwIcon size={12} />
-          ) : (
-            <PlayIcon size={12} />
-          )}
-        </Button>
-      ),
-    },
   ];
+
+  if (model?.voices.length) {
+    toolbar.push({
+      children: (
+        <ModelSelector
+          value={data.voice ?? model.voices[0]}
+          options={[
+            {
+              label: `${modelId} voices`,
+              models: model.voices.map((voice) => ({
+                id: voice,
+                label: capitalize(voice),
+              })),
+            },
+          ]}
+          key={id}
+          className="w-[200px] rounded-full"
+          onChange={(value) => updateNodeData(id, { voice: value })}
+        />
+      ),
+    });
+
+  toolbar.push({
+    tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
+    children: (
+      <Button
+        size="icon"
+        className="rounded-full"
+        onClick={handleGenerate}
+        disabled={loading || !projectId}
+      >
+        {data.generated?.url ? (
+          <RotateCcwIcon size={12} />
+        ) : (
+          <PlayIcon size={12} />
+        )}
+      </Button>
+    ),
+  })
 
   if (data.generated) {
     toolbar.push({

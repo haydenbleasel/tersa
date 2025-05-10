@@ -21,7 +21,7 @@ type ModelSelectorProps = {
   options: {
     label: string;
     models: {
-      icon: ComponentType<SVGProps<SVGSVGElement>>;
+      icon?: ComponentType<SVGProps<SVGSVGElement>>;
       id: string;
       label: string;
       disabled?: boolean;
@@ -59,7 +59,9 @@ export const ModelSelector = ({
       <ComboboxTrigger className={className} id={id} style={{ width }}>
         {activeModel && (
           <div className="flex w-full items-center gap-2 overflow-hidden">
-            <activeModel.icon className="size-4 shrink-0" />
+            {activeModel.icon && (
+              <activeModel.icon className="size-4 shrink-0" />
+            )}
             <span className="block truncate">{activeModel.label}</span>
           </div>
         )}
@@ -88,7 +90,7 @@ export const ModelSelector = ({
                     disabled={model.disabled}
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <model.icon className="size-4 shrink-0" />
+                      {model.icon && <model.icon className="size-4 shrink-0" />}
                       <span className="block truncate">{model.label}</span>
                     </div>
                     <CheckIcon
