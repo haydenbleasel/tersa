@@ -8,10 +8,11 @@ import {
   VideoIcon,
 } from 'lucide-react';
 import { nanoid } from 'nanoid';
+import { memo } from 'react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
-export const Toolbar = () => {
+export const ToolbarInner = () => {
   const { addNodes, getViewport } = useReactFlow();
 
   const addNode = (type: string, options?: Record<string, unknown>) => {
@@ -89,7 +90,7 @@ export const Toolbar = () => {
   return (
     <Panel
       position="bottom-center"
-      className="flex items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm"
+      className="m-4 flex items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm"
     >
       {buttons.map((button) => (
         <Tooltip key={button.id}>
@@ -109,3 +110,5 @@ export const Toolbar = () => {
     </Panel>
   );
 };
+
+export const Toolbar = memo(ToolbarInner);

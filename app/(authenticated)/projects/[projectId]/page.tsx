@@ -1,4 +1,6 @@
 import { Canvas } from '@/components/canvas';
+import { TopLeft } from '@/components/top-left';
+import { TopRight } from '@/components/top-right';
 import { currentUser, currentUserProfile } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { polar } from '@/lib/polar';
@@ -7,6 +9,7 @@ import { projects } from '@/schema';
 import { eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Tersa',
@@ -69,11 +72,14 @@ const Project = async ({ params }: ProjectProps) => {
 
   return (
     <div className="h-screen w-screen">
-      <Canvas
-        projects={allProjects}
-        data={project}
-        isSubscribed={profile.subscriptionId}
-      />
+      <Canvas data={project} />
+      <Suspense fallback={null}>
+        <TopLeft id={projectId} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TopRight />
+      </Suspense>
+      {/* <RealtimeCursors roomName={`${data.id}-cursors`} /> */}
     </div>
   );
 };

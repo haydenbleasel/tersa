@@ -1,3 +1,5 @@
+'use client';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,28 +10,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
-import { Panel } from '@xyflow/react';
 import { ArrowUpRight, ArrowUpRightIcon, MenuIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { type MouseEventHandler, useState } from 'react';
-import { ClaimButton } from './claim-button';
-import { CreditsCounter } from './credits-counter';
 import { Feedback } from './feedback';
 import { Profile } from './profile';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
-type MenuProps = {
-  isSubscribed: boolean;
-};
-
-export const Menu = ({ isSubscribed }: MenuProps) => {
-  const router = useRouter();
-  const { projectId } = useParams();
+export const Menu = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const router = useRouter();
   const user = useUser();
 
   const logout = async () => {
@@ -64,95 +58,67 @@ export const Menu = ({ isSubscribed }: MenuProps) => {
 
   return (
     <>
-      <Panel
-        position="top-right"
-        className="top-16! left-0 flex items-center gap-2 sm:top-0! sm:left-auto"
-      >
-        {/* {typeof projectId === 'string' && (
-          <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
-            <RealtimeAvatarStack roomName={projectId} />
-          </div>
-        )} */}
-        {isSubscribed ? (
-          <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
-            <CreditsCounter />
-          </div>
-        ) : (
-          <div className="flex flex-1 items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
-            <ClaimButton />
-          </div>
-        )}
-        <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">
-          <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <MenuIcon size={16} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side="bottom"
-              align="end"
-              collisionPadding={8}
-              sideOffset={16}
-              className="w-52"
-            >
-              <DropdownMenuLabel>
-                <Avatar>
-                  <AvatarImage src={user.user_metadata.avatar} />
-                  <AvatarFallback className="bg-primary text-primary-foreground uppercase">
-                    {(user.user_metadata.name ?? user.email ?? user.id)
-                      ?.split(' ')
-                      .map((name: string) => name.at(0))
-                      .join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <p className="mt-2">
-                  {user.user_metadata.name ?? user.email ?? user.id}
-                </p>
-                {user.user_metadata.name && user.email && (
-                  <p className="font-normal text-muted-foreground text-xs">
-                    {user.email}
-                  </p>
-                )}
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleOpenProfile}>
-                Profile
-              </DropdownMenuItem>
-              {user.user_metadata.polar_subscription_id ? (
-                <DropdownMenuItem asChild className="justify-between">
-                  <a
-                    href="/api/portal"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Billing{' '}
-                    <ArrowUpRightIcon
-                      size={16}
-                      className="text-muted-foreground"
-                    />
-                  </a>
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/pricing"
-                    className="flex items-center justify-between"
-                  >
-                    <span>Upgrade</span>
-                    <ArrowUpRight size={16} className="text-muted-foreground" />
-                  </Link>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleOpenFeedback}>
-                Send feedback
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </Panel>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <MenuIcon size={16} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side="bottom"
+          align="end"
+          collisionPadding={8}
+          sideOffset={16}
+          className="w-52"
+        >
+          <DropdownMenuLabel>
+            <Avatar>
+              <AvatarImage src={user.user_metadata.avatar} />
+              <AvatarFallback className="bg-primary text-primary-foreground uppercase">
+                {(user.user_metadata.name ?? user.email ?? user.id)
+                  ?.split(' ')
+                  .map((name: string) => name.at(0))
+                  .join('')}
+              </AvatarFallback>
+            </Avatar>
+            <p className="mt-2">
+              {user.user_metadata.name ?? user.email ?? user.id}
+            </p>
+            {user.user_metadata.name && user.email && (
+              <p className="font-normal text-muted-foreground text-xs">
+                {user.email}
+              </p>
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleOpenProfile}>
+            Profile
+          </DropdownMenuItem>
+          {user.user_metadata.polar_subscription_id ? (
+            <DropdownMenuItem asChild className="justify-between">
+              <a href="/api/portal" target="_blank" rel="noopener noreferrer">
+                Billing{' '}
+                <ArrowUpRightIcon size={16} className="text-muted-foreground" />
+              </a>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem asChild>
+              <Link
+                href="/pricing"
+                className="flex items-center justify-between"
+              >
+                <span>Upgrade</span>
+                <ArrowUpRight size={16} className="text-muted-foreground" />
+              </Link>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleOpenFeedback}>
+            Send feedback
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <Profile open={profileOpen} setOpen={setProfileOpen} />
       <Feedback open={feedbackOpen} setOpen={setFeedbackOpen} />
     </>

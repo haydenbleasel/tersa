@@ -1,3 +1,5 @@
+'use client';
+
 import { deleteProjectAction } from '@/app/actions/project/delete';
 import { updateProjectAction } from '@/app/actions/project/update';
 import {

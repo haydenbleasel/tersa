@@ -50,7 +50,7 @@ const getFormattedTime = (date: Date) => {
 export const SaveIndicator = ({ lastSaved, saving }: SaveIndicatorProps) => (
   <Panel
     position="bottom-right"
-    className="flex items-center gap-1 rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm"
+    className="m-4 flex items-center gap-1 rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm"
   >
     {lastSaved && (
       <span className="mx-1 hidden text-muted-foreground text-sm sm:block">

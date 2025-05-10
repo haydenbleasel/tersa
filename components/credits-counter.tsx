@@ -1,51 +1,28 @@
-import { getCredits } from '@/app/actions/credits/get';
-import { handleError } from '@/lib/error/handle';
-import { CoinsIcon, Loader2Icon } from 'lucide-react';
+import { CoinsIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 
-const fetchCredits = async () => {
-  const response = await getCredits();
-
-  if ('error' in response) {
-    throw new Error(response.error);
-  }
-
-  return response.credits;
+type CreditsCounterProps = {
+  credits: number;
 };
 
-export const CreditsCounter = () => {
-  const [credits, setCredits] = useState<number | null>(null);
-
-  useEffect(() => {
-    fetchCredits()
-      .then(setCredits)
-      .catch((error) => handleError('Error fetching credits', error));
-  }, []);
-
-  if (credits === null) {
-    return <Loader2Icon size={20} className="animate-spin" />;
-  }
-
-  return (
-    <div className="flex shrink-0 items-center gap-2 px-2 text-muted-foreground">
-      <CoinsIcon size={16} />
-      {credits < 0 ? (
-        <p className="text-nowrap text-sm">
-          {Math.abs(credits)} credits in overage
-          <Button asChild size="sm" className="-my-2 -mr-3 ml-3 rounded-full">
-            <Link href="/pricing">Upgrade</Link>
-          </Button>
-        </p>
-      ) : (
-        <p className="text-nowrap text-sm">{credits} credits remaining</p>
-      )}
-      {!credits && (
-        <Button size="sm" className="-my-2 -mr-3 ml-1 rounded-full" asChild>
+export const CreditsCounter = ({ credits }: CreditsCounterProps) => (
+  <div className="flex shrink-0 items-center gap-2 px-2 text-muted-foreground">
+    <CoinsIcon size={16} />
+    {credits < 0 ? (
+      <p className="text-nowrap text-sm">
+        {Math.abs(credits)} credits in overage
+        <Button asChild size="sm" className="-my-2 -mr-3 ml-3 rounded-full">
           <Link href="/pricing">Upgrade</Link>
         </Button>
-      )}
-    </div>
-  );
-};
+      </p>
+    ) : (
+      <p className="text-nowrap text-sm">{credits} credits remaining</p>
+    )}
+    {!credits && (
+      <Button size="sm" className="-my-2 -mr-3 ml-1 rounded-full" asChild>
+        <Link href="/pricing">Upgrade</Link>
+      </Button>
+    )}
+  </div>
+);

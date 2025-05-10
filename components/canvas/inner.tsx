@@ -24,11 +24,13 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
-import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useState } from 'react';
 import { ConnectionLine } from '../connection-line';
+import { Controls } from '../controls';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
+import { SaveIndicator } from '../save-indicator';
+import { Toolbar } from '../toolbar';
 
 type ProjectData = {
   content?:
@@ -41,7 +43,6 @@ type ProjectData = {
 };
 
 export type CanvasProps = {
-  projects: (typeof projects.$inferSelect)[];
   data: typeof projects.$inferSelect;
   defaultContent?: {
     nodes: Node[];
@@ -49,44 +50,12 @@ export type CanvasProps = {
     viewport: Viewport;
   };
   canvasProps?: ReactFlowProps;
-  isSubscribed: boolean;
 };
 
-const SaveIndicator = dynamic(
-  () => import('../save-indicator').then((mod) => mod.SaveIndicator),
-  {
-    ssr: false,
-  }
-);
-
-const Menu = dynamic(() => import('../menu').then((mod) => mod.Menu), {
-  ssr: false,
-});
-
-const Controls = dynamic(
-  () => import('../controls').then((mod) => mod.Controls),
-  {
-    ssr: false,
-  }
-);
-
-const Toolbar = dynamic(() => import('../toolbar').then((mod) => mod.Toolbar), {
-  ssr: false,
-});
-
-const Projects = dynamic(
-  () => import('../projects').then((mod) => mod.Projects),
-  {
-    ssr: false,
-  }
-);
-
 export const CanvasInner = ({
-  projects,
   data,
   defaultContent,
   canvasProps,
-  isSubscribed,
 }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(
@@ -365,18 +334,11 @@ export const CanvasInner = ({
         {!data.id.includes('demo') && user && (
           <>
             <Controls />
-            <Projects projects={projects} currentProject={data.id} />
-            <Menu isSubscribed={isSubscribed} />
-            {data.userId === user?.id && (
-              <>
-                <Toolbar />
-                <SaveIndicator
-                  lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
-                  saving={isSaving}
-                />
-              </>
-            )}
-            {/* <RealtimeCursors roomName={`${data.id}-cursors`} /> */}
+            <Toolbar />
+            <SaveIndicator
+              lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
+              saving={isSaving}
+            />
           </>
         )}
       </ReactFlow>

@@ -1,3 +1,5 @@
+'use client';
+
 import { createProjectAction } from '@/app/actions/project/create';
 import {
   Dialog,

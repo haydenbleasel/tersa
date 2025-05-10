@@ -1,4 +1,5 @@
 'use client';
+
 import { createCheckoutLink } from '@/app/actions/checkout/create';
 import { handleError } from '@/lib/error/handle';
 import { PolarEmbedCheckout } from '@polar-sh/checkout/embed';

@@ -11,12 +11,11 @@ import {
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
-import { type Message, useChat } from '@ai-sdk/react';
+import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
-import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
-import { type ChangeEventHandler, type ComponentProps, useMemo } from 'react';
+import type { ChangeEventHandler, ComponentProps } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { TextNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
@@ -98,24 +97,6 @@ export const TextTransform = ({
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
-  const nonUserMessages = useMemo(() => {
-    let newMessages: Message[] = [];
-
-    if (messages.length) {
-      newMessages = messages.filter((message) => message.role !== 'user');
-    }
-
-    if (data.generated?.text) {
-      newMessages.push({
-        id: nanoid(),
-        role: 'system',
-        content: data.generated?.text,
-      });
-    }
-
-    return newMessages;
-  }, [messages, data.generated?.text]);
-
   const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
     const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
 
@@ -145,7 +126,7 @@ export const TextTransform = ({
           </Button>
         ),
       });
-    } else if (nonUserMessages?.length || data.generated?.text) {
+    } else if (messages.length || data.generated?.text) {
       toolbar.push({
         tooltip: 'Regenerate',
         children: (
@@ -192,6 +173,8 @@ export const TextTransform = ({
     return toolbar;
   };
 
+  const nonUserMessages = messages.filter((message) => message.role !== 'user');
+
   return (
     <NodeLayout
       id={id}
@@ -201,23 +184,32 @@ export const TextTransform = ({
       toolbar={createToolbar()}
     >
       <div className="flex flex-1 rounded-t-3xl rounded-b-xl bg-secondary p-4">
-        {status === 'streaming' && (
+        {status === 'submitted' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
             <Skeleton className="h-4 w-40 animate-pulse rounded-lg" />
             <Skeleton className="h-4 w-50 animate-pulse rounded-lg" />
           </div>
         )}
-        {!nonUserMessages?.length && status !== 'streaming' && (
-          <div className="flex aspect-video w-full items-center justify-center">
-            <p className="text-muted-foreground text-sm">
-              Press "Generate" to generate text
-            </p>
-          </div>
-        )}
-        {nonUserMessages?.map((message, index) => (
-          <ReactMarkdown key={index}>{message.content}</ReactMarkdown>
-        ))}
+        {data.generated?.text &&
+          !nonUserMessages.length &&
+          status !== 'submitted' && (
+            <ReactMarkdown>{data.generated.text}</ReactMarkdown>
+          )}
+        {!data.generated?.text &&
+          !nonUserMessages.length &&
+          status !== 'submitted' && (
+            <div className="flex aspect-video w-full items-center justify-center">
+              <p className="text-muted-foreground text-sm">
+                Press "Generate" to generate text
+              </p>
+            </div>
+          )}
+        {Boolean(nonUserMessages.length) &&
+          status !== 'submitted' &&
+          nonUserMessages.map((message, index) => (
+            <ReactMarkdown key={index}>{message.content}</ReactMarkdown>
+          ))}
       </div>
       <Textarea
         value={data.instructions ?? ''}
