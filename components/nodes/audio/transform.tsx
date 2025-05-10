@@ -34,9 +34,9 @@ export const AudioTransform = ({
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
   const modelId = data.model ?? 'tts-1';
-  const model = speechModels.flatMap((model) => model.models).find(
-    (model) => model.id === modelId
-  );
+  const model = speechModels
+    .flatMap((model) => model.models)
+    .find((model) => model.id === modelId);
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -113,6 +113,7 @@ export const AudioTransform = ({
         />
       ),
     });
+  }
 
   toolbar.push({
     tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
@@ -130,7 +131,7 @@ export const AudioTransform = ({
         )}
       </Button>
     ),
-  })
+  });
 
   if (data.generated) {
     toolbar.push({
@@ -172,9 +173,9 @@ export const AudioTransform = ({
         <Skeleton className="h-[50px] w-full animate-pulse rounded-full" />
       )}
       {!loading && !data.generated?.url && (
-        <div className="flex h-[50px] w-full items-center justify-center">
+        <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press "Generate" to generate text
+            Press "Generate" to generate audio
           </p>
         </div>
       )}

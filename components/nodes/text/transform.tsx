@@ -205,7 +205,7 @@ export const TextTransform = ({
         {!data.generated?.text &&
           !nonUserMessages.length &&
           status !== 'submitted' && (
-            <div className="flex aspect-video w-full items-center justify-center">
+            <div className="flex aspect-video w-full items-center justify-center bg-secondary">
               <p className="text-muted-foreground text-sm">
                 Press "Generate" to generate text
               </p>
