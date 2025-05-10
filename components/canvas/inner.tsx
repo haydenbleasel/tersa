@@ -320,7 +320,6 @@ export const CanvasInner = ({
         edgeTypes={edgeTypes}
         isValidConnection={isValidConnection}
         connectionLineComponent={ConnectionLine}
-        fitView
         panOnScroll
         viewport={viewport}
         onViewportChange={onViewportChange}
