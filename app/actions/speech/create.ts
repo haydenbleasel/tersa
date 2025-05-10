@@ -1,10 +1,10 @@
 'use server';
 
+import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { speechModels } from '@/lib/models';
 import { trackCreditUsage } from '@/lib/polar';
-import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { experimental_generateSpeech as generateSpeech } from 'ai';

@@ -1,9 +1,9 @@
 'use server';
 
+import { currentUser, currentUserProfile } from '@/lib/auth';
 import { env } from '@/lib/env';
 import { parseError } from '@/lib/error/parse';
 import { polar } from '@/lib/polar';
-import { createClient } from '@/lib/supabase/server';
 
 export const createCheckoutLink = async (): Promise<
   | {
@@ -14,17 +14,21 @@ export const createCheckoutLink = async (): Promise<
     }
 > => {
   try {
-    const client = await createClient();
-    const { data } = await client.auth.getUser();
-    const customerId = data.user?.user_metadata.polar_customer_id;
+    const user = await currentUser();
 
-    if (!customerId) {
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const profile = await currentUserProfile();
+
+    if (!profile.customerId) {
       throw new Error('Customer ID not found');
     }
 
     const checkout = await polar.checkouts.create({
       products: [env.POLAR_HOBBY_PRODUCT_ID],
-      customerId,
+      customerId: profile.customerId,
     });
 
     return { url: checkout.url };

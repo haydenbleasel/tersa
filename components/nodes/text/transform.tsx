@@ -16,7 +16,7 @@ import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useParams } from 'next/navigation';
-import type { ChangeEventHandler, ComponentProps } from 'react';
+import { type ChangeEventHandler, type ComponentProps, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { TextNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
@@ -98,19 +98,23 @@ export const TextTransform = ({
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
-  let nonUserMessages: Message[] = [];
+  const nonUserMessages = useMemo(() => {
+    let newMessages: Message[] = [];
 
-  if (messages.length) {
-    nonUserMessages = messages.filter((message) => message.role !== 'user');
-  }
+    if (messages.length) {
+      newMessages = messages.filter((message) => message.role !== 'user');
+    }
 
-  if (data.generated?.text) {
-    nonUserMessages.push({
-      id: nanoid(),
-      role: 'system',
-      content: data.generated?.text,
-    });
-  }
+    if (data.generated?.text) {
+      newMessages.push({
+        id: nanoid(),
+        role: 'system',
+        content: data.generated?.text,
+      });
+    }
+
+    return newMessages;
+  }, [messages, data.generated?.text]);
 
   const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
     const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [];
@@ -197,7 +201,7 @@ export const TextTransform = ({
       toolbar={createToolbar()}
     >
       <div className="flex flex-1 rounded-t-3xl rounded-b-xl bg-secondary p-4">
-        {!nonUserMessages?.length && status === 'streaming' && (
+        {status === 'streaming' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
             <Skeleton className="h-4 w-40 animate-pulse rounded-lg" />

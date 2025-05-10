@@ -1,4 +1,5 @@
 import { Canvas } from '@/components/canvas';
+import { currentUser, currentUserProfile } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { polar } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
@@ -22,17 +23,19 @@ type ProjectProps = {
 
 const Project = async ({ params }: ProjectProps) => {
   const client = await createClient();
-  const { data } = await client.auth.getUser();
+  const user = await currentUser();
   const { projectId } = await params;
 
-  if (!data?.user) {
+  if (!user) {
     return redirect('/sign-in');
   }
 
-  if (!data.user.user_metadata.polar_customer_id && data.user.email) {
+  const profile = await currentUserProfile();
+
+  if (!profile.customerId && user.email) {
     const customer = await polar.customers.create({
-      email: data.user.email,
-      externalId: data.user.id,
+      email: user.email,
+      externalId: user.id,
     });
 
     await client.auth.updateUser({
@@ -47,9 +50,9 @@ const Project = async ({ params }: ProjectProps) => {
     .from(projects)
     .where(
       or(
-        eq(projects.userId, data.user.id)
-        // data.user.email
-        //   ? arrayContains(projects.members, [data.user.email])
+        eq(projects.userId, user.id)
+        // user.email
+        //   ? arrayContains(projects.members, [user.email])
         //   : undefined
       )
     );
@@ -66,7 +69,11 @@ const Project = async ({ params }: ProjectProps) => {
 
   return (
     <div className="h-screen w-screen">
-      <Canvas projects={allProjects} data={project} />
+      <Canvas
+        projects={allProjects}
+        data={project}
+        isSubscribed={profile.subscriptionId}
+      />
     </div>
   );
 };

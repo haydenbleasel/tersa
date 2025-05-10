@@ -1,5 +1,5 @@
+import { currentUser, currentUserProfile } from '@/lib/auth';
 import { env } from '@/lib/env';
-import { createClient } from '@/lib/supabase/server';
 import type { Metadata } from 'next';
 import { Hero } from './components/hero';
 
@@ -9,19 +9,17 @@ export const metadata: Metadata = {
 };
 
 const PricingPage = async () => {
-  const client = await createClient();
-  const {
-    data: { user },
-  } = await client.auth.getUser();
-  let currentPlan: string | undefined;
+  const user = await currentUser();
+  let currentPlan: 'hobby' | 'pro' | undefined;
 
   if (user) {
-    if (
-      user.user_metadata.polar_subscription_id === env.POLAR_HOBBY_PRODUCT_ID
-    ) {
+    const profile = await currentUserProfile();
+
+    if (profile.productId === env.POLAR_HOBBY_PRODUCT_ID) {
       currentPlan = 'hobby';
     } else if (
-      user.user_metadata.polar_subscription_id === env.POLAR_PRO_PRODUCT_ID
+      profile.productId === env.POLAR_PRO_PRODUCT_MONTHLY_ID ||
+      profile.productId === env.POLAR_PRO_PRODUCT_YEARLY_ID
     ) {
       currentPlan = 'pro';
     }

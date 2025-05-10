@@ -1,7 +1,7 @@
+import { getSubscribedUser } from '@/lib/auth';
 import { parseError } from '@/lib/error/parse';
 import { chatModels } from '@/lib/models';
 import { trackCreditUsage } from '@/lib/polar';
-import { getSubscribedUser } from '@/lib/protect';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamObject } from 'ai';
 import { z } from 'zod';

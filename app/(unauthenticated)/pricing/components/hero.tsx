@@ -58,7 +58,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': false,
         credits: 500,
       },
-      ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'yearly' : 'monthly'}`,
+      ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'yearly' : 'monthly'}&userId=${userId}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -74,7 +74,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': true,
         credits: 1000,
       },
-      ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'yearly' : 'monthly'}`,
+      ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'yearly' : 'monthly'}&userId=${userId}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };

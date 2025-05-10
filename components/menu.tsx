@@ -20,7 +20,11 @@ import { Profile } from './profile';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 
-export const Menu = () => {
+type MenuProps = {
+  isSubscribed: boolean;
+};
+
+export const Menu = ({ isSubscribed }: MenuProps) => {
   const router = useRouter();
   const { projectId } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -69,7 +73,7 @@ export const Menu = () => {
             <RealtimeAvatarStack roomName={projectId} />
           </div>
         )} */}
-        {user.user_metadata.polar_subscription_id ? (
+        {isSubscribed ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
             <CreditsCounter />
           </div>

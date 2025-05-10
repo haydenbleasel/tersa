@@ -1,10 +1,10 @@
 'use server';
 
+import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { imageModels } from '@/lib/models';
 import { trackCreditUsage } from '@/lib/polar';
-import { getSubscribedUser } from '@/lib/protect';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';

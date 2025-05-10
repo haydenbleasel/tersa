@@ -1,9 +1,9 @@
 'use server';
 
+import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { transcriptionModels } from '@/lib/models';
-import { getSubscribedUser } from '@/lib/protect';
 import { projects } from '@/schema';
 import { experimental_transcribe as transcribe } from 'ai';
 import { eq } from 'drizzle-orm';

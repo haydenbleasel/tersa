@@ -49,6 +49,7 @@ export type CanvasProps = {
     viewport: Viewport;
   };
   canvasProps?: ReactFlowProps;
+  isSubscribed: boolean;
 };
 
 const SaveIndicator = dynamic(
@@ -85,6 +86,7 @@ export const CanvasInner = ({
   data,
   defaultContent,
   canvasProps,
+  isSubscribed,
 }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(
@@ -364,7 +366,7 @@ export const CanvasInner = ({
           <>
             <Controls />
             <Projects projects={projects} currentProject={data.id} />
-            <Menu />
+            <Menu isSubscribed={isSubscribed} />
             {data.userId === user?.id && (
               <>
                 <Toolbar />

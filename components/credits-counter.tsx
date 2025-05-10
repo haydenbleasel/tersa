@@ -31,7 +31,16 @@ export const CreditsCounter = () => {
   return (
     <div className="flex shrink-0 items-center gap-2 px-2 text-muted-foreground">
       <CoinsIcon size={16} />
-      <p className="text-nowrap text-sm">{credits} credits remaining</p>
+      {credits < 0 ? (
+        <p className="text-nowrap text-sm">
+          {Math.abs(credits)} credits in overage
+          <Button asChild size="sm" className="-my-2 -mr-3 ml-3 rounded-full">
+            <Link href="/pricing">Upgrade</Link>
+          </Button>
+        </p>
+      ) : (
+        <p className="text-nowrap text-sm">{credits} credits remaining</p>
+      )}
       {!credits && (
         <Button size="sm" className="-my-2 -mr-3 ml-1 rounded-full" asChild>
           <Link href="/pricing">Upgrade</Link>

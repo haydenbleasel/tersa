@@ -1,3 +1,4 @@
+import { currentUserProfile } from '@/lib/auth';
 import { env } from '@/lib/env';
 import { createClient } from '@/lib/supabase/server';
 import { CustomerPortal } from '@polar-sh/nextjs';
@@ -15,7 +16,9 @@ export const GET = CustomerPortal({
       throw new Error('User not found');
     }
 
-    const polarCustomerId = user.user_metadata.polar_customer_id;
+    const profile = await currentUserProfile();
+
+    const polarCustomerId = profile.customerId;
 
     if (typeof polarCustomerId !== 'string') {
       throw new Error('User has no Polar Customer ID');

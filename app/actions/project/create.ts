@@ -1,8 +1,8 @@
 'use server';
 
+import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
-import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 
 export const createProjectAction = async (
@@ -16,10 +16,9 @@ export const createProjectAction = async (
     }
 > => {
   try {
-    const client = await createClient();
-    const { data } = await client.auth.getUser();
+    const user = await currentUser();
 
-    if (!data?.user) {
+    if (!user) {
       throw new Error('You need to be logged in to create a project!');
     }
 
@@ -27,7 +26,7 @@ export const createProjectAction = async (
       .insert(projects)
       .values({
         name,
-        userId: data.user.id,
+        userId: user.id,
         transcriptionModel: 'gpt-4o-mini-transcribe',
         visionModel: 'gpt-4.1-nano',
       })
