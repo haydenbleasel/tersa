@@ -5,16 +5,9 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { ContextMenuSeparator } from '@radix-ui/react-context-menu';
-import {
-  Handle,
-  type Node,
-  NodeToolbar,
-  Position,
-  useReactFlow,
-} from '@xyflow/react';
+import { Handle, type Node, Position, useReactFlow } from '@xyflow/react';
 import {
   BrainIcon,
-  CodeIcon,
   CopyIcon,
   EyeIcon,
   TrashIcon,
@@ -22,10 +15,8 @@ import {
 } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import type { ReactNode } from 'react';
-import { Fragment } from 'react';
-import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { NodeToolbar } from './toolbar';
 
 type NodeLayoutProps = {
   children: ReactNode;
@@ -56,28 +47,6 @@ export const NodeLayout = ({
   const { deleteElements, setCenter, getNode, updateNodeData, addNodes } =
     useReactFlow();
 
-  const handleDelete = () => {
-    deleteElements({
-      nodes: [{ id }],
-    });
-  };
-
-  const handleFocus = () => {
-    const node = getNode(id);
-
-    if (!node) {
-      return;
-    }
-
-    const { x, y } = node.position;
-    const width = node.measured?.width ?? 0;
-    const height = node.measured?.height ?? 0;
-
-    setCenter(x + width / 2, y + height / 2, {
-      duration: 1000,
-    });
-  };
-
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
       source: value ? 'transform' : 'primitive',
@@ -104,66 +73,39 @@ export const NodeLayout = ({
     addNodes([newNode]);
   };
 
+  const handleFocus = () => {
+    const node = getNode(id);
+
+    if (!node) {
+      return;
+    }
+
+    const { x, y } = node.position;
+    const width = node.measured?.width ?? 0;
+    const height = node.measured?.height ?? 0;
+
+    setCenter(x + width / 2, y + height / 2, {
+      duration: 1000,
+    });
+  };
+
+  const handleDelete = () => {
+    deleteElements({
+      nodes: [{ id }],
+    });
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
         {type !== 'drop' && (
           <NodeToolbar
-            isVisible={data?.forceToolbarVisible || undefined}
-            position={Position.Bottom}
-            className="flex items-center gap-1 rounded-full border bg-background/90 p-1 drop-shadow-xs backdrop-blur-sm"
-          >
-            {toolbar?.map((button, index) =>
-              button.tooltip ? (
-                <Tooltip key={button.tooltip}>
-                  <TooltipTrigger asChild>{button.children}</TooltipTrigger>
-                  <TooltipContent>{button.tooltip}</TooltipContent>
-                </Tooltip>
-              ) : (
-                <Fragment key={index}>{button.children}</Fragment>
-              )
-            )}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full"
-                  onClick={handleFocus}
-                >
-                  <EyeIcon size={12} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Focus</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-destructive/10 hover:text-destructive"
-                  onClick={handleDelete}
-                >
-                  <TrashIcon size={12} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Delete</TooltipContent>
-            </Tooltip>
-            {process.env.NODE_ENV === 'development' && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
-                    <CodeIcon size={12} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[600px] text-wrap">
-                  <pre className="whitespace-pre-wrap">
-                    {JSON.stringify({ id, data, type, title }, null, 2)}
-                  </pre>
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </NodeToolbar>
+            id={id}
+            data={data as never}
+            items={toolbar}
+            onFocus={handleFocus}
+            onDelete={handleDelete}
+          />
         )}
         {type !== 'drop' && type !== 'file' && (
           <Handle type="target" position={Position.Left} />
