@@ -64,7 +64,12 @@ export const ModelSelector = ({
           </div>
         )}
       </ComboboxTrigger>
-      <ComboboxContent className={cn('p-0', className)}>
+      <ComboboxContent
+        popoverOptions={{
+          sideOffset: 8,
+        }}
+        className={cn('shadow-2xl shadow-black/10', className)}
+      >
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
