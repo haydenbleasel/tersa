@@ -17,6 +17,8 @@ import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { toast } from 'sonner';
+import { mutate } from 'swr';
 import type { TextNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -44,6 +46,10 @@ export const TextTransform = ({
         },
         updatedAt: new Date().toISOString(),
       });
+
+      toast.success('Text generated successfully');
+
+      setTimeout(() => mutate('credits'), 1000);
     },
   });
 

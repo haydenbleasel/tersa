@@ -20,6 +20,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
+import { mutate } from 'swr';
 import type { ImageNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -86,6 +87,8 @@ export const ImageTransform = ({
       updateNodeData(id, response.nodeData);
 
       toast.success('Image generated successfully');
+
+      setTimeout(() => mutate('credits'), 1000);
     } catch (error) {
       handleError('Error generating image', error);
     } finally {

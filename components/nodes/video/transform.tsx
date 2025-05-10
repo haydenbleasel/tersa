@@ -18,6 +18,7 @@ import {
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
+import { mutate } from 'swr';
 import type { VideoNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -66,6 +67,8 @@ export const VideoTransform = ({
       updateNodeData(id, response.nodeData);
 
       toast.success('Video generated successfully');
+
+      setTimeout(() => mutate('credits'), 1000);
     } catch (error) {
       handleError('Error generating video', error);
     } finally {

@@ -1,5 +1,4 @@
 import { Polar } from '@polar-sh/sdk';
-import { revalidatePath } from 'next/cache';
 import { env } from './env';
 
 export const polar = new Polar({
@@ -30,6 +29,4 @@ export const trackCreditUsage = async ({
       },
     ],
   });
-
-  revalidatePath('/');
 };

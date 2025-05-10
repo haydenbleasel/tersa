@@ -14,6 +14,7 @@ import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
+import { mutate } from 'swr';
 import type { AudioNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
 
@@ -62,6 +63,8 @@ export const AudioTransform = ({
       updateNodeData(id, response.nodeData);
 
       toast.success('Audio generated successfully');
+
+      setTimeout(() => mutate('credits'), 1000);
     } catch (error) {
       handleError('Error generating audio', error);
     } finally {

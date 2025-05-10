@@ -14,6 +14,8 @@ import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import type { ChangeEventHandler, ComponentProps } from 'react';
+import { toast } from 'sonner';
+import { mutate } from 'swr';
 import { z } from 'zod';
 import type { CodeNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
@@ -47,6 +49,10 @@ export const CodeTransform = ({
         generated: generated.object,
         updatedAt: new Date().toISOString(),
       });
+
+      toast.success('Text generated successfully');
+
+      setTimeout(() => mutate('credits'), 1000);
     },
   });
 
