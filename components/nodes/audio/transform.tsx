@@ -2,6 +2,7 @@ import { generateSpeechAction } from '@/app/actions/speech/create';
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models';
@@ -12,7 +13,7 @@ import {
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { type ComponentProps, useState } from 'react';
+import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
 import type { AudioNodeProps } from '.';
@@ -54,6 +55,7 @@ export const AudioTransform = ({
         nodeId: id,
         modelId,
         projectId,
+        instructions: data.instructions,
       });
 
       if ('error' in response) {
@@ -133,6 +135,10 @@ export const AudioTransform = ({
     });
   }
 
+  const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => updateNodeData(id, { instructions: event.target.value });
+
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       {loading && (
@@ -153,6 +159,12 @@ export const AudioTransform = ({
           className="w-full rounded-none"
         />
       )}
+      <Textarea
+        value={data.instructions ?? ''}
+        onChange={handleInstructionsChange}
+        placeholder="Enter instructions"
+        className="shrink-0 resize-none rounded-none border-none bg-transparent shadow-none focus-visible:ring-0"
+      />
     </NodeLayout>
   );
 };

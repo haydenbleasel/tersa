@@ -16,6 +16,7 @@ type GenerateSpeechActionProps = {
   modelId: string;
   nodeId: string;
   projectId: string;
+  instructions?: string;
 };
 
 export const generateSpeechAction = async ({
@@ -23,6 +24,7 @@ export const generateSpeechAction = async ({
   nodeId,
   modelId,
   projectId,
+  instructions,
 }: GenerateSpeechActionProps): Promise<
   | {
       nodeData: object;
@@ -47,6 +49,7 @@ export const generateSpeechAction = async ({
       model: model.model,
       text,
       outputFormat: 'mp3',
+      instructions,
     });
 
     await trackCreditUsage({
