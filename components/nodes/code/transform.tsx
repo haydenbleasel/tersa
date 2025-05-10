@@ -13,7 +13,12 @@ import Editor from '@monaco-editor/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import type { ChangeEventHandler, ComponentProps } from 'react';
+import {
+  type ChangeEventHandler,
+  type ComponentProps,
+  useCallback,
+  useMemo,
+} from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
 import { z } from 'zod';
@@ -56,7 +61,7 @@ export const CodeTransform = ({
     },
   });
 
-  const handleGenerate = () => {
+  const handleGenerate = useCallback(() => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
     const audioPrompts = getTranscriptionFromAudioNodes(incomers);
@@ -85,7 +90,7 @@ export const CodeTransform = ({
         ),
       ].join('\n')
     );
-  };
+  }, [data.instructions, id, getNodes, getEdges, submit]);
 
   const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (
     event
@@ -97,14 +102,17 @@ export const CodeTransform = ({
     });
   };
 
-  const handleLanguageChange = (value: string) => {
-    updateNodeData(id, {
-      generated: { text: data.generated?.text, language: value },
-    });
-  };
+  const handleLanguageChange = useCallback(
+    (value: string) => {
+      updateNodeData(id, {
+        generated: { text: data.generated?.text, language: value },
+      });
+    },
+    [data.generated?.text, id, updateNodeData]
+  );
 
-  const createToolbar = (): ComponentProps<typeof NodeLayout>['toolbar'] => {
-    const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
+  const toolbar = useMemo(() => {
+    const items: ComponentProps<typeof NodeLayout>['toolbar'] = [
       {
         children: (
           <LanguageSelector
@@ -114,22 +122,21 @@ export const CodeTransform = ({
           />
         ),
       },
+      {
+        children: (
+          <ModelSelector
+            value={data.model ?? 'gpt-4'}
+            options={chatModels}
+            key={id}
+            className="w-[200px] rounded-full"
+            onChange={(value) => updateNodeData(id, { model: value })}
+          />
+        ),
+      },
     ];
 
-    toolbar.push({
-      children: (
-        <ModelSelector
-          value={data.model ?? 'gpt-4'}
-          options={chatModels}
-          key={id}
-          className="w-[200px] rounded-full"
-          onChange={(value) => updateNodeData(id, { model: value })}
-        />
-      ),
-    });
-
     if (isLoading) {
-      toolbar.push({
+      items.push({
         tooltip: 'Stop',
         children: (
           <Button
@@ -143,7 +150,7 @@ export const CodeTransform = ({
         ),
       });
     } else if (object?.text || data.generated?.text) {
-      toolbar.push({
+      items.push({
         tooltip: 'Regenerate',
         children: (
           <Button
@@ -157,7 +164,7 @@ export const CodeTransform = ({
         ),
       });
     } else {
-      toolbar.push({
+      items.push({
         tooltip: data.generated?.text ? 'Regenerate' : 'Generate',
         children: (
           <Button
@@ -177,7 +184,7 @@ export const CodeTransform = ({
     }
 
     if (data.updatedAt) {
-      toolbar.push({
+      items.push({
         tooltip: `Last updated: ${new Intl.DateTimeFormat('en-US', {
           dateStyle: 'short',
           timeStyle: 'short',
@@ -190,17 +197,21 @@ export const CodeTransform = ({
       });
     }
 
-    return toolbar;
-  };
+    return items;
+  }, [
+    id,
+    updateNodeData,
+    stop,
+    data,
+    handleGenerate,
+    handleLanguageChange,
+    isLoading,
+    object,
+    projectId,
+  ]);
 
   return (
-    <NodeLayout
-      id={id}
-      data={data}
-      title={title}
-      type={type}
-      toolbar={createToolbar()}
-    >
+    <NodeLayout id={id} data={data} title={title} type={type} toolbar={toolbar}>
       <Editor
         className="aspect-square w-full overflow-hidden rounded-b-xl"
         language={data.generated?.language}
