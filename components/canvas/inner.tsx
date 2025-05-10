@@ -25,6 +25,7 @@ import {
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
 import { useCallback, useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
 import { edgeTypes } from '../edges';
@@ -71,42 +72,34 @@ export const CanvasInner = ({
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check if the event target is an input, textarea, or contenteditable element
-      const target = event.target as HTMLElement;
-      const isEditableTarget =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable;
+  useHotkeys('ctrl+a', (event) => {
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
 
-      if (isEditableTarget) {
-        // Skip if we're in an editable element
-        return;
+    const isEditableTarget =
+      event.target.tagName === 'INPUT' ||
+      event.target.tagName === 'TEXTAREA' ||
+      event.target.isContentEditable;
+
+    if (isEditableTarget) {
+      // Skip if we're in an editable element
+      return;
+    }
+
+    event.preventDefault();
+
+    const allNodes = getNodes();
+    if (allNodes.length > 0) {
+      const newNodes = [...allNodes];
+
+      for (const node of newNodes) {
+        node.selected = true;
       }
 
-      if ((event.metaKey || event.ctrlKey) && event.key === 'a') {
-        event.preventDefault();
-
-        const allNodes = getNodes();
-        if (allNodes.length > 0) {
-          const newNodes = [...allNodes];
-
-          for (const node of newNodes) {
-            node.selected = true;
-          }
-
-          setNodes(newNodes);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [getNodes]);
+      setNodes(newNodes);
+    }
+  });
 
   useEffect(() => {
     if (data.userId === user?.id) {
