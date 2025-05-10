@@ -71,6 +71,7 @@ export const CanvasInner = ({
   const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
+  const editable = data.userId === user?.id;
 
   useHotkeys('ctrl+a', (event) => {
     if (!(event.target instanceof HTMLElement)) {
@@ -102,7 +103,7 @@ export const CanvasInner = ({
   });
 
   useEffect(() => {
-    if (data.userId === user?.id) {
+    if (editable) {
       return;
     }
 
@@ -140,7 +141,7 @@ export const CanvasInner = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [data.id, data.userId, user?.id]);
+  }, [editable, data.id]);
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
@@ -168,11 +169,11 @@ export const CanvasInner = ({
     (connection: Connection) => {
       setEdges((eds) => addEdge({ ...connection, type: 'animated' }, eds));
 
-      if (data.userId === user?.id) {
+      if (editable) {
         save();
       }
     },
-    [save, data.userId, user?.id]
+    [save, editable]
   );
 
   const onConnectEnd = useCallback(
@@ -265,11 +266,11 @@ export const CanvasInner = ({
         return;
       }
 
-      if (data.userId === user?.id) {
+      if (editable) {
         save();
       }
     },
-    [save, data.userId, user?.id]
+    [save, editable]
   );
 
   const onNodeDragStop = useCallback(() => {
@@ -280,22 +281,22 @@ export const CanvasInner = ({
     (changes: EdgeChange[]) => {
       setEdges((eds) => applyEdgeChanges(changes, eds));
 
-      if (data.userId === user?.id) {
+      if (editable) {
         save();
       }
     },
-    [save, data.userId, user?.id]
+    [save, editable]
   );
 
   const onViewportChange = useCallback(
     (viewport: Viewport) => {
       setViewport(viewport);
 
-      if (data.userId === user?.id) {
+      if (editable) {
         save();
       }
     },
-    [save, data.userId, user?.id]
+    [save, editable]
   );
 
   return (
@@ -317,9 +318,9 @@ export const CanvasInner = ({
         viewport={viewport}
         onViewportChange={onViewportChange}
         zoomOnDoubleClick={false}
-        elementsSelectable={data.userId === user?.id}
-        nodesConnectable={data.userId === user?.id}
-        nodesDraggable={data.userId === user?.id}
+        elementsSelectable={editable}
+        nodesConnectable={editable}
+        nodesDraggable={editable}
         {...canvasProps}
       >
         <Background />
