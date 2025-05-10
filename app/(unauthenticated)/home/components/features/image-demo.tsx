@@ -52,7 +52,6 @@ const edges: Edge[] = [
 
 export const ImageDemo = () => (
   <Canvas
-    projects={[]}
     data={{
       createdAt: new Date(),
       id: 'image-demo',

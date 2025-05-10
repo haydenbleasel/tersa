@@ -9,8 +9,6 @@ export const POST = Webhooks({
   onSubscriptionCreated: async (subscription) => {
     const userId = subscription.data.customer.externalId;
 
-    console.log(JSON.stringify(subscription, null, 2), 'created');
-
     if (!userId) {
       throw new Error('User ID not found');
     }
@@ -25,8 +23,6 @@ export const POST = Webhooks({
   },
   onSubscriptionUpdated: async (subscription) => {
     const userId = subscription.data.customer.externalId;
-
-    console.log(JSON.stringify(subscription, null, 2), 'updated');
 
     if (!userId) {
       throw new Error('User ID not found');

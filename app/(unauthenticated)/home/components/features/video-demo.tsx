@@ -71,7 +71,6 @@ const edges: Edge[] = [
 
 export const VideoDemo = () => (
   <Canvas
-    projects={[]}
     data={{
       createdAt: new Date(),
       id: 'video-demo',

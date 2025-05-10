@@ -6,7 +6,6 @@ export const Demo = () => (
     <div className="rounded-lg bg-gradient-to-b from-primary to-border p-px">
       <div className="aspect-video overflow-hidden rounded-[9px]">
         <Canvas
-          projects={[]}
           data={{
             createdAt: new Date(),
             id: 'demo',

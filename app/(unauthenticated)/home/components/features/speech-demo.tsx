@@ -61,7 +61,6 @@ const edges: Edge[] = [
 
 export const SpeechDemo = () => (
   <Canvas
-    projects={[]}
     data={{
       createdAt: new Date(),
       id: 'speech-demo',
