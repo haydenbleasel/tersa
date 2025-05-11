@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { useReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useUser } from './use-user';
 
@@ -70,28 +71,32 @@ export const useRealtimeCursors = ({
   const [cursors, setCursors] = useState<Record<string, CursorEventPayload>>(
     {}
   );
+  const { screenToFlowPosition } = useReactFlow();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
 
   const callback = useCallback(
     (event: MouseEvent) => {
-      const { clientX, clientY } = event;
-
       if (!user) {
         return;
       }
 
+      const flowPosition = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
       const payload: CursorEventPayload = {
         position: {
-          x: clientX,
-          y: clientY,
+          x: flowPosition.x,
+          y: flowPosition.y,
         },
         user: {
           id: user.id,
           name: user.user_metadata.name ?? user.email ?? user.id,
         },
         color: color,
-        timestamp: new Date().getTime(),
+        timestamp: Date.now(),
       };
 
       channelRef.current?.send({
@@ -100,7 +105,7 @@ export const useRealtimeCursors = ({
         payload: payload,
       });
     },
-    [color, user]
+    [color, screenToFlowPosition, user]
   );
 
   const handleMouseMove = useThrottleCallback(callback, throttleMs);
