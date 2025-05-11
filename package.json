@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "concurrently -n \"Next.js,Supabase,Email\" \"next dev --turbopack\" \"npx supabase start\" \"email dev --port 3001\"",
-    "build": "next build --turbopack && email build",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "ngrok": "ngrok http 3000",
