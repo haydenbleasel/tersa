@@ -25,8 +25,6 @@ type NodeLayoutProps = {
     model?: string;
     source?: string;
     generated?: object;
-    forceToolbarVisible?: boolean;
-    toolbarPosition?: Position;
   };
   title: string;
   type: string;

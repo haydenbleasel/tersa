@@ -5,6 +5,7 @@ import { useUser } from '@/hooks/use-user';
 import { env } from '@/lib/env';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
+import { ProjectProvider } from '@/providers/project';
 import type { projects } from '@/schema';
 import {
   Background,
@@ -296,38 +297,37 @@ export const CanvasInner = ({
   );
 
   return (
-    <NodeDropzoneProvider addNode={addNode}>
-      <ReactFlow
-        nodes={nodes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        onEdgesChange={onEdgesChange}
-        onConnectStart={onConnectStart}
-        onConnect={onConnect}
-        onConnectEnd={onConnectEnd}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        isValidConnection={isValidConnection}
-        connectionLineComponent={ConnectionLine}
-        panOnScroll
-        fitView
-        zoomOnDoubleClick={false}
-        onDoubleClick={handleDoubleClick}
-        {...canvasProps}
-      >
-        <Background />
-        {!data.id.includes('demo') && user && (
-          <>
-            <Controls />
-            <Toolbar />
-            <SaveIndicator
-              lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
-              saving={isSaving}
-            />
-            <RealtimeCursors roomName={`${data.id}-cursors`} />
-          </>
-        )}
-      </ReactFlow>
-    </NodeDropzoneProvider>
+    <ProjectProvider data={data}>
+      <NodeDropzoneProvider addNode={addNode}>
+        <ReactFlow
+          nodes={nodes}
+          onNodesChange={onNodesChange}
+          edges={edges}
+          onEdgesChange={onEdgesChange}
+          onConnectStart={onConnectStart}
+          onConnect={onConnect}
+          onConnectEnd={onConnectEnd}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          isValidConnection={isValidConnection}
+          connectionLineComponent={ConnectionLine}
+          panOnScroll
+          fitView
+          zoomOnDoubleClick={false}
+          onDoubleClick={handleDoubleClick}
+          {...canvasProps}
+        >
+          <Background />
+          {!data.id.includes('demo') && user && (
+            <>
+              <Controls />
+              <Toolbar />
+              <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
+              <RealtimeCursors roomName={`${data.id}-cursors`} />
+            </>
+          )}
+        </ReactFlow>
+      </NodeDropzoneProvider>
+    </ProjectProvider>
   );
 };
