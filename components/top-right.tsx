@@ -3,7 +3,7 @@ import { currentUser, currentUserProfile } from '@/lib/auth';
 import { ClaimButton } from './claim-button';
 import { CreditsCounter } from './credits-counter';
 import { Menu } from './menu';
-import { RealtimeAvatarStack } from './supabase-ui/realtime-avatar-stack';
+import { Presence } from './presence';
 
 type TopRightProps = {
   id: string;
@@ -27,7 +27,7 @@ export const TopRight = async ({ id }: TopRightProps) => {
     <>
       <div className="fixed top-16 right-0 left-0 z-[50] m-4 flex items-center gap-2 sm:top-0 sm:left-auto">
         <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
-          <RealtimeAvatarStack roomName={`${id}-presence`} />
+          <Presence roomName={`${id}-presence`} />
         </div>
         {profile.subscriptionId ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
