@@ -43,7 +43,7 @@ const supabase = createClient();
 
 const EVENT_NAME = 'realtime-cursor-move';
 
-type CursorEventPayload = {
+export type CursorEventPayload = {
   position: {
     x: number;
     y: number;

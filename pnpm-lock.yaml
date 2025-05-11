@@ -311,6 +311,9 @@ importers:
       openai:
         specifier: ^4.96.0
         version: 4.96.0(ws@8.18.1)(zod@3.24.3)
+      perfect-cursors:
+        specifier: ^1.0.5
+        version: 1.0.5
       postgres:
         specifier: ^3.4.5
         version: 3.4.5
@@ -2538,6 +2541,9 @@ packages:
       '@tiptap/core': ^2.7.0
       '@tiptap/pm': ^2.7.0
 
+  '@tldraw/vec@1.9.2':
+    resolution: {integrity: sha512-k9vH52MRpJHjVcaahWu6VqvhLeE9h1qL5Z2gLobS9zTMpUJ59kBQPNo0VPzPlDYBpXdS4GxuB4jYQMnKvuPAZg==}
+
   '@types/cors@2.8.18':
     resolution: {integrity: sha512-nX3d0sxJW41CqQvfOzVG1NCTXfFDrDWIghCZncpHeWlVFd81zxB/DLhg7avFg6eHLCRX7ckBmoIIcqa++upvJA==}
 
@@ -3886,6 +3892,9 @@ packages:
 
   peberminta@0.9.0:
     resolution: {integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==}
+
+  perfect-cursors@1.0.5:
+    resolution: {integrity: sha512-LgQJj6QtF6VzYODurlhF9Ayt2liiadJZBocK98brcCC6D/dRtZlSU/r0mXWDoCdGPiO24oJB1+PZKz4p9hblWg==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -6523,6 +6532,8 @@ snapshots:
       '@tiptap/core': 2.11.7(@tiptap/pm@2.11.7)
       '@tiptap/pm': 2.11.7
 
+  '@tldraw/vec@1.9.2': {}
+
   '@types/cors@2.8.18':
     dependencies:
       '@types/node': 20.17.30
@@ -7870,6 +7881,10 @@ snapshots:
       minipass: 7.1.2
 
   peberminta@0.9.0: {}
+
+  perfect-cursors@1.0.5:
+    dependencies:
+      '@tldraw/vec': 1.9.2
 
   picocolors@1.1.1: {}
 
