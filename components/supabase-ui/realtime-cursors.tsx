@@ -24,6 +24,7 @@ export const RealtimeCursors = ({ roomName }: { roomName: string }) => {
           }}
           color={cursors[id].color}
           name={cursors[id].user.name}
+          avatar={cursors[id].user.avatar}
         />
       ))}
     </div>

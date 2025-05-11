@@ -54,6 +54,7 @@ type CursorEventPayload = {
   user: {
     id: string;
     name: string;
+    avatar: string;
   };
   color: string;
   timestamp: number;
@@ -94,6 +95,7 @@ export const useRealtimeCursors = ({
         user: {
           id: user.id,
           name: user.user_metadata.name ?? user.email ?? user.id,
+          avatar: user.user_metadata.avatar,
         },
         color: color,
         timestamp: Date.now(),
