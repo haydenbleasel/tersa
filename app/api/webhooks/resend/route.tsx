@@ -1,3 +1,4 @@
+import ForgotPasswordEmailTemplate from '@/emails/forgot-password';
 import { LoginEmailTemplate } from '@/emails/sign-in';
 import { SignupEmailTemplate } from '@/emails/sign-up';
 import { env } from '@/lib/env';
@@ -69,6 +70,14 @@ export const POST = async (req: Request) => {
         />
       );
       subject = 'Your magic link to login to Tersa';
+    } else if (email_action_type === 'recovery') {
+      emailComponent = (
+        <ForgotPasswordEmailTemplate
+          magicLink={magicLink.toString()}
+          email={user.email}
+        />
+      );
+      subject = 'Reset your password for Tersa';
     } else {
       throw new Error('Invalid email action type');
     }
