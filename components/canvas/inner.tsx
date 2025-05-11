@@ -77,6 +77,8 @@ export const CanvasInner = ({
   const yEdges = useRef<Y.Array<Edge> | null>(null);
 
   useEffect(() => {
+    console.log('💽 Connecting to room', data.id);
+
     // Create a new Y.Doc (CRDT document)
     const ydoc = new Y.Doc();
 
@@ -85,17 +87,37 @@ export const CanvasInner = ({
       signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
     });
 
+    provider.on('status', (status) => {
+      console.log('💽 Status updated', status);
+    });
+
+    provider.on('synced', () => {
+      console.log('💽 Synced');
+    });
+
+    provider.on('peers', (peers) => {
+      console.log('💽 Peers', peers);
+    });
+
+    console.log('📄 Connected to room', data.id);
+
     // Create shared arrays for nodes and edges (initially empty)
     yNodes.current = ydoc.getArray<Node>('nodes');
     yEdges.current = ydoc.getArray<Edge>('edges');
 
     // Observe changes on yNodes and yEdges, update React state
     yNodes.current?.observe(() => {
+      console.log('📄 Nodes changed');
       setNodes(yNodes.current?.toArray() ?? []);
     });
 
     yEdges.current?.observe(() => {
+      console.log('📄 Edges changed');
       setEdges(yEdges.current?.toArray() ?? []);
+    });
+
+    ydoc.on('load', () => {
+      console.log('📄 Document loaded');
     });
 
     // Save the nodes and edges to the database
