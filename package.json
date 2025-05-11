@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n \"Next.js,Supabase\" \"next dev --turbopack\" \"npx supabase start\"",
-    "build": "next build --turbopack",
+    "dev": "concurrently -n \"Next.js,Supabase,Email\" \"next dev --turbopack\" \"npx supabase start\" \"email dev --port 3001\"",
+    "build": "next build --turbopack && email build",
     "start": "next start",
     "lint": "next lint",
-    "ngrok": "ngrok http 3000"
+    "ngrok": "ngrok http 3000",
+    "export": "email export"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^2.2.8",
@@ -63,6 +64,7 @@
     "@radix-ui/react-toggle-group": "^1.1.7",
     "@radix-ui/react-tooltip": "^1.2.3",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
+    "@react-email/components": "0.0.39",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "@t3-oss/env-core": "^0.13.0",
@@ -141,6 +143,7 @@
     "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.0",
     "prettier": "^3.5.3",
+    "react-email": "4.0.13",
     "tailwindcss": "^4",
     "typescript": "^5",
     "ultracite": "4.2.1"
