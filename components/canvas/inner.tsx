@@ -80,15 +80,10 @@ export const CanvasInner = ({
     // Create a new Y.Doc (CRDT document)
     const ydoc = new Y.Doc();
 
-    yDoc.current = ydoc;
-
     // Connect peers in the same "room" for P2P sync. Clients must use the same roomName.
     const provider = new WebrtcProvider(`tersa-${data.id}`, ydoc, {
       signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
     });
-
-    // Optionally, get awareness to share cursor/user info
-    // const awareness = provider.awareness;
 
     // Create shared arrays for nodes and edges (initially empty)
     yNodes.current = ydoc.getArray<Node>('nodes');
@@ -105,6 +100,8 @@ export const CanvasInner = ({
 
     // Save the nodes and edges to the database
     ydoc.on('update', save);
+
+    yDoc.current = ydoc;
 
     // Clean up on unmount
     return () => {
