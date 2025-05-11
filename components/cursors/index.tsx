@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { Cursor } from './cursor'
-import { useRealtimeCursors } from '@/hooks/use-realtime-cursors'
+import { useRealtimeCursors } from '@/hooks/use-realtime-cursors';
+import { Cursor } from './cursor';
 
-const THROTTLE_MS = 50
+const THROTTLE_MS = 50;
 
 export const RealtimeCursors = ({ roomName }: { roomName: string }) => {
   const { cursors } = useRealtimeCursors({ roomName, throttleMs: THROTTLE_MS });
@@ -14,5 +14,5 @@ export const RealtimeCursors = ({ roomName }: { roomName: string }) => {
         <Cursor key={id} data={cursors[id]} />
       ))}
     </div>
-  )
-}
+  );
+};

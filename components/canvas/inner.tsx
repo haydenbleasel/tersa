@@ -31,10 +31,10 @@ import { WebrtcProvider } from 'y-webrtc';
 import * as Y from 'yjs';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
+import { RealtimeCursors } from '../cursors';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
 import { SaveIndicator } from '../save-indicator';
-import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 import { Toolbar } from '../toolbar';
 
 type ProjectData = {
