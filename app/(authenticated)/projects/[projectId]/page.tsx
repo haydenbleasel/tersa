@@ -1,12 +1,10 @@
 import { Canvas } from '@/components/canvas';
 import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
-import { currentUser, currentUserProfile } from '@/lib/auth';
+import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
-import { polar } from '@/lib/polar';
-import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
-import { eq, or } from 'drizzle-orm';
+import { arrayContains, eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -25,7 +23,6 @@ type ProjectProps = {
 };
 
 const Project = async ({ params }: ProjectProps) => {
-  const client = await createClient();
   const user = await currentUser();
   const { projectId } = await params;
 
@@ -33,30 +30,13 @@ const Project = async ({ params }: ProjectProps) => {
     return redirect('/sign-in');
   }
 
-  const profile = await currentUserProfile();
-
-  if (!profile.customerId && user.email) {
-    const customer = await polar.customers.create({
-      email: user.email,
-      externalId: user.id,
-    });
-
-    await client.auth.updateUser({
-      data: {
-        polar_customer_id: customer.id,
-      },
-    });
-  }
-
   const allProjects = await database
     .select()
     .from(projects)
     .where(
       or(
-        eq(projects.userId, user.id)
-        // user.email
-        //   ? arrayContains(projects.members, [user.email])
-        //   : undefined
+        eq(projects.userId, user.id),
+        user.email ? arrayContains(projects.members, [user.email]) : undefined
       )
     );
 
@@ -77,9 +57,8 @@ const Project = async ({ params }: ProjectProps) => {
         <TopLeft id={projectId} />
       </Suspense>
       <Suspense fallback={null}>
-        <TopRight />
+        <TopRight id={projectId} />
       </Suspense>
-      {/* <RealtimeCursors roomName={`${data.id}-cursors`} /> */}
     </div>
   );
 };

@@ -2,40 +2,39 @@
 
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
-import { createClient } from '@/lib/supabase/client';
+import { env } from '@/lib/env';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import type { projects } from '@/schema';
 import {
   Background,
-  type Connection,
-  type Edge,
-  type EdgeChange,
   type FinalConnectionState,
-  type Node,
-  type NodeChange,
   ReactFlow,
   type ReactFlowProps,
-  type Viewport,
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
   getOutgoers,
   useReactFlow,
 } from '@xyflow/react';
-import { nanoid } from 'nanoid';
 import {
-  type MouseEventHandler,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+  type Connection,
+  type Edge,
+  type EdgeChange,
+  type Node,
+  type NodeChange,
+  applyEdgeChanges,
+  applyNodeChanges,
+} from '@xyflow/react';
+import { nanoid } from 'nanoid';
+import type { MouseEventHandler } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { WebrtcProvider } from 'y-webrtc';
+import * as Y from 'yjs';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
 import { SaveIndicator } from '../save-indicator';
+import { RealtimeCursors } from '../supabase-ui/realtime-cursors';
 import { Toolbar } from '../toolbar';
 
 type ProjectData = {
@@ -43,7 +42,6 @@ type ProjectData = {
     | {
         nodes: Node[];
         edges: Edge[];
-        viewport: Viewport;
       }
     | undefined;
 };
@@ -53,7 +51,6 @@ export type CanvasProps = {
   defaultContent?: {
     nodes: Node[];
     edges: Edge[];
-    viewport: Viewport;
   };
   canvasProps?: ReactFlowProps;
 };
@@ -70,13 +67,87 @@ export const CanvasInner = ({
   const [edges, setEdges] = useState<Edge[]>(
     content?.edges ?? defaultContent?.edges ?? []
   );
-  const [viewport, setViewport] = useState<Viewport>(
-    content?.viewport ?? defaultContent?.viewport ?? { x: 0, y: 0, zoom: 1 }
-  );
   const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
-  const editable = data.userId === user?.id;
+
+  const yDoc = useRef<Y.Doc | null>(null);
+  const yNodes = useRef<Y.Array<Node> | null>(null);
+  const yEdges = useRef<Y.Array<Edge> | null>(null);
+
+  useEffect(() => {
+    // Create a new Y.Doc (CRDT document)
+    const ydoc = new Y.Doc();
+
+    yDoc.current = ydoc;
+
+    // Connect peers in the same "room" for P2P sync. Clients must use the same roomName.
+    const provider = new WebrtcProvider(`tersa-${data.id}`, ydoc, {
+      signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
+    });
+
+    // Optionally, get awareness to share cursor/user info
+    // const awareness = provider.awareness;
+
+    // Create shared arrays for nodes and edges (initially empty)
+    yNodes.current = ydoc.getArray<Node>('nodes');
+    yEdges.current = ydoc.getArray<Edge>('edges');
+
+    // Observe changes on yNodes and yEdges, update React state
+    yNodes.current?.observe(() => {
+      setNodes(yNodes.current?.toArray() ?? []);
+    });
+
+    yEdges.current?.observe(() => {
+      setEdges(yEdges.current?.toArray() ?? []);
+    });
+
+    // Save the nodes and edges to the database
+    ydoc.on('update', save);
+
+    // Clean up on unmount
+    return () => {
+      provider.destroy();
+      ydoc.destroy();
+    };
+  }, [data.id, save]);
+
+  // Handlers to apply local changes both to React Flow and Y.js
+  const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
+    setNodes((current) => {
+      const updated = applyNodeChanges(changes, current);
+      // Replace Yjs nodes with updated array
+      yDoc.current?.transact(() => {
+        yNodes.current?.delete(0, yNodes.current.length);
+        yNodes.current?.insert(0, updated);
+      });
+      return updated;
+    });
+  }, []);
+
+  const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
+    setEdges((current) => {
+      const updated = applyEdgeChanges(changes, current);
+      yDoc.current?.transact(() => {
+        yEdges.current?.delete(0, yEdges.current.length);
+        yEdges.current?.insert(0, updated);
+      });
+      return updated;
+    });
+  }, []);
+
+  const onConnect = useCallback((connection: Connection) => {
+    const newEdge: Edge = {
+      id: nanoid(),
+      type: 'animated',
+      ...connection,
+    };
+    setEdges((current) => {
+      const updated = [...current, newEdge];
+      yEdges.current?.push([newEdge]);
+      return updated;
+    });
+  }, []);
 
   useHotkeys('ctrl+a', (event) => {
     if (!(event.target instanceof HTMLElement)) {
@@ -107,47 +178,6 @@ export const CanvasInner = ({
     }
   });
 
-  useEffect(() => {
-    if (editable) {
-      return;
-    }
-
-    console.log('🔄 Initializing sync engine');
-
-    const supabase = createClient();
-    const channel = supabase
-      .channel(`${data.id}-changes`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'project',
-          filter: `id=eq.${data.id}`,
-        },
-        (payload) => {
-          console.log('🔄 Syncing project', payload);
-
-          const { content } = payload.new as {
-            content: ProjectData['content'];
-          };
-
-          console.log('🔄 Setting nodes', content);
-
-          if (content) {
-            setNodes(content.nodes);
-            setEdges(content.edges);
-            setViewport(content.viewport);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [editable, data.id]);
-
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
       const { data: nodeData, ...rest } = options ?? {};
@@ -168,17 +198,6 @@ export const CanvasInner = ({
       return newNode.id;
     },
     []
-  );
-
-  const onConnect = useCallback(
-    (connection: Connection) => {
-      setEdges((eds) => addEdge({ ...connection, type: 'animated' }, eds));
-
-      if (editable) {
-        save();
-      }
-    },
-    [save, editable]
   );
 
   const onConnectEnd = useCallback(
@@ -262,48 +281,6 @@ export const CanvasInner = ({
     setEdges((eds) => eds.filter((e) => e.type !== 'temporary'));
   }, []);
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) => {
-      setNodes((nds) => applyNodeChanges(changes, nds));
-
-      // Don't save if only the selected state is changing.
-      if (changes.every((change) => change.type === 'select')) {
-        return;
-      }
-
-      if (editable) {
-        save();
-      }
-    },
-    [save, editable]
-  );
-
-  const onNodeDragStop = useCallback(() => {
-    save();
-  }, [save]);
-
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) => {
-      setEdges((eds) => applyEdgeChanges(changes, eds));
-
-      if (editable) {
-        save();
-      }
-    },
-    [save, editable]
-  );
-
-  const onViewportChange = useCallback(
-    (viewport: Viewport) => {
-      setViewport(viewport);
-
-      if (editable) {
-        save();
-      }
-    },
-    [save, editable]
-  );
-
   const handleDoubleClick = useCallback<MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const { x, y } = screenToFlowPosition({
@@ -323,7 +300,6 @@ export const CanvasInner = ({
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
-        onNodeDragStop={onNodeDragStop}
         edges={edges}
         onEdgesChange={onEdgesChange}
         onConnectStart={onConnectStart}
@@ -334,13 +310,9 @@ export const CanvasInner = ({
         isValidConnection={isValidConnection}
         connectionLineComponent={ConnectionLine}
         panOnScroll
-        viewport={viewport}
-        onViewportChange={onViewportChange}
+        fitView
         zoomOnDoubleClick={false}
         onDoubleClick={handleDoubleClick}
-        elementsSelectable={editable}
-        nodesConnectable={editable}
-        nodesDraggable={editable}
         {...canvasProps}
       >
         <Background />
@@ -352,6 +324,7 @@ export const CanvasInner = ({
               lastSaved={lastSaved ?? data.updatedAt ?? data.createdAt}
               saving={isSaving}
             />
+            <RealtimeCursors roomName={`${data.id}-cursors`} />
           </>
         )}
       </ReactFlow>

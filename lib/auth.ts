@@ -25,10 +25,27 @@ export const currentUserProfile = async () => {
     .select()
     .from(profile)
     .where(eq(profile.id, user.id));
-  const userProfile = userProfiles.at(0);
+  let userProfile = userProfiles.at(0);
 
   if (!userProfile) {
-    throw new Error('User profile not found');
+    const customer = await polar.customers.create({
+      email: user.email ?? '',
+      externalId: user.id,
+    });
+
+    const response = await database
+      .insert(profile)
+      .values({
+        id: user.id,
+        customerId: customer.id,
+      })
+      .returning();
+
+    if (!response.length) {
+      throw new Error('Failed to create user profile');
+    }
+
+    userProfile = response[0];
   }
 
   return userProfile;
