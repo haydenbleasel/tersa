@@ -299,6 +299,20 @@ export const CanvasInner = ({
     [save, editable]
   );
 
+  const handleDoubleClick = useCallback(
+    (event: MouseEvent) => {
+      const { x, y } = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      addNode('drop', {
+        position: { x, y },
+      });
+    },
+    [addNode, screenToFlowPosition]
+  );
+
   return (
     <NodeDropzoneProvider addNode={addNode}>
       <ReactFlow
@@ -318,6 +332,7 @@ export const CanvasInner = ({
         viewport={viewport}
         onViewportChange={onViewportChange}
         zoomOnDoubleClick={false}
+        onDoubleClick={handleDoubleClick}
         elementsSelectable={editable}
         nodesConnectable={editable}
         nodesDraggable={editable}
