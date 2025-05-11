@@ -25,6 +25,7 @@ export const env = createEnv({
     POLAR_CREDITS_METER_ID: z.string().min(1),
 
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+    SUPABASE_AUTH_HOOK_SECRET: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
@@ -50,5 +51,6 @@ export const env = createEnv({
     POLAR_PRO_PRODUCT_YEARLY_ID: process.env.POLAR_PRO_PRODUCT_YEARLY_ID,
     POLAR_CREDITS_METER_ID: process.env.POLAR_CREDITS_METER_ID,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_AUTH_HOOK_SECRET: process.env.SUPABASE_AUTH_HOOK_SECRET,
   },
 });

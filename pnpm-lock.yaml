@@ -350,6 +350,9 @@ importers:
       sonner:
         specifier: ^2.0.3
         version: 2.0.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      standardwebhooks:
+        specifier: ^1.0.0
+        version: 1.0.0
       swr:
         specifier: ^2.3.3
         version: 2.3.3(react@19.1.0)

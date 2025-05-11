@@ -125,6 +125,7 @@
     "recharts": "^2.15.3",
     "resend": "^4.4.1",
     "sonner": "^2.0.3",
+    "standardwebhooks": "^1.0.0",
     "swr": "^2.3.3",
     "tailwind-merge": "^3.2.0",
     "tippy.js": "^6.3.7",
