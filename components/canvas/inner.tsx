@@ -24,7 +24,12 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  type MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
@@ -299,8 +304,8 @@ export const CanvasInner = ({
     [save, editable]
   );
 
-  const handleDoubleClick = useCallback(
-    (event: MouseEvent) => {
+  const handleDoubleClick = useCallback<MouseEventHandler<HTMLDivElement>>(
+    (event) => {
       const { x, y } = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
