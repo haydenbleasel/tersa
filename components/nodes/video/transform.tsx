@@ -163,7 +163,7 @@ export const VideoTransform = ({
           </p>
         </div>
       )}
-      {data.generated?.url && (
+      {data.generated?.url && !loading && (
         <video
           src={data.generated.url}
           width={data.width ?? 800}
