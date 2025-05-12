@@ -64,7 +64,8 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
-  const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
+  const { getEdges, screenToFlowPosition, getNodes, getNode, updateNode } =
+    useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
 
@@ -142,35 +143,6 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     });
   }, []);
 
-  useHotkeys('ctrl+a', (event) => {
-    if (!(event.target instanceof HTMLElement)) {
-      return;
-    }
-
-    const isEditableTarget =
-      event.target.tagName === 'INPUT' ||
-      event.target.tagName === 'TEXTAREA' ||
-      event.target.isContentEditable;
-
-    if (isEditableTarget) {
-      // Skip if we're in an editable element
-      return;
-    }
-
-    event.preventDefault();
-
-    const allNodes = getNodes();
-    if (allNodes.length > 0) {
-      const newNodes = [...allNodes];
-
-      for (const node of newNodes) {
-        node.selected = true;
-      }
-
-      setNodes(newNodes);
-    }
-  });
-
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
       const { data: nodeData, ...rest } = options ?? {};
@@ -191,6 +163,33 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
       return newNode.id;
     },
     []
+  );
+
+  const duplicateNode = useCallback(
+    (id: string) => {
+      const node = getNode(id);
+
+      if (!node || !node.type) {
+        return;
+      }
+
+      const { id: oldId, ...rest } = node;
+
+      const newId = addNode(node.type, {
+        ...rest,
+        position: {
+          x: node.position.x + 200,
+          y: node.position.y + 200,
+        },
+        selected: true,
+      });
+
+      setTimeout(() => {
+        updateNode(id, { selected: false });
+        updateNode(newId, { selected: true });
+      }, 0);
+    },
+    [addNode, getNode, updateNode]
   );
 
   const onConnectEnd = useCallback(
@@ -302,9 +301,43 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     setNodes(nodes.map((node) => ({ ...node, selected: true })));
   }, [nodes]);
 
+  useHotkeys(
+    'meta+a',
+    () => {
+      const allNodes = getNodes();
+
+      if (allNodes.length > 0) {
+        const newNodes = [...allNodes];
+
+        for (const node of newNodes) {
+          node.selected = true;
+        }
+
+        setNodes(newNodes);
+      }
+    },
+    {
+      enableOnContentEditable: false,
+    }
+  );
+
+  useHotkeys(
+    'meta+d',
+    () => {
+      const selected = getNodes().filter((node) => node.selected);
+
+      for (const node of selected) {
+        duplicateNode(node.id);
+      }
+    },
+    {
+      preventDefault: true,
+    }
+  );
+
   return (
     <ProjectProvider data={data}>
-      <NodeOperationsProvider addNode={addNode}>
+      <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
         <NodeDropzoneProvider>
           <ContextMenu>
             <ContextMenuTrigger>

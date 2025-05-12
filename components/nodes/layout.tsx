@@ -52,37 +52,13 @@ export const NodeLayout = ({
 }: NodeLayoutProps) => {
   const { deleteElements, setCenter, getNode, updateNodeData, updateNode } =
     useReactFlow();
-  const { addNode } = useNodeOperations();
+  const { duplicateNode } = useNodeOperations();
   const [showData, setShowData] = useState(false);
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
       source: value ? 'transform' : 'primitive',
     });
-
-  const handleDuplicate = () => {
-    const node = getNode(id);
-
-    if (!node || !node.type) {
-      return;
-    }
-
-    const { id: oldId, ...rest } = node;
-
-    const newId = addNode(node.type, {
-      ...rest,
-      position: {
-        x: node.position.x + 200,
-        y: node.position.y + 200,
-      },
-      selected: true,
-    });
-
-    setTimeout(() => {
-      updateNode(id, { selected: false });
-      updateNode(newId, { selected: true });
-    }, 0);
-  };
 
   const handleFocus = () => {
     const node = getNode(id);
@@ -161,7 +137,7 @@ export const NodeLayout = ({
           <Handle type="source" position={Position.Right} />
         </ContextMenuTrigger>
         <ContextMenuContent>
-          <ContextMenuItem onClick={handleDuplicate}>
+          <ContextMenuItem onClick={() => duplicateNode(id)}>
             <CopyIcon size={12} />
             <span>Duplicate</span>
           </ContextMenuItem>

@@ -5,6 +5,7 @@ import { createContext, useContext } from 'react';
 
 type NodeOperationsContextType = {
   addNode: (type: string, options?: Record<string, unknown>) => string;
+  duplicateNode: (id: string) => void;
 };
 
 const NodeOperationsContext = createContext<NodeOperationsContextType | null>(
@@ -23,15 +24,17 @@ export const useNodeOperations = () => {
 
 type NodeOperationsProviderProps = {
   addNode: (type: string, options?: Record<string, unknown>) => string;
+  duplicateNode: (id: string) => void;
   children: ReactNode;
 };
 
 export const NodeOperationsProvider = ({
   addNode,
+  duplicateNode,
   children,
 }: NodeOperationsProviderProps) => {
   return (
-    <NodeOperationsContext.Provider value={{ addNode }}>
+    <NodeOperationsContext.Provider value={{ addNode, duplicateNode }}>
       {children}
     </NodeOperationsContext.Provider>
   );
