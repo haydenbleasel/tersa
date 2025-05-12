@@ -151,7 +151,14 @@ export const ModelSelector = ({
                     )}
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
-                      {model.icon && <model.icon className="size-4 shrink-0" />}
+                      {model.icon && (
+                        <model.icon
+                          className={cn(
+                            'size-4 shrink-0',
+                            value === model.id && 'text-primary-foreground'
+                          )}
+                        />
+                      )}
                       <span className="block truncate">{model.label}</span>
                     </div>
                     {model.priceIndicator && (
