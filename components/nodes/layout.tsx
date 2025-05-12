@@ -105,9 +105,7 @@ export const NodeLayout = ({
             onDelete={handleDelete}
           />
         )}
-        {type !== 'drop' && type !== 'file' && (
-          <Handle type="target" position={Position.Left} />
-        )}
+        {type !== 'file' && <Handle type="target" position={Position.Left} />}
         <div className="relative size-full h-auto w-sm">
           {type !== 'drop' && (
             <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
@@ -132,7 +130,7 @@ export const NodeLayout = ({
             </div>
           </div>
         </div>
-        {type !== 'drop' && <Handle type="source" position={Position.Right} />}
+        <Handle type="source" position={Position.Right} />
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={handleDuplicate}>
