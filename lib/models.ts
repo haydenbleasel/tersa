@@ -29,6 +29,7 @@ import {
 const million = 1000000;
 const thousand = 1000;
 
+// Median input cost: 2.7
 export const chatModels: {
   label: string;
   models: {
@@ -38,6 +39,7 @@ export const chatModels: {
     model: LanguageModelV1;
     getCost: ({ input, output }: { input: number; output: number }) => number;
     legacy?: boolean;
+    priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
     disabled?: boolean;
   }[];
 }[] = [
@@ -49,6 +51,7 @@ export const chatModels: {
         id: 'gpt-3.5-turbo',
         label: 'GPT-3.5 Turbo',
         model: openai('gpt-3.5-turbo'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.5;
           const outputCost = (output / million) * 1.5;
@@ -61,6 +64,7 @@ export const chatModels: {
         id: 'gpt-4',
         label: 'GPT-4',
         model: openai('gpt-4'),
+        priceIndicator: 'highest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 30;
           const outputCost = (output / million) * 60;
@@ -85,6 +89,7 @@ export const chatModels: {
         id: 'gpt-4.1-mini',
         label: 'GPT-4.1 Mini',
         model: openai('gpt-4.1-mini'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.4;
           const outputCost = (output / million) * 1.6;
@@ -97,6 +102,7 @@ export const chatModels: {
         id: 'gpt-4.1-nano',
         label: 'GPT-4.1 Nano',
         model: openai('gpt-4.1-nano'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.1;
           const outputCost = (output / million) * 0.4;
@@ -121,6 +127,7 @@ export const chatModels: {
         id: 'gpt-4o-mini',
         label: 'GPT-4o Mini',
         model: openai('gpt-4o-mini'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.15;
           const outputCost = (output / million) * 0.6;
@@ -133,6 +140,7 @@ export const chatModels: {
         id: 'o1',
         label: 'O1',
         model: openai('o1'),
+        priceIndicator: 'highest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 15;
           const outputCost = (output / million) * 60;
@@ -145,6 +153,7 @@ export const chatModels: {
         id: 'o1-mini',
         label: 'O1 Mini',
         model: openai('o1-mini'),
+        priceIndicator: 'low',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 1.1;
           const outputCost = (output / million) * 4.4;
@@ -157,6 +166,7 @@ export const chatModels: {
         id: 'o3',
         label: 'O3',
         model: openai('o3'),
+        priceIndicator: 'high',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 10;
           const outputCost = (output / million) * 40;
@@ -169,6 +179,7 @@ export const chatModels: {
         id: 'o3-mini',
         label: 'O3 Mini',
         model: openai('o3-mini'),
+        priceIndicator: 'low',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 1.1;
           const outputCost = (output / million) * 4.4;
@@ -181,6 +192,7 @@ export const chatModels: {
         id: 'o4-mini',
         label: 'O4 Mini',
         model: openai('o4-mini'),
+        priceIndicator: 'low',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 1.1;
           const outputCost = (output / million) * 4.4;
@@ -210,6 +222,7 @@ export const chatModels: {
         id: 'grok-3-fast',
         label: 'Grok-3 Fast',
         model: xai('grok-3-fast'),
+        priceIndicator: 'high',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 5;
           const outputCost = (output / million) * 25;
@@ -222,6 +235,7 @@ export const chatModels: {
         id: 'grok-3-mini',
         label: 'Grok-3 Mini',
         model: xai('grok-3-mini'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.3;
           const outputCost = (output / million) * 0.5;
@@ -234,6 +248,7 @@ export const chatModels: {
         id: 'grok-3-mini-fast',
         label: 'Grok-3 Mini Fast',
         model: xai('grok-3-mini-fast'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.6;
           const outputCost = (output / million) * 4;
@@ -258,6 +273,7 @@ export const chatModels: {
         id: 'grok-beta',
         label: 'Grok Beta',
         model: xai('grok-beta'),
+        priceIndicator: 'high',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 5;
           const outputCost = (output / million) * 15;
@@ -276,6 +292,7 @@ export const chatModels: {
         id: 'claude-3-5-haiku-latest',
         label: 'Claude 3.5 Haiku',
         model: anthropic('claude-3-5-haiku-latest'),
+        priceIndicator: 'low',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.8;
           const outputCost = (output / million) * 4;
@@ -301,6 +318,7 @@ export const chatModels: {
         id: 'claude-3-haiku-20240307',
         label: 'Claude 3 Haiku',
         model: anthropic('claude-3-haiku-20240307'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.25;
           const outputCost = (output / million) * 1.25;
@@ -326,6 +344,7 @@ export const chatModels: {
         id: 'claude-3-opus-latest',
         label: 'Claude 3 Opus',
         model: anthropic('claude-3-opus-latest'),
+        priceIndicator: 'highest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 15;
           const outputCost = (output / million) * 75;
@@ -368,6 +387,7 @@ export const chatModels: {
         id: 'ministral-8b-latest',
         label: 'Ministral 8B',
         model: mistral('ministral-8b-latest'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.1;
           const outputCost = (output / million) * 0.1;
@@ -380,6 +400,7 @@ export const chatModels: {
         id: 'ministral-3b-latest',
         label: 'Ministral 3B',
         model: mistral('ministral-3b-latest'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.04;
           const outputCost = (output / million) * 0.04;
@@ -398,6 +419,7 @@ export const chatModels: {
         id: 'gemini-2.0-flash',
         label: 'Gemini 2.0 Flash',
         model: google('gemini-2.0-flash-001'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.1;
           const outputCost = (output / million) * 0.4;
@@ -410,6 +432,7 @@ export const chatModels: {
         id: 'gemini-1.5-flash',
         label: 'Gemini 1.5 Flash',
         model: google('gemini-1.5-flash'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.15;
           const outputCost = (output / million) * 0.6;
@@ -440,6 +463,7 @@ export const chatModels: {
         id: 'deepseek-chat',
         label: 'DeepSeek Chat',
         model: deepseek('deepseek-chat'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.27;
           const outputCost = (output / million) * 1.1;
@@ -452,6 +476,7 @@ export const chatModels: {
         id: 'deepseek-reasoner',
         label: 'DeepSeek Reasoner',
         model: deepseek('deepseek-reasoner'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.55;
           const outputCost = (output / million) * 2.19;
@@ -500,6 +525,7 @@ export const chatModels: {
         id: 'meta-llama/llama-4-scout-17b-16e-instruct',
         label: 'Llama 4 Scout 17B',
         model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.11;
           const outputCost = (output / million) * 0.34;
@@ -512,6 +538,7 @@ export const chatModels: {
         id: 'llama-3.3-70b-versatile',
         label: 'Llama 3.3 70B Versatile',
         model: groq('llama-3.3-70b-versatile'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.59;
           const outputCost = (output / million) * 0.79;
@@ -524,6 +551,7 @@ export const chatModels: {
         id: 'llama-3.1-8b-instant',
         label: 'Llama 3.1 8B Instant',
         model: groq('llama-3.1-8b-instant'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.05;
           const outputCost = (output / million) * 0.08;
@@ -536,6 +564,7 @@ export const chatModels: {
         id: 'gemma2-9b-it',
         label: 'Gemma 2 9B',
         model: groq('gemma2-9b-it'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.2;
           const outputCost = (output / million) * 0.2;
@@ -548,6 +577,7 @@ export const chatModels: {
         id: 'deepseek-r1-distill-llama-70b',
         label: 'DeepSeek R1 Distill Llama 70B',
         model: groq('deepseek-r1-distill-llama-70b'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.75;
           const outputCost = (output / million) * 0.99;
@@ -560,6 +590,7 @@ export const chatModels: {
         id: 'qwen-2.5-32b',
         label: 'Qwen 2.5 32B',
         model: groq('qwen-2.5-32b'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.29;
           const outputCost = (output / million) * 0.39;
@@ -572,6 +603,7 @@ export const chatModels: {
         id: 'mistral-saba-24b',
         label: 'Mistral Saba 24B',
         model: groq('mistral-saba-24b'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.79;
           const outputCost = (output / million) * 0.79;
@@ -584,6 +616,7 @@ export const chatModels: {
         id: 'llama-guard-3-8b',
         label: 'Llama Guard 3 8B',
         model: groq('llama-guard-3-8b'),
+        priceIndicator: 'lowest',
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 0.2;
           const outputCost = (output / million) * 0.2;
@@ -611,6 +644,7 @@ export const imageModels: {
     supportsEdit?: boolean;
     disabled?: boolean;
     providerOptions?: Record<string, Record<string, string>>;
+    priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
   }[];
 }[] = [
   {
