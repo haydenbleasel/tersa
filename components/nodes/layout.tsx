@@ -69,9 +69,8 @@ export const NodeLayout = ({
 
     const { x, y } = node.position;
     const width = node.measured?.width ?? 0;
-    const height = node.measured?.height ?? 0;
 
-    setCenter(x + width / 2, y + height / 2, {
+    setCenter(x + width / 2, y, {
       duration: 1000,
     });
   };
