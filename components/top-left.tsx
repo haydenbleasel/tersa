@@ -21,7 +21,7 @@ export const TopLeft = async ({ id }: TopLeftProps) => {
     .from(projects)
     .where(
       or(
-        eq(projects.id, id),
+        eq(projects.userId, user.id),
         user.email ? arrayContains(projects.members, [user.email]) : undefined
       )
     );
