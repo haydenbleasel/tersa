@@ -18,8 +18,14 @@ export const TopRight = async ({ id }: TopRightProps) => {
 
   const profile = await currentUserProfile();
   const credits = await getCredits();
+  const allProjects = await database
+    .select()
+    .from(projects)
+    .where(eq(projects.id, id));
+  const project = allProjects.at(0);
 
   if ('error' in credits) {
+  if (!profile || !project) {
     return null;
   }
 
@@ -27,7 +33,9 @@ export const TopRight = async ({ id }: TopRightProps) => {
     <>
       <div className="fixed top-16 right-0 left-0 z-[50] m-4 flex items-center gap-2 sm:top-0 sm:left-auto">
         <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
-          <Presence roomName={`${id}-presence`} />
+          {Boolean(project.members?.length) && (
+            <Presence roomName={`${id}-presence`} />
+          )}
         </div>
         {profile.subscriptionId ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">

@@ -396,7 +396,9 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
                     <Controls />
                     <Toolbar />
                     <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
-                    <RealtimeCursors roomName={`${data.id}-cursors`} />
+                    {Boolean(data.members?.length) && (
+                      <RealtimeCursors roomName={`${data.id}-cursors`} />
+                    )}
                   </>
                 )}
               </ReactFlow>
