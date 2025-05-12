@@ -2,7 +2,6 @@
 
 import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
-import { env } from '@/lib/env';
 import { parseError } from '@/lib/error/parse';
 import { videoModels } from '@/lib/models';
 import { trackCreditUsage } from '@/lib/polar';
@@ -10,6 +9,9 @@ import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
+import { generateLumaVideo } from './lib/create-luma';
+import { generateMinimaxVideo } from './lib/create-minimax';
+import { generateRunwayVideo } from './lib/create-runway';
 
 type CreateJobProps = {
   model:
@@ -98,6 +100,7 @@ export const generateVideoAction = async ({
       throw new Error('Model not found');
     }
 
+    let videoArrayBuffer: ArrayBuffer | undefined;
     let firstFrameImage = images.at(0)?.url;
 
     if (firstFrameImage && process.env.NODE_ENV !== 'production') {
@@ -109,29 +112,26 @@ export const generateVideoAction = async ({
       firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
     }
 
-    const props: CreateJobProps = {
-      model: model.id as CreateJobProps['model'],
-      prompt,
-      first_frame_image: firstFrameImage,
-    };
-
-    // Create job
-    const createJobResponse = await fetch(
-      new URL('/v1/video_generation', baseUrl),
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-        },
-        body: JSON.stringify(props),
-      }
-    );
-
-    const createJobData = (await createJobResponse.json()) as CreateJobResponse;
-
-    if (createJobData.base_resp.status_code !== 0) {
-      throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
+    if (model.id.startsWith('runway-')) {
+      videoArrayBuffer = await generateRunwayVideo({
+        model,
+        prompt,
+        image: firstFrameImage,
+      });
+    } else if (model.id.startsWith('minimax-')) {
+      videoArrayBuffer = await generateMinimaxVideo({
+        model,
+        prompt,
+        image: firstFrameImage,
+      });
+    } else if (model.id.startsWith('luma-')) {
+      videoArrayBuffer = await generateLumaVideo({
+        model,
+        prompt,
+        image: firstFrameImage,
+      });
+    } else {
+      throw new Error('Invalid model');
     }
 
     await trackCreditUsage({
@@ -139,72 +139,6 @@ export const generateVideoAction = async ({
       action: 'generate_video',
       cost: model.getCost(),
     });
-
-    const taskId = createJobData.task_id;
-    // Poll for job completion (max 2 minutes)
-    let isCompleted = false;
-    let fileId: string | null = null;
-    const startTime = Date.now();
-    const maxPollTime = 5 * 60 * 1000; // 5 minutes in milliseconds
-
-    while (!isCompleted && Date.now() - startTime < maxPollTime) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      const queryJobResponse = await fetch(
-        new URL(`/v1/query/video_generation?task_id=${taskId}`, baseUrl),
-        {
-          headers: {
-            authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-          },
-        }
-      );
-
-      const queryJobData = (await queryJobResponse.json()) as QueryJobResponse;
-
-      if (queryJobData.base_resp.status_code !== 0) {
-        throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
-      }
-
-      if (queryJobData.status === 'Success') {
-        isCompleted = true;
-        fileId = queryJobData.file_id as string;
-      } else if (queryJobData.status === 'Fail') {
-        throw new Error('Video generation failed');
-      }
-    }
-
-    if (!isCompleted) {
-      throw new Error('Video generation timed out after 2 minutes');
-    }
-
-    if (!fileId) {
-      throw new Error('Failed to get file_id');
-    }
-
-    // Retrieve download URL
-    const retrieveUrlResponse = await fetch(
-      new URL(
-        `/v1/files/retrieve?GroupId=${env.MINIMAX_GROUP_ID}&file_id=${fileId}`,
-        baseUrl
-      ),
-      {
-        headers: {
-          authority: 'api.minimaxi.chat',
-          authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-        },
-      }
-    );
-
-    const retrieveUrlData =
-      (await retrieveUrlResponse.json()) as RetrieveUrlResponse;
-
-    if (retrieveUrlData.base_resp.status_code !== 0) {
-      throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
-    }
-
-    // Download the video
-    const videoResponse = await fetch(retrieveUrlData.file.download_url);
-    const videoArrayBuffer = await videoResponse.arrayBuffer();
 
     const blob = await client.storage
       .from('files')

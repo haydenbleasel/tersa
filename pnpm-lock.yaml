@@ -170,6 +170,9 @@ importers:
       '@react-email/components':
         specifier: 0.0.39
         version: 0.0.39(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@runwayml/sdk':
+        specifier: ^2.0.3
+        version: 2.0.3
       '@supabase/ssr':
         specifier: ^0.6.1
         version: 0.6.1(@supabase/supabase-js@2.49.4)
@@ -293,6 +296,9 @@ importers:
       lucide-react:
         specifier: ^0.501.0
         version: 0.501.0(react@19.1.0)
+      lumaai:
+        specifier: ^1.9.0
+        version: 1.9.0
       modern-screenshot:
         specifier: ^4.6.0
         version: 4.6.0
@@ -2091,6 +2097,9 @@ packages:
   '@remirror/core-constants@3.0.0':
     resolution: {integrity: sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==}
 
+  '@runwayml/sdk@2.0.3':
+    resolution: {integrity: sha512-VGSmJcotPytRkritktDj+yA69FCk1l5aVafLblLMdfli0e65oCZ7zDCaxfpBYvn379vl+IeSoyMFXW8Svilsaw==}
+
   '@selderee/plugin-htmlparser2@0.11.0':
     resolution: {integrity: sha512-P33hHGdldxGabLFjPPpaTxVolMrzrcegejx+0GxjrIb9Zv48D8yAIA/QTDR2dFl7Uz7urX8aX6+5bCZslr+gWQ==}
 
@@ -3607,6 +3616,9 @@ packages:
     resolution: {integrity: sha512-E2KoyhW59fCb/yUbR3rbDer83fqn7a8NG91ZhIot2yWaPHjPyGzzsNKh40N//GezYShAuycf3TcQksRQznIsRw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lumaai@1.9.0:
+    resolution: {integrity: sha512-ifQ7/py+vjbTnUSQfrXfN3ynLwLJr9cpGQCBvtPzeh/b7NHGp/Z0N9CF0+gt6q81mibRVTBt8uEXLovji3Dbwg==}
 
   markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
@@ -6095,6 +6107,18 @@ snapshots:
 
   '@remirror/core-constants@3.0.0': {}
 
+  '@runwayml/sdk@2.0.3':
+    dependencies:
+      '@types/node': 18.19.87
+      '@types/node-fetch': 2.6.12
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+
   '@selderee/plugin-htmlparser2@0.11.0':
     dependencies:
       domhandler: 5.0.3
@@ -7477,6 +7501,18 @@ snapshots:
   lucide-react@0.501.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  lumaai@1.9.0:
+    dependencies:
+      '@types/node': 18.19.87
+      '@types/node-fetch': 2.6.12
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
 
   markdown-it@14.1.0:
     dependencies:

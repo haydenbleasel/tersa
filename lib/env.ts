@@ -26,6 +26,10 @@ export const env = createEnv({
 
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
     SUPABASE_AUTH_HOOK_SECRET: z.string().min(1),
+
+    RUNWAYML_API_SECRET: z.string().min(1),
+
+    LUMAAI_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
@@ -54,5 +58,7 @@ export const env = createEnv({
     POLAR_CREDITS_METER_ID: process.env.POLAR_CREDITS_METER_ID,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     SUPABASE_AUTH_HOOK_SECRET: process.env.SUPABASE_AUTH_HOOK_SECRET,
+    RUNWAYML_API_SECRET: process.env.RUNWAYML_API_SECRET,
+    LUMAAI_API_KEY: process.env.LUMAAI_API_KEY,
   },
 });

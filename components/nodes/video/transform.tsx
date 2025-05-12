@@ -35,6 +35,7 @@ export const VideoTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
+  const modelId = data.model ?? videoModels[0].models[0].id;
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -53,7 +54,7 @@ export const VideoTransform = ({
       setLoading(true);
 
       const response = await generateVideoAction({
-        modelId: data.model ?? 'T2V-01-Director',
+        modelId,
         prompt: [data.instructions ?? '', ...textPrompts].join('\n'),
         images: images.slice(0, 1),
         nodeId: id,
@@ -80,7 +81,7 @@ export const VideoTransform = ({
     {
       children: (
         <ModelSelector
-          value={data.model ?? 'T2V-01-Director'}
+          value={modelId}
           options={videoModels}
           key={id}
           className="w-[200px] rounded-full"

@@ -8,12 +8,12 @@ import {
 import {
   AmazonIcon,
   AnthropicIcon,
-  CerebrasIcon,
+  // CerebrasIcon,
   DeepSeekIcon,
-  DeepinfraIcon,
-  FalIcon,
-  FireworksIcon,
-  GoogleIcon,
+  // DeepinfraIcon,
+  // FalIcon,
+  // FireworksIcon,
+  // GoogleIcon,
   GroqIcon,
   HumeIcon,
   LmntIcon,
@@ -21,19 +21,28 @@ import {
   MinimaxIcon,
   MistralIcon,
   OpenAiIcon,
-  TogetherIcon,
+  // TogetherIcon,
   XaiIcon,
 } from '@/lib/icons';
+
+import {
+  chatModels,
+  imageModels,
+  speechModels,
+  transcriptionModels,
+  videoModels,
+  visionModels,
+} from '@/lib/models';
 
 const icons = [
   AmazonIcon,
   AnthropicIcon,
-  CerebrasIcon,
+  // CerebrasIcon,
   DeepSeekIcon,
-  DeepinfraIcon,
-  FalIcon,
-  FireworksIcon,
-  GoogleIcon,
+  // DeepinfraIcon,
+  // FalIcon,
+  // FireworksIcon,
+  // GoogleIcon,
   GroqIcon,
   HumeIcon,
   LmntIcon,
@@ -41,9 +50,18 @@ const icons = [
   MinimaxIcon,
   MistralIcon,
   OpenAiIcon,
-  TogetherIcon,
+  // TogetherIcon,
   XaiIcon,
 ];
+
+const allModels = [
+  ...chatModels.flatMap((model) => model.models),
+  ...imageModels.flatMap((model) => model.models),
+  ...speechModels.flatMap((model) => model.models),
+  ...transcriptionModels.flatMap((model) => model.models),
+  ...videoModels.flatMap((model) => model.models),
+  ...visionModels.flatMap((model) => model.models),
+].length;
 
 export const Providers = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -85,7 +103,7 @@ export const Providers = () => (
           </h2>
 
           <p className="mx-auto max-w-lg text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
-            Connect your workflows to leading models from the world's top AI
+            Connect your workflows to {allModels} models from the world's top AI
             providers, including OpenAI, Anthropic, and more.
           </p>
         </div>
