@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { createContext, useContext } from 'react';
 
 type NodeOperationsContextType = {
-  addNode: (type: string, options?: Record<string, unknown>) => void;
+  addNode: (type: string, options?: Record<string, unknown>) => string;
 };
 
 const NodeOperationsContext = createContext<NodeOperationsContextType | null>(
@@ -22,7 +22,7 @@ export const useNodeOperations = () => {
 };
 
 type NodeOperationsProviderProps = {
-  addNode: (type: string, options?: Record<string, unknown>) => void;
+  addNode: (type: string, options?: Record<string, unknown>) => string;
   children: ReactNode;
 };
 

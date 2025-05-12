@@ -42,7 +42,8 @@ export const NodeLayout = ({
   toolbar,
   title,
 }: NodeLayoutProps) => {
-  const { deleteElements, setCenter, getNode, updateNodeData } = useReactFlow();
+  const { deleteElements, setCenter, getNode, updateNodeData, updateNode } =
+    useReactFlow();
   const { addNode } = useNodeOperations();
 
   const handleSourceChange = (value: boolean) =>
@@ -59,13 +60,19 @@ export const NodeLayout = ({
 
     const { id: oldId, ...rest } = node;
 
-    addNode(node.type, {
+    const newId = addNode(node.type, {
       ...rest,
       position: {
         x: node.position.x + 200,
         y: node.position.y + 200,
       },
+      selected: true,
     });
+
+    setTimeout(() => {
+      updateNode(id, { selected: false });
+      updateNode(newId, { selected: true });
+    }, 0);
   };
 
   const handleFocus = () => {

@@ -302,8 +302,6 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     setNodes(nodes.map((node) => ({ ...node, selected: true })));
   }, [nodes]);
 
-  console.log({ nodes, edges });
-
   return (
     <ProjectProvider data={data}>
       <NodeOperationsProvider addNode={addNode}>
