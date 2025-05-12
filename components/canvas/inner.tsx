@@ -64,6 +64,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
+  const [copiedNodes, setCopiedNodes] = useState<Node[]>([]);
   const { getEdges, screenToFlowPosition, getNodes, getNode, updateNode } =
     useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
@@ -301,39 +302,68 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     setNodes(nodes.map((node) => ({ ...node, selected: true })));
   }, [nodes]);
 
-  useHotkeys(
-    'meta+a',
-    () => {
-      const allNodes = getNodes();
-
-      if (allNodes.length > 0) {
-        const newNodes = [...allNodes];
-
-        for (const node of newNodes) {
-          node.selected = true;
-        }
-
-        setNodes(newNodes);
-      }
-    },
-    {
-      enableOnContentEditable: false,
+  const handleCopy = useCallback(() => {
+    const selectedNodes = getNodes().filter((node) => node.selected);
+    if (selectedNodes.length > 0) {
+      setCopiedNodes(selectedNodes);
     }
-  );
+  }, [getNodes]);
 
-  useHotkeys(
-    'meta+d',
-    () => {
-      const selected = getNodes().filter((node) => node.selected);
-
-      for (const node of selected) {
-        duplicateNode(node.id);
-      }
-    },
-    {
-      preventDefault: true,
+  const handlePaste = useCallback(() => {
+    if (copiedNodes.length === 0) {
+      return;
     }
-  );
+
+    const offset = 50; // Offset for pasted nodes
+    const newNodes = copiedNodes.map((node) => ({
+      ...node,
+      id: nanoid(),
+      position: {
+        x: node.position.x + offset,
+        y: node.position.y + offset,
+      },
+      selected: true,
+    }));
+
+    // Unselect all existing nodes
+    setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        selected: false,
+      }))
+    );
+
+    // Add new nodes
+    setNodes((nodes) => [...nodes, ...newNodes]);
+  }, [copiedNodes]);
+
+  const handleDuplicateAll = useCallback(() => {
+    const selected = getNodes().filter((node) => node.selected);
+
+    for (const node of selected) {
+      duplicateNode(node.id);
+    }
+  }, [getNodes, duplicateNode]);
+
+  useHotkeys('meta+a', handleSelectAll, {
+    enableOnContentEditable: false,
+    preventDefault: true,
+  });
+
+  useHotkeys('meta+d', handleDuplicateAll, {
+    enableOnContentEditable: false,
+    preventDefault: true,
+  });
+
+  useHotkeys('meta+c', handleCopy, {
+    enableOnContentEditable: false,
+    preventDefault: true,
+  });
+
+  useHotkeys('meta+v', handlePaste, {
+    enableOnContentEditable: false,
+    preventDefault: true,
+  });
 
   return (
     <ProjectProvider data={data}>
