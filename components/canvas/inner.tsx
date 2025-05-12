@@ -314,13 +314,12 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
       return;
     }
 
-    const offset = 50; // Offset for pasted nodes
     const newNodes = copiedNodes.map((node) => ({
       ...node,
       id: nanoid(),
       position: {
-        x: node.position.x + offset,
-        y: node.position.y + offset,
+        x: node.position.x + 200,
+        y: node.position.y + 200,
       },
       selected: true,
     }));
