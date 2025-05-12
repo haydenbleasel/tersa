@@ -91,7 +91,7 @@ export const ModelSelector = ({
   id,
   value,
   options,
-  width = 200,
+  width = 250,
   className,
   onChange,
 }: ModelSelectorProps) => {
