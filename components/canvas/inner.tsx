@@ -49,25 +49,13 @@ type ProjectData = {
 
 export type CanvasProps = {
   data: typeof projects.$inferSelect;
-  defaultContent?: {
-    nodes: Node[];
-    edges: Edge[];
-  };
   canvasProps?: ReactFlowProps;
 };
 
-export const CanvasInner = ({
-  data,
-  defaultContent,
-  canvasProps,
-}: CanvasProps) => {
+export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
-  const [nodes, setNodes] = useState<Node[]>(
-    content?.nodes ?? defaultContent?.nodes ?? []
-  );
-  const [edges, setEdges] = useState<Edge[]>(
-    content?.edges ?? defaultContent?.edges ?? []
-  );
+  const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
+  const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
   const { getEdges, screenToFlowPosition, getNodes } = useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
