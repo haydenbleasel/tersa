@@ -26,6 +26,8 @@ import {
   XaiIcon,
 } from './icons';
 
+export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
+
 const million = 1000000;
 const thousand = 1000;
 
@@ -39,7 +41,7 @@ export const chatModels: {
     model: LanguageModelV1;
     getCost: ({ input, output }: { input: number; output: number }) => number;
     legacy?: boolean;
-    priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
+    priceIndicator?: PriceBracket;
     disabled?: boolean;
   }[];
 }[] = [
