@@ -1,4 +1,4 @@
-import type { videoModels } from '@/lib/models';
+import type { videoModels } from '@/lib/models/video';
 import RunwayML from '@runwayml/sdk';
 
 type GenerateVideoProps = {

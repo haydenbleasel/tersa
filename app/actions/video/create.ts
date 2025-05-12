@@ -3,7 +3,7 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
-import { videoModels } from '@/lib/models';
+import { videoModels } from '@/lib/models/video';
 import { trackCreditUsage } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
@@ -12,57 +12,6 @@ import { nanoid } from 'nanoid';
 import { generateLumaVideo } from './lib/create-luma';
 import { generateMinimaxVideo } from './lib/create-minimax';
 import { generateRunwayVideo } from './lib/create-runway';
-
-type CreateJobProps = {
-  model:
-    | 'T2V-01-Director'
-    | 'I2V-01-Director'
-    | 'S2V-01'
-    | 'I2V-01'
-    | 'I2V-01-live'
-    | 'T2V-01';
-  prompt: string;
-  prompt_optimizer?: boolean;
-  first_frame_image?: string;
-  subject_reference?: string[];
-  callback_url?: string;
-};
-
-type CreateJobResponse = {
-  task_id: string;
-  base_resp: {
-    status_code: number;
-    status_msg: string;
-  };
-};
-
-type QueryJobResponse = {
-  task_id: string;
-  status: 'Queueing' | 'Preparing' | 'Processing' | 'Success' | 'Fail';
-  file_id?: string;
-  base_resp: {
-    status_code: number;
-    status_msg: string;
-  };
-};
-
-type RetrieveUrlResponse = {
-  file: {
-    file_id: number;
-    bytes: number;
-    created_at: number;
-    filename: string;
-    purpose: string;
-    download_url: string;
-    backup_download_url: string;
-  };
-  base_resp: {
-    status_code: number;
-    status_msg: string;
-  };
-};
-
-const baseUrl = 'https://api.minimaxi.chat/';
 
 type GenerateVideoActionProps = {
   modelId: string;

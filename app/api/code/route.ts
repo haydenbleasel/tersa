@@ -1,6 +1,6 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { parseError } from '@/lib/error/parse';
-import { chatModels } from '@/lib/models';
+import { textModels } from '@/lib/models/text';
 import { trackCreditUsage } from '@/lib/polar';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { streamObject } from 'ai';
@@ -53,7 +53,7 @@ export const POST = async (req: Request) => {
     return new Response('Model not found', { status: 400 });
   }
 
-  const model = chatModels
+  const model = textModels
     .flatMap((model) => model.models)
     .find(({ id }) => id === modelId);
 

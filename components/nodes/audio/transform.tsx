@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
-import { speechModels } from '@/lib/models';
+import { speechModels } from '@/lib/models/speech';
 import { capitalize } from '@/lib/utils';
 import {
   getDescriptionsFromImageNodes,

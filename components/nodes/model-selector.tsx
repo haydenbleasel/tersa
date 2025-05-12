@@ -8,7 +8,7 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from '@/components/ui/kibo-ui/combobox';
-import type { PriceBracket } from '@/lib/models';
+import type { PriceBracket } from '@/lib/models/text';
 import { cn } from '@/lib/utils';
 import {
   ChevronDownIcon,

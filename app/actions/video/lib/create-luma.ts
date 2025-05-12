@@ -1,5 +1,5 @@
 import { env } from '@/lib/env';
-import type { videoModels } from '@/lib/models';
+import type { videoModels } from '@/lib/models/video';
 import { LumaAI } from 'lumaai';
 
 const luma = new LumaAI({

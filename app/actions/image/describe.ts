@@ -3,7 +3,7 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
-import { visionModels } from '@/lib/models';
+import { visionModels } from '@/lib/models/vision';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
 import OpenAI from 'openai';

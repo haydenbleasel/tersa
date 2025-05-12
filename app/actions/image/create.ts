@@ -3,7 +3,8 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
-import { imageModels, visionModels } from '@/lib/models';
+import { imageModels } from '@/lib/models/image';
+import { visionModels } from '@/lib/models/vision';
 import { trackCreditUsage } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';

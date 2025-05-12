@@ -3,7 +3,7 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
-import { speechModels } from '@/lib/models';
+import { speechModels } from '@/lib/models/speech';
 import { trackCreditUsage } from '@/lib/polar';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';

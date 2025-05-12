@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
-import { videoModels } from '@/lib/models';
+import { videoModels } from '@/lib/models/video';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import {

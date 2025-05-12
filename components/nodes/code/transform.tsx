@@ -2,7 +2,7 @@ import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { handleError } from '@/lib/error/handle';
-import { chatModels } from '@/lib/models';
+import { textModels } from '@/lib/models/text';
 import {
   getCodeFromCodeNodes,
   getTextFromTextNodes,
@@ -30,7 +30,7 @@ type CodeTransformProps = CodeNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof chatModels) => {
+const getDefaultModel = (models: typeof textModels) => {
   const defaultModel = models
     .flatMap((model) => model.models)
     .find((model) => model.default);
@@ -50,7 +50,7 @@ export const CodeTransform = ({
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
-  const modelId = data.model ?? getDefaultModel(chatModels).id;
+  const modelId = data.model ?? getDefaultModel(textModels).id;
   const { isLoading, object, stop, submit } = useObject({
     api: '/api/code',
     schema: z.object({
@@ -139,7 +139,7 @@ export const CodeTransform = ({
         children: (
           <ModelSelector
             value={modelId}
-            options={chatModels}
+            options={textModels}
             key={id}
             className="w-[200px] rounded-full"
             onChange={(value) => updateNodeData(id, { model: value })}

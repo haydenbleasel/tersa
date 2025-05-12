@@ -12,7 +12,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { handleError } from '@/lib/error/handle';
-import { transcriptionModels, visionModels } from '@/lib/models';
+import { transcriptionModels } from '@/lib/models/transcription';
+import { visionModels } from '@/lib/models/vision';
 import type { projects } from '@/schema';
 import { SettingsIcon, TrashIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';

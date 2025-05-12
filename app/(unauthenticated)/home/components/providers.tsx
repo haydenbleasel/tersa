@@ -25,15 +25,12 @@ import {
   XaiIcon,
 } from '@/lib/icons';
 
-import {
-  chatModels,
-  imageModels,
-  speechModels,
-  transcriptionModels,
-  videoModels,
-  visionModels,
-} from '@/lib/models';
-
+import { imageModels } from '@/lib/models/image';
+import { speechModels } from '@/lib/models/speech';
+import { textModels } from '@/lib/models/text';
+import { transcriptionModels } from '@/lib/models/transcription';
+import { videoModels } from '@/lib/models/video';
+import { visionModels } from '@/lib/models/vision';
 const icons = [
   AmazonIcon,
   AnthropicIcon,
@@ -55,7 +52,7 @@ const icons = [
 ];
 
 const allModels = [
-  ...chatModels.flatMap((model) => model.models),
+  ...textModels.flatMap((model) => model.models),
   ...imageModels.flatMap((model) => model.models),
   ...speechModels.flatMap((model) => model.models),
   ...transcriptionModels.flatMap((model) => model.models),
