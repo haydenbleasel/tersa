@@ -4,8 +4,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { useNodeOperations } from '@/providers/node-operations';
 import { ContextMenuSeparator } from '@radix-ui/react-context-menu';
-import { Handle, type Node, Position, useReactFlow } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
 import {
   BrainIcon,
   CopyIcon,
@@ -13,7 +14,6 @@ import {
   TrashIcon,
   UserIcon,
 } from 'lucide-react';
-import { nanoid } from 'nanoid';
 import type { ReactNode } from 'react';
 import { Switch } from '../ui/switch';
 import { NodeToolbar } from './toolbar';
@@ -42,8 +42,8 @@ export const NodeLayout = ({
   toolbar,
   title,
 }: NodeLayoutProps) => {
-  const { deleteElements, setCenter, getNode, updateNodeData, addNodes } =
-    useReactFlow();
+  const { deleteElements, setCenter, getNode, updateNodeData } = useReactFlow();
+  const { addNode } = useNodeOperations();
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
@@ -53,22 +53,19 @@ export const NodeLayout = ({
   const handleDuplicate = () => {
     const node = getNode(id);
 
-    if (!node) {
+    if (!node || !node.type) {
       return;
     }
 
     const { id: oldId, ...rest } = node;
 
-    const newNode: Node = {
-      id: nanoid(),
+    addNode(node.type, {
       ...rest,
       position: {
         x: node.position.x + 200,
         y: node.position.y + 200,
       },
-    };
-
-    addNodes([newNode]);
+    });
   };
 
   const handleFocus = () => {

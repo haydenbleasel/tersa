@@ -4,16 +4,16 @@ import { uploadFile } from '@/lib/upload';
 import { cn } from '@/lib/utils';
 import type { ReactNode } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useNodeOperations } from './node-operations';
 
 type NodeDropzoneProviderProps = {
-  addNode: (nodeType: string, options?: Record<string, unknown>) => void;
   children: ReactNode;
 };
 
 export const NodeDropzoneProvider = ({
-  addNode,
   children,
 }: NodeDropzoneProviderProps) => {
+  const { addNode } = useNodeOperations();
   const dropzone = useDropzone({
     noClick: true,
     accept: {

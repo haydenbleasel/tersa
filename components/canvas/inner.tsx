@@ -5,6 +5,7 @@ import { useUser } from '@/hooks/use-user';
 import { env } from '@/lib/env';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
+import { NodeOperationsProvider } from '@/providers/node-operations';
 import { ProjectProvider } from '@/providers/project';
 import type { projects } from '@/schema';
 import {
@@ -24,6 +25,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
 } from '@xyflow/react';
+import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import type { MouseEventHandler } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -37,6 +39,12 @@ import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
 import { SaveIndicator } from '../save-indicator';
 import { Toolbar } from '../toolbar';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '../ui/context-menu';
 
 type ProjectData = {
   content?:
@@ -65,8 +73,6 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   const yEdges = useRef<Y.Array<Edge> | null>(null);
 
   useEffect(() => {
-    console.log('💽 Connecting to room', data.id);
-
     // Create a new Y.Doc (CRDT document)
     const ydoc = new Y.Doc();
 
@@ -75,37 +81,17 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
       signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
     });
 
-    provider.on('status', (status) => {
-      console.log('💽 Status updated', status);
-    });
-
-    provider.on('synced', () => {
-      console.log('💽 Synced');
-    });
-
-    provider.on('peers', (peers) => {
-      console.log('💽 Peers', peers);
-    });
-
-    console.log('📄 Connected to room', data.id);
-
     // Create shared arrays for nodes and edges (initially empty)
     yNodes.current = ydoc.getArray<Node>('nodes');
     yEdges.current = ydoc.getArray<Edge>('edges');
 
     // Observe changes on yNodes and yEdges, update React state
     yNodes.current?.observe(() => {
-      console.log('📄 Nodes changed');
       setNodes(yNodes.current?.toArray() ?? []);
     });
 
     yEdges.current?.observe(() => {
-      console.log('📄 Edges changed');
       setEdges(yEdges.current?.toArray() ?? []);
-    });
-
-    ydoc.on('load', () => {
-      console.log('📄 Document loaded');
     });
 
     // Save the nodes and edges to the database
@@ -122,8 +108,6 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
 
   // Handlers to apply local changes both to React Flow and Y.js
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
-    console.log('💽 Nodes changed', changes);
-
     setNodes((current) => {
       const updated = applyNodeChanges(changes, current);
       // Replace Yjs nodes with updated array
@@ -136,8 +120,6 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
-    console.log('💽 Edges changed', changes);
-
     setEdges((current) => {
       const updated = applyEdgeChanges(changes, current);
       yDoc.current?.transact(() => {
@@ -154,10 +136,9 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
       type: 'animated',
       ...connection,
     };
-    setEdges((current) => {
-      const updated = [...current, newEdge];
+
+    yDoc.current?.transact(() => {
       yEdges.current?.push([newEdge]);
-      return updated;
     });
   }, []);
 
@@ -303,7 +284,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     setEdges((eds) => eds.filter((e) => e.type !== 'temporary'));
   }, []);
 
-  const handleDoubleClick = useCallback<MouseEventHandler<HTMLDivElement>>(
+  const addDropNode = useCallback<MouseEventHandler<HTMLDivElement>>(
     (event) => {
       const { x, y } = screenToFlowPosition({
         x: event.clientX,
@@ -317,38 +298,60 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     [addNode, screenToFlowPosition]
   );
 
+  const handleSelectAll = useCallback(() => {
+    setNodes(nodes.map((node) => ({ ...node, selected: true })));
+  }, [nodes]);
+
+  console.log({ nodes, edges });
+
   return (
     <ProjectProvider data={data}>
-      <NodeDropzoneProvider addNode={addNode}>
-        <ReactFlow
-          nodes={nodes}
-          onNodesChange={onNodesChange}
-          edges={edges}
-          onEdgesChange={onEdgesChange}
-          onConnectStart={onConnectStart}
-          onConnect={onConnect}
-          onConnectEnd={onConnectEnd}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          isValidConnection={isValidConnection}
-          connectionLineComponent={ConnectionLine}
-          panOnScroll
-          fitView
-          zoomOnDoubleClick={false}
-          onDoubleClick={handleDoubleClick}
-          {...canvasProps}
-        >
-          <Background />
-          {!data.id.includes('demo') && user && (
-            <>
-              <Controls />
-              <Toolbar />
-              <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
-              <RealtimeCursors roomName={`${data.id}-cursors`} />
-            </>
-          )}
-        </ReactFlow>
-      </NodeDropzoneProvider>
+      <NodeOperationsProvider addNode={addNode}>
+        <NodeDropzoneProvider>
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <ReactFlow
+                nodes={nodes}
+                onNodesChange={onNodesChange}
+                edges={edges}
+                onEdgesChange={onEdgesChange}
+                onConnectStart={onConnectStart}
+                onConnect={onConnect}
+                onConnectEnd={onConnectEnd}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                isValidConnection={isValidConnection}
+                connectionLineComponent={ConnectionLine}
+                panOnScroll
+                fitView
+                zoomOnDoubleClick={false}
+                onDoubleClick={addDropNode}
+                {...canvasProps}
+              >
+                <Background />
+                {!data.id.includes('demo') && user && (
+                  <>
+                    <Controls />
+                    <Toolbar />
+                    <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
+                    <RealtimeCursors roomName={`${data.id}-cursors`} />
+                  </>
+                )}
+              </ReactFlow>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuItem onClick={addDropNode}>
+                <PlusIcon size={12} />
+                <span>Add a new node</span>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={handleSelectAll}>
+                <BoxSelectIcon size={12} />
+                <span>Select all</span>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+        </NodeDropzoneProvider>
+      </NodeOperationsProvider>
     </ProjectProvider>
   );
 };
