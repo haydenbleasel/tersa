@@ -385,6 +385,8 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
                 panOnScroll
                 fitView
                 zoomOnDoubleClick={false}
+                panOnDrag={false}
+                selectionOnDrag={true}
                 onDoubleClick={addDropNode}
                 {...canvasProps}
               >
