@@ -20,6 +20,7 @@ import { NodeLayout } from './layout';
 
 type DropNodeProps = {
   data: {
+    isSource?: boolean;
     position: XYPosition;
   };
   id: string;
@@ -93,8 +94,8 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
     for (const sourceNode of sourceNodes) {
       addEdges({
         id: nanoid(),
-        source: sourceNode.source,
-        target: newNodeId,
+        source: data.isSource ? newNodeId : sourceNode.source,
+        target: data.isSource ? sourceNode.source : newNodeId,
         type: 'animated',
       });
     }

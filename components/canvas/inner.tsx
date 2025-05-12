@@ -229,15 +229,25 @@ export const CanvasInner = ({
         const { clientX, clientY } =
           'changedTouches' in event ? event.changedTouches[0] : event;
 
+        const sourceId = connectionState.fromNode?.id;
+        const isSourceHandle = connectionState.fromHandle?.type === 'source';
+
+        if (!sourceId) {
+          return;
+        }
+
         const newNodeId = addNode('drop', {
           position: screenToFlowPosition({ x: clientX, y: clientY }),
+          data: {
+            isSource: !isSourceHandle,
+          },
         });
 
         setEdges((eds) =>
           eds.concat({
-            id: newNodeId,
-            source: connectionState.fromNode?.id ?? '',
-            target: newNodeId,
+            id: nanoid(),
+            source: isSourceHandle ? sourceId : newNodeId,
+            target: isSourceHandle ? newNodeId : sourceId,
             type: 'temporary',
           })
         );
