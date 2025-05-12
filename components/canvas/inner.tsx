@@ -134,6 +134,8 @@ export const CanvasInner = ({
 
   // Handlers to apply local changes both to React Flow and Y.js
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
+    console.log('💽 Nodes changed', changes);
+
     setNodes((current) => {
       const updated = applyNodeChanges(changes, current);
       // Replace Yjs nodes with updated array
@@ -146,6 +148,8 @@ export const CanvasInner = ({
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
+    console.log('💽 Edges changed', changes);
+
     setEdges((current) => {
       const updated = applyEdgeChanges(changes, current);
       yDoc.current?.transact(() => {
