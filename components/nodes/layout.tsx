@@ -112,9 +112,23 @@ export const NodeLayout = ({
     }, 100);
   };
 
+  const handleSelect = (open: boolean) => {
+    if (!open) {
+      return;
+    }
+
+    const node = getNode(id);
+
+    if (!node) {
+      return;
+    }
+
+    updateNode(id, { selected: true });
+  };
+
   return (
     <>
-      <ContextMenu>
+      <ContextMenu onOpenChange={handleSelect}>
         <ContextMenuTrigger>
           {type !== 'drop' && toolbar?.length && (
             <NodeToolbar id={id} items={toolbar} />
