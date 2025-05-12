@@ -24,7 +24,7 @@ export const speechModels: {
     models: [
       {
         icon: OpenAiIcon,
-        id: 'tts-1',
+        id: 'openai-tts-1',
         label: 'TTS-1',
         model: openai.speech('tts-1'),
         getCost: (characters: number) => (characters / million) * 15,
@@ -43,7 +43,7 @@ export const speechModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'tts-1-hd',
+        id: 'openai-tts-1-hd',
         label: 'TTS-1-HD',
         model: openai.speech('tts-1-hd'),
         default: true,
@@ -63,7 +63,7 @@ export const speechModels: {
       },
       // {
       //   icon: OpenAiIcon,
-      //   id: 'gpt-4o-mini-tts',
+      //   id: 'openai-gpt-4o-mini-tts',
       //   label: 'GPT-4o Mini TTS',
       //   model: openai.speech('gpt-4o-mini-tts'),
       //   getCost: (tokens: number) => (tokens / million) * 0.6,
@@ -75,7 +75,7 @@ export const speechModels: {
     models: [
       {
         icon: LmntIcon,
-        id: 'aurora',
+        id: 'lmnt-aurora',
         label: 'Aurora',
         model: lmnt.speech('aurora'),
         getCost: (characters: number) => (characters / thousand) * 0.05,
@@ -105,7 +105,7 @@ export const speechModels: {
       },
       {
         icon: LmntIcon,
-        id: 'blizzard',
+        id: 'lmnt-blizzard',
         label: 'Blizzard',
         model: lmnt.speech('blizzard'),
         getCost: (characters: number) => (characters / thousand) * 0.05,
@@ -140,7 +140,7 @@ export const speechModels: {
     models: [
       {
         icon: HumeIcon,
-        id: 'default',
+        id: 'hume-default',
         label: 'Default',
         model: hume.speech(),
         // Creator plan pricing

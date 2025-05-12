@@ -41,7 +41,7 @@ export const textModels: {
     models: [
       {
         icon: OpenAiIcon,
-        id: 'gpt-3.5-turbo',
+        id: 'openai-gpt-3.5-turbo',
         label: 'GPT-3.5 Turbo',
         model: openai('gpt-3.5-turbo'),
         priceIndicator: 'lowest',
@@ -54,7 +54,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4',
+        id: 'openai-gpt-4',
         label: 'GPT-4',
         model: openai('gpt-4'),
         priceIndicator: 'highest',
@@ -67,7 +67,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4.1',
+        id: 'openai-gpt-4.1',
         label: 'GPT-4.1',
         model: openai('gpt-4.1'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -79,7 +79,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4.1-mini',
+        id: 'openai-gpt-4.1-mini',
         label: 'GPT-4.1 Mini',
         model: openai('gpt-4.1-mini'),
         priceIndicator: 'lowest',
@@ -92,7 +92,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4.1-nano',
+        id: 'openai-gpt-4.1-nano',
         label: 'GPT-4.1 Nano',
         model: openai('gpt-4.1-nano'),
         priceIndicator: 'lowest',
@@ -105,7 +105,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4o',
+        id: 'openai-gpt-4o',
         label: 'GPT-4o',
         model: openai('gpt-4o'),
         default: true,
@@ -118,7 +118,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4o-mini',
+        id: 'openai-gpt-4o-mini',
         label: 'GPT-4o Mini',
         model: openai('gpt-4o-mini'),
         priceIndicator: 'lowest',
@@ -131,7 +131,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'o1',
+        id: 'openai-o1',
         label: 'O1',
         model: openai('o1'),
         priceIndicator: 'highest',
@@ -144,7 +144,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'o1-mini',
+        id: 'openai-o1-mini',
         label: 'O1 Mini',
         model: openai('o1-mini'),
         priceIndicator: 'low',
@@ -157,7 +157,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'o3',
+        id: 'openai-o3',
         label: 'O3',
         model: openai('o3'),
         priceIndicator: 'high',
@@ -170,7 +170,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'o3-mini',
+        id: 'openai-o3-mini',
         label: 'O3 Mini',
         model: openai('o3-mini'),
         priceIndicator: 'low',
@@ -183,7 +183,7 @@ export const textModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'o4-mini',
+        id: 'openai-o4-mini',
         label: 'O4 Mini',
         model: openai('o4-mini'),
         priceIndicator: 'low',
@@ -201,7 +201,7 @@ export const textModels: {
     models: [
       {
         icon: XaiIcon,
-        id: 'grok-3',
+        id: 'xai-grok-3',
         label: 'Grok-3',
         model: xai('grok-3'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -213,7 +213,7 @@ export const textModels: {
       },
       {
         icon: XaiIcon,
-        id: 'grok-3-fast',
+        id: 'xai-grok-3-fast',
         label: 'Grok-3 Fast',
         model: xai('grok-3-fast'),
         priceIndicator: 'high',
@@ -226,7 +226,7 @@ export const textModels: {
       },
       {
         icon: XaiIcon,
-        id: 'grok-3-mini',
+        id: 'xai-grok-3-mini',
         label: 'Grok-3 Mini',
         model: xai('grok-3-mini'),
         priceIndicator: 'lowest',
@@ -239,7 +239,7 @@ export const textModels: {
       },
       {
         icon: XaiIcon,
-        id: 'grok-3-mini-fast',
+        id: 'xai-grok-3-mini-fast',
         label: 'Grok-3 Mini Fast',
         model: xai('grok-3-mini-fast'),
         priceIndicator: 'lowest',
@@ -252,7 +252,7 @@ export const textModels: {
       },
       {
         icon: XaiIcon,
-        id: 'grok-2',
+        id: 'xai-grok-2',
         label: 'Grok 2',
         model: xai('grok-2'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -264,7 +264,7 @@ export const textModels: {
       },
       {
         icon: XaiIcon,
-        id: 'grok-beta',
+        id: 'xai-grok-beta',
         label: 'Grok Beta',
         model: xai('grok-beta'),
         priceIndicator: 'high',
@@ -283,7 +283,7 @@ export const textModels: {
     models: [
       {
         icon: AnthropicIcon,
-        id: 'claude-3-5-haiku-latest',
+        id: 'anthropic-claude-3-5-haiku-latest',
         label: 'Claude 3.5 Haiku',
         model: anthropic('claude-3-5-haiku-latest'),
         priceIndicator: 'low',
@@ -296,7 +296,7 @@ export const textModels: {
       },
       {
         icon: AnthropicIcon,
-        id: 'claude-3-5-sonnet-latest',
+        id: 'anthropic-claude-3-5-sonnet-latest',
         label: 'Claude 3.5 Sonnet',
         model: anthropic('claude-3-5-sonnet-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -309,7 +309,7 @@ export const textModels: {
       },
       {
         icon: AnthropicIcon,
-        id: 'claude-3-haiku-20240307',
+        id: 'anthropic-claude-3-haiku-20240307',
         label: 'Claude 3 Haiku',
         model: anthropic('claude-3-haiku-20240307'),
         priceIndicator: 'lowest',
@@ -323,7 +323,7 @@ export const textModels: {
       },
       {
         icon: AnthropicIcon,
-        id: 'claude-3-7-sonnet-20250219',
+        id: 'anthropic-claude-3-7-sonnet-20250219',
         label: 'Claude 3.7 Sonnet',
         model: anthropic('claude-3-7-sonnet-20250219'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -335,7 +335,7 @@ export const textModels: {
       },
       {
         icon: AnthropicIcon,
-        id: 'claude-3-opus-latest',
+        id: 'anthropic-claude-3-opus-latest',
         label: 'Claude 3 Opus',
         model: anthropic('claude-3-opus-latest'),
         priceIndicator: 'highest',
@@ -354,7 +354,7 @@ export const textModels: {
     models: [
       {
         icon: MistralIcon,
-        id: 'pixtral-large-latest',
+        id: 'mistral-pixtral-large-latest',
         label: 'Pixtral Large',
         model: mistral('pixtral-large-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -366,7 +366,7 @@ export const textModels: {
       },
       {
         icon: MistralIcon,
-        id: 'mistral-large-latest',
+        id: 'mistral-mistral-large-latest',
         label: 'Mistral Large',
         model: mistral('mistral-large-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -378,7 +378,7 @@ export const textModels: {
       },
       {
         icon: MistralIcon,
-        id: 'ministral-8b-latest',
+        id: 'mistral-ministral-8b-latest',
         label: 'Ministral 8B',
         model: mistral('ministral-8b-latest'),
         priceIndicator: 'lowest',
@@ -391,7 +391,7 @@ export const textModels: {
       },
       {
         icon: MistralIcon,
-        id: 'ministral-3b-latest',
+        id: 'mistral-ministral-3b-latest',
         label: 'Ministral 3B',
         model: mistral('ministral-3b-latest'),
         priceIndicator: 'lowest',
@@ -410,7 +410,7 @@ export const textModels: {
     models: [
       {
         icon: GoogleIcon,
-        id: 'gemini-2.0-flash',
+        id: 'google-gemini-2.0-flash',
         label: 'Gemini 2.0 Flash',
         model: google('gemini-2.0-flash-001'),
         priceIndicator: 'lowest',
@@ -423,7 +423,7 @@ export const textModels: {
       },
       {
         icon: GoogleIcon,
-        id: 'gemini-1.5-flash',
+        id: 'google-gemini-1.5-flash',
         label: 'Gemini 1.5 Flash',
         model: google('gemini-1.5-flash'),
         priceIndicator: 'lowest',
@@ -436,7 +436,7 @@ export const textModels: {
       },
       {
         icon: GoogleIcon,
-        id: 'gemini-1.5-pro',
+        id: 'google-gemini-1.5-pro',
         label: 'Gemini 1.5 Pro',
         model: google('gemini-1.5-pro'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -454,7 +454,7 @@ export const textModels: {
     models: [
       {
         icon: DeepSeekIcon,
-        id: 'deepseek-chat',
+        id: 'deepseek-deepseek-chat',
         label: 'DeepSeek Chat',
         model: deepseek('deepseek-chat'),
         priceIndicator: 'lowest',
@@ -467,7 +467,7 @@ export const textModels: {
       },
       {
         icon: DeepSeekIcon,
-        id: 'deepseek-reasoner',
+        id: 'deepseek-deepseek-reasoner',
         label: 'DeepSeek Reasoner',
         model: deepseek('deepseek-reasoner'),
         priceIndicator: 'lowest',
@@ -486,7 +486,7 @@ export const textModels: {
   //   models: [
   //     {
   //       icon: CerebrasIcon,
-  //       id: 'llama3.1-8b',
+  //       id: 'cerebras-llama3.1-8b',
   //       label: 'Llama 3.1 8B',
   //       model: cerebras('llama3.1-8b'),
   //       getCost: ({ input, output }: { input: number; output: number }) => {
@@ -498,7 +498,7 @@ export const textModels: {
   //     },
   //     {
   //       icon: CerebrasIcon,
-  //       id: 'llama3.3-70b',
+  //       id: 'cerebras-llama3.3-70b',
   //       label: 'Llama 3.3 70B',
   //       model: cerebras('llama3.3-70b'),
   //       getCost: ({ input, output }: { input: number; output: number }) => {
@@ -516,7 +516,7 @@ export const textModels: {
     models: [
       {
         icon: GroqIcon,
-        id: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        id: 'groq-meta-llama/llama-4-scout-17b-16e-instruct',
         label: 'Llama 4 Scout 17B',
         model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
         priceIndicator: 'lowest',
@@ -529,7 +529,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'llama-3.3-70b-versatile',
+        id: 'groq-llama-3.3-70b-versatile',
         label: 'Llama 3.3 70B Versatile',
         model: groq('llama-3.3-70b-versatile'),
         priceIndicator: 'lowest',
@@ -542,7 +542,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'llama-3.1-8b-instant',
+        id: 'groq-llama-3.1-8b-instant',
         label: 'Llama 3.1 8B Instant',
         model: groq('llama-3.1-8b-instant'),
         priceIndicator: 'lowest',
@@ -555,7 +555,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'gemma2-9b-it',
+        id: 'groq-gemma2-9b-it',
         label: 'Gemma 2 9B',
         model: groq('gemma2-9b-it'),
         priceIndicator: 'lowest',
@@ -568,7 +568,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'deepseek-r1-distill-llama-70b',
+        id: 'groq-deepseek-r1-distill-llama-70b',
         label: 'DeepSeek R1 Distill Llama 70B',
         model: groq('deepseek-r1-distill-llama-70b'),
         priceIndicator: 'lowest',
@@ -581,7 +581,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'qwen-2.5-32b',
+        id: 'groq-qwen-2.5-32b',
         label: 'Qwen 2.5 32B',
         model: groq('qwen-2.5-32b'),
         priceIndicator: 'lowest',
@@ -594,7 +594,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'mistral-saba-24b',
+        id: 'groq-mistral-saba-24b',
         label: 'Mistral Saba 24B',
         model: groq('mistral-saba-24b'),
         priceIndicator: 'lowest',
@@ -607,7 +607,7 @@ export const textModels: {
       },
       {
         icon: GroqIcon,
-        id: 'llama-guard-3-8b',
+        id: 'groq-llama-guard-3-8b',
         label: 'Llama Guard 3 8B',
         model: groq('llama-guard-3-8b'),
         priceIndicator: 'lowest',

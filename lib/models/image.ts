@@ -31,7 +31,7 @@ export const imageModels: {
     models: [
       {
         icon: XaiIcon,
-        id: 'grok-2-image',
+        id: 'xai-grok-2-image',
         label: 'Grok',
         model: xai.image('grok-2-image'),
 
@@ -49,7 +49,7 @@ export const imageModels: {
     models: [
       {
         icon: OpenAiIcon,
-        id: 'dall-e-3',
+        id: 'openai-dall-e-3',
         label: 'DALL-E 3',
         model: openai.image('dall-e-3'),
         size: '1024x1024',
@@ -64,7 +64,7 @@ export const imageModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'dall-e-2',
+        id: 'openai-dall-e-2',
         label: 'DALL-E 2',
         model: openai.image('dall-e-2'),
         size: '1024x1024',
@@ -79,7 +79,7 @@ export const imageModels: {
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-image-1',
+        id: 'openai-gpt-image-1',
         label: 'GPT Image 1',
         model: openai.image('gpt-image-1'),
         supportsEdit: true,
@@ -115,7 +115,7 @@ export const imageModels: {
     models: [
       {
         icon: AmazonIcon,
-        id: 'amazon.nova-canvas-v1:0',
+        id: 'amazon-nova-canvas-v1',
         label: 'Nova Canvas',
         model: bedrock.image('amazon.nova-canvas-v1:0'),
 

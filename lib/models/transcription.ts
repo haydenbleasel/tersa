@@ -7,20 +7,20 @@ export const transcriptionModels = [
     models: [
       {
         icon: OpenAiIcon,
-        id: 'gpt-4o-mini-transcribe',
+        id: 'openai-gpt-4o-mini-transcribe',
         label: 'GPT-4o Mini Transcribe',
         model: openai.transcription('gpt-4o-mini-transcribe'),
         default: true,
       },
       {
         icon: OpenAiIcon,
-        id: 'whisper-1',
+        id: 'openai-whisper-1',
         label: 'Whisper 1',
         model: openai.transcription('whisper-1'),
       },
       {
         icon: OpenAiIcon,
-        id: 'gpt-4o-transcribe',
+        id: 'openai-gpt-4o-transcribe',
         label: 'GPT-4o Transcribe',
         model: openai.transcription('gpt-4o-transcribe'),
       },
