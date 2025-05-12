@@ -226,7 +226,6 @@ export const ModelSelector = ({
         popoverOptions={{
           sideOffset: 8,
         }}
-        className={cn('shadow-2xl shadow-black/10', className)}
       >
         <ComboboxInput />
         <ComboboxList>
