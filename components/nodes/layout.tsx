@@ -2,19 +2,27 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useNodeOperations } from '@/providers/node-operations';
-import { ContextMenuSeparator } from '@radix-ui/react-context-menu';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import {
   BrainIcon,
+  CodeIcon,
   CopyIcon,
   EyeIcon,
   TrashIcon,
   UserIcon,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Switch } from '../ui/switch';
 import { NodeToolbar } from './toolbar';
 
@@ -45,6 +53,7 @@ export const NodeLayout = ({
   const { deleteElements, setCenter, getNode, updateNodeData, updateNode } =
     useReactFlow();
   const { addNode } = useNodeOperations();
+  const [showData, setShowData] = useState(false);
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
@@ -97,60 +106,87 @@ export const NodeLayout = ({
     });
   };
 
+  const handleShowData = () => {
+    setTimeout(() => {
+      setShowData(true);
+    }, 100);
+  };
+
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>
-        {type !== 'drop' && (
-          <NodeToolbar
-            id={id}
-            data={data as never}
-            items={toolbar}
-            onFocus={handleFocus}
-            onDelete={handleDelete}
-          />
-        )}
-        {type !== 'file' && <Handle type="target" position={Position.Left} />}
-        <div className="relative size-full h-auto w-sm">
-          {type !== 'drop' && (
-            <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
-              <p className="font-mono text-muted-foreground text-xs tracking-tighter">
-                {title}
-              </p>
-              {type !== 'file' && (
-                <div className="flex items-center gap-2">
-                  <UserIcon size={12} className="text-muted-foreground" />
-                  <Switch
-                    checked={data?.source === 'transform'}
-                    onCheckedChange={handleSourceChange}
-                  />
-                  <BrainIcon size={12} className="text-muted-foreground" />
-                </div>
-              )}
-            </div>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger>
+          {type !== 'drop' && toolbar?.length && (
+            <NodeToolbar id={id} items={toolbar} />
           )}
-          <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 shadow-2xl shadow-black/10 ring-1 ring-border transition-all">
-            <div className="overflow-hidden rounded-3xl bg-card">
-              {children}
+          {type !== 'file' && <Handle type="target" position={Position.Left} />}
+          <div className="relative size-full h-auto w-sm">
+            {type !== 'drop' && (
+              <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
+                <p className="font-mono text-muted-foreground text-xs tracking-tighter">
+                  {title}
+                </p>
+                {type !== 'file' && (
+                  <div className="flex items-center gap-2">
+                    <UserIcon size={12} className="text-muted-foreground" />
+                    <Switch
+                      checked={data?.source === 'transform'}
+                      onCheckedChange={handleSourceChange}
+                    />
+                    <BrainIcon size={12} className="text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+            )}
+            <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 shadow-2xl shadow-black/10 ring-1 ring-border transition-all">
+              <div className="overflow-hidden rounded-3xl bg-card">
+                {children}
+              </div>
             </div>
           </div>
-        </div>
-        <Handle type="source" position={Position.Right} />
-      </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem onClick={handleDuplicate}>
-          <CopyIcon size={12} />
-          <span>Duplicate</span>
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleFocus}>
-          <EyeIcon size={12} />
-          <span>Focus</span>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={handleDelete} variant="destructive">
-          <TrashIcon size={12} />
-          <span>Delete</span>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+          <Handle type="source" position={Position.Right} />
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={handleDuplicate}>
+            <CopyIcon size={12} />
+            <span>Duplicate</span>
+          </ContextMenuItem>
+          <ContextMenuItem onClick={handleFocus}>
+            <EyeIcon size={12} />
+            <span>Focus</span>
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem onClick={handleDelete} variant="destructive">
+            <TrashIcon size={12} />
+            <span>Delete</span>
+          </ContextMenuItem>
+          {process.env.NODE_ENV === 'development' && (
+            <>
+              <ContextMenuSeparator />
+              <ContextMenuItem onClick={handleShowData}>
+                <CodeIcon size={12} />
+                <span>Show data</span>
+              </ContextMenuItem>
+            </>
+          )}
+        </ContextMenuContent>
+      </ContextMenu>
+      <Dialog open={showData} onOpenChange={setShowData}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Node data</DialogTitle>
+            <DialogDescription>
+              Data for node{' '}
+              <code className="rounded-sm bg-secondary px-2 py-1 font-mono">
+                {id}
+              </code>
+            </DialogDescription>
+          </DialogHeader>
+          <pre className="rounded-lg bg-black p-4 text-sm text-white">
+            {JSON.stringify(data, null, 2)}
+          </pre>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
