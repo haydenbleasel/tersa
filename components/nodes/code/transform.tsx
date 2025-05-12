@@ -30,6 +30,18 @@ type CodeTransformProps = CodeNodeProps & {
   title: string;
 };
 
+const getDefaultModel = (models: typeof chatModels) => {
+  const defaultModel = models
+    .flatMap((model) => model.models)
+    .find((model) => model.default);
+
+  if (!defaultModel) {
+    throw new Error('No default model found');
+  }
+
+  return defaultModel;
+};
+
 export const CodeTransform = ({
   data,
   id,
@@ -38,6 +50,7 @@ export const CodeTransform = ({
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
+  const modelId = data.model ?? getDefaultModel(chatModels).id;
   const { isLoading, object, stop, submit } = useObject({
     api: '/api/code',
     schema: z.object({
@@ -46,7 +59,7 @@ export const CodeTransform = ({
     }),
     headers: {
       'tersa-language': data.generated?.language ?? 'javascript',
-      'tersa-model': data.model ?? 'gpt-4',
+      'tersa-model': modelId,
     },
     onError: (error) => handleError('Error generating code', error),
     onFinish: (generated) => {
@@ -125,7 +138,7 @@ export const CodeTransform = ({
       {
         children: (
           <ModelSelector
-            value={data.model ?? 'gpt-4'}
+            value={modelId}
             options={chatModels}
             key={id}
             className="w-[200px] rounded-full"
@@ -208,6 +221,7 @@ export const CodeTransform = ({
     isLoading,
     object,
     projectId,
+    modelId,
   ]);
 
   return (

@@ -26,6 +26,18 @@ type TextTransformProps = TextNodeProps & {
   title: string;
 };
 
+const getDefaultModel = (models: typeof chatModels) => {
+  const defaultModel = models
+    .flatMap((model) => model.models)
+    .find((model) => model.default);
+
+  if (!defaultModel) {
+    throw new Error('No default model found');
+  }
+
+  return defaultModel;
+};
+
 export const TextTransform = ({
   data,
   id,
@@ -34,9 +46,10 @@ export const TextTransform = ({
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
+  const modelId = data.model ?? getDefaultModel(chatModels).id;
   const { append, messages, setMessages, status, stop } = useChat({
     body: {
-      modelId: data.model ?? 'gpt-4',
+      modelId,
     },
     onError: (error) => handleError('Error generating text', error),
     onFinish: (message) => {
@@ -109,7 +122,7 @@ export const TextTransform = ({
     toolbar.push({
       children: (
         <ModelSelector
-          value={data.model ?? 'gpt-4'}
+          value={modelId}
           options={chatModels}
           key={id}
           className="w-[200px] rounded-full"

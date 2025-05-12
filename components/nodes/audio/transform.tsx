@@ -24,6 +24,18 @@ type AudioTransformProps = AudioNodeProps & {
   title: string;
 };
 
+const getDefaultModel = (models: typeof speechModels) => {
+  const defaultModel = models
+    .flatMap((model) => model.models)
+    .find((model) => model.default);
+
+  if (!defaultModel) {
+    throw new Error('No default model found');
+  }
+
+  return defaultModel;
+};
+
 export const AudioTransform = ({
   data,
   id,
@@ -33,7 +45,7 @@ export const AudioTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
-  const modelId = data.model ?? 'tts-1';
+  const modelId = data.model ?? getDefaultModel(speechModels).id;
   const model = speechModels
     .flatMap((model) => model.models)
     .find((model) => model.id === modelId);

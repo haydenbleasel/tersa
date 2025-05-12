@@ -28,6 +28,18 @@ type ImageTransformProps = ImageNodeProps & {
   title: string;
 };
 
+const getDefaultModel = (models: typeof imageModels) => {
+  const defaultModel = models
+    .flatMap((model) => model.models)
+    .find((model) => model.default);
+
+  if (!defaultModel) {
+    throw new Error('No default model found');
+  }
+
+  return defaultModel;
+};
+
 export const ImageTransform = ({
   data,
   id,
@@ -40,7 +52,7 @@ export const ImageTransform = ({
   const hasIncomingImageNodes =
     getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
       .length > 0;
-  const modelId = data.model ?? 'gpt-image-1';
+  const modelId = data.model ?? getDefaultModel(imageModels).id;
 
   const availableModels = imageModels.map((provider) => ({
     ...provider,

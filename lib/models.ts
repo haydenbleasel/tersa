@@ -43,6 +43,7 @@ export const chatModels: {
     legacy?: boolean;
     priceIndicator?: PriceBracket;
     disabled?: boolean;
+    default?: boolean;
   }[];
 }[] = [
   {
@@ -117,6 +118,7 @@ export const chatModels: {
         id: 'gpt-4o',
         label: 'GPT-4o',
         model: openai('gpt-4o'),
+        default: true,
         getCost: ({ input, output }: { input: number; output: number }) => {
           const inputCost = (input / million) * 2.5;
           const outputCost = (output / million) * 10;
@@ -647,6 +649,7 @@ export const imageModels: {
     disabled?: boolean;
     providerOptions?: Record<string, Record<string, string>>;
     priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
+    default?: boolean;
   }[];
 }[] = [
   {
@@ -707,6 +710,7 @@ export const imageModels: {
         model: openai.image('gpt-image-1'),
         supportsEdit: true,
         size: '1024x1024',
+        default: true,
         providerOptions: {
           openai: {
             quality: 'high',
@@ -1049,6 +1053,7 @@ export const speechModels: {
     model: SpeechModel;
     voices: string[];
     getCost: (tokens: number) => number;
+    default?: boolean;
   }[];
 }[] = [
   {
@@ -1078,6 +1083,7 @@ export const speechModels: {
         id: 'tts-1-hd',
         label: 'TTS-1-HD',
         model: openai.speech('tts-1-hd'),
+        default: true,
         getCost: (characters: number) => (characters / million) * 30,
         voices: [
           'alloy',
@@ -1203,6 +1209,7 @@ export const visionModels = [
         id: 'gpt-4.1-nano',
         label: 'GPT-4.1 Nano',
         model: openai('gpt-4.1-nano'),
+        default: true,
       },
       {
         icon: OpenAiIcon,
@@ -1277,6 +1284,7 @@ export const transcriptionModels = [
         id: 'gpt-4o-mini-transcribe',
         label: 'GPT-4o Mini Transcribe',
         model: openai.transcription('gpt-4o-mini-transcribe'),
+        default: true,
       },
       {
         icon: OpenAiIcon,
@@ -1302,6 +1310,7 @@ export const videoModels: {
     label: string;
     model: string;
     getCost: () => number;
+    default?: boolean;
   }[];
 }[] = [
   {
@@ -1371,7 +1380,7 @@ export const videoModels: {
         id: 'runway-gen4-turbo',
         label: 'Gen4 Turbo',
         model: 'gen4_turbo',
-
+        default: true,
         // https://docs.dev.runwayml.com/#price
         getCost: () => 0.5,
       },
