@@ -97,7 +97,12 @@ export const ProjectSelector = ({
         onValueChange={handleSelect}
       >
         <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
-        <ComboboxContent className="p-0">
+        <ComboboxContent
+          className="p-0"
+          popoverOptions={{
+            sideOffset: 8,
+          }}
+        >
           <ComboboxInput />
           <ComboboxList>
             <ComboboxEmpty />
