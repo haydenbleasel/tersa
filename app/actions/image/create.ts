@@ -101,7 +101,7 @@ export const generateImageAction = async ({
 
     let image: Experimental_GenerateImageResult['image'] | undefined;
 
-    if (model.id === 'gpt-image-1') {
+    if (model.model.modelId === 'gpt-image-1') {
       const generatedImageResponse = await generateGptImage1Image({
         instructions,
         prompt,
