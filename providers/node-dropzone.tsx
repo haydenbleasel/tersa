@@ -16,6 +16,8 @@ export const NodeDropzoneProvider = ({
   const { addNode } = useNodeOperations();
   const dropzone = useDropzone({
     noClick: true,
+    autoFocus: false,
+    noKeyboard: true,
     accept: {
       'image/*': [],
       'video/*': [],
