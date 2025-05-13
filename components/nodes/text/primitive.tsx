@@ -1,8 +1,8 @@
 import { EditorProvider } from '@/components/ui/kibo-ui/editor';
 import { cn } from '@/lib/utils';
-import type { Editor, JSONContent } from '@tiptap/core';
+import type { Editor, EditorEvents, JSONContent } from '@tiptap/core';
 import { useReactFlow } from '@xyflow/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { TextNodeProps } from '.';
 import { NodeLayout } from '../layout';
 
@@ -20,6 +20,14 @@ export const TextPrimitive = ({
   const [content, setContent] = useState<JSONContent | undefined>(
     data.content ?? undefined
   );
+  const editor = useRef<Editor | null>(null);
+
+  useEffect(() => {
+    if (data.content) {
+      setContent(data.content);
+      editor.current?.commands.setContent(data.content);
+    }
+  }, [data.content]);
 
   const handleUpdate = ({ editor }: { editor: Editor }) => {
     const json = editor.getJSON();
@@ -27,6 +35,11 @@ export const TextPrimitive = ({
 
     setContent(json);
     updateNodeData(id, { content: json, text });
+  };
+
+  const handleCreate = (props: EditorEvents['create']) => {
+    editor.current = props.editor;
+    props.editor.chain().focus().run();
   };
 
   return (
@@ -39,9 +52,7 @@ export const TextPrimitive = ({
     >
       <div className="nowheel h-full max-h-[30rem] overflow-auto">
         <EditorProvider
-          onCreate={(props) => {
-            props.editor.chain().focus().run();
-          }}
+          onCreate={handleCreate}
           immediatelyRender={false}
           content={content}
           placeholder="Start typing..."
