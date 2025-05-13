@@ -1,30 +1,26 @@
-import { getCredits } from '@/app/actions/credits/get';
-import { currentUser, currentUserProfile } from '@/lib/auth';
-import { ClaimButton } from './claim-button';
+import { currentUserProfile } from '@/lib/auth';
+import { database } from '@/lib/database';
+import { projects } from '@/schema';
+import { eq } from 'drizzle-orm';
+import Link from 'next/link';
+import { Suspense } from 'react';
 import { CreditsCounter } from './credits-counter';
 import { Menu } from './menu';
 import { Presence } from './presence';
+import { Button } from './ui/button';
 
 type TopRightProps = {
   id: string;
 };
 
 export const TopRight = async ({ id }: TopRightProps) => {
-  const user = await currentUser();
-
-  if (!user) {
-    return null;
-  }
-
   const profile = await currentUserProfile();
-  const credits = await getCredits();
   const allProjects = await database
     .select()
     .from(projects)
     .where(eq(projects.id, id));
   const project = allProjects.at(0);
 
-  if ('error' in credits) {
   if (!profile || !project) {
     return null;
   }
@@ -39,11 +35,19 @@ export const TopRight = async ({ id }: TopRightProps) => {
         )}
         {profile.subscriptionId ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
-            <CreditsCounter credits={credits.credits} />
+            <Suspense
+              fallback={
+                <p className="text-muted-foreground text-sm">Loading...</p>
+              }
+            >
+              <CreditsCounter />
+            </Suspense>
           </div>
         ) : (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
-            <ClaimButton />
+            <Button className="rounded-full" size="lg" asChild>
+              <Link href="/pricing">Claim your free AI credits</Link>
+            </Button>
           </div>
         )}
         <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm">

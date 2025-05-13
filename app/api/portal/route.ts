@@ -1,30 +1,29 @@
 import { currentUserProfile } from '@/lib/auth';
 import { env } from '@/lib/env';
-import { createClient } from '@/lib/supabase/server';
-import { CustomerPortal } from '@polar-sh/nextjs';
+import { parseError } from '@/lib/error/parse';
+import { stripe } from '@/lib/stripe';
+import { NextResponse } from 'next/server';
 
-export const GET = CustomerPortal({
-  accessToken: env.POLAR_ACCESS_TOKEN,
-  getCustomerId: async () => {
-    const supabase = await createClient();
+const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+const returnUrl = `${protocol}://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
+export const GET = async () => {
+  try {
     const profile = await currentUserProfile();
 
-    const polarCustomerId = profile.customerId;
-
-    if (typeof polarCustomerId !== 'string') {
-      throw new Error('User has no Polar Customer ID');
+    if (!profile) {
+      throw new Error('User profile not found');
     }
 
-    return polarCustomerId;
-  },
-  server: process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
-});
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.customerId,
+      return_url: returnUrl,
+    });
+
+    return NextResponse.redirect(session.url);
+  } catch (error) {
+    const message = parseError(error);
+
+    return new Response(message, { status: 500 });
+  }
+};

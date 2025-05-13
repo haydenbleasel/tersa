@@ -1,8 +1,8 @@
+import { getCredits } from '@/app/actions/credits/get';
 import { profile } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { database } from './database';
 import { env } from './env';
-import { polar } from './polar';
 import { createClient } from './supabase/server';
 
 export const currentUser = async () => {
@@ -27,18 +27,10 @@ export const currentUserProfile = async () => {
     .where(eq(profile.id, user.id));
   let userProfile = userProfiles.at(0);
 
-  if (!userProfile) {
-    const customer = await polar.customers.create({
-      email: user.email ?? '',
-      externalId: user.id,
-    });
-
+  if (!userProfile && user.email) {
     const response = await database
       .insert(profile)
-      .values({
-        id: user.id,
-        customerId: customer.id,
-      })
+      .values({ id: user.id })
       .returning();
 
     if (!response.length) {
@@ -60,31 +52,24 @@ export const getSubscribedUser = async () => {
 
   const profile = await currentUserProfile();
 
+  if (!profile) {
+    throw new Error('User profile not found');
+  }
+
   if (!profile.subscriptionId) {
-    throw new Error('Please claim your free AI credits to use AI features.');
+    throw new Error('Claim your free AI credits to use this feature.');
   }
 
-  if (!profile.customerId) {
-    throw new Error('Customer ID not found');
+  const credits = await getCredits();
+
+  if ('error' in credits) {
+    throw new Error(credits.error);
   }
 
-  const state = await polar.customers.getState({
-    id: profile.customerId,
-  });
-
-  const meter = state.activeMeters?.find(
-    (m) => m.meterId === env.POLAR_CREDITS_METER_ID
-  );
-
-  const hasHobbySubscription = state.activeSubscriptions.some(
-    (s) => s.productId === env.POLAR_HOBBY_PRODUCT_ID
-  );
-
-  if (!meter) {
-    throw new Error('No credits meter found');
-  }
-
-  if (meter.balance <= 0 && hasHobbySubscription) {
+  if (
+    profile.productId === env.STRIPE_HOBBY_PRODUCT_ID &&
+    credits.credits <= 0
+  ) {
     throw new Error(
       'Sorry, you have no credits remaining! Please upgrade for more credits.'
     );

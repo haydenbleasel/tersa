@@ -62,7 +62,7 @@ export const TextTransform = ({
 
       toast.success('Text generated successfully');
 
-      setTimeout(() => mutate('credits'), 1000);
+      setTimeout(() => mutate('credits'), 5000);
     },
   });
 

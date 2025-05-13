@@ -81,7 +81,7 @@ export const VideoTransform = ({
 
       toast.success('Video generated successfully');
 
-      setTimeout(() => mutate('credits'), 1000);
+      setTimeout(() => mutate('credits'), 5000);
     } catch (error) {
       handleError('Error generating video', error);
     } finally {

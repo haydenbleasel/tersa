@@ -4,7 +4,7 @@ import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { imageModels } from '@/lib/models/image';
-import { trackCreditUsage } from '@/lib/polar';
+import { trackCreditUsage } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
@@ -83,7 +83,6 @@ export const editImageAction = async ({
     }
 
     await trackCreditUsage({
-      userId: user.id,
       action: 'edit_image',
       cost: model.getCost({
         textInput: response.usage.input_tokens_details.text_tokens,

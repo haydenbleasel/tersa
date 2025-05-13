@@ -1,8 +1,8 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { parseError } from '@/lib/error/parse';
 import { textModels } from '@/lib/models/text';
-import { trackCreditUsage } from '@/lib/polar';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
+import { trackCreditUsage } from '@/lib/stripe';
 import { streamObject } from 'ai';
 import { z } from 'zod';
 
@@ -77,7 +77,6 @@ export const POST = async (req: Request) => {
     ].join('\n'),
     onFinish: async ({ usage }) => {
       await trackCreditUsage({
-        userId,
         action: 'chat',
         cost: model.getCost({
           input: usage.promptTokens,

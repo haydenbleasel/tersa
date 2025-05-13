@@ -4,7 +4,7 @@ import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { speechModels } from '@/lib/models/speech';
-import { trackCreditUsage } from '@/lib/polar';
+import { trackCreditUsage } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
@@ -56,7 +56,6 @@ export const generateSpeechAction = async ({
     });
 
     await trackCreditUsage({
-      userId: user.id,
       action: 'generate_speech',
       cost: model.getCost(text.length),
     });

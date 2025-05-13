@@ -1,13 +1,14 @@
 'use client';
 
 import { getCredits } from '@/app/actions/credits/get';
+import { Button } from '@/components/ui/button';
 import { CoinsIcon } from 'lucide-react';
 import Link from 'next/link';
 import useSWR from 'swr';
-import { Button } from './ui/button';
 
-type CreditsCounterProps = {
-  credits: number;
+type CreditsClientProps = {
+  defaultCredits: number;
+  canUpgrade: boolean;
 };
 
 const creditsFetcher = async () => {
@@ -20,10 +21,14 @@ const creditsFetcher = async () => {
   return response;
 };
 
-export const CreditsCounter = ({ credits }: CreditsCounterProps) => {
+const pluralize = (count: number) => (count === 1 ? 'credit' : 'credits');
+
+export const CreditsClient = ({
+  defaultCredits,
+  canUpgrade,
+}: CreditsClientProps) => {
   const { data, error } = useSWR('credits', creditsFetcher, {
-    revalidateOnMount: false,
-    fallbackData: { credits },
+    fallbackData: { credits: defaultCredits },
   });
 
   if (error) {
@@ -35,15 +40,15 @@ export const CreditsCounter = ({ credits }: CreditsCounterProps) => {
       <CoinsIcon size={16} />
       {data.credits < 0 ? (
         <p className="text-nowrap text-sm">
-          {Math.abs(data.credits)} credits in overage
-          <Button asChild size="sm" className="-my-2 -mr-3 ml-3 rounded-full">
-            <Link href="/pricing">Upgrade</Link>
-          </Button>
+          {Math.abs(data.credits)} {pluralize(Math.abs(data.credits))} in
+          overage
         </p>
       ) : (
-        <p className="text-nowrap text-sm">{data.credits} credits remaining</p>
+        <p className="text-nowrap text-sm">
+          {data.credits} {pluralize(data.credits)} remaining
+        </p>
       )}
-      {!data.credits && (
+      {data.credits <= 0 && canUpgrade && (
         <Button size="sm" className="-my-2 -mr-3 ml-1 rounded-full" asChild>
           <Link href="/pricing">Upgrade</Link>
         </Button>

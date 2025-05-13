@@ -5,7 +5,7 @@ import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { imageModels } from '@/lib/models/image';
 import { visionModels } from '@/lib/models/vision';
-import { trackCreditUsage } from '@/lib/polar';
+import { trackCreditUsage } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import {
@@ -108,7 +108,6 @@ export const generateImageAction = async ({
       });
 
       await trackCreditUsage({
-        userId: user.id,
         action: 'generate_image',
         cost: model.getCost(generatedImageResponse.usage),
       });
@@ -129,7 +128,6 @@ export const generateImageAction = async ({
       });
 
       await trackCreditUsage({
-        userId: user.id,
         action: 'generate_image',
         cost: model.getCost(),
       });

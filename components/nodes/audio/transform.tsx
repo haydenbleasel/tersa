@@ -83,7 +83,7 @@ export const AudioTransform = ({
 
       toast.success('Audio generated successfully');
 
-      setTimeout(() => mutate('credits'), 1000);
+      setTimeout(() => mutate('credits'), 5000);
     } catch (error) {
       handleError('Error generating audio', error);
     } finally {

@@ -1,4 +1,4 @@
-import { currentUser, currentUserProfile } from '@/lib/auth';
+import { currentUserProfile } from '@/lib/auth';
 import { env } from '@/lib/env';
 import type { Metadata } from 'next';
 import { Hero } from './components/hero';
@@ -9,23 +9,18 @@ export const metadata: Metadata = {
 };
 
 const PricingPage = async () => {
-  const user = await currentUser();
+  const profile = await currentUserProfile();
   let currentPlan: 'hobby' | 'pro' | undefined;
 
-  if (user) {
-    const profile = await currentUserProfile();
-
-    if (profile.productId === env.POLAR_HOBBY_PRODUCT_ID) {
+  if (profile) {
+    if (profile.productId === env.STRIPE_HOBBY_PRODUCT_ID) {
       currentPlan = 'hobby';
-    } else if (
-      profile.productId === env.POLAR_PRO_PRODUCT_MONTHLY_ID ||
-      profile.productId === env.POLAR_PRO_PRODUCT_YEARLY_ID
-    ) {
+    } else if (profile.productId === env.STRIPE_PRO_PRODUCT_ID) {
       currentPlan = 'pro';
     }
   }
 
-  return <Hero userId={user?.id} currentPlan={currentPlan} />;
+  return <Hero currentPlan={currentPlan} />;
 };
 
 export default PricingPage;

@@ -4,7 +4,7 @@ import { getSubscribedUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
 import { videoModels } from '@/lib/models/video';
-import { trackCreditUsage } from '@/lib/polar';
+import { trackCreditUsage } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import { eq } from 'drizzle-orm';
@@ -84,7 +84,6 @@ export const generateVideoAction = async ({
     }
 
     await trackCreditUsage({
-      userId: user.id,
       action: 'generate_video',
       cost: model.getCost(),
     });

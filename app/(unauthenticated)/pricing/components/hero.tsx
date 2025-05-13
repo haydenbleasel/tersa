@@ -23,7 +23,6 @@ import Link from 'next/link';
 import { type ComponentProps, useMemo, useState } from 'react';
 
 type HeroProps = {
-  userId?: string | undefined;
   currentPlan?: 'hobby' | 'pro' | undefined;
 };
 
@@ -43,8 +42,8 @@ type Plan = {
   variant: ComponentProps<typeof Button>['variant'];
 };
 
-export const Hero = ({ userId, currentPlan }: HeroProps) => {
-  const [yearly, setYearly] = useState(true);
+export const Hero = ({ currentPlan }: HeroProps) => {
+  const [yearly, setYearly] = useState(false);
 
   const plans = useMemo(() => {
     const free: Plan = {
@@ -58,7 +57,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': false,
         credits: 500,
       },
-      ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'yearly' : 'monthly'}&userId=${userId}`,
+      ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -74,7 +73,7 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
         'advanced-ai': true,
         credits: 1000,
       },
-      ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'yearly' : 'monthly'}&userId=${userId}`,
+      ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
       variant: 'outline',
     };
@@ -94,12 +93,6 @@ export const Hero = ({ userId, currentPlan }: HeroProps) => {
       ctaText: 'Get in Touch',
       variant: 'outline',
     };
-
-    if (currentPlan) {
-      for (const plan of [free, pro, enterprise]) {
-        plan.ctaLink = '/api/portal';
-      }
-    }
 
     if (currentPlan === 'hobby') {
       free.ctaText = 'Manage';
