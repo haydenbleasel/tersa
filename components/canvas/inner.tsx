@@ -76,7 +76,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     onConnect: yjsOnConnect,
     addNode: yjsAddNode,
     removeDropNodes: yjsRemoveDropNodes,
-  } = useCollaboration(data, save);
+  } = useCollaboration({ id: data.id, members: data.members, content }, save);
 
   // Use Y.js state if there are members, otherwise use local state
   const nodes = data.members?.length ? yjsNodes : localNodes;

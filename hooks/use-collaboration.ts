@@ -16,6 +16,10 @@ import * as Y from 'yjs';
 type CollaborationProps = {
   id: string;
   members: string[] | null;
+  content?: {
+    nodes: Node[];
+    edges: Edge[];
+  };
 };
 
 type CollaborationReturn = {
@@ -36,8 +40,8 @@ export const useCollaboration = (
   const yDoc = useRef<Y.Doc | null>(null);
   const yNodes = useRef<Y.Array<Node> | null>(null);
   const yEdges = useRef<Y.Array<Edge> | null>(null);
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes] = useState<Node[]>(data.content?.nodes ?? []);
+  const [edges, setEdges] = useState<Edge[]>(data.content?.edges ?? []);
 
   useEffect(() => {
     if (!data.members?.length) {
@@ -55,6 +59,12 @@ export const useCollaboration = (
     // Create shared arrays for nodes and edges (initially empty)
     yNodes.current = ydoc.getArray<Node>('nodes');
     yEdges.current = ydoc.getArray<Edge>('edges');
+
+    // Initialize with existing content if available
+    if (data.content) {
+      yNodes.current.push(data.content.nodes);
+      yEdges.current.push(data.content.edges);
+    }
 
     // Observe changes on yNodes and yEdges, update React state
     yNodes.current?.observe(() => {
@@ -75,7 +85,7 @@ export const useCollaboration = (
       provider.destroy();
       ydoc.destroy();
     };
-  }, [data.id, data.members?.length, save]);
+  }, [data.id, data.members?.length, save, data.content]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     setNodes((current) => {
