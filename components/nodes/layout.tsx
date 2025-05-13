@@ -117,8 +117,6 @@ export const NodeLayout = ({
     updateNode(id, { selected: true });
   };
 
-  console.log(selectedColor);
-
   return (
     <>
       <ContextMenu onOpenChange={handleSelect}>
