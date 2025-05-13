@@ -69,10 +69,26 @@ export const useCollaboration = (
     // Initialize with existing content if available
     if (data.content && yNodes.current && yEdges.current) {
       try {
-        yNodes.current.push(data.content.nodes);
-        yEdges.current.push(data.content.edges);
+        // Ensure we have valid arrays to work with
+        const nodes = Array.isArray(data.content.nodes)
+          ? data.content.nodes
+          : [];
+        const edges = Array.isArray(data.content.edges)
+          ? data.content.edges
+          : [];
+
+        console.log('Initializing Y.js with nodes:', nodes);
+        console.log('Initializing Y.js with edges:', edges);
+
+        for (const node of nodes) {
+          yNodes.current?.push([node]);
+        }
+        for (const edge of edges) {
+          yEdges.current?.push([edge]);
+        }
       } catch (error) {
         console.error('Error initializing Y.js arrays:', error);
+        console.error('Data content:', data.content);
       }
     }
 

@@ -133,12 +133,21 @@ export default function createSupabaseProvider(
     }: { added: number[]; updated: number[]; removed: number[] },
     origin: unknown
   ) => {
-    const changedClients = added.concat(updated).concat(removed);
-    const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
-      awareness,
-      changedClients
-    );
-    emitter.emit('awareness', awarenessUpdate);
+    try {
+      const changedClients = added.concat(updated).concat(removed);
+      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
+        awareness,
+        changedClients
+      );
+      if (awarenessUpdate && awarenessUpdate.length > 0) {
+        emitter.emit('awareness', awarenessUpdate);
+      }
+    } catch (error) {
+      logger(
+        'Error encoding awareness update:',
+        error instanceof Error ? error.message : String(error)
+      );
+    }
   };
 
   const removeSelfFromAwarenessOnUnload = () => {
@@ -290,7 +299,18 @@ export default function createSupabaseProvider(
   };
 
   const onAwareness = (message: Uint8Array) => {
-    awarenessProtocol.applyAwarenessUpdate(awareness, message, provider);
+    try {
+      if (!message || message.length === 0) {
+        logger('Received empty awareness update');
+        return;
+      }
+      awarenessProtocol.applyAwarenessUpdate(awareness, message, provider);
+    } catch (error) {
+      logger(
+        'Error applying awareness update:',
+        error instanceof Error ? error.message : String(error)
+      );
+    }
   };
 
   const onAuth = (message: Uint8Array) => {
@@ -356,21 +376,21 @@ export default function createSupabaseProvider(
   }
 
   // Set up awareness and message event listeners
-  emitter.on('awareness', (update) => {
+  emitter.on('awareness', (event) => {
     if (channel)
       channel.send({
         type: 'broadcast',
         event: 'awareness',
-        payload: Array.from(update),
+        payload: Array.from(event.detail),
       });
   });
 
-  emitter.on('message', (update) => {
+  emitter.on('message', (event) => {
     if (channel)
       channel.send({
         type: 'broadcast',
         event: 'message',
-        payload: Array.from(update),
+        payload: Array.from(event.detail),
       });
   });
 
