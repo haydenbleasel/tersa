@@ -8,12 +8,23 @@ import {
   CursorPointer,
 } from '@/components/ui/kibo-ui/cursor';
 import { usePerfectCursor } from '@/hooks/use-perfect-cursor';
-import type { CursorEventPayload } from '@/hooks/use-realtime-cursors';
 import { useReactFlow } from '@xyflow/react';
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
 type CursorProps = {
-  data: CursorEventPayload;
+  data: {
+    position: {
+      x: number;
+      y: number;
+    };
+    user: {
+      id: string;
+      name: string;
+      avatar: string;
+      color: string;
+    };
+    timestamp: number;
+  };
 };
 
 export const Cursor = ({ data }: CursorProps) => {
@@ -45,10 +56,10 @@ export const Cursor = ({ data }: CursorProps) => {
       }}
     >
       <CursorComponent className="relative">
-        <CursorPointer className="size-5" style={{ color: data.color }} />
+        <CursorPointer className="size-5" style={{ color: data.user.color }} />
         <CursorBody
           className="flex-row items-center gap-2 py-1.5 font-semibold text-sm text-white"
-          style={{ backgroundColor: data.color }}
+          style={{ backgroundColor: data.user.color }}
         >
           <Avatar className="h-4 w-4 rounded-full">
             <AvatarImage src={data.user.avatar} />

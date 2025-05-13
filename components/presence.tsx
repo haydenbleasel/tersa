@@ -7,21 +7,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useRealtimePresenceRoom } from '@/hooks/use-realtime-presence-room';
-import { useMemo } from 'react';
+import { useRealtime } from '@/providers/realtime';
+import { type CSSProperties, useMemo } from 'react';
 
 const MAX_AVATARS_AMOUNT = 3;
 
-export const Presence = ({ roomName }: { roomName: string }) => {
-  const { users: usersMap } = useRealtimePresenceRoom(roomName);
+export const Presence = () => {
+  const { users } = useRealtime();
 
   const avatars = useMemo(
     () =>
-      Object.values(usersMap).map((user) => ({
+      Object.values(users).map((user) => ({
         name: user.name,
         image: user.avatar,
+        color: user.color,
       })),
-    [usersMap]
+    [users]
   );
 
   const shownAvatars = avatars.slice(0, MAX_AVATARS_AMOUNT);
@@ -29,10 +30,13 @@ export const Presence = ({ roomName }: { roomName: string }) => {
 
   return (
     <AvatarStack size={32}>
-      {shownAvatars.map(({ name, image }, index) => (
+      {shownAvatars.map(({ name, image, color }, index) => (
         <Tooltip key={`${name}-${image}-${index}`}>
           <TooltipTrigger asChild className="size-full">
-            <Avatar className="hover:z-10">
+            <Avatar
+              className="border-2 border-[var(--border-color)] hover:z-10"
+              style={{ '--border-color': color } as CSSProperties}
+            >
               <AvatarImage src={image} />
               <AvatarFallback>
                 {name

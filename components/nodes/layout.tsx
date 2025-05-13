@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
 import { useNodeOperations } from '@/providers/node-operations';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
@@ -23,7 +24,7 @@ import {
   TrashIcon,
   UserIcon,
 } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { type CSSProperties, type ReactNode, useState } from 'react';
 import { Switch } from '../ui/switch';
 import { NodeToolbar } from './toolbar';
 
@@ -57,6 +58,8 @@ export const NodeLayout = ({
     useReactFlow();
   const { duplicateNode } = useNodeOperations();
   const [showData, setShowData] = useState(false);
+  const user = useUser();
+  const isSelected = getNode(id)?.selected;
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
@@ -135,6 +138,13 @@ export const NodeLayout = ({
                 'node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 ring-1 ring-border transition-all',
                 className
               )}
+              style={
+                isSelected
+                  ? ({
+                      '--cursor-color': user?.user_metadata?.color,
+                    } as CSSProperties)
+                  : undefined
+              }
             >
               <div className="overflow-hidden rounded-3xl bg-card">
                 {children}

@@ -1,8 +1,8 @@
+import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useUser } from './use-user';
 
 /**
  * Throttle a callback to a certain delay, It will only call the callback if the delay has passed, with the arguments
@@ -84,7 +84,21 @@ export const useRealtimeCursors = ({
   throttleMs: number;
 }) => {
   const user = useUser();
-  const [color] = useState(colors[Math.floor(Math.random() * colors.length)]);
+  const [color] = useState(() => {
+    // If user already has a cursor color, use it
+    if (user?.user_metadata?.color) {
+      return user.user_metadata.color;
+    }
+    // Otherwise, assign a random color and store it
+    const newColor = colors[Math.floor(Math.random() * colors.length)];
+    if (user) {
+      user.user_metadata = {
+        ...user.user_metadata,
+        color: newColor,
+      };
+    }
+    return newColor;
+  });
   const [cursors, setCursors] = useState<Record<string, CursorEventPayload>>(
     {}
   );

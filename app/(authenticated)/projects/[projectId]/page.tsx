@@ -3,7 +3,9 @@ import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
 import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
+import { RealtimeProvider } from '@/providers/realtime';
 import { projects } from '@/schema';
+import { ReactFlowProvider } from '@xyflow/react';
 import { arrayContains, eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -52,13 +54,17 @@ const Project = async ({ params }: ProjectProps) => {
 
   return (
     <div className="h-screen w-screen">
-      <Canvas data={project} />
-      <Suspense fallback={null}>
-        <TopLeft id={projectId} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <TopRight id={projectId} />
-      </Suspense>
+      <ReactFlowProvider>
+        <RealtimeProvider roomName={project.id}>
+          <Canvas data={project} />
+          <Suspense fallback={null}>
+            <TopLeft id={projectId} />
+          </Suspense>
+          <Suspense fallback={null}>
+            <TopRight id={projectId} />
+          </Suspense>
+        </RealtimeProvider>
+      </ReactFlowProvider>
     </div>
   );
 };

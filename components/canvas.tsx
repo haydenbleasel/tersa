@@ -1,5 +1,4 @@
 'use client';
-
 import { useCollaboration } from '@/hooks/use-collaboration';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
@@ -30,19 +29,19 @@ import { nanoid } from 'nanoid';
 import type { MouseEventHandler } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { ConnectionLine } from '../connection-line';
-import { Controls } from '../controls';
-import { RealtimeCursors } from '../cursors';
-import { edgeTypes } from '../edges';
-import { nodeTypes } from '../nodes';
-import { SaveIndicator } from '../save-indicator';
-import { Toolbar } from '../toolbar';
+import { ConnectionLine } from './connection-line';
+import { Controls } from './controls';
+import { RealtimeCursors } from './cursors';
+import { edgeTypes } from './edges';
+import { nodeTypes } from './nodes';
+import { SaveIndicator } from './save-indicator';
+import { Toolbar } from './toolbar';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from '../ui/context-menu';
+} from './ui/context-menu';
 
 type ProjectData = {
   content?:
@@ -58,7 +57,7 @@ export type CanvasProps = {
   canvasProps?: ReactFlowProps;
 };
 
-export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
+export const Canvas = ({ data, canvasProps }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [localNodes, setLocalNodes] = useState<Node[]>(content?.nodes ?? []);
   const [localEdges, setLocalEdges] = useState<Edge[]>(content?.edges ?? []);
@@ -396,9 +395,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
                     <Controls />
                     <Toolbar />
                     <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
-                    {Boolean(data.members?.length) && (
-                      <RealtimeCursors roomName={`${data.id}-cursors`} />
-                    )}
+                    {Boolean(data.members?.length) && <RealtimeCursors />}
                   </>
                 )}
               </ReactFlow>
