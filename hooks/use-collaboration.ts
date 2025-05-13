@@ -1,4 +1,5 @@
-import { env } from '@/lib/env';
+import { createClient } from '@/lib/supabase/client';
+import SupabaseProvider from '@/lib/supabase/y-supabase';
 import {
   type Connection,
   type Edge,
@@ -10,8 +11,9 @@ import {
 } from '@xyflow/react';
 import { nanoid } from 'nanoid';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { WebrtcProvider } from 'y-webrtc';
 import * as Y from 'yjs';
+
+const supabase = createClient();
 
 type CollaborationProps = {
   id: string;
@@ -51,9 +53,13 @@ export const useCollaboration = (
     // Create a new Y.Doc (CRDT document)
     const ydoc = new Y.Doc();
 
-    // Connect peers in the same "room" for P2P sync. Clients must use the same roomName.
-    const provider = new WebrtcProvider(`tersa-${data.id}`, ydoc, {
-      signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
+    // Connect peers using SupabaseProvider for sync.
+    const provider = new SupabaseProvider(ydoc, supabase, {
+      channel: `tersa-${data.id}`,
+      tableName: 'project',
+      columnName: 'content',
+      id: data.id,
+      resyncInterval: 5000, // Optional
     });
 
     // Create shared arrays for nodes and edges (initially empty)
@@ -61,9 +67,13 @@ export const useCollaboration = (
     yEdges.current = ydoc.getArray<Edge>('edges');
 
     // Initialize with existing content if available
-    if (data.content) {
-      yNodes.current.push(data.content.nodes);
-      yEdges.current.push(data.content.edges);
+    if (data.content && yNodes.current && yEdges.current) {
+      try {
+        yNodes.current.push(data.content.nodes);
+        yEdges.current.push(data.content.edges);
+      } catch (error) {
+        console.error('Error initializing Y.js arrays:', error);
+      }
     }
 
     // Observe changes on yNodes and yEdges, update React state
@@ -75,9 +85,6 @@ export const useCollaboration = (
       setEdges(yEdges.current?.toArray() ?? []);
     });
 
-    // Save the nodes and edges to the database
-    ydoc.on('update', save);
-
     yDoc.current = ydoc;
 
     // Clean up on unmount
@@ -85,7 +92,7 @@ export const useCollaboration = (
       provider.destroy();
       ydoc.destroy();
     };
-  }, [data.id, data.members?.length, save, data.content]);
+  }, [data.id, data.members?.length, data.content]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     setNodes((current) => {
