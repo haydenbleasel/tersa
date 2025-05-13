@@ -383,9 +383,6 @@ importers:
       vaul:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      y-protocols:
-        specifier: ^1.0.6
-        version: 1.0.6(yjs@13.6.26)
       y-webrtc:
         specifier: ^10.3.0
         version: 10.3.0(yjs@13.6.26)

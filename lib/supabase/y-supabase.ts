@@ -4,7 +4,6 @@ import {
   type SupabaseClient,
 } from '@supabase/supabase-js';
 import debounce from 'debounce';
-import * as awarenessProtocol from 'y-protocols/awareness';
 import * as Y from 'yjs';
 
 export interface SupabaseProviderConfig {
@@ -13,7 +12,6 @@ export interface SupabaseProviderConfig {
   columnName: string;
   idName?: string;
   id: string | number;
-  awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
 }
 
@@ -23,7 +21,6 @@ type EventMap = {
   error: CustomEvent<SupabaseProvider>;
   status: CustomEvent<{ status: string }[]>;
   message: CustomEvent<Uint8Array>;
-  awareness: CustomEvent<Uint8Array>;
   save: CustomEvent<number>;
   synced: CustomEvent<boolean[]>;
   sync: CustomEvent<boolean[]>;
@@ -51,23 +48,15 @@ class EventBus extends EventTarget {
 }
 
 export interface SupabaseProvider {
-  awareness: awarenessProtocol.Awareness;
   id: number;
   version: number;
   isOnline: (online?: boolean) => boolean;
   onDocumentUpdate: (update: Uint8Array, origin: unknown) => void;
-  onAwarenessUpdate: (
-    update: { added: number[]; updated: number[]; removed: number[] },
-    origin: unknown
-  ) => void;
-  removeSelfFromAwarenessOnUnload: () => void;
   save: () => Promise<void>;
   destroy: () => void;
   onConnecting: () => void;
   onDisconnect: () => void;
   onMessage: (message: Uint8Array, origin: unknown) => void;
-  onAwareness: (message: Uint8Array) => void;
-  onAuth: (message: Uint8Array) => void;
   get synced(): boolean;
   set synced(state: boolean);
 }
@@ -90,7 +79,6 @@ export default function createSupabaseProvider(
   let resyncInterval: NodeJS.Timeout | undefined;
   let version = 0;
 
-  const awareness = config.awareness || new awarenessProtocol.Awareness(doc);
   const id = doc.clientID;
 
   const debouncedSave = debounce(async () => {
@@ -125,39 +113,6 @@ export default function createSupabaseProvider(
       emitter.emit('message', update);
       debouncedSave();
     }
-  };
-
-  const onAwarenessUpdate = (
-    {
-      added,
-      updated,
-      removed,
-    }: { added: number[]; updated: number[]; removed: number[] },
-    origin: unknown
-  ) => {
-    try {
-      const changedClients = added.concat(updated).concat(removed);
-      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
-        awareness,
-        changedClients
-      );
-      if (awarenessUpdate && awarenessUpdate.length > 0) {
-        emitter.emit('awareness', awarenessUpdate);
-      }
-    } catch (error) {
-      logger(
-        'Error encoding awareness update:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-  };
-
-  const removeSelfFromAwarenessOnUnload = () => {
-    awarenessProtocol.removeAwarenessStates(
-      awareness,
-      [doc.clientID],
-      'window unload'
-    );
   };
 
   const save = async () => {
@@ -198,13 +153,6 @@ export default function createSupabaseProvider(
           { event: EVENT_NAME },
           ({ payload }) => {
             onMessage(Uint8Array.from(payload), provider);
-          }
-        )
-        .on(
-          REALTIME_LISTEN_TYPES.BROADCAST,
-          { event: 'awareness' },
-          ({ payload }) => {
-            onAwareness(Uint8Array.from(payload));
           }
         )
         .subscribe((status, err) => {
@@ -255,14 +203,6 @@ export default function createSupabaseProvider(
     isOnline(true);
 
     emitter.emit('status', [{ status: 'connected' }]);
-
-    if (awareness.getLocalState() !== null) {
-      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
-        awareness,
-        [doc.clientID]
-      );
-      emitter.emit('awareness', awarenessUpdate);
-    }
   };
 
   const onConnecting = () => {
@@ -281,11 +221,6 @@ export default function createSupabaseProvider(
     if (isOnline()) {
       emitter.emit('status', [{ status: 'disconnected' }]);
     }
-
-    const states = Array.from(awareness.getStates().keys()).filter(
-      (client) => client !== doc.clientID
-    );
-    awarenessProtocol.removeAwarenessStates(awareness, states, provider);
   };
 
   const onMessage = (message: Uint8Array, origin: unknown) => {
@@ -300,30 +235,6 @@ export default function createSupabaseProvider(
     }
   };
 
-  const onAwareness = (message: Uint8Array) => {
-    try {
-      if (!message || message.length === 0) {
-        logger('Received empty awareness update');
-        return;
-      }
-      awarenessProtocol.applyAwarenessUpdate(awareness, message, provider);
-    } catch (error) {
-      logger(
-        'Error applying awareness update:',
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-  };
-
-  const onAuth = (message: Uint8Array) => {
-    logger(`received ${message.byteLength} bytes from peer: ${message}`);
-
-    if (!message) {
-      logger('Permission denied to channel');
-    }
-    logger('processed message (type = MessageAuth)');
-  };
-
   const destroy = () => {
     logger('destroying');
 
@@ -331,16 +242,6 @@ export default function createSupabaseProvider(
       clearInterval(resyncInterval);
     }
 
-    if (typeof window !== 'undefined') {
-      window.removeEventListener(
-        'beforeunload',
-        removeSelfFromAwarenessOnUnload
-      );
-    } else if (typeof process !== 'undefined') {
-      process.off('exit', () => removeSelfFromAwarenessOnUnload);
-    }
-
-    awareness.off('update', onAwarenessUpdate);
     doc.off('update', onDocumentUpdate);
 
     if (channel) disconnect();
@@ -370,23 +271,7 @@ export default function createSupabaseProvider(
     }, config.resyncInterval || 5000);
   }
 
-  // Set up window/process event listeners
-  if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', removeSelfFromAwarenessOnUnload);
-  } else if (typeof process !== 'undefined') {
-    process.on('exit', () => removeSelfFromAwarenessOnUnload);
-  }
-
-  // Set up awareness and message event listeners
-  emitter.on('awareness', (event) => {
-    if (channel)
-      channel.send({
-        type: 'broadcast',
-        event: 'awareness',
-        payload: Array.from(event.detail),
-      });
-  });
-
+  // Set up message event listeners
   emitter.on('message', (event) => {
     if (channel) {
       channel.send({
@@ -400,24 +285,18 @@ export default function createSupabaseProvider(
   // Initialize connection
   connect();
   doc.on('update', onDocumentUpdate);
-  awareness.on('update', onAwarenessUpdate);
 
   // Create provider object
   const provider: SupabaseProvider = {
-    awareness,
     id,
     version,
     isOnline,
     onDocumentUpdate,
-    onAwarenessUpdate,
-    removeSelfFromAwarenessOnUnload,
     save,
     destroy,
     onConnecting,
     onDisconnect,
     onMessage,
-    onAwareness,
-    onAuth,
     get synced() {
       return _synced;
     },
