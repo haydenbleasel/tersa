@@ -2,6 +2,7 @@
 
 import { getCredits } from '@/app/actions/credits/get';
 import { Button } from '@/components/ui/button';
+import NumberFlow from '@number-flow/react';
 import { CoinsIcon } from 'lucide-react';
 import Link from 'next/link';
 import useSWR from 'swr';
@@ -35,19 +36,18 @@ export const CreditsClient = ({
     return null;
   }
 
+  const label = pluralize(Math.abs(data.credits));
+
   return (
     <div className="flex shrink-0 items-center gap-2 px-2 text-muted-foreground">
       <CoinsIcon size={16} />
-      {data.credits < 0 ? (
-        <p className="text-nowrap text-sm">
-          {Math.abs(data.credits)} {pluralize(Math.abs(data.credits))} in
-          overage
-        </p>
-      ) : (
-        <p className="text-nowrap text-sm">
-          {data.credits} {pluralize(data.credits)} remaining
-        </p>
-      )}
+      <NumberFlow
+        className="text-nowrap text-sm"
+        value={Math.abs(data.credits)}
+        suffix={
+          data.credits < 0 ? ` ${label} in overage` : ` ${label} remaining`
+        }
+      />
       {data.credits <= 0 && canUpgrade && (
         <Button size="sm" className="-my-2 -mr-3 ml-1 rounded-full" asChild>
           <Link href="/pricing">Upgrade</Link>
