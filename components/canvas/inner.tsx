@@ -371,6 +371,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
           <ContextMenu>
             <ContextMenuTrigger>
               <ReactFlow
+                deleteKeyCode={['Backspace', 'Delete']}
                 nodes={nodes}
                 onNodesChange={onNodesChange}
                 edges={edges}
