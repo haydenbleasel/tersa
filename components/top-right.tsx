@@ -32,11 +32,11 @@ export const TopRight = async ({ id }: TopRightProps) => {
   return (
     <>
       <div className="fixed top-16 right-0 left-0 z-[50] m-4 flex items-center gap-2 sm:top-0 sm:left-auto">
-        <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
-          {Boolean(project.members?.length) && (
+        {Boolean(project.members?.length) && (
+          <div className="flex flex-1 items-center rounded-full border bg-card/90 p-1.5 drop-shadow-xs backdrop-blur-sm">
             <Presence roomName={`${id}-presence`} />
-          )}
-        </div>
+          </div>
+        )}
         {profile.subscriptionId ? (
           <div className="flex flex-1 items-center rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm">
             <CreditsCounter credits={credits.credits} />
