@@ -1,13 +1,11 @@
-import { EventEmitter } from 'node:events';
-import debounce from 'debounce';
-import * as awarenessProtocol from 'y-protocols/awareness';
-import * as Y from 'yjs';
-
 import {
   REALTIME_LISTEN_TYPES,
   type RealtimeChannel,
   type SupabaseClient,
 } from '@supabase/supabase-js';
+import debounce from 'debounce';
+import * as awarenessProtocol from 'y-protocols/awareness';
+import * as Y from 'yjs';
 
 export interface SupabaseProviderConfig {
   channel: string;
@@ -17,6 +15,39 @@ export interface SupabaseProviderConfig {
   id: string | number;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
+}
+
+type EventMap = {
+  connect: CustomEvent<SupabaseProvider>;
+  disconnect: CustomEvent<SupabaseProvider>;
+  error: CustomEvent<SupabaseProvider>;
+  status: CustomEvent<{ status: string }[]>;
+  message: CustomEvent<Uint8Array>;
+  awareness: CustomEvent<Uint8Array>;
+  save: CustomEvent<number>;
+  synced: CustomEvent<boolean[]>;
+  sync: CustomEvent<boolean[]>;
+};
+
+class EventBus extends EventTarget {
+  emit<K extends keyof EventMap>(eventName: K, detail: EventMap[K]['detail']) {
+    const event = new CustomEvent(eventName, { detail });
+    this.dispatchEvent(event);
+  }
+
+  on<K extends keyof EventMap>(
+    eventName: K,
+    listener: (event: EventMap[K]) => void
+  ) {
+    this.addEventListener(eventName, listener as EventListener);
+  }
+
+  off<K extends keyof EventMap>(
+    eventName: K,
+    listener: (event: EventMap[K]) => void
+  ) {
+    this.removeEventListener(eventName, listener as EventListener);
+  }
 }
 
 export interface SupabaseProvider {
@@ -46,7 +77,7 @@ export default function createSupabaseProvider(
   supabase: SupabaseClient,
   config: SupabaseProviderConfig
 ): SupabaseProvider {
-  const emitter = new EventEmitter();
+  const emitter = new EventBus();
   const logger = (message: string, ...args: unknown[]) => {
     console.log(`[y-${doc.clientID}] ${message}`, ...args);
   };
