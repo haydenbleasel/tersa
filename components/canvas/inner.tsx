@@ -1,8 +1,8 @@
 'use client';
 
+import { useCollaboration } from '@/hooks/use-collaboration';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
-import { env } from '@/lib/env';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import { NodeOperationsProvider } from '@/providers/node-operations';
@@ -28,10 +28,8 @@ import {
 import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import type { MouseEventHandler } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { WebrtcProvider } from 'y-webrtc';
-import * as Y from 'yjs';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
 import { RealtimeCursors } from '../cursors';
@@ -62,87 +60,74 @@ export type CanvasProps = {
 
 export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
-  const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
-  const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
+  const [localNodes, setLocalNodes] = useState<Node[]>(content?.nodes ?? []);
+  const [localEdges, setLocalEdges] = useState<Edge[]>(content?.edges ?? []);
   const [copiedNodes, setCopiedNodes] = useState<Node[]>([]);
   const { getEdges, screenToFlowPosition, getNodes, getNode, updateNode } =
     useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
 
-  const yDoc = useRef<Y.Doc | null>(null);
-  const yNodes = useRef<Y.Array<Node> | null>(null);
-  const yEdges = useRef<Y.Array<Edge> | null>(null);
+  const {
+    nodes: yjsNodes,
+    edges: yjsEdges,
+    onNodesChange: yjsOnNodesChange,
+    onEdgesChange: yjsOnEdgesChange,
+    onConnect: yjsOnConnect,
+    addNode: yjsAddNode,
+    removeDropNodes: yjsRemoveDropNodes,
+  } = useCollaboration(data, save);
 
-  useEffect(() => {
-    // Create a new Y.Doc (CRDT document)
-    const ydoc = new Y.Doc();
+  // Use Y.js state if there are members, otherwise use local state
+  const nodes = data.members?.length ? yjsNodes : localNodes;
+  const edges = data.members?.length ? yjsEdges : localEdges;
 
-    // Connect peers in the same "room" for P2P sync. Clients must use the same roomName.
-    const provider = new WebrtcProvider(`tersa-${data.id}`, ydoc, {
-      signaling: [env.NEXT_PUBLIC_WSS_SIGNALING_URL],
-    });
+  const onNodesChange = useCallback(
+    (changes: NodeChange<Node>[]) => {
+      if (data.members?.length) {
+        yjsOnNodesChange(changes);
+      } else {
+        setLocalNodes((current) => {
+          const updated = applyNodeChanges(changes, current);
+          save();
+          return updated;
+        });
+      }
+    },
+    [data.members?.length, yjsOnNodesChange, save]
+  );
 
-    // Create shared arrays for nodes and edges (initially empty)
-    yNodes.current = ydoc.getArray<Node>('nodes');
-    yEdges.current = ydoc.getArray<Edge>('edges');
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange<Edge>[]) => {
+      if (data.members?.length) {
+        yjsOnEdgesChange(changes);
+      } else {
+        setLocalEdges((current) => {
+          const updated = applyEdgeChanges(changes, current);
+          save();
+          return updated;
+        });
+      }
+    },
+    [data.members?.length, yjsOnEdgesChange, save]
+  );
 
-    // Observe changes on yNodes and yEdges, update React state
-    yNodes.current?.observe(() => {
-      setNodes(yNodes.current?.toArray() ?? []);
-    });
-
-    yEdges.current?.observe(() => {
-      setEdges(yEdges.current?.toArray() ?? []);
-    });
-
-    // Save the nodes and edges to the database
-    ydoc.on('update', save);
-
-    yDoc.current = ydoc;
-
-    // Clean up on unmount
-    return () => {
-      provider.destroy();
-      ydoc.destroy();
-    };
-  }, [data.id, save]);
-
-  // Handlers to apply local changes both to React Flow and Y.js
-  const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
-    setNodes((current) => {
-      const updated = applyNodeChanges(changes, current);
-      // Replace Yjs nodes with updated array
-      yDoc.current?.transact(() => {
-        yNodes.current?.delete(0, yNodes.current.length);
-        yNodes.current?.insert(0, updated);
-      });
-      return updated;
-    });
-  }, []);
-
-  const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
-    setEdges((current) => {
-      const updated = applyEdgeChanges(changes, current);
-      yDoc.current?.transact(() => {
-        yEdges.current?.delete(0, yEdges.current.length);
-        yEdges.current?.insert(0, updated);
-      });
-      return updated;
-    });
-  }, []);
-
-  const onConnect = useCallback((connection: Connection) => {
-    const newEdge: Edge = {
-      id: nanoid(),
-      type: 'animated',
-      ...connection,
-    };
-
-    yDoc.current?.transact(() => {
-      yEdges.current?.push([newEdge]);
-    });
-  }, []);
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      if (data.members?.length) {
+        yjsOnConnect(connection);
+      } else {
+        const newEdge: Edge = {
+          id: nanoid(),
+          type: 'animated',
+          ...connection,
+        };
+        setLocalEdges((eds: Edge[]) => eds.concat(newEdge));
+        save();
+      }
+    },
+    [data.members?.length, yjsOnConnect, save]
+  );
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
@@ -159,11 +144,16 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
         ...rest,
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      if (data.members?.length) {
+        yjsAddNode(newNode);
+      } else {
+        setLocalNodes((nds: Node[]) => nds.concat(newNode));
+        save();
+      }
 
       return newNode.id;
     },
-    []
+    [data.members?.length, yjsAddNode, save]
   );
 
   const duplicateNode = useCallback(
@@ -216,7 +206,7 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
           },
         });
 
-        setEdges((eds) =>
+        setLocalEdges((eds: Edge[]) =>
           eds.concat({
             id: nanoid(),
             source: isSourceHandle ? sourceId : newNodeId,
@@ -278,11 +268,18 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
 
   const onConnectStart = useCallback(() => {
     // Delete any drop nodes when starting to drag a node
-    setNodes((nds) => nds.filter((n) => n.type !== 'drop'));
-
-    // Also remove any temporary edges
-    setEdges((eds) => eds.filter((e) => e.type !== 'temporary'));
-  }, []);
+    if (data.members?.length) {
+      yjsRemoveDropNodes();
+    } else {
+      setLocalNodes((nds: Node[]) =>
+        nds.filter((n: Node) => n.type !== 'drop')
+      );
+      setLocalEdges((eds: Edge[]) =>
+        eds.filter((e: Edge) => e.type !== 'temporary')
+      );
+      save();
+    }
+  }, [data.members?.length, yjsRemoveDropNodes, save]);
 
   const addDropNode = useCallback<MouseEventHandler<HTMLDivElement>>(
     (event) => {
@@ -299,8 +296,10 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
   );
 
   const handleSelectAll = useCallback(() => {
-    setNodes(nodes.map((node) => ({ ...node, selected: true })));
-  }, [nodes]);
+    setLocalNodes((nodes: Node[]) =>
+      nodes.map((node: Node) => ({ ...node, selected: true }))
+    );
+  }, []);
 
   const handleCopy = useCallback(() => {
     const selectedNodes = getNodes().filter((node) => node.selected);
@@ -325,15 +324,15 @@ export const CanvasInner = ({ data, canvasProps }: CanvasProps) => {
     }));
 
     // Unselect all existing nodes
-    setNodes((nodes) =>
-      nodes.map((node) => ({
+    setLocalNodes((nodes: Node[]) =>
+      nodes.map((node: Node) => ({
         ...node,
         selected: false,
       }))
     );
 
     // Add new nodes
-    setNodes((nodes) => [...nodes, ...newNodes]);
+    setLocalNodes((nodes: Node[]) => [...nodes, ...newNodes]);
   }, [copiedNodes]);
 
   const handleDuplicateAll = useCallback(() => {
