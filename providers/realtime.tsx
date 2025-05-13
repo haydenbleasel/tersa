@@ -38,6 +38,8 @@ type RealtimeContextType = {
   users: Record<string, RealtimeUser>;
   cursors: Record<string, CursorState>;
   color: string;
+  selectedNodes: Record<string, string>;
+  channelRef: React.RefObject<RealtimeChannel | null>;
 };
 
 const RealtimeContext = createContext<RealtimeContextType | null>(null);
@@ -62,6 +64,7 @@ const colors = [
 ];
 
 const CURSOR_EVENT = 'cursor-move';
+const NODE_SELECTION_EVENT = 'node-selection';
 
 export const useRealtime = () => {
   const context = useContext(RealtimeContext);
@@ -84,6 +87,9 @@ export const RealtimeProvider = ({
   const { screenToFlowPosition } = useReactFlow();
   const [users, setUsers] = useState<Record<string, RealtimeUser>>({});
   const [cursors, setCursors] = useState<Record<string, CursorState>>({});
+  const [selectedNodes, setSelectedNodes] = useState<Record<string, string>>(
+    {}
+  );
   const [color] = useState(() => {
     if (user?.user_metadata?.color) {
       return user.user_metadata.color;
@@ -180,6 +186,20 @@ export const RealtimeProvider = ({
           }));
         }
       )
+      .on(
+        'broadcast',
+        { event: NODE_SELECTION_EVENT },
+        ({ payload }: { payload: { nodeId: string; userId: string } }) => {
+          if (user.id === payload.userId) {
+            return;
+          }
+
+          setSelectedNodes((prev) => ({
+            ...prev,
+            [payload.nodeId]: payload.userId,
+          }));
+        }
+      )
       .subscribe(async (status) => {
         if (status !== 'SUBSCRIBED') {
           return;
@@ -205,7 +225,9 @@ export const RealtimeProvider = ({
   }, [roomName, user, color, handleMouseMove]);
 
   return (
-    <RealtimeContext.Provider value={{ users, cursors, color }}>
+    <RealtimeContext.Provider
+      value={{ users, cursors, color, selectedNodes, channelRef }}
+    >
       {children}
     </RealtimeContext.Provider>
   );

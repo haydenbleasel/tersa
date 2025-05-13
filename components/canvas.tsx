@@ -1,4 +1,5 @@
 'use client';
+
 import { useCollaboration } from '@/hooks/use-collaboration';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
@@ -6,6 +7,7 @@ import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import { NodeOperationsProvider } from '@/providers/node-operations';
 import { ProjectProvider } from '@/providers/project';
+import { useRealtime } from '@/providers/realtime';
 import type { projects } from '@/schema';
 import {
   Background,
@@ -66,6 +68,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
+  const { channelRef } = useRealtime();
 
   const {
     nodes: yjsNodes,
@@ -85,6 +88,20 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     (changes: NodeChange<Node>[]) => {
       if (data.members?.length) {
         yjsOnNodesChange(changes);
+
+        // Broadcast selection changes
+        for (const change of changes) {
+          if (change.type === 'select' && user) {
+            channelRef.current?.send({
+              type: 'broadcast',
+              event: 'node-selection',
+              payload: {
+                nodeId: change.id,
+                userId: change.selected ? user.id : null,
+              },
+            });
+          }
+        }
       } else {
         setLocalNodes((current) => {
           const updated = applyNodeChanges(changes, current);
@@ -93,7 +110,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
         });
       }
     },
-    [data.members?.length, yjsOnNodesChange, save]
+    [data.members?.length, yjsOnNodesChange, save, user, channelRef]
   );
 
   const onEdgesChange = useCallback(

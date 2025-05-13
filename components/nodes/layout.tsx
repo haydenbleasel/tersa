@@ -15,6 +15,7 @@ import {
 import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
 import { useNodeOperations } from '@/providers/node-operations';
+import { useRealtime } from '@/providers/realtime';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import {
   BrainIcon,
@@ -24,7 +25,7 @@ import {
   TrashIcon,
   UserIcon,
 } from 'lucide-react';
-import { type CSSProperties, type ReactNode, useState } from 'react';
+import { type CSSProperties, type ReactNode, useMemo, useState } from 'react';
 import { Switch } from '../ui/switch';
 import { NodeToolbar } from './toolbar';
 
@@ -59,7 +60,16 @@ export const NodeLayout = ({
   const { duplicateNode } = useNodeOperations();
   const [showData, setShowData] = useState(false);
   const user = useUser();
-  const isSelected = getNode(id)?.selected;
+  const { selectedNodes, users } = useRealtime();
+
+  const selectedColor = useMemo(() => {
+    const selectedByUserId = selectedNodes[id];
+    const user = Object.values(users).find(
+      (user) => user.id === selectedByUserId
+    );
+
+    return user?.color;
+  }, [selectedNodes, users, id]);
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
@@ -107,6 +117,8 @@ export const NodeLayout = ({
     updateNode(id, { selected: true });
   };
 
+  console.log(selectedColor);
+
   return (
     <>
       <ContextMenu onOpenChange={handleSelect}>
@@ -139,11 +151,9 @@ export const NodeLayout = ({
                 className
               )}
               style={
-                isSelected
-                  ? ({
-                      '--cursor-color': user?.user_metadata?.color,
-                    } as CSSProperties)
-                  : undefined
+                {
+                  '--cursor-color': selectedColor,
+                } as CSSProperties
               }
             >
               <div className="overflow-hidden rounded-3xl bg-card">

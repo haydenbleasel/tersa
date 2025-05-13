@@ -55,7 +55,7 @@ export const useCollaboration = (
 
     // Connect peers using SupabaseProvider for sync.
     const provider = createSupabaseProvider(ydoc, supabase, {
-      channel: `tersa-${data.id}`,
+      channel: data.id,
       tableName: 'project',
       columnName: 'content',
       id: data.id,
