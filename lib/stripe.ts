@@ -22,6 +22,10 @@ export const trackCreditUsage = async ({
     throw new Error('User profile not found');
   }
 
+  if (!profile.customerId) {
+    throw new Error('User customerId not found');
+  }
+
   await stripe.billing.meterEvents.create({
     event_name: env.STRIPE_CREDITS_METER_NAME,
     payload: {

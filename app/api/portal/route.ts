@@ -15,6 +15,10 @@ export const GET = async () => {
       throw new Error('User profile not found');
     }
 
+    if (!profile.customerId) {
+      throw new Error('User customerId not found');
+    }
+
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.customerId,
       return_url: returnUrl,
