@@ -19,12 +19,13 @@ import {
   ComboboxSeparator,
   ComboboxTrigger,
 } from '@/components/ui/kibo-ui/combobox';
+import { useUser } from '@/hooks/use-user';
 import { handleError } from '@/lib/error/handle';
 import { cn } from '@/lib/utils';
 import type { projects } from '@/schema';
 import { CheckIcon, PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { type FormEventHandler, useState } from 'react';
+import { type FormEventHandler, Fragment, useMemo, useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
@@ -43,6 +44,7 @@ export const ProjectSelector = ({
   const [isCreating, setIsCreating] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const router = useRouter();
+  const user = useUser();
 
   const handleCreateProject: FormEventHandler<HTMLFormElement> = async (
     event
@@ -83,6 +85,23 @@ export const ProjectSelector = ({
     router.push(`/projects/${projectId}`);
   };
 
+  const projectGroups = useMemo(() => {
+    if (!user) {
+      return [];
+    }
+
+    return [
+      {
+        label: 'My Projects',
+        data: projects.filter((project) => project.userId === user.id),
+      },
+      {
+        label: 'Other Projects',
+        data: projects.filter((project) => project.userId !== user.id),
+      },
+    ];
+  }, [projects, user]);
+
   return (
     <>
       <Combobox
@@ -106,20 +125,26 @@ export const ProjectSelector = ({
           <ComboboxInput />
           <ComboboxList>
             <ComboboxEmpty />
-            <ComboboxGroup>
-              {projects.map((project) => (
-                <ComboboxItem key={project.id} value={project.id}>
-                  {project.name}
-                  <CheckIcon
-                    className={cn(
-                      'ml-auto',
-                      value === project.id ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                </ComboboxItem>
+            {projectGroups
+              .filter((group) => group.data.length > 0)
+              .map((group) => (
+                <Fragment key={group.label}>
+                  <ComboboxGroup heading={group.label}>
+                    {group.data.map((project) => (
+                      <ComboboxItem key={project.id} value={project.id}>
+                        {project.name}
+                        <CheckIcon
+                          className={cn(
+                            'ml-auto',
+                            value === project.id ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                      </ComboboxItem>
+                    ))}
+                  </ComboboxGroup>
+                  <ComboboxSeparator />
+                </Fragment>
               ))}
-            </ComboboxGroup>
-            <ComboboxSeparator />
             <ComboboxGroup>
               <ComboboxItem value="new">
                 <PlusIcon size={16} />
