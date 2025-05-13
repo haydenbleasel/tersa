@@ -72,6 +72,8 @@ export interface SupabaseProvider {
   set synced(state: boolean);
 }
 
+const EVENT_NAME = 'canvas-update';
+
 export default function createSupabaseProvider(
   doc: Y.Doc,
   supabase: SupabaseClient,
@@ -193,7 +195,7 @@ export default function createSupabaseProvider(
       channel
         .on(
           REALTIME_LISTEN_TYPES.BROADCAST,
-          { event: 'message' },
+          { event: EVENT_NAME },
           ({ payload }) => {
             onMessage(Uint8Array.from(payload), provider);
           }
@@ -362,7 +364,7 @@ export default function createSupabaseProvider(
       if (channel)
         channel.send({
           type: 'broadcast',
-          event: 'message',
+          event: EVENT_NAME,
           payload: Array.from(Y.encodeStateAsUpdate(doc)),
         });
     }, config.resyncInterval || 5000);
@@ -386,12 +388,13 @@ export default function createSupabaseProvider(
   });
 
   emitter.on('message', (event) => {
-    if (channel)
+    if (channel) {
       channel.send({
         type: 'broadcast',
-        event: 'message',
+        event: EVENT_NAME,
         payload: Array.from(event.detail),
       });
+    }
   });
 
   // Initialize connection
