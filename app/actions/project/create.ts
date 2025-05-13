@@ -3,7 +3,25 @@
 import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { parseError } from '@/lib/error/parse';
+import { transcriptionModels } from '@/lib/models/transcription';
+import { visionModels } from '@/lib/models/vision';
 import { projects } from '@/schema';
+
+const defaultTranscriptionModel = transcriptionModels
+  .flatMap((model) => model.models)
+  .find((model) => model.default);
+
+const defaultVisionModel = visionModels
+  .flatMap((model) => model.models)
+  .find((model) => model.default);
+
+if (!defaultTranscriptionModel) {
+  throw new Error('No default transcription model found');
+}
+
+if (!defaultVisionModel) {
+  throw new Error('No default vision model found');
+}
 
 export const createProjectAction = async (
   name: string
@@ -27,8 +45,8 @@ export const createProjectAction = async (
       .values({
         name,
         userId: user.id,
-        transcriptionModel: 'gpt-4o-mini-transcribe',
-        visionModel: 'gpt-4.1-nano',
+        transcriptionModel: defaultTranscriptionModel.id,
+        visionModel: defaultVisionModel.id,
       })
       .returning({ id: projects.id });
 
