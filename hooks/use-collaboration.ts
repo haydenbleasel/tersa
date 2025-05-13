@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import SupabaseProvider from '@/lib/supabase/y-supabase';
+import createSupabaseProvider from '@/lib/supabase/y-supabase';
 import {
   type Connection,
   type Edge,
@@ -54,7 +54,7 @@ export const useCollaboration = (
     const ydoc = new Y.Doc();
 
     // Connect peers using SupabaseProvider for sync.
-    const provider = new SupabaseProvider(ydoc, supabase, {
+    const provider = createSupabaseProvider(ydoc, supabase, {
       channel: `tersa-${data.id}`,
       tableName: 'project',
       columnName: 'content',
