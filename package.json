@@ -115,7 +115,7 @@
     "perfect-cursors": "^1.0.5",
     "postgres": "^3.4.5",
     "react": "^19.1.0",
-    "react-day-picker": "9.6.7",
+    "react-day-picker": "8.10.1",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.8",
     "react-fast-marquee": "^1.6.5",
