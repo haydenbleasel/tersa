@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 import { useNodeOperations } from '@/providers/node-operations';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import {
@@ -40,6 +41,7 @@ type NodeLayoutProps = {
     tooltip?: string;
     children: ReactNode;
   }[];
+  className?: string;
 };
 
 export const NodeLayout = ({
@@ -49,6 +51,7 @@ export const NodeLayout = ({
   data,
   toolbar,
   title,
+  className,
 }: NodeLayoutProps) => {
   const { deleteElements, setCenter, getNode, updateNodeData, updateNode } =
     useReactFlow();
@@ -127,7 +130,12 @@ export const NodeLayout = ({
                 )}
               </div>
             )}
-            <div className="node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 ring-1 ring-border transition-all">
+            <div
+              className={cn(
+                'node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 ring-1 ring-border transition-all',
+                className
+              )}
+            >
               <div className="overflow-hidden rounded-3xl bg-card">
                 {children}
               </div>
