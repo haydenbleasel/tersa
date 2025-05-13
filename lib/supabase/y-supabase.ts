@@ -22,8 +22,6 @@ type EventMap = {
   status: CustomEvent<{ status: string }[]>;
   message: CustomEvent<Uint8Array>;
   save: CustomEvent<number>;
-  synced: CustomEvent<boolean[]>;
-  sync: CustomEvent<boolean[]>;
 };
 
 class EventBus extends EventTarget {
@@ -57,8 +55,6 @@ export interface SupabaseProvider {
   onConnecting: () => void;
   onDisconnect: () => void;
   onMessage: (message: Uint8Array, origin: unknown) => void;
-  get synced(): boolean;
-  set synced(state: boolean);
 }
 
 const EVENT_NAME = 'canvas-update';
@@ -75,7 +71,6 @@ export default function createSupabaseProvider(
 
   let connected = false;
   let channel: RealtimeChannel | null = null;
-  let _synced = false;
   let resyncInterval: NodeJS.Timeout | undefined;
   let version = 0;
 
@@ -99,7 +94,10 @@ export default function createSupabaseProvider(
   }, 1000);
 
   const isOnline = (online?: boolean): boolean => {
-    if (!online && online !== false) return connected;
+    if (!online && online !== false) {
+      return connected;
+    }
+
     connected = online;
     return connected;
   };
@@ -214,8 +212,6 @@ export default function createSupabaseProvider(
 
   const onDisconnect = () => {
     logger('disconnected');
-
-    _synced = false;
     isOnline(false);
     logger('set connected flag to false');
     if (isOnline()) {
@@ -244,7 +240,9 @@ export default function createSupabaseProvider(
 
     doc.off('update', onDocumentUpdate);
 
-    if (channel) disconnect();
+    if (channel) {
+      disconnect();
+    }
   };
 
   // Set up event listeners
@@ -262,12 +260,13 @@ export default function createSupabaseProvider(
     resyncInterval = setInterval(() => {
       logger('resyncing (resync interval elapsed)');
       emitter.emit('message', Y.encodeStateAsUpdate(doc));
-      if (channel)
+      if (channel) {
         channel.send({
           type: 'broadcast',
           event: EVENT_NAME,
           payload: Array.from(Y.encodeStateAsUpdate(doc)),
         });
+      }
     }, config.resyncInterval || 5000);
   }
 
@@ -297,17 +296,6 @@ export default function createSupabaseProvider(
     onConnecting,
     onDisconnect,
     onMessage,
-    get synced() {
-      return _synced;
-    },
-    set synced(state) {
-      if (_synced !== state) {
-        logger(`setting sync state to ${state}`);
-        _synced = state;
-        emitter.emit('synced', [state]);
-        emitter.emit('sync', [state]);
-      }
-    },
   };
 
   return provider;
