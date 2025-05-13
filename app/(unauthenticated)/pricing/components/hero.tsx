@@ -32,11 +32,7 @@ type Plan = {
   description: string;
   monthlyPrice: number;
   yearlyPrice: number;
-  features: {
-    credits: number;
-    ai: boolean;
-    'advanced-ai': boolean;
-  };
+  features: string[];
   ctaLink: string;
   ctaText: string;
   variant: ComponentProps<typeof Button>['variant'];
@@ -52,11 +48,7 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       description: 'For personal use and testing.',
       monthlyPrice: 0,
       yearlyPrice: 0,
-      features: {
-        ai: false,
-        'advanced-ai': false,
-        credits: 500,
-      },
+      features: ['100 credits / month', 'Basic AI models', 'General support'],
       ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
       variant: 'outline',
@@ -68,11 +60,7 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       description: 'For professional use or small teams.',
       monthlyPrice: 8,
       yearlyPrice: 6,
-      features: {
-        ai: true,
-        'advanced-ai': true,
-        credits: 1000,
-      },
+      features: ['1600 credits / month', 'All AI models', 'Priority support'],
       ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
       variant: 'outline',
@@ -84,11 +72,12 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       description: 'For large teams or enterprise use.',
       monthlyPrice: -1,
       yearlyPrice: -1,
-      features: {
-        ai: true,
-        'advanced-ai': true,
-        credits: 1000,
-      },
+      features: [
+        'Unlimited credits',
+        'Custom AI models',
+        'Custom authentication',
+        'Dedicated support',
+      ],
       ctaLink: '/contact',
       ctaText: 'Get in Touch',
       variant: 'outline',
@@ -101,6 +90,7 @@ export const Hero = ({ currentPlan }: HeroProps) => {
     } else if (currentPlan === 'pro') {
       pro.ctaText = 'Manage';
       free.ctaText = 'Downgrade';
+      enterprise.variant = 'default';
     } else if (currentPlan === 'enterprise') {
       enterprise.ctaText = 'Manage';
       free.ctaText = 'Downgrade';
@@ -195,11 +185,11 @@ export const Hero = ({ currentPlan }: HeroProps) => {
 
         {/* Pricing Cards */}
         <div className="grid w-full grid-cols-1 divide-x divide-dotted xl:grid-cols-3">
-          {plans.map((plan) => (
+          {plans.map((plan, planIndex) => (
             <div key={plan.name} className="p-12">
               <Card
                 key={plan.name}
-                className="rounded-none border-none bg-transparent p-0 shadow-none"
+                className="h-full rounded-none border-none bg-transparent p-0 shadow-none"
               >
                 <CardHeader className="p-0">
                   <div className="inline-flex w-fit items-center justify-center rounded bg-primary/10 p-3">
@@ -213,19 +203,23 @@ export const Hero = ({ currentPlan }: HeroProps) => {
                 <CardContent className="flex-grow p-0">
                   {plan.monthlyPrice === -1 && (
                     <div className="mb-4 h-[45px]">
-                      <span className="font-medium text-3xl">Custom</span>
+                      <span className="font-medium text-3xl tracking-tight">
+                        Custom
+                      </span>
                     </div>
                   )}
 
                   {plan.monthlyPrice === 0 && (
                     <div className="mb-4 h-[45px]">
-                      <span className="font-medium text-3xl">Free</span>
+                      <span className="font-medium text-3xl tracking-tight">
+                        Free
+                      </span>
                     </div>
                   )}
 
                   {plan.monthlyPrice > 0 && (
                     <div className="mb-4">
-                      <span className="font-medium text-3xl">
+                      <span className="font-medium text-3xl tracking-tight">
                         <NumberFlow
                           value={yearly ? plan.yearlyPrice : plan.monthlyPrice}
                           format={{
@@ -234,14 +228,22 @@ export const Hero = ({ currentPlan }: HeroProps) => {
                           }}
                         />
                       </span>
-                      <span className="text-muted-foreground">/mo</span>
+                      <span className="text-muted-foreground">
+                        /mo, billed {yearly ? 'annually' : 'monthly'}
+                      </span>
                     </div>
                   )}
 
+                  {planIndex > 0 && (
+                    <p className="mb-2 text-muted-foreground text-sm">
+                      Everything in {plans[planIndex - 1].name}, plus:
+                    </p>
+                  )}
+
                   <ul className="space-y-2">
-                    {Object.entries(plan.features).map(([feature, enabled]) => (
+                    {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2">
-                        {enabled ? (
+                        {feature ? (
                           <CheckIcon size={16} className="text-primary" />
                         ) : (
                           <XIcon size={16} className="text-muted-foreground" />
@@ -251,7 +253,7 @@ export const Hero = ({ currentPlan }: HeroProps) => {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter className="p-0">
+                <CardFooter className="mt-auto p-0">
                   <Button className="w-full" variant={plan.variant} asChild>
                     <Link href={plan.ctaLink}>{plan.ctaText}</Link>
                   </Button>
