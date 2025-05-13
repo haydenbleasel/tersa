@@ -379,6 +379,8 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     preventDefault: true,
   });
 
+  console.log(nodes, edges, 'canvas');
+
   return (
     <ProjectProvider data={data}>
       <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>

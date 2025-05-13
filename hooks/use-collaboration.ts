@@ -94,10 +94,18 @@ export const useCollaboration = (
 
     // Observe changes on yNodes and yEdges, update React state
     yNodes.current?.observe(() => {
+      console.log(
+        'yNodes.current?.toArray()',
+        yNodes.current?.toArray().length
+      );
       setNodes(yNodes.current?.toArray() ?? []);
     });
 
     yEdges.current?.observe(() => {
+      console.log(
+        'yEdges.current?.toArray()',
+        yEdges.current?.toArray().length
+      );
       setEdges(yEdges.current?.toArray() ?? []);
     });
 
@@ -111,6 +119,7 @@ export const useCollaboration = (
   }, [data.id, data.members?.length, data.content]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
+    console.log('onNodesChange', changes);
     setNodes((current) => {
       const updated = applyNodeChanges(changes, current);
       // Replace Yjs nodes with updated array
@@ -123,6 +132,7 @@ export const useCollaboration = (
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
+    console.log('onEdgesChange', changes);
     setEdges((current) => {
       const updated = applyEdgeChanges(changes, current);
       yDoc.current?.transact(() => {
@@ -134,6 +144,7 @@ export const useCollaboration = (
   }, []);
 
   const onConnect = useCallback((connection: Connection) => {
+    console.log('onConnect', connection);
     const newEdge: Edge = {
       id: nanoid(),
       type: 'animated',
@@ -146,12 +157,14 @@ export const useCollaboration = (
   }, []);
 
   const addNode = useCallback((node: Node) => {
+    console.log('addNode', node);
     yDoc.current?.transact(() => {
       yNodes.current?.push([node]);
     });
   }, []);
 
   const removeDropNodes = useCallback(() => {
+    console.log('removeDropNodes');
     yDoc.current?.transact(() => {
       const currentNodes = yNodes.current?.toArray() ?? [];
       const filteredNodes = currentNodes.filter((n: Node) => n.type !== 'drop');
