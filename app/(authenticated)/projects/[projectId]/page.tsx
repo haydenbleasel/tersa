@@ -55,7 +55,7 @@ const Project = async ({ params }: ProjectProps) => {
   return (
     <div className="h-screen w-screen">
       <ReactFlowProvider>
-        <RealtimeProvider roomName={project.id}>
+        <RealtimeProvider id={project.id}>
           <Canvas data={project} />
           <Suspense fallback={null}>
             <TopLeft id={projectId} />

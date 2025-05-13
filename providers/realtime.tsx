@@ -76,11 +76,11 @@ export const useRealtime = () => {
 
 export const RealtimeProvider = ({
   children,
-  roomName,
+  id,
   throttleMs = 50,
 }: {
   children: ReactNode;
-  roomName: string;
+  id: string;
   throttleMs?: number;
 }) => {
   const user = useUser();
@@ -161,7 +161,7 @@ export const RealtimeProvider = ({
       return;
     }
 
-    const channel = supabase.channel(roomName);
+    const channel = supabase.channel(`${id}-presence`);
     channelRef.current = channel;
 
     channel
@@ -222,7 +222,7 @@ export const RealtimeProvider = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [roomName, user, color, handleMouseMove]);
+  }, [id, user, color, handleMouseMove]);
 
   return (
     <RealtimeContext.Provider

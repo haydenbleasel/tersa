@@ -55,7 +55,7 @@ export const useCollaboration = (
 
     // Connect peers using SupabaseProvider for sync.
     const provider = createSupabaseProvider(ydoc, supabase, {
-      channel: data.id,
+      channel: `${data.id}-canvas`,
       tableName: 'project',
       columnName: 'content',
       id: data.id,
