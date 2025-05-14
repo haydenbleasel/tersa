@@ -300,11 +300,8 @@ export const Hero = ({ currentPlan }: HeroProps) => {
                   )}
 
                   <ul className="space-y-2">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature.label}
-                        className="flex items-center gap-2"
-                      >
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2">
                         {feature.icon ? (
                           <feature.icon size={16} className="text-primary" />
                         ) : (
