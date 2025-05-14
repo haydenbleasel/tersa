@@ -13,20 +13,20 @@ export interface SupabaseProviderConfig {
   id: string | number;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
-  defaultValue?: any;
+  defaultValue?: unknown;
 }
 
 export default class SupabaseProvider extends EventEmitter {
-  public awareness: awarenessProtocol.Awareness;
-  public connected = false;
+  awareness: awarenessProtocol.Awareness;
+  connected = false;
   private channel: RealtimeChannel | null = null;
 
   private _synced = false;
-  private resyncInterval: NodeJS.Timer | undefined;
-  protected logger: (message: string, ...optionalParams: any[]) => void;
-  public readonly id: number;
+  private resyncInterval: NodeJS.Timeout | undefined;
+  protected logger: (message: string, ...optionalParams: unknown[]) => void;
+  readonly id: number;
 
-  public version = 0;
+  version = 0;
 
   isOnline(online?: boolean): boolean {
     if (!online && online !== false) return this.connected;
@@ -34,7 +34,7 @@ export default class SupabaseProvider extends EventEmitter {
     return this.connected;
   }
 
-  onDocumentUpdate(update: Uint8Array, origin: any) {
+  onDocumentUpdate(update: Uint8Array, origin: unknown) {
     if (origin !== this) {
       this.logger(
         'document updated locally, broadcasting update to peers',
@@ -44,7 +44,14 @@ export default class SupabaseProvider extends EventEmitter {
     }
   }
 
-  onAwarenessUpdate({ added, updated, removed }: any, origin: any) {
+  onAwarenessUpdate(
+    {
+      added,
+      updated,
+      removed,
+    }: { added: number[]; updated: number[]; removed: number[] },
+    origin: unknown
+  ) {
     const changedClients = added.concat(updated).concat(removed);
     const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
       this.awareness,
@@ -61,7 +68,7 @@ export default class SupabaseProvider extends EventEmitter {
     );
   }
 
-  private async onConnect() {
+  private onConnect() {
     this.logger('connected');
 
     if (this.config.defaultValue) {
@@ -87,7 +94,7 @@ export default class SupabaseProvider extends EventEmitter {
     }
   }
 
-  private applyUpdate(update: Uint8Array, origin?: any) {
+  private applyUpdate(update: Uint8Array, origin?: unknown) {
     this.version++;
     Y.applyUpdate(this.doc, update, origin);
   }
@@ -173,12 +180,13 @@ export default class SupabaseProvider extends EventEmitter {
       this.resyncInterval = setInterval(() => {
         this.logger('resyncing (resync interval elapsed)');
         this.emit('message', Y.encodeStateAsUpdate(this.doc));
-        if (this.channel)
+        if (this.channel) {
           this.channel.send({
             type: 'broadcast',
             event: 'message',
             payload: Array.from(Y.encodeStateAsUpdate(this.doc)),
           });
+        }
       }, this.config.resyncInterval || 5000);
     }
 
@@ -191,20 +199,22 @@ export default class SupabaseProvider extends EventEmitter {
       process.on('exit', () => this.removeSelfFromAwarenessOnUnload);
     }
     this.on('awareness', (update) => {
-      if (this.channel)
+      if (this.channel) {
         this.channel.send({
           type: 'broadcast',
           event: 'awareness',
           payload: Array.from(update),
         });
+      }
     });
     this.on('message', (update) => {
-      if (this.channel)
+      if (this.channel) {
         this.channel.send({
           type: 'broadcast',
           event: 'message',
           payload: Array.from(update),
         });
+      }
     });
 
     this.connect();
@@ -225,14 +235,14 @@ export default class SupabaseProvider extends EventEmitter {
     }
   }
 
-  public onConnecting() {
+  onConnecting() {
     if (!this.isOnline()) {
       this.logger('connecting');
       this.emit('status', [{ status: 'connecting' }]);
     }
   }
 
-  public onDisconnect() {
+  onDisconnect() {
     this.logger('disconnected');
 
     this.synced = false;
@@ -250,8 +260,11 @@ export default class SupabaseProvider extends EventEmitter {
     awarenessProtocol.removeAwarenessStates(this.awareness, states, this);
   }
 
-  public onMessage(message: Uint8Array, origin: any) {
-    if (!this.isOnline()) return;
+  onMessage(message: Uint8Array, origin: unknown) {
+    if (!this.isOnline()) {
+      return;
+    }
+
     try {
       this.applyUpdate(message, this);
     } catch (err) {
@@ -259,11 +272,11 @@ export default class SupabaseProvider extends EventEmitter {
     }
   }
 
-  public onAwareness(message: Uint8Array) {
+  onAwareness(message: Uint8Array) {
     awarenessProtocol.applyAwarenessUpdate(this.awareness, message, this);
   }
 
-  public onAuth(message: Uint8Array) {
+  onAuth(message: Uint8Array) {
     this.logger(`received ${message.byteLength} bytes from peer: ${message}`);
 
     if (!message) {
@@ -272,7 +285,7 @@ export default class SupabaseProvider extends EventEmitter {
     this.logger('processed message (type = MessageAuth)');
   }
 
-  public destroy() {
+  destroy() {
     this.logger('destroying');
 
     if (this.resyncInterval) {
@@ -291,6 +304,8 @@ export default class SupabaseProvider extends EventEmitter {
     this.awareness.off('update', this.onAwarenessUpdate);
     this.doc.off('update', this.onDocumentUpdate);
 
-    if (this.channel) this.disconnect();
+    if (this.channel) {
+      this.disconnect();
+    }
   }
 }
