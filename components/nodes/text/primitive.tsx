@@ -1,5 +1,6 @@
 import { EditorProvider } from '@/components/ui/kibo-ui/editor';
 import { cn } from '@/lib/utils';
+import { useProject } from '@/providers/project';
 import type { Editor, EditorEvents, JSONContent } from '@tiptap/core';
 import { useReactFlow } from '@xyflow/react';
 import { useEffect, useRef, useState } from 'react';
@@ -21,6 +22,7 @@ export const TextPrimitive = ({
     data.content ?? undefined
   );
   const editor = useRef<Editor | null>(null);
+  const { project } = useProject();
 
   useEffect(() => {
     if (data.content) {
@@ -39,7 +41,10 @@ export const TextPrimitive = ({
 
   const handleCreate = (props: EditorEvents['create']) => {
     editor.current = props.editor;
-    props.editor.chain().focus().run();
+
+    if (project) {
+      props.editor.chain().focus().run();
+    }
   };
 
   return (
