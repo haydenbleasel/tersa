@@ -3,6 +3,7 @@
 import { uploadFile } from '@/lib/upload';
 import { cn } from '@/lib/utils';
 import { useReactFlow } from '@xyflow/react';
+import { FileIcon, ImageIcon, VideoIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNodeOperations } from './node-operations';
@@ -20,14 +21,12 @@ export const NodeDropzoneProvider = ({
     noClick: true,
     autoFocus: false,
     noKeyboard: true,
-    accept: {
-      'image/*': [],
-      'video/*': [],
-      'audio/*': [],
-    },
     onDrop: async (acceptedFiles) => {
       const uploads = await Promise.all(
-        acceptedFiles.map((file) => uploadFile(file, 'files'))
+        acceptedFiles.map(async (file) => ({
+          name: file.name,
+          data: await uploadFile(file, 'files'),
+        }))
       );
 
       // Get the current viewport
@@ -39,14 +38,23 @@ export const NodeDropzoneProvider = ({
       const centerY =
         -viewport.y / viewport.zoom + window.innerHeight / 2 / viewport.zoom;
 
-      for (const { url, type } of uploads) {
-        const nodeType = type.split('/')[0];
+      for (const { data, name } of uploads) {
+        let nodeType = 'file';
+
+        if (data.type.startsWith('image/')) {
+          nodeType = 'image';
+        } else if (data.type.startsWith('video/')) {
+          nodeType = 'video';
+        } else if (data.type.startsWith('audio/')) {
+          nodeType = 'audio';
+        }
 
         addNode(nodeType, {
           data: {
             content: {
-              url,
-              type,
+              url: data.url,
+              type: data.type,
+              name,
             },
           },
           position: {
@@ -66,13 +74,26 @@ export const NodeDropzoneProvider = ({
       />
       <div
         className={cn(
-          'absolute inset-0 z-[999999] flex items-center justify-center bg-foreground/50 text-primary backdrop-blur-xl transition-all',
+          'absolute inset-0 z-[999999] flex flex-col items-center justify-center gap-6 bg-background/70 text-foreground backdrop-blur-xl transition-all',
           dropzone.isDragActive
             ? 'pointer-events-auto opacity-100'
             : 'pointer-events-none opacity-0'
         )}
       >
-        <p className="text-2xl text-background">Drop files to create nodes</p>
+        <div className="-space-x-4 relative isolate flex items-center">
+          <div className="-rotate-12 flex aspect-square translate-y-2 items-center justify-center rounded-md bg-background p-3 shadow-xl">
+            <FileIcon size={24} className="text-muted-foreground" />
+          </div>
+          <div className="z-10 flex aspect-square items-center justify-center rounded-md bg-background p-3 shadow-xl">
+            <ImageIcon size={24} className="text-muted-foreground" />
+          </div>
+          <div className="flex aspect-square translate-y-2 rotate-12 items-center justify-center rounded-md bg-background p-3 shadow-xl">
+            <VideoIcon size={24} className="text-muted-foreground" />
+          </div>
+        </div>
+        <p className="font-medium text-xl tracking-tight">
+          Drop files to create nodes
+        </p>
       </div>
       {children}
     </div>
