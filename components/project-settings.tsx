@@ -119,6 +119,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               options={transcriptionModels}
               width={462}
               onChange={setTranscriptionModel}
+              disabled
             />
           </div>
           <div className="grid gap-2">
@@ -129,6 +130,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               options={visionModels}
               onChange={setVisionModel}
               width={462}
+              disabled
             />
           </div>
           <Button type="submit" disabled={isUpdating || !name.trim()}>

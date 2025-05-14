@@ -25,6 +25,7 @@ type ModelSelectorProps = {
   width?: number | string;
   className?: string;
   onChange?: (value: string) => void;
+  disabled?: boolean;
   options: {
     label: string;
     models: {
@@ -94,6 +95,7 @@ export const ModelSelector = ({
   width = 250,
   className,
   onChange,
+  disabled,
 }: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
   const activeModel = options
@@ -114,7 +116,12 @@ export const ModelSelector = ({
         }))}
       type="model"
     >
-      <ComboboxTrigger className={className} id={id} style={{ width }}>
+      <ComboboxTrigger
+        className={className}
+        id={id}
+        style={{ width }}
+        disabled={disabled}
+      >
         {activeModel && (
           <div className="flex w-full items-center gap-2 overflow-hidden">
             {activeModel.icon && (
