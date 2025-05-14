@@ -71,15 +71,21 @@ export const useCollaboration = (
     }
 
     // Observe changes on yNodes, update React state
-    ynodes.observe(() => {
-      console.log('ynodes.observe', ynodes.toArray());
-      setNodes(ynodes.toArray());
+    ynodes.observe((event) => {
+      console.log('ynodes.observe', ynodes.toArray(), event.transaction.local);
+      // Only update if the change came from a remote client
+      if (!event.transaction.local) {
+        setNodes(ynodes.toArray());
+      }
     });
 
     // Observe changes on yEdges, update React state
-    yedges.observe(() => {
-      console.log('yedges.observe', yedges.toArray());
-      setEdges(yedges.toArray());
+    yedges.observe((event) => {
+      console.log('yedges.observe', yedges.toArray(), event.transaction.local);
+      // Only update if the change came from a remote client
+      if (!event.transaction.local) {
+        setEdges(yedges.toArray());
+      }
     });
 
     // Store references to the Y.js arrays
@@ -99,6 +105,8 @@ export const useCollaboration = (
     console.log('onNodesChange', changes);
     setNodes((current) => {
       const updated = applyNodeChanges(changes, current);
+
+      console.log('onNodesChange updated', updated);
       // Replace Yjs nodes with updated array
       yDoc.current?.transact(() => {
         yNodes.current?.delete(0, yNodes.current.length);
@@ -135,15 +143,10 @@ export const useCollaboration = (
 
   const addNode = useCallback((node: Node) => {
     console.log('addNode', node);
-    // Check if node already exists to prevent duplicates
-    const existingNode = yNodes.current
-      ?.toArray()
-      .find((n) => n.id === node.id);
-    if (!existingNode) {
-      yDoc.current?.transact(() => {
-        yNodes.current?.push([node]);
-      });
-    }
+
+    yDoc.current?.transact(() => {
+      yNodes.current?.push([node]);
+    });
   }, []);
 
   const removeDropNodes = useCallback(() => {
