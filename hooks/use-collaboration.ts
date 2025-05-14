@@ -60,6 +60,7 @@ export const useCollaboration = (
       resyncInterval: 5000, // Optional
       columnName: 'content',
       tableName: 'project',
+      defaultValue: data.content,
     });
 
     provider.on('message', save);

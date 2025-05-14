@@ -13,7 +13,7 @@ export interface SupabaseProviderConfig {
   id: string | number;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
-  defaultValue?: unknown;
+  defaultValue?: object;
 }
 
 // Define event types for better intellisense
@@ -127,7 +127,8 @@ export default class SupabaseProvider extends EventEmitter {
     if (this.config.defaultValue) {
       this.logger('applying update to yjs');
       try {
-        this.applyUpdate(Uint8Array.from(this.config.defaultValue));
+        const string = JSON.stringify(this.config.defaultValue);
+        this.applyUpdate(Uint8Array.from(string));
       } catch (error) {
         this.logger(`Error: ${error}`);
       }
