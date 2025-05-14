@@ -23,7 +23,7 @@ export const generateRunwayVideo = async ({
     promptImage: image,
     ratio: model.model === 'gen4_turbo' ? '1280:720' : '1280:768',
     promptText: prompt,
-    duration: 10,
+    duration: 5,
   });
 
   const startTime = Date.now();
