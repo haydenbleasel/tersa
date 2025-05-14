@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -25,7 +26,7 @@ import {
   XIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { type ComponentProps, useMemo, useState } from 'react';
+import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
 
 type HeroProps = {
   currentPlan?: 'hobby' | 'pro' | undefined;
@@ -38,7 +39,7 @@ type Plan = {
   monthlyPrice: number;
   yearlyPrice: number;
   features: {
-    label: string;
+    label: ReactNode;
     icon: LucideIcon;
   }[];
   ctaLink: string;
@@ -99,10 +100,15 @@ export const Hero = ({ currentPlan }: HeroProps) => {
           icon: LifeBuoyIcon,
         },
         {
-          label: 'Multiplayer (coming soon)',
+          label: (
+            <>
+              Live collaboration <Badge variant="secondary">Coming soon</Badge>
+            </>
+          ),
           icon: UsersIcon,
         },
       ],
+      variant: 'outline',
       ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
     };
