@@ -41,7 +41,6 @@ export default class SupabaseProvider extends EventEmitter {
         this.isOnline()
       );
       this.emit('message', update);
-      this.save();
     }
   }
 
@@ -60,21 +59,6 @@ export default class SupabaseProvider extends EventEmitter {
       [this.doc.clientID],
       'window unload'
     );
-  }
-
-  async save() {
-    const content = Array.from(Y.encodeStateAsUpdate(this.doc));
-
-    const { error } = await this.supabase
-      .from(this.config.tableName)
-      .update({ [this.config.columnName]: content })
-      .eq(this.config.idName || 'id', this.config.id);
-
-    if (error) {
-      throw error;
-    }
-
-    this.emit('save', this.version);
   }
 
   private async onConnect() {

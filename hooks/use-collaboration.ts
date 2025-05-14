@@ -62,9 +62,7 @@ export const useCollaboration = (
       tableName: 'project',
     });
 
-    provider.on('save', () => {
-      save();
-    });
+    provider.on('message', save);
 
     // Create shared arrays for nodes and edges (initially empty)
     yNodes.current = ydoc.getArray<Node>('nodes');
