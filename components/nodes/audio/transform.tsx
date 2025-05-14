@@ -13,7 +13,13 @@ import {
   getTextFromTextNodes,
 } from '@/lib/xyflow';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import { ClockIcon, DownloadIcon, PlayIcon, RotateCcwIcon } from 'lucide-react';
+import {
+  ClockIcon,
+  DownloadIcon,
+  Loader2Icon,
+  PlayIcon,
+  RotateCcwIcon,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
@@ -139,23 +145,34 @@ export const AudioTransform = ({
     });
   }
 
-  toolbar.push({
-    tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
-    children: (
-      <Button
-        size="icon"
-        className="rounded-full"
-        onClick={handleGenerate}
-        disabled={loading || !projectId}
-      >
-        {data.generated?.url ? (
-          <RotateCcwIcon size={12} />
-        ) : (
-          <PlayIcon size={12} />
-        )}
-      </Button>
-    ),
-  });
+  toolbar.push(
+    loading
+      ? {
+          tooltip: 'Generating...',
+          children: (
+            <Button size="icon" className="rounded-full" disabled>
+              <Loader2Icon className="animate-spin" size={12} />
+            </Button>
+          ),
+        }
+      : {
+          tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
+          children: (
+            <Button
+              size="icon"
+              className="rounded-full"
+              onClick={handleGenerate}
+              disabled={loading || !projectId}
+            >
+              {data.generated?.url ? (
+                <RotateCcwIcon size={12} />
+              ) : (
+                <PlayIcon size={12} />
+              )}
+            </Button>
+          ),
+        }
+  );
 
   if (data.generated) {
     toolbar.push({
