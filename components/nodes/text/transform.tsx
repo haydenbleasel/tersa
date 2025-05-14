@@ -118,6 +118,8 @@ export const TextTransform = ({
         })),
         ...files.map((file) => ({
           url: file.url,
+          contentType: file.type,
+          name: file.name,
         })),
       ],
     });
@@ -213,7 +215,7 @@ export const TextTransform = ({
       type={type}
       toolbar={createToolbar()}
     >
-      <div className="flex flex-1 rounded-t-3xl rounded-b-xl bg-secondary p-4">
+      <div className="nowheel h-full max-h-[30rem] flex-1 overflow-auto rounded-t-3xl rounded-b-xl bg-secondary p-4">
         {status === 'submitted' && (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-60 animate-pulse rounded-lg" />
