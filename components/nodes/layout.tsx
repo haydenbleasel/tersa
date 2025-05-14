@@ -12,10 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useUser } from '@/hooks/use-user';
 import { cn } from '@/lib/utils';
 import { useNodeOperations } from '@/providers/node-operations';
-import { useRealtime } from '@/providers/realtime';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import {
   BrainIcon,
@@ -25,7 +23,7 @@ import {
   TrashIcon,
   UserIcon,
 } from 'lucide-react';
-import { type CSSProperties, type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Switch } from '../ui/switch';
 import { NodeToolbar } from './toolbar';
 
@@ -59,17 +57,6 @@ export const NodeLayout = ({
     useReactFlow();
   const { duplicateNode } = useNodeOperations();
   const [showData, setShowData] = useState(false);
-  const user = useUser();
-  const { selectedNodes, users } = useRealtime();
-
-  const selectedColor = useMemo(() => {
-    const selectedByUserId = selectedNodes[id];
-    const user = Object.values(users).find(
-      (user) => user.id === selectedByUserId
-    );
-
-    return user?.color;
-  }, [selectedNodes, users, id]);
 
   const handleSourceChange = (value: boolean) =>
     updateNodeData(id, {
@@ -148,11 +135,6 @@ export const NodeLayout = ({
                 'node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 ring-1 ring-border transition-all',
                 className
               )}
-              style={
-                {
-                  '--cursor-color': selectedColor,
-                } as CSSProperties
-              }
             >
               <div className="overflow-hidden rounded-3xl bg-card">
                 {children}

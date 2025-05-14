@@ -3,10 +3,9 @@ import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
 import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
-import { RealtimeProvider } from '@/providers/realtime';
 import { projects } from '@/schema';
 import { ReactFlowProvider } from '@xyflow/react';
-import { arrayContains, eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -35,12 +34,7 @@ const Project = async ({ params }: ProjectProps) => {
   const allProjects = await database
     .select()
     .from(projects)
-    .where(
-      or(
-        eq(projects.userId, user.id),
-        user.email ? arrayContains(projects.members, [user.email]) : undefined
-      )
-    );
+    .where(eq(projects.userId, user.id));
 
   if (!allProjects.length) {
     notFound();
@@ -55,15 +49,13 @@ const Project = async ({ params }: ProjectProps) => {
   return (
     <div className="h-screen w-screen">
       <ReactFlowProvider>
-        <RealtimeProvider id={project.id}>
-          <Canvas data={project} />
-          <Suspense fallback={null}>
-            <TopLeft id={projectId} />
-          </Suspense>
-          <Suspense fallback={null}>
-            <TopRight id={projectId} />
-          </Suspense>
-        </RealtimeProvider>
+        <Canvas data={project} />
+        <Suspense fallback={null}>
+          <TopLeft id={projectId} />
+        </Suspense>
+        <Suspense fallback={null}>
+          <TopRight id={projectId} />
+        </Suspense>
       </ReactFlowProvider>
     </div>
   );

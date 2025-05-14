@@ -9,7 +9,6 @@ Tersa is an AI canvas powered by [Supabase](https://supabase.com/), [shadcn/ui](
 - **Visual Workflow Builder**: Create AI workflows by connecting nodes in an intuitive drag-and-drop interface
 - **Multiple AI Models**: Seamlessly integrate with leading AI models from various providers
 - **Multimedia Processing**: Process images, text, audio, and video content through your workflows
-- **Real-time Collaboration**: Work together with team members in real-time with cursor sharing
 - **Automatic Saving**: Changes are automatically saved to your projects
 - **Cloud Storage**: All workflows are securely stored in Supabase with Row Level Security enabled
 - **Modern UI**: Clean, responsive interface built with Next.js, React, and Tailwind CSS

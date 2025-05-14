@@ -1,7 +1,7 @@
 import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
 import { projects } from '@/schema';
-import { arrayContains, eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { ProjectSelector } from './project-selector';
 import { ProjectSettings } from './project-settings';
 
@@ -19,12 +19,7 @@ export const TopLeft = async ({ id }: TopLeftProps) => {
   const allProjects = await database
     .select()
     .from(projects)
-    .where(
-      or(
-        eq(projects.userId, user.id),
-        user.email ? arrayContains(projects.members, [user.email]) : undefined
-      )
-    );
+    .where(eq(projects.userId, user.id));
 
   if (!allProjects.length) {
     return null;

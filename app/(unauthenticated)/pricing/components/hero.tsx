@@ -12,11 +12,16 @@ import {
 import { Switch } from '@/components/ui/switch';
 import NumberFlow from '@number-flow/react';
 import {
-  CheckIcon,
+  BrainIcon,
+  CoinsIcon,
   Flower2Icon,
   FlowerIcon,
   LeafIcon,
+  LifeBuoyIcon,
+  LockIcon,
   type LucideIcon,
+  UserIcon,
+  UsersIcon,
   XIcon,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -32,7 +37,10 @@ type Plan = {
   description: string;
   monthlyPrice: number;
   yearlyPrice: number;
-  features: string[];
+  features: {
+    label: string;
+    icon: LucideIcon;
+  }[];
   ctaLink: string;
   ctaText: string;
   variant: ComponentProps<typeof Button>['variant'];
@@ -48,7 +56,24 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       description: 'For personal use and testing.',
       monthlyPrice: 0,
       yearlyPrice: 0,
-      features: ['100 credits / month', 'Basic AI models', 'General support'],
+      features: [
+        {
+          label: '100 credits / month',
+          icon: CoinsIcon,
+        },
+        {
+          label: 'Basic AI models',
+          icon: BrainIcon,
+        },
+        {
+          label: 'General support',
+          icon: LifeBuoyIcon,
+        },
+        {
+          label: 'Single user',
+          icon: UserIcon,
+        },
+      ],
       ctaLink: `/api/checkout?product=hobby&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
       variant: 'outline',
@@ -60,10 +85,26 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       description: 'For professional use or small teams.',
       monthlyPrice: 8,
       yearlyPrice: 6,
-      features: ['1600 credits / month', 'All AI models', 'Priority support'],
+      features: [
+        {
+          label: '1600 credits / month',
+          icon: CoinsIcon,
+        },
+        {
+          label: 'All AI models',
+          icon: BrainIcon,
+        },
+        {
+          label: 'Priority support',
+          icon: LifeBuoyIcon,
+        },
+        {
+          label: 'Multiplayer (coming soon)',
+          icon: UsersIcon,
+        },
+      ],
       ctaLink: `/api/checkout?product=pro&frequency=${yearly ? 'year' : 'month'}`,
       ctaText: 'Get Started',
-      variant: 'outline',
     };
 
     const enterprise: Plan = {
@@ -73,10 +114,22 @@ export const Hero = ({ currentPlan }: HeroProps) => {
       monthlyPrice: -1,
       yearlyPrice: -1,
       features: [
-        'Unlimited credits',
-        'Custom AI models',
-        'Custom authentication',
-        'Dedicated support',
+        {
+          label: 'Unlimited credits',
+          icon: CoinsIcon,
+        },
+        {
+          label: 'Custom AI models',
+          icon: BrainIcon,
+        },
+        {
+          label: 'Dedicated support',
+          icon: LifeBuoyIcon,
+        },
+        {
+          label: 'Custom authentication',
+          icon: LockIcon,
+        },
       ],
       ctaLink: '/contact',
       ctaText: 'Get in Touch',
@@ -242,13 +295,16 @@ export const Hero = ({ currentPlan }: HeroProps) => {
 
                   <ul className="space-y-2">
                     {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2">
-                        {feature ? (
-                          <CheckIcon size={16} className="text-primary" />
+                      <li
+                        key={feature.label}
+                        className="flex items-center gap-2"
+                      >
+                        {feature.icon ? (
+                          <feature.icon size={16} className="text-primary" />
                         ) : (
                           <XIcon size={16} className="text-muted-foreground" />
                         )}
-                        <span className="text-sm">{feature}</span>
+                        <span className="text-sm">{feature.label}</span>
                       </li>
                     ))}
                   </ul>
