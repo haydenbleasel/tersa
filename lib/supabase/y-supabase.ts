@@ -14,6 +14,7 @@ export interface SupabaseProviderConfig {
   id: string | number;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
+  defaultValue?: any;
 }
 
 export default class SupabaseProvider extends EventEmitter {
@@ -64,18 +65,10 @@ export default class SupabaseProvider extends EventEmitter {
   private async onConnect() {
     this.logger('connected');
 
-    const { data, error, status } = await this.supabase
-      .from(this.config.tableName)
-      .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
-      .eq(this.config.idName || 'id', this.config.id)
-      .single();
-
-    this.logger('retrieved data from supabase', status);
-
-    if (data && data[this.config.columnName]) {
+    if (this.config.defaultValue) {
       this.logger('applying update to yjs');
       try {
-        this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
+        this.applyUpdate(Uint8Array.from(this.config.defaultValue));
       } catch (error) {
         this.logger(error);
       }
