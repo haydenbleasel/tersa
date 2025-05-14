@@ -174,7 +174,7 @@ export const generateImageAction = async ({
 
     const openai = new OpenAI();
     const response = await openai.chat.completions.create({
-      model: visionModel.id,
+      model: visionModel.model.modelId,
       messages: [
         {
           role: 'user',
