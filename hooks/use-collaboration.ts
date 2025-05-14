@@ -57,59 +57,35 @@ export const useCollaboration = (
     const provider = new SupabaseProvider(ydoc, supabase, {
       channel: `${data.id}-canvas`,
       resyncInterval: 5000, // Optional
-      defaultValue: data.content,
     });
+
+    const ynodes = ydoc.getArray<Node>('nodes');
+    const yedges = ydoc.getArray<Edge>('edges');
 
     provider.on('message', save);
 
-    // Create shared arrays for nodes and edges (initially empty)
-    yNodes.current = ydoc.getArray<Node>('nodes');
-    yEdges.current = ydoc.getArray<Edge>('edges');
-
     // Initialize with existing content if available
-    if (data.content && yNodes.current && yEdges.current) {
-      try {
-        // Ensure we have valid arrays to work with
-        const nodes = Array.isArray(data.content.nodes)
-          ? data.content.nodes
-          : [];
-        const edges = Array.isArray(data.content.edges)
-          ? data.content.edges
-          : [];
-
-        console.log('Initializing Y.js with nodes:', nodes);
-        console.log('Initializing Y.js with edges:', edges);
-
-        for (const node of nodes) {
-          yNodes.current?.push([node]);
-        }
-        for (const edge of edges) {
-          yEdges.current?.push([edge]);
-        }
-      } catch (error) {
-        console.error('Error initializing Y.js arrays:', error);
-        console.error('Data content:', data.content);
-      }
+    if (data.content) {
+      ynodes.push(data.content.nodes);
+      yedges.push(data.content.edges);
     }
 
-    // Observe changes on yNodes and yEdges, update React state
-    yNodes.current?.observe(() => {
-      console.log(
-        'yNodes.current?.toArray()',
-        yNodes.current?.toArray().length
-      );
-      setNodes(yNodes.current?.toArray() ?? []);
+    // Observe changes on yNodes, update React state
+    ynodes.observe(() => {
+      console.log('ynodes.observe', ynodes.toArray());
+      setNodes(ynodes.toArray());
     });
 
-    yEdges.current?.observe(() => {
-      console.log(
-        'yEdges.current?.toArray()',
-        yEdges.current?.toArray().length
-      );
-      setEdges(yEdges.current?.toArray() ?? []);
+    // Observe changes on yEdges, update React state
+    yedges.observe(() => {
+      console.log('yedges.observe', yedges.toArray());
+      setEdges(yedges.toArray());
     });
 
+    // Store references to the Y.js arrays
     yDoc.current = ydoc;
+    yNodes.current = ynodes;
+    yEdges.current = yedges;
 
     // Clean up on unmount
     return () => {
@@ -118,6 +94,7 @@ export const useCollaboration = (
     };
   }, [data.id, data.members?.length, data.content, save]);
 
+  // Handle changes on yNodes
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     console.log('onNodesChange', changes);
     setNodes((current) => {
@@ -158,9 +135,15 @@ export const useCollaboration = (
 
   const addNode = useCallback((node: Node) => {
     console.log('addNode', node);
-    yDoc.current?.transact(() => {
-      yNodes.current?.push([node]);
-    });
+    // Check if node already exists to prevent duplicates
+    const existingNode = yNodes.current
+      ?.toArray()
+      .find((n) => n.id === node.id);
+    if (!existingNode) {
+      yDoc.current?.transact(() => {
+        yNodes.current?.push([node]);
+      });
+    }
   }, []);
 
   const removeDropNodes = useCallback(() => {

@@ -9,7 +9,6 @@ export interface SupabaseProviderConfig {
   channel: string;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
-  defaultValue?: object;
 }
 
 // Define event types for better intellisense
@@ -119,17 +118,6 @@ export default class SupabaseProvider extends EventEmitter {
 
   private onConnect() {
     this.logger('connected');
-
-    if (this.config.defaultValue) {
-      this.logger('applying update to yjs');
-      try {
-        const string = JSON.stringify(this.config.defaultValue);
-        this.applyUpdate(Uint8Array.from(string));
-      } catch (error) {
-        this.logger(`Error: ${error}`);
-      }
-    }
-
     this.logger('setting connected flag to true');
     this.isOnline(true);
 
