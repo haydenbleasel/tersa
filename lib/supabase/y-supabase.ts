@@ -1,10 +1,10 @@
-import {
-  REALTIME_LISTEN_TYPES,
-  type RealtimeChannel,
-  type SupabaseClient,
-} from '@supabase/supabase-js';
-import debounce from 'debounce';
+import { EventEmitter } from 'events';
+import debug from 'debug';
+import * as awarenessProtocol from 'y-protocols/awareness';
 import * as Y from 'yjs';
+
+import { REALTIME_LISTEN_TYPES } from '@supabase/supabase-js';
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 
 export interface SupabaseProviderConfig {
   channel: string;
@@ -12,291 +12,311 @@ export interface SupabaseProviderConfig {
   columnName: string;
   idName?: string;
   id: string | number;
+  awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
 }
 
-type EventMap = {
-  connect: CustomEvent<SupabaseProvider>;
-  disconnect: CustomEvent<SupabaseProvider>;
-  error: CustomEvent<SupabaseProvider>;
-  status: CustomEvent<{ status: string }[]>;
-  message: CustomEvent<Uint8Array>;
-  save: CustomEvent<number>;
-};
+export default class SupabaseProvider extends EventEmitter {
+  public awareness: awarenessProtocol.Awareness;
+  public connected = false;
+  private channel: RealtimeChannel | null = null;
 
-class EventBus extends EventTarget {
-  emit<K extends keyof EventMap>(eventName: K, detail: EventMap[K]['detail']) {
-    const event = new CustomEvent(eventName, { detail });
-    this.dispatchEvent(event);
+  private _synced = false;
+  private resyncInterval: NodeJS.Timer | undefined;
+  protected logger: debug.Debugger;
+  public readonly id: number;
+
+  public version = 0;
+
+  isOnline(online?: boolean): boolean {
+    if (!online && online !== false) return this.connected;
+    this.connected = online;
+    return this.connected;
   }
 
-  on<K extends keyof EventMap>(
-    eventName: K,
-    listener: (event: EventMap[K]) => void
-  ) {
-    this.addEventListener(eventName, listener as EventListener);
-  }
-
-  off<K extends keyof EventMap>(
-    eventName: K,
-    listener: (event: EventMap[K]) => void
-  ) {
-    this.removeEventListener(eventName, listener as EventListener);
-  }
-}
-
-export interface SupabaseProvider {
-  id: number;
-  version: number;
-  isOnline: (online?: boolean) => boolean;
-  onDocumentUpdate: (update: Uint8Array, origin: unknown) => void;
-  save: () => Promise<void>;
-  destroy: () => void;
-  onConnecting: () => void;
-  onDisconnect: () => void;
-  onMessage: (message: Uint8Array, origin: unknown) => void;
-}
-
-const EVENT_NAME = 'canvas-update';
-
-export default function createSupabaseProvider(
-  doc: Y.Doc,
-  supabase: SupabaseClient,
-  config: SupabaseProviderConfig
-): SupabaseProvider {
-  const emitter = new EventBus();
-  const logger = (message: string, ...args: unknown[]) => {
-    console.log(`[y-${doc.clientID}] ${message}`, ...args);
-  };
-
-  let connected = false;
-  let channel: RealtimeChannel | null = null;
-  let resyncInterval: NodeJS.Timeout | undefined;
-  let version = 0;
-
-  const id = doc.clientID;
-
-  const debouncedSave = debounce(async () => {
-    const content = Array.from(Y.encodeStateAsUpdate(doc));
-
-    logger('saving to database');
-
-    const { error } = await supabase
-      .from(config.tableName)
-      .update({ [config.columnName]: content })
-      .eq(config.idName || 'id', config.id);
-
-    if (error) {
-      throw error;
-    }
-
-    emitter.emit('save', version);
-  }, 1000);
-
-  const isOnline = (online?: boolean): boolean => {
-    if (!online && online !== false) {
-      return connected;
-    }
-
-    connected = online;
-    return connected;
-  };
-
-  const onDocumentUpdate = (update: Uint8Array, origin: unknown) => {
-    if (origin !== provider) {
-      logger(
+  onDocumentUpdate(update: Uint8Array, origin: any) {
+    if (origin !== this) {
+      this.logger(
         'document updated locally, broadcasting update to peers',
-        isOnline()
+        this.isOnline()
       );
-      emitter.emit('message', update);
-      debouncedSave();
+      this.emit('message', update);
+      this.save();
     }
-  };
+  }
 
-  const save = async () => {
-    const content = Array.from(Y.encodeStateAsUpdate(doc));
+  onAwarenessUpdate({ added, updated, removed }: any, origin: any) {
+    const changedClients = added.concat(updated).concat(removed);
+    const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
+      this.awareness,
+      changedClients
+    );
+    this.emit('awareness', awarenessUpdate);
+  }
 
-    logger('saving to database');
+  removeSelfFromAwarenessOnUnload() {
+    awarenessProtocol.removeAwarenessStates(
+      this.awareness,
+      [this.doc.clientID],
+      'window unload'
+    );
+  }
 
-    const { error } = await supabase
-      .from(config.tableName)
-      .update({ [config.columnName]: content })
-      .eq(config.idName || 'id', config.id);
+  async save() {
+    const content = Array.from(Y.encodeStateAsUpdate(this.doc));
+
+    const { error } = await this.supabase
+      .from(this.config.tableName)
+      .update({ [this.config.columnName]: content })
+      .eq(this.config.idName || 'id', this.config.id);
 
     if (error) {
       throw error;
     }
 
-    emitter.emit('save', version);
-  };
+    this.emit('save', this.version);
+  }
 
-  const applyUpdate = (update: Uint8Array, origin?: unknown) => {
-    version++;
-    Y.applyUpdate(doc, update, origin);
-  };
+  private async onConnect() {
+    this.logger('connected');
 
-  const disconnect = () => {
-    if (channel) {
-      supabase.removeChannel(channel);
-      channel = null;
+    const { data, error, status } = await this.supabase
+      .from(this.config.tableName)
+      .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
+      .eq(this.config.idName || 'id', this.config.id)
+      .single();
+
+    this.logger('retrieved data from supabase', status);
+
+    if (data && data[this.config.columnName]) {
+      this.logger('applying update to yjs');
+      try {
+        this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
+      } catch (error) {
+        this.logger(error);
+      }
     }
-  };
 
-  const connect = () => {
-    channel = supabase.channel(config.channel);
-    if (channel) {
-      channel
+    this.logger('setting connected flag to true');
+    this.isOnline(true);
+
+    this.emit('status', [{ status: 'connected' }]);
+
+    if (this.awareness.getLocalState() !== null) {
+      const awarenessUpdate = awarenessProtocol.encodeAwarenessUpdate(
+        this.awareness,
+        [this.doc.clientID]
+      );
+      this.emit('awareness', awarenessUpdate);
+    }
+  }
+
+  private applyUpdate(update: Uint8Array, origin?: any) {
+    this.version++;
+    Y.applyUpdate(this.doc, update, origin);
+  }
+
+  private disconnect() {
+    if (this.channel) {
+      this.supabase.removeChannel(this.channel);
+      this.channel = null;
+    }
+  }
+
+  private connect() {
+    this.channel = this.supabase.channel(this.config.channel);
+    if (this.channel) {
+      this.channel
         .on(
           REALTIME_LISTEN_TYPES.BROADCAST,
-          { event: EVENT_NAME },
+          { event: 'message' },
           ({ payload }) => {
-            onMessage(Uint8Array.from(payload), provider);
+            this.onMessage(Uint8Array.from(payload), this);
+          }
+        )
+        .on(
+          REALTIME_LISTEN_TYPES.BROADCAST,
+          { event: 'awareness' },
+          ({ payload }) => {
+            this.onAwareness(Uint8Array.from(payload));
           }
         )
         .subscribe((status, err) => {
           if (status === 'SUBSCRIBED') {
-            emitter.emit('connect', provider);
+            this.emit('connect', this);
           }
 
           if (status === 'CHANNEL_ERROR') {
-            logger('CHANNEL_ERROR', err);
-            emitter.emit('error', provider);
+            this.logger('CHANNEL_ERROR', err);
+            this.emit('error', this);
           }
 
           if (status === 'TIMED_OUT') {
-            emitter.emit('disconnect', provider);
+            this.emit('disconnect', this);
           }
 
           if (status === 'CLOSED') {
-            emitter.emit('disconnect', provider);
+            this.emit('disconnect', this);
           }
         });
     }
-  };
-
-  const onConnect = async () => {
-    logger('connected');
-
-    const { data, error, status } = await supabase
-      .from(config.tableName)
-      .select<string, { [key: string]: number[] }>(`${config.columnName}`)
-      .eq(config.idName || 'id', config.id)
-      .single();
-
-    logger('retrieved data from supabase', status);
-
-    if (data?.[config.columnName]) {
-      logger('applying update to yjs');
-      try {
-        applyUpdate(Uint8Array.from(data[config.columnName]));
-      } catch (error) {
-        logger(
-          'Error applying update:',
-          error instanceof Error ? error.message : String(error)
-        );
-      }
-    }
-
-    logger('setting connected flag to true');
-    isOnline(true);
-
-    emitter.emit('status', [{ status: 'connected' }]);
-  };
-
-  const onConnecting = () => {
-    if (!isOnline()) {
-      logger('connecting');
-      emitter.emit('status', [{ status: 'connecting' }]);
-    }
-  };
-
-  const onDisconnect = () => {
-    logger('disconnected');
-    isOnline(false);
-    logger('set connected flag to false');
-    if (isOnline()) {
-      emitter.emit('status', [{ status: 'disconnected' }]);
-    }
-  };
-
-  const onMessage = (message: Uint8Array, origin: unknown) => {
-    if (!isOnline()) return;
-    try {
-      applyUpdate(message, provider);
-    } catch (err) {
-      logger(
-        'Error processing message:',
-        err instanceof Error ? err.message : String(err)
-      );
-    }
-  };
-
-  const destroy = () => {
-    logger('destroying');
-
-    if (resyncInterval) {
-      clearInterval(resyncInterval);
-    }
-
-    doc.off('update', onDocumentUpdate);
-
-    if (channel) {
-      disconnect();
-    }
-  };
-
-  // Set up event listeners
-  emitter.on('connect', onConnect);
-  emitter.on('disconnect', onDisconnect);
-
-  // Set up resync interval if configured
-  if (config.resyncInterval || typeof config.resyncInterval === 'undefined') {
-    if (config.resyncInterval && config.resyncInterval < 3000) {
-      throw new Error('resync interval of less than 3 seconds');
-    }
-    logger(
-      `setting resync interval to every ${(config.resyncInterval || 5000) / 1000} seconds`
-    );
-    resyncInterval = setInterval(() => {
-      logger('resyncing (resync interval elapsed)');
-      emitter.emit('message', Y.encodeStateAsUpdate(doc));
-      if (channel) {
-        channel.send({
-          type: 'broadcast',
-          event: EVENT_NAME,
-          payload: Array.from(Y.encodeStateAsUpdate(doc)),
-        });
-      }
-    }, config.resyncInterval || 5000);
   }
 
-  // Set up message event listeners
-  emitter.on('message', (event) => {
-    if (channel) {
-      channel.send({
-        type: 'broadcast',
-        event: EVENT_NAME,
-        payload: Array.from(event.detail),
-      });
+  constructor(
+    private doc: Y.Doc,
+    private supabase: SupabaseClient,
+    private config: SupabaseProviderConfig
+  ) {
+    super();
+
+    this.awareness =
+      this.config.awareness || new awarenessProtocol.Awareness(doc);
+
+    this.config = config || {};
+    this.id = doc.clientID;
+
+    this.supabase = supabase;
+    this.on('connect', this.onConnect);
+    this.on('disconnect', this.onDisconnect);
+
+    this.logger = debug('y-' + doc.clientID);
+    // turn on debug logging to the console
+    this.logger.enabled = true;
+
+    this.logger('constructor initializing');
+    this.logger('connecting to Supabase Realtime', doc.guid);
+
+    if (
+      this.config.resyncInterval ||
+      typeof this.config.resyncInterval === 'undefined'
+    ) {
+      if (this.config.resyncInterval && this.config.resyncInterval < 3000) {
+        throw new Error('resync interval of less than 3 seconds');
+      }
+      this.logger(
+        `setting resync interval to every ${(this.config.resyncInterval || 5000) / 1000} seconds`
+      );
+      this.resyncInterval = setInterval(() => {
+        this.logger('resyncing (resync interval elapsed)');
+        this.emit('message', Y.encodeStateAsUpdate(this.doc));
+        if (this.channel)
+          this.channel.send({
+            type: 'broadcast',
+            event: 'message',
+            payload: Array.from(Y.encodeStateAsUpdate(this.doc)),
+          });
+      }, this.config.resyncInterval || 5000);
     }
-  });
 
-  // Initialize connection
-  connect();
-  doc.on('update', onDocumentUpdate);
+    if (typeof window !== 'undefined') {
+      window.addEventListener(
+        'beforeunload',
+        this.removeSelfFromAwarenessOnUnload
+      );
+    } else if (typeof process !== 'undefined') {
+      process.on('exit', () => this.removeSelfFromAwarenessOnUnload);
+    }
+    this.on('awareness', (update) => {
+      if (this.channel)
+        this.channel.send({
+          type: 'broadcast',
+          event: 'awareness',
+          payload: Array.from(update),
+        });
+    });
+    this.on('message', (update) => {
+      if (this.channel)
+        this.channel.send({
+          type: 'broadcast',
+          event: 'message',
+          payload: Array.from(update),
+        });
+    });
 
-  // Create provider object
-  const provider: SupabaseProvider = {
-    id,
-    version,
-    isOnline,
-    onDocumentUpdate,
-    save,
-    destroy,
-    onConnecting,
-    onDisconnect,
-    onMessage,
-  };
+    this.connect();
+    this.doc.on('update', this.onDocumentUpdate.bind(this));
+    this.awareness.on('update', this.onAwarenessUpdate.bind(this));
+  }
 
-  return provider;
+  get synced() {
+    return this._synced;
+  }
+
+  set synced(state) {
+    if (this._synced !== state) {
+      this.logger('setting sync state to ' + state);
+      this._synced = state;
+      this.emit('synced', [state]);
+      this.emit('sync', [state]);
+    }
+  }
+
+  public onConnecting() {
+    if (!this.isOnline()) {
+      this.logger('connecting');
+      this.emit('status', [{ status: 'connecting' }]);
+    }
+  }
+
+  public onDisconnect() {
+    this.logger('disconnected');
+
+    this.synced = false;
+    this.isOnline(false);
+    this.logger('set connected flag to false');
+    if (this.isOnline()) {
+      this.emit('status', [{ status: 'disconnected' }]);
+    }
+
+    // update awareness (keep all users except local)
+    // FIXME? compare to broadcast channel behavior
+    const states = Array.from(this.awareness.getStates().keys()).filter(
+      (client) => client !== this.doc.clientID
+    );
+    awarenessProtocol.removeAwarenessStates(this.awareness, states, this);
+  }
+
+  public onMessage(message: Uint8Array, origin: any) {
+    if (!this.isOnline()) return;
+    try {
+      this.applyUpdate(message, this);
+    } catch (err) {
+      this.logger(err);
+    }
+  }
+
+  public onAwareness(message: Uint8Array) {
+    awarenessProtocol.applyAwarenessUpdate(this.awareness, message, this);
+  }
+
+  public onAuth(message: Uint8Array) {
+    this.logger(`received ${message.byteLength} bytes from peer: ${message}`);
+
+    if (!message) {
+      this.logger(`Permission denied to channel`);
+    }
+    this.logger('processed message (type = MessageAuth)');
+  }
+
+  public destroy() {
+    this.logger('destroying');
+
+    if (this.resyncInterval) {
+      clearInterval(this.resyncInterval);
+    }
+
+    if (typeof window !== 'undefined') {
+      window.removeEventListener(
+        'beforeunload',
+        this.removeSelfFromAwarenessOnUnload
+      );
+    } else if (typeof process !== 'undefined') {
+      process.off('exit', () => this.removeSelfFromAwarenessOnUnload);
+    }
+
+    this.awareness.off('update', this.onAwarenessUpdate);
+    this.doc.off('update', this.onDocumentUpdate);
+
+    if (this.channel) this.disconnect();
+  }
 }

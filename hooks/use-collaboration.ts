@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import createSupabaseProvider from '@/lib/supabase/y-supabase';
+import SupabaseProvider from '@/lib/supabase/y-supabase';
 import {
   type Connection,
   type Edge,
@@ -54,12 +54,16 @@ export const useCollaboration = (
     const ydoc = new Y.Doc();
 
     // Connect peers using SupabaseProvider for sync.
-    const provider = createSupabaseProvider(ydoc, supabase, {
+    const provider = new SupabaseProvider(ydoc, supabase, {
       channel: `${data.id}-canvas`,
-      tableName: 'project',
-      columnName: 'content',
       id: data.id,
       resyncInterval: 5000, // Optional
+      columnName: 'content',
+      tableName: 'project',
+    });
+
+    provider.on('save', () => {
+      save();
     });
 
     // Create shared arrays for nodes and edges (initially empty)
@@ -116,7 +120,7 @@ export const useCollaboration = (
       provider.destroy();
       ydoc.destroy();
     };
-  }, [data.id, data.members?.length, data.content]);
+  }, [data.id, data.members?.length, data.content, save]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     console.log('onNodesChange', changes);
