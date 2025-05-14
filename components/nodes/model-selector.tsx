@@ -125,8 +125,6 @@ export const ModelSelector = ({
     .flatMap((option) => option.models)
     .find((model) => model.id === value);
 
-  console.log(options, 'plan');
-
   return (
     <Combobox
       open={open}

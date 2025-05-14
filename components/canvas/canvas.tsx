@@ -329,8 +329,6 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     preventDefault: true,
   });
 
-  console.log(nodes, edges, 'canvas');
-
   return (
     <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
       <NodeDropzoneProvider>
