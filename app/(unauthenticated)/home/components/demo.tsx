@@ -24,6 +24,7 @@ export const Demo = () => (
           }}
           canvasProps={{
             panOnScroll: false,
+            panOnDrag: true,
             zoomOnScroll: false,
             preventScrolling: false,
           }}

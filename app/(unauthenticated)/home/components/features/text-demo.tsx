@@ -54,7 +54,6 @@ const nodes: Node[] = [
     position: { x: 600, y: 100 },
     data: {
       source: 'transform',
-      model: 'gpt-4o',
       instructions: 'Add some flair to the text',
       generated: ['Bonjour!'],
     },
