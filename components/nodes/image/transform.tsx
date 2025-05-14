@@ -95,7 +95,7 @@ export const ImageTransform = ({
             modelId,
           })
         : await generateImageAction({
-            prompt: [...textNodes, ...imageNodes].join('\n'),
+            prompt: textNodes.join('\n'),
             modelId,
             instructions: data.instructions,
             projectId,
