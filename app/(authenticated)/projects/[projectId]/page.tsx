@@ -1,10 +1,15 @@
 import { Canvas } from '@/components/canvas';
 import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
-import { currentUser } from '@/lib/auth';
+import { currentUser, currentUserProfile } from '@/lib/auth';
 import { database } from '@/lib/database';
+import { env } from '@/lib/env';
+import { ProjectProvider } from '@/providers/project';
+import {
+  type SubscriptionContextType,
+  SubscriptionProvider,
+} from '@/providers/subscription';
 import { projects } from '@/schema';
-import { ReactFlowProvider } from '@xyflow/react';
 import { eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -31,6 +36,12 @@ const Project = async ({ params }: ProjectProps) => {
     return redirect('/sign-in');
   }
 
+  const profile = await currentUserProfile();
+
+  if (!profile) {
+    return null;
+  }
+
   const allProjects = await database
     .select()
     .from(projects)
@@ -46,17 +57,30 @@ const Project = async ({ params }: ProjectProps) => {
     notFound();
   }
 
+  let plan: SubscriptionContextType['plan'];
+
+  if (profile.subscriptionId === env.STRIPE_HOBBY_PRODUCT_ID) {
+    plan = 'hobby';
+  } else if (profile.subscriptionId === env.STRIPE_PRO_PRODUCT_ID) {
+    plan = 'pro';
+  }
+
   return (
     <div className="h-screen w-screen">
-      <ReactFlowProvider>
-        <Canvas data={project} />
-        <Suspense fallback={null}>
-          <TopLeft id={projectId} />
-        </Suspense>
-        <Suspense fallback={null}>
-          <TopRight id={projectId} />
-        </Suspense>
-      </ReactFlowProvider>
+      <ProjectProvider data={project}>
+        <SubscriptionProvider
+          isSubscribed={Boolean(profile.subscriptionId)}
+          plan={plan}
+        >
+          <Canvas data={project} />
+        </SubscriptionProvider>
+      </ProjectProvider>
+      <Suspense fallback={null}>
+        <TopLeft id={projectId} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <TopRight id={projectId} />
+      </Suspense>
     </div>
   );
 };

@@ -11,6 +11,10 @@ import {
 import type { PriceBracket } from '@/lib/models/text';
 import { cn } from '@/lib/utils';
 import {
+  type SubscriptionContextType,
+  useSubscription,
+} from '@/providers/subscription';
+import {
   ChevronDownIcon,
   ChevronUpIcon,
   ChevronsDownIcon,
@@ -88,6 +92,24 @@ const getCostBracketLabel = (bracket: PriceBracket) => {
   }
 };
 
+const getModelDisabled = (
+  model: ModelSelectorProps['options'][number]['models'][number],
+  plan: SubscriptionContextType['plan']
+) => {
+  if (model.disabled) {
+    return true;
+  }
+
+  if (
+    (!plan || plan === 'hobby') &&
+    (model.priceIndicator === 'highest' || model.priceIndicator === 'high')
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const ModelSelector = ({
   id,
   value,
@@ -98,9 +120,12 @@ export const ModelSelector = ({
   disabled,
 }: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
+  const { plan } = useSubscription();
   const activeModel = options
     .flatMap((option) => option.models)
     .find((model) => model.id === value);
+
+  console.log(options, 'plan');
 
   return (
     <Combobox
@@ -151,7 +176,7 @@ export const ModelSelector = ({
                       onChange?.(model.id);
                       setOpen(false);
                     }}
-                    disabled={model.disabled}
+                    disabled={getModelDisabled(model, plan)}
                     className={cn(
                       value === model.id &&
                         'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'

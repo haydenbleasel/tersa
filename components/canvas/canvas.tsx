@@ -1,10 +1,10 @@
 'use client';
+
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import { NodeOperationsProvider } from '@/providers/node-operations';
-import { ProjectProvider } from '@/providers/project';
 import type { projects } from '@/schema';
 import {
   Background,
@@ -28,18 +28,18 @@ import { nanoid } from 'nanoid';
 import type { MouseEventHandler } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { ConnectionLine } from './connection-line';
-import { Controls } from './controls';
-import { edgeTypes } from './edges';
-import { nodeTypes } from './nodes';
-import { SaveIndicator } from './save-indicator';
-import { Toolbar } from './toolbar';
+import { ConnectionLine } from '../connection-line';
+import { Controls } from '../controls';
+import { edgeTypes } from '../edges';
+import { nodeTypes } from '../nodes';
+import { SaveIndicator } from '../save-indicator';
+import { Toolbar } from '../toolbar';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from './ui/context-menu';
+} from '../ui/context-menu';
 
 type ProjectData = {
   content?:
@@ -325,55 +325,53 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
   console.log(nodes, edges, 'canvas');
 
   return (
-    <ProjectProvider data={data}>
-      <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
-        <NodeDropzoneProvider>
-          <ContextMenu>
-            <ContextMenuTrigger>
-              <ReactFlow
-                deleteKeyCode={['Backspace', 'Delete']}
-                nodes={nodes}
-                onNodesChange={onNodesChange}
-                edges={edges}
-                onEdgesChange={onEdgesChange}
-                onConnectStart={onConnectStart}
-                onConnect={onConnect}
-                onConnectEnd={onConnectEnd}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                isValidConnection={isValidConnection}
-                connectionLineComponent={ConnectionLine}
-                panOnScroll
-                fitView
-                zoomOnDoubleClick={false}
-                panOnDrag={false}
-                selectionOnDrag={true}
-                onDoubleClick={addDropNode}
-                {...canvasProps}
-              >
-                <Background />
-                {!data.id.includes('demo') && user && (
-                  <>
-                    <Controls />
-                    <Toolbar />
-                    <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
-                  </>
-                )}
-              </ReactFlow>
-            </ContextMenuTrigger>
-            <ContextMenuContent>
-              <ContextMenuItem onClick={addDropNode}>
-                <PlusIcon size={12} />
-                <span>Add a new node</span>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={handleSelectAll}>
-                <BoxSelectIcon size={12} />
-                <span>Select all</span>
-              </ContextMenuItem>
-            </ContextMenuContent>
-          </ContextMenu>
-        </NodeDropzoneProvider>
-      </NodeOperationsProvider>
-    </ProjectProvider>
+    <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
+      <NodeDropzoneProvider>
+        <ContextMenu>
+          <ContextMenuTrigger>
+            <ReactFlow
+              deleteKeyCode={['Backspace', 'Delete']}
+              nodes={nodes}
+              onNodesChange={onNodesChange}
+              edges={edges}
+              onEdgesChange={onEdgesChange}
+              onConnectStart={onConnectStart}
+              onConnect={onConnect}
+              onConnectEnd={onConnectEnd}
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              isValidConnection={isValidConnection}
+              connectionLineComponent={ConnectionLine}
+              panOnScroll
+              fitView
+              zoomOnDoubleClick={false}
+              panOnDrag={false}
+              selectionOnDrag={true}
+              onDoubleClick={addDropNode}
+              {...canvasProps}
+            >
+              <Background />
+              {!data.id.includes('demo') && user && (
+                <>
+                  <Controls />
+                  <Toolbar />
+                  <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
+                </>
+              )}
+            </ReactFlow>
+          </ContextMenuTrigger>
+          <ContextMenuContent>
+            <ContextMenuItem onClick={addDropNode}>
+              <PlusIcon size={12} />
+              <span>Add a new node</span>
+            </ContextMenuItem>
+            <ContextMenuItem onClick={handleSelectAll}>
+              <BoxSelectIcon size={12} />
+              <span>Select all</span>
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      </NodeDropzoneProvider>
+    </NodeOperationsProvider>
   );
 };

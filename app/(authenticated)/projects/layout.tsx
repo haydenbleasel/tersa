@@ -1,4 +1,3 @@
-import { currentUserProfile } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -14,9 +13,6 @@ const ProjectsLayout = async ({ children }: ProjectsLayoutProps) => {
   if (error || !data?.user) {
     redirect('/auth/login');
   }
-
-  // Side effect to ensure user profile exists
-  await currentUserProfile();
 
   return children;
 };

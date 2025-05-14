@@ -1,3 +1,5 @@
+'use client';
+
 import type { projects } from '@/schema';
 import { type ReactNode, createContext, useContext } from 'react';
 
