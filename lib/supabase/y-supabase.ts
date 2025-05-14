@@ -16,6 +16,27 @@ export interface SupabaseProviderConfig {
   defaultValue?: unknown;
 }
 
+// Define event types for better intellisense
+export interface SupabaseProviderEvents {
+  // Connection events
+  connect: (provider: SupabaseProvider) => void;
+  disconnect: (provider: SupabaseProvider) => void;
+  error: (provider: SupabaseProvider) => void;
+
+  // Sync events
+  synced: (synced: boolean[]) => void;
+  sync: (synced: boolean[]) => void;
+
+  // Status events
+  status: (
+    status: { status: 'connecting' | 'connected' | 'disconnected' }[]
+  ) => void;
+
+  // Data events
+  message: (update: Uint8Array) => void;
+  awareness: (update: Uint8Array) => void;
+}
+
 export default class SupabaseProvider extends EventEmitter {
   awareness: awarenessProtocol.Awareness;
   connected = false;
@@ -28,8 +49,40 @@ export default class SupabaseProvider extends EventEmitter {
 
   version = 0;
 
+  // Override EventEmitter methods for better typing
+  on<K extends keyof SupabaseProviderEvents>(
+    event: K,
+    listener: SupabaseProviderEvents[K]
+  ): this {
+    return super.on(event, listener as any);
+  }
+
+  once<K extends keyof SupabaseProviderEvents>(
+    event: K,
+    listener: SupabaseProviderEvents[K]
+  ): this {
+    return super.once(event, listener as any);
+  }
+
+  emit<K extends keyof SupabaseProviderEvents>(
+    event: K,
+    ...args: Parameters<SupabaseProviderEvents[K]>
+  ): boolean {
+    return super.emit(event, ...args);
+  }
+
+  off<K extends keyof SupabaseProviderEvents>(
+    event: K,
+    listener: SupabaseProviderEvents[K]
+  ): this {
+    return super.off(event, listener as any);
+  }
+
   isOnline(online?: boolean): boolean {
-    if (!online && online !== false) return this.connected;
+    if (!online && online !== false) {
+      return this.connected;
+    }
+
     this.connected = online;
     return this.connected;
   }
