@@ -64,7 +64,7 @@ export const generateMinimaxVideo = async ({
   image,
 }: GenerateVideoProps) => {
   const props: CreateJobProps = {
-    model: model.id as CreateJobProps['model'],
+    model: model.model as CreateJobProps['model'],
     prompt,
     first_frame_image: image,
   };

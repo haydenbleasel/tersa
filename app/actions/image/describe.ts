@@ -49,7 +49,7 @@ export const describeAction = async (
     }
 
     const response = await openai.chat.completions.create({
-      model: model.id,
+      model: model.model.modelId,
       messages: [
         {
           role: 'user',

@@ -70,7 +70,7 @@ export const editImageAction = async ({
         : 'Create a single variant of the images.';
 
     const response = await openai.images.edit({
-      model: model.id,
+      model: model.model.modelId,
       image: promptImages,
       prompt: instructions ?? defaultPrompt,
       user: user.id,
