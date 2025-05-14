@@ -110,6 +110,8 @@
     "openai": "^4.98.0",
     "perfect-cursors": "^1.0.5",
     "postgres": "^3.4.5",
+    "posthog-js": "^1.242.0",
+    "posthog-node": "^4.17.1",
     "react": "^19.1.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^19.1.0",

@@ -37,6 +37,8 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
     NEXT_PUBLIC_WSS_SIGNALING_URL: z.string().url().min(1),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().min(1),
   },
   runtimeEnv: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -62,5 +64,7 @@ export const env = createEnv({
     SUPABASE_AUTH_HOOK_SECRET: process.env.SUPABASE_AUTH_HOOK_SECRET,
     RUNWAYML_API_SECRET: process.env.RUNWAYML_API_SECRET,
     LUMAAI_API_KEY: process.env.LUMAAI_API_KEY,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
 });

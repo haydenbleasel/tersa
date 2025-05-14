@@ -2,6 +2,7 @@ import './globals.css';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { mono, sans, serif } from '@/lib/fonts';
 import { cn } from '@/lib/utils';
+import { PostHogProvider } from '@/providers/posthog-provider';
 import { ThemeProvider } from '@/providers/theme';
 import { Analytics } from '@vercel/analytics/next';
 import type { ReactNode } from 'react';
@@ -21,16 +22,18 @@ const RootLayout = ({ children }: RootLayoutProps) => (
         'bg-background text-foreground antialiased'
       )}
     >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster className="z-[99999999]" />
-      </ThemeProvider>
-      <Analytics />
+      <PostHogProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster className="z-[99999999]" />
+        </ThemeProvider>
+        <Analytics />
+      </PostHogProvider>
     </body>
   </html>
 );
