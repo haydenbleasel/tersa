@@ -7,10 +7,6 @@ import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 
 export interface SupabaseProviderConfig {
   channel: string;
-  tableName: string;
-  columnName: string;
-  idName?: string;
-  id: string | number;
   awareness?: awarenessProtocol.Awareness;
   resyncInterval?: number | false;
   defaultValue?: object;
