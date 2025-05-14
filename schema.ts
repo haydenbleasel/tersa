@@ -21,5 +21,4 @@ export const profile = pgTable('profile', {
   customerId: text('customer_id'),
   subscriptionId: text('subscription_id'),
   productId: text('product_id'),
-  avatar: text('avatar'),
 });

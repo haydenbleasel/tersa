@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { PostHogIdentifyProvider } from '@/providers/posthog-provider';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 
@@ -14,7 +15,7 @@ const ProjectsLayout = async ({ children }: ProjectsLayoutProps) => {
     redirect('/auth/login');
   }
 
-  return children;
+  return <PostHogIdentifyProvider>{children}</PostHogIdentifyProvider>;
 };
 
 export default ProjectsLayout;

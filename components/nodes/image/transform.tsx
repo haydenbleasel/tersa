@@ -4,6 +4,7 @@ import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { imageModels } from '@/lib/models/image';
@@ -53,6 +54,7 @@ export const ImageTransform = ({
     getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
       .length > 0;
   const modelId = data.model ?? getDefaultModel(imageModels).id;
+  const analytics = useAnalytics();
 
   const availableModels = imageModels.map((provider) => ({
     ...provider,
@@ -75,6 +77,14 @@ export const ImageTransform = ({
 
     try {
       setLoading(true);
+
+      analytics.track('canvas', 'node', 'generate', {
+        type,
+        textPromptsLength: textNodes.length,
+        imagePromptsLength: imageNodes.length,
+        model: modelId,
+        instructionsLength: data.instructions?.length ?? 0,
+      });
 
       const response = imageNodes.length
         ? await editImageAction({

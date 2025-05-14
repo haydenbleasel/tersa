@@ -2,6 +2,7 @@ import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { handleError } from '@/lib/error/handle';
 import { textModels } from '@/lib/models/text';
 import {
@@ -47,6 +48,7 @@ export const TextTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
   const modelId = data.model ?? getDefaultModel(textModels).id;
+  const analytics = useAnalytics();
   const { append, messages, setMessages, status, stop } = useChat({
     body: {
       modelId,
@@ -96,6 +98,15 @@ export const TextTransform = ({
     if (imageDescriptions.length) {
       content.push('--- Image Descriptions ---', ...imageDescriptions);
     }
+
+    analytics.track('canvas', 'node', 'generate', {
+      type,
+      promptLength: content.join('\n').length,
+      model: modelId,
+      instructionsLength: data.instructions?.length ?? 0,
+      imageCount: images.length,
+      fileCount: files.length,
+    });
 
     setMessages([]);
     append({

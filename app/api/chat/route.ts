@@ -15,12 +15,8 @@ const rateLimiter = createRateLimiter({
 });
 
 export const POST = async (req: Request) => {
-  let userId: string;
-
   try {
-    const user = await getSubscribedUser();
-
-    userId = user.id;
+    await getSubscribedUser();
   } catch (error) {
     const message = parseError(error);
 

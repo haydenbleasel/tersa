@@ -1,5 +1,6 @@
 'use client';
 
+import { useUser } from '@/hooks/use-user';
 import { env } from '@/lib/env';
 import { usePathname, useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
@@ -54,4 +55,20 @@ const SuspendedPostHogPageView = () => {
       <PostHogPageView />
     </Suspense>
   );
+};
+
+export const PostHogIdentifyProvider = ({ children }: PostHogProviderProps) => {
+  const posthog = usePostHog();
+  const user = useUser();
+
+  useEffect(() => {
+    if (posthog && user) {
+      posthog.identify(user.id, {
+        email: user.email,
+        name: user.user_metadata.name,
+      });
+    }
+  }, [posthog, user]);
+
+  return children;
 };

@@ -3,6 +3,7 @@ import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models/video';
@@ -48,6 +49,7 @@ export const VideoTransform = ({
   const [loading, setLoading] = useState(false);
   const { projectId } = useParams();
   const modelId = data.model ?? getDefaultModel(videoModels).id;
+  const analytics = useAnalytics();
 
   const handleGenerate = async () => {
     if (loading || typeof projectId !== 'string') {
@@ -64,6 +66,14 @@ export const VideoTransform = ({
       }
 
       setLoading(true);
+
+      analytics.track('canvas', 'node', 'generate', {
+        type,
+        promptLength: textPrompts.join('\n').length,
+        model: modelId,
+        instructionsLength: data.instructions?.length ?? 0,
+        imageCount: images.length,
+      });
 
       const response = await generateVideoAction({
         modelId,

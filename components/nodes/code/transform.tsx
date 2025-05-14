@@ -1,6 +1,7 @@
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useAnalytics } from '@/hooks/use-analytics';
 import { handleError } from '@/lib/error/handle';
 import { textModels } from '@/lib/models/text';
 import {
@@ -51,6 +52,7 @@ export const CodeTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const { projectId } = useParams();
   const modelId = data.model ?? getDefaultModel(textModels).id;
+  const analytics = useAnalytics();
   const { isLoading, object, stop, submit } = useObject({
     api: '/api/code',
     schema: z.object({
@@ -85,25 +87,41 @@ export const CodeTransform = ({
       return;
     }
 
-    submit(
-      [
-        '--- Instructions ---',
-        data.instructions ?? 'None.',
-        '--- Text Prompts ---',
-        ...textPrompts.join('\n'),
-        '--- Audio Prompts ---',
-        ...audioPrompts.join('\n'),
-        '--- Code Prompts ---',
-        ...codePrompts.map(
-          (code, index) =>
-            `--- Prompt ${index + 1} ---
+    const prompt = [
+      '--- Instructions ---',
+      data.instructions ?? 'None.',
+      '--- Text Prompts ---',
+      ...textPrompts.join('\n'),
+      '--- Audio Prompts ---',
+      ...audioPrompts.join('\n'),
+      '--- Code Prompts ---',
+      ...codePrompts.map(
+        (code, index) =>
+          `--- Prompt ${index + 1} ---
             Language: ${code.language}
             Code: ${code.text}
             `
-        ),
-      ].join('\n')
-    );
-  }, [data.instructions, id, getNodes, getEdges, submit]);
+      ),
+    ].join('\n');
+
+    submit(prompt);
+
+    analytics.track('canvas', 'node', 'generate', {
+      type,
+      promptLength: prompt.length,
+      model: modelId,
+      instructionsLength: data.instructions?.length ?? 0,
+    });
+  }, [
+    data.instructions,
+    id,
+    getNodes,
+    getEdges,
+    submit,
+    analytics,
+    modelId,
+    type,
+  ]);
 
   const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (
     event

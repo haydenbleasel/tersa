@@ -1,5 +1,6 @@
 'use client';
 
+import { useAnalytics } from '@/hooks/use-analytics';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
 import { isValidSourceTarget } from '@/lib/xyflow';
@@ -64,6 +65,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     useReactFlow();
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
+  const analytics = useAnalytics();
 
   const onNodesChange = useCallback(
     (changes: NodeChange<Node>[]) => {
@@ -118,9 +120,13 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
       setNodes((nds: Node[]) => nds.concat(newNode));
       save();
 
+      analytics.track('toolbar', 'node', 'added', {
+        type,
+      });
+
       return newNode.id;
     },
-    [save]
+    [save, analytics]
   );
 
   const duplicateNode = useCallback(
