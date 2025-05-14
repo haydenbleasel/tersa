@@ -135,10 +135,22 @@ export const generateImageAction = async ({
       image = generatedImageResponse.image;
     }
 
+    let extension = image.mimeType.split('/').pop();
+
+    if (extension === 'jpeg') {
+      extension = 'jpg';
+    }
+
+    const name = `${nanoid()}.${extension}`;
+
+    const file: File = new File([image.uint8Array], name, {
+      type: image.mimeType,
+    });
+
     const blob = await client.storage
       .from('files')
-      .upload(`${user.id}/${nanoid()}`, new Blob([image.uint8Array]), {
-        contentType: image.mimeType,
+      .upload(`${user.id}/${name}`, file, {
+        contentType: file.type,
       });
 
     if (blob.error) {
