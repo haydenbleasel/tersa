@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import debug from 'debug';
 import * as awarenessProtocol from 'y-protocols/awareness';
 import * as Y from 'yjs';
 
@@ -24,7 +23,7 @@ export default class SupabaseProvider extends EventEmitter {
 
   private _synced = false;
   private resyncInterval: NodeJS.Timer | undefined;
-  protected logger: debug.Debugger;
+  protected logger: (message: string, ...optionalParams: any[]) => void;
   public readonly id: number;
 
   public version = 0;
@@ -70,7 +69,7 @@ export default class SupabaseProvider extends EventEmitter {
       try {
         this.applyUpdate(Uint8Array.from(this.config.defaultValue));
       } catch (error) {
-        this.logger(error);
+        this.logger(`Error: ${error}`);
       }
     }
 
@@ -156,12 +155,10 @@ export default class SupabaseProvider extends EventEmitter {
     this.on('connect', this.onConnect);
     this.on('disconnect', this.onDisconnect);
 
-    this.logger = debug('y-' + doc.clientID);
-    // turn on debug logging to the console
-    this.logger.enabled = true;
+    this.logger = console.log;
 
     this.logger('constructor initializing');
-    this.logger('connecting to Supabase Realtime', doc.guid);
+    this.logger(`connecting to Supabase Realtime ${doc.guid}`);
 
     if (
       this.config.resyncInterval ||
@@ -221,7 +218,7 @@ export default class SupabaseProvider extends EventEmitter {
 
   set synced(state) {
     if (this._synced !== state) {
-      this.logger('setting sync state to ' + state);
+      this.logger(`setting sync state to ${state}`);
       this._synced = state;
       this.emit('synced', [state]);
       this.emit('sync', [state]);
@@ -258,7 +255,7 @@ export default class SupabaseProvider extends EventEmitter {
     try {
       this.applyUpdate(message, this);
     } catch (err) {
-      this.logger(err);
+      this.logger(`Error: ${err}`);
     }
   }
 
@@ -270,7 +267,7 @@ export default class SupabaseProvider extends EventEmitter {
     this.logger(`received ${message.byteLength} bytes from peer: ${message}`);
 
     if (!message) {
-      this.logger(`Permission denied to channel`);
+      this.logger('Permission denied to channel');
     }
     this.logger('processed message (type = MessageAuth)');
   }
