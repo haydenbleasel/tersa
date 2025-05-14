@@ -242,6 +242,13 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
 
   const addDropNode = useCallback<MouseEventHandler<HTMLDivElement>>(
     (event) => {
+      if (
+        !(event.target instanceof HTMLDivElement) ||
+        !event.target.classList.contains('react-flow__pane')
+      ) {
+        return;
+      }
+
       const { x, y } = screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
