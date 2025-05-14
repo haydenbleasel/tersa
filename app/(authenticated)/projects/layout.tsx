@@ -11,12 +11,12 @@ const ProjectsLayout = async ({ children }: ProjectsLayoutProps) => {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
 
-  // Side effect to ensure user profile exists
-  await currentUserProfile();
-
   if (error || !data?.user) {
     redirect('/auth/login');
   }
+
+  // Side effect to ensure user profile exists
+  await currentUserProfile();
 
   return children;
 };
