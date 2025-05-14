@@ -10,14 +10,13 @@ export const SubFooter = () => {
 
   return (
     <div className="flex items-start justify-between gap-4 text-muted-foreground text-sm">
-      <div className="grid gap-4">
-        <Logo className="h-4 w-auto" />
-        <div className="flex items-center gap-8">
-          <Link href="/">Home</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-        </div>
+      <div className="flex items-center gap-8">
+        <Link href="/">
+          <Logo className="h-4 w-auto" />
+        </Link>
+        <Link href="/pricing">Pricing</Link>
+        <Link href="/privacy">Privacy</Link>
+        <Link href="/terms">Terms</Link>
       </div>
       <div className="flex items-center justify-end">
         <ThemeSwitcher
