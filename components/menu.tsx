@@ -10,7 +10,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
-import { ArrowUpRight, ArrowUpRightIcon, MenuIcon } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ArrowUpRightIcon,
+  Loader2,
+  MenuIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type MouseEventHandler, useState } from 'react';
@@ -53,7 +58,11 @@ export const Menu = () => {
   };
 
   if (!user) {
-    return null;
+    return (
+      <Button variant="ghost" size="icon" className="rounded-full" disabled>
+        <Loader2 className="animate-spin" size={16} />
+      </Button>
+    );
   }
 
   return (
