@@ -106,6 +106,8 @@ export const POST = async (req: Request) => {
   } catch (error) {
     const message = parseError(error);
 
+    console.error(message, 'error');
+
     return NextResponse.json(
       {
         error: {
