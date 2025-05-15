@@ -23,6 +23,7 @@ import { useUser } from '@/hooks/use-user';
 import { handleError } from '@/lib/error/handle';
 import { cn } from '@/lib/utils';
 import type { projects } from '@/schema';
+import Fuse from 'fuse.js';
 import { CheckIcon, PlusIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type FormEventHandler, Fragment, useMemo, useState } from 'react';
@@ -102,6 +103,18 @@ export const ProjectSelector = ({
     ];
   }, [projects, user]);
 
+  const fuse = new Fuse(projects, {
+    keys: ['name'],
+    minMatchCharLength: 1,
+    threshold: 0.3,
+  });
+
+  const filterByFuse = (currentValue: string, search: string) => {
+    return fuse.search(search).find((result) => result.item.id === currentValue)
+      ? 1
+      : 0;
+  };
+
   return (
     <>
       <Combobox
@@ -117,6 +130,7 @@ export const ProjectSelector = ({
       >
         <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
         <ComboboxContent
+          filter={filterByFuse}
           className="p-0"
           popoverOptions={{
             sideOffset: 8,
