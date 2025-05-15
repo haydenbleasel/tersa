@@ -19,7 +19,7 @@ Visualize your AI workflows. Tersa is an open source canvas for building AI work
 - [React 19](https://react.dev/)
 - [Supabase](https://supabase.com/) for authentication and data storage
 - [Vercel AI SDK](https://sdk.vercel.ai/) for AI model integration
-- [ReactFlow](https://reactflow.dev/) (via @xyflow/react) for the visual canvas
+- [ReactFlow](https://reactflow.dev/) for the visual canvas
 - [TipTap](https://tiptap.dev/) for rich text editing
 - [Drizzle ORM](https://orm.drizzle.team/) for database queries
 - [Tailwind CSS](https://tailwindcss.com/) for styling
