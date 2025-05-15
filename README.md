@@ -23,7 +23,7 @@ Visualize your AI workflows. Tersa is an open source canvas for building AI work
 - [TipTap](https://tiptap.dev/) for rich text editing
 - [Drizzle ORM](https://orm.drizzle.team/) for database queries
 - [Tailwind CSS](https://tailwindcss.com/) for styling
-- [shadcn/ui](https://ui.shadcn.com/), [Kibo UI](https://www.kibo-ui.com/\) and [Radix UI](https://www.radix-ui.com/) for accessible UI components
+- [shadcn/ui](https://ui.shadcn.com/), [Kibo UI](https://www.kibo-ui.com/) and [Radix UI](https://www.radix-ui.com/) for accessible UI components
 
 ## Getting Started
 
