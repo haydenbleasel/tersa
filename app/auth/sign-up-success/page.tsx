@@ -23,7 +23,8 @@ const SignUpSuccessPage = () => (
     <CardContent>
       <p className="text-muted-foreground text-sm">
         You&apos;ve successfully signed up. Please check your email to confirm
-        your account before signing in.
+        your account before signing in. Remember to check your spam folder if
+        you don&apos;t see the email.
       </p>
     </CardContent>
   </Card>
