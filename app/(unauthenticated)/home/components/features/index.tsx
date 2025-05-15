@@ -108,9 +108,9 @@ export const Features = () => (
           <div className="grid gap-2">
             <h3 className="font-medium text-xl sm:text-2xl">Create videos</h3>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Use models like Minimax's T2V-01-Director to create videos from
-              text prompts, or connect an image node to create a video from an
-              existing image.
+              Use models like Minimax's T2V-01-Director on Runway's Gen4 Turbo
+              to create videos from text prompts, or connect an image node to
+              create a video from an existing image.
             </p>
           </div>
         </div>
