@@ -137,7 +137,7 @@ export const Hero = ({ currentPlan }: HeroProps) => {
           icon: LockIcon,
         },
       ],
-      ctaLink: '/contact',
+      ctaLink: 'https://x.com/haydenbleasel',
       ctaText: 'Get in Touch',
       variant: 'outline',
     };
