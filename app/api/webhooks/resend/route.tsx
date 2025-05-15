@@ -37,21 +37,16 @@ type WebhookPayload = {
 export const POST = async (req: Request) => {
   try {
     const payload = await req.text();
-
-    console.log(payload, typeof payload, 'payload');
-
     const headers = Object.fromEntries(req.headers);
 
-    const wh = new Webhook(env.SUPABASE_AUTH_HOOK_SECRET);
-
-    console.log(wh, typeof wh, 'wh');
+    const wh = new Webhook(
+      env.SUPABASE_AUTH_HOOK_SECRET.replace('v1,whsec_', '')
+    );
 
     const {
       user,
       email_data: { token, token_hash, redirect_to, email_action_type },
     } = wh.verify(payload, headers) as WebhookPayload;
-
-    console.log(user, typeof user, 'user');
 
     const magicLink = new URL(redirect_to, env.NEXT_PUBLIC_SUPABASE_URL);
 
@@ -89,8 +84,6 @@ export const POST = async (req: Request) => {
       throw new Error('Invalid email action type');
     }
 
-    console.log(react, typeof react, 'react');
-
     const { error } = await resend.emails.send({
       from: env.RESEND_EMAIL,
       to: [user.email],
@@ -105,8 +98,6 @@ export const POST = async (req: Request) => {
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
     const message = parseError(error);
-
-    console.error(message, 'error');
 
     return NextResponse.json(
       {
