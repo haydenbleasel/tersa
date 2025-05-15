@@ -1,3 +1,4 @@
+import { env } from '@/lib/env';
 import {
   Body,
   Container,
@@ -12,9 +13,8 @@ type EmailLayoutProps = {
   children: ReactNode;
 };
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : '';
+const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+const returnUrl = `${protocol}://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
 
 export const EmailLayout = ({ children }: EmailLayoutProps) => (
   <Tailwind>
@@ -22,7 +22,7 @@ export const EmailLayout = ({ children }: EmailLayoutProps) => (
       <Container className="mx-auto mb-16 bg-white py-5 pb-12">
         <Section className="px-12">
           <Img
-            src={`${baseUrl}/static/tersa.png`}
+            src={new URL('/tersa.png', returnUrl).toString()}
             width="85"
             height="21.5"
             alt="Tersa"
