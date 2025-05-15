@@ -9,15 +9,20 @@ export const metadata: Metadata = {
 };
 
 const PricingPage = async () => {
-  const profile = await currentUserProfile();
   let currentPlan: 'hobby' | 'pro' | undefined;
 
-  if (profile) {
-    if (profile.productId === env.STRIPE_HOBBY_PRODUCT_ID) {
-      currentPlan = 'hobby';
-    } else if (profile.productId === env.STRIPE_PRO_PRODUCT_ID) {
-      currentPlan = 'pro';
+  try {
+    const profile = await currentUserProfile();
+
+    if (profile) {
+      if (profile.productId === env.STRIPE_HOBBY_PRODUCT_ID) {
+        currentPlan = 'hobby';
+      } else if (profile.productId === env.STRIPE_PRO_PRODUCT_ID) {
+        currentPlan = 'pro';
+      }
     }
+  } catch (error) {
+    // Not an error, just no profile
   }
 
   return <Hero currentPlan={currentPlan} />;
