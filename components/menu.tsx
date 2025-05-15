@@ -92,11 +92,11 @@ export const Menu = () => {
                   .join('')}
               </AvatarFallback>
             </Avatar>
-            <p className="mt-2">
+            <p className="mt-2 truncate">
               {user.user_metadata.name ?? user.email ?? user.id}
             </p>
             {user.user_metadata.name && user.email && (
-              <p className="font-normal text-muted-foreground text-xs">
+              <p className="truncate font-normal text-muted-foreground text-xs">
                 {user.email}
               </p>
             )}
