@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
+import { useSubscription } from '@/providers/subscription';
 import {
   ArrowUpRight,
   ArrowUpRightIcon,
@@ -30,6 +31,7 @@ export const Menu = () => {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const router = useRouter();
   const user = useUser();
+  const { isSubscribed } = useSubscription();
 
   const logout = async () => {
     const supabase = createClient();
@@ -103,12 +105,14 @@ export const Menu = () => {
           <DropdownMenuItem onClick={handleOpenProfile}>
             Profile
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="justify-between">
-            <a href="/api/portal" target="_blank" rel="noopener noreferrer">
-              Billing{' '}
-              <ArrowUpRightIcon size={16} className="text-muted-foreground" />
-            </a>
-          </DropdownMenuItem>
+          {isSubscribed && (
+            <DropdownMenuItem asChild className="justify-between">
+              <a href="/api/portal" target="_blank" rel="noopener noreferrer">
+                Billing{' '}
+                <ArrowUpRightIcon size={16} className="text-muted-foreground" />
+              </a>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href="/pricing" className="flex items-center justify-between">
               <span>Upgrade</span>
