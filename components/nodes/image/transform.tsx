@@ -200,7 +200,8 @@ export const ImageTransform = ({
       {!loading && !data.generated?.url && (
         <div className="flex aspect-square w-full items-center justify-center rounded-b-xl bg-secondary p-4">
           <p className="text-muted-foreground text-sm">
-            Press "Generate" to create an image
+            Press <PlayIcon size={12} className="-translate-y-px inline" /> to
+            create an image
           </p>
         </div>
       )}

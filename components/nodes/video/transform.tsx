@@ -181,7 +181,8 @@ export const VideoTransform = ({
       {!loading && !data.generated?.url && (
         <div className="flex aspect-video w-full items-center justify-center rounded-b-xl bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press "Generate" to generate video
+            Press <PlayIcon size={12} className="-translate-y-px inline" /> to
+            generate video
           </p>
         </div>
       )}

@@ -216,7 +216,8 @@ export const AudioTransform = ({
       {!loading && !data.generated?.url && (
         <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press "Generate" to generate audio
+            Press <PlayIcon size={12} className="-translate-y-px inline" /> to
+            generate audio
           </p>
         </div>
       )}

@@ -233,7 +233,8 @@ export const TextTransform = ({
           status !== 'submitted' && (
             <div className="flex aspect-video w-full items-center justify-center bg-secondary">
               <p className="text-muted-foreground text-sm">
-                Press "Generate" to generate text
+                Press <PlayIcon size={12} className="-translate-y-px inline" />{' '}
+                to generate text
               </p>
             </div>
           )}
