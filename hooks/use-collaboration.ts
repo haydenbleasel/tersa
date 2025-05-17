@@ -133,7 +133,10 @@ const applyEdgeChanges = (
   });
 };
 
-export const useCollaboration = (projectId: string) => {
+export const useCollaboration = (
+  projectId: string,
+  onSaveSnapshot?: (snapshot: { nodes: Node[]; edges: Edge[] }) => void
+) => {
   const yDoc = useRef<Y.Doc | null>(null);
   const yNodes = useRef<Y.Array<Node> | null>(null);
   const yEdges = useRef<Y.Array<Edge> | null>(null);
@@ -173,21 +176,40 @@ export const useCollaboration = (projectId: string) => {
       }
     });
 
+    if (onSaveSnapshot && yDoc.current) {
+      const interval = setInterval(() => {
+        const nodes = yNodes.current?.toArray() ?? [];
+        const edges = yEdges.current?.toArray() ?? [];
+        onSaveSnapshot({ nodes, edges });
+      }, 5000); // save every 5s
+
+      // Clear interval on cleanup
+      return () => {
+        yNodes.current?.unobserve(updateNodes);
+        yEdges.current?.unobserve(updateEdges);
+        provider.destroy();
+        yDoc.current?.destroy();
+        clearInterval(interval);
+      };
+    }
+
     return () => {
       yNodes.current?.unobserve(updateNodes);
       yEdges.current?.unobserve(updateEdges);
       provider.destroy();
       yDoc.current?.destroy();
     };
-  }, [projectId, setNodes, setEdges]);
+  }, [projectId, setNodes, setEdges, onSaveSnapshot]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
+    console.log('log:onNodesChange', changes, yNodes.current);
     if (yNodes.current) {
       applyNodeChanges(yNodes.current, changes);
     }
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
+    console.log('log:onEdgesChange', changes, yEdges.current);
     if (yEdges.current) {
       applyEdgeChanges(yEdges.current, changes);
     }

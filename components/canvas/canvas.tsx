@@ -67,8 +67,8 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
   const analytics = useAnalytics();
-  const collaboration = useCollaboration(data.id);
-  const isCollaborative = data.members && data.members.length > 1;
+  const collaboration = useCollaboration(data.id, () => save());
+  const isCollaborative = data.members && data.members.length > 0;
 
   useEffect(() => {
     if (isCollaborative) {
