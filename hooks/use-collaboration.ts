@@ -36,7 +36,11 @@ export const useCollaboration = (
     yNodes.current = yDoc.current.getArray('nodes');
     yEdges.current = yDoc.current.getArray('edges');
 
-    if (yNodes.current.length === 0 && yEdges.current.length === 0) {
+    if (
+      yNodes.current.length === 0 &&
+      yEdges.current.length === 0 &&
+      projectData
+    ) {
       yNodes.current.push(projectData.nodes);
       yEdges.current.push(projectData.edges);
     }
@@ -46,28 +50,26 @@ export const useCollaboration = (
       tableName: 'project',
       columnName: 'content',
       id: projectId,
+      resyncInterval: false,
     });
 
     // Initial data sync
-    const updateNodes = () => {
-      const updated = yNodes.current?.toArray() ?? [];
-      setNodes([...updated]); // spread to force React to detect change
-    };
-
-    const updateEdges = () => {
-      const updated = yEdges.current?.toArray() ?? [];
-      setEdges([...updated]);
-    };
-
-    yNodes.current?.observeDeep(updateNodes);
-    yEdges.current?.observeDeep(updateEdges);
-
-    provider.on('sync', (isSynced: boolean) => {
-      if (isSynced) {
-        updateNodes();
-        updateEdges();
+    const updateNodes = (event: Y.YEvent<Y.Array<Node>>) => {
+      if (!event.transaction.local) {
+        const updated = yNodes.current?.toArray() ?? [];
+        setNodes([...updated]); // spread to force React to detect change
       }
-    });
+    };
+
+    const updateEdges = (event: Y.YEvent<Y.Array<Edge>>) => {
+      if (!event.transaction.local) {
+        const updated = yEdges.current?.toArray() ?? [];
+        setEdges([...updated]);
+      }
+    };
+
+    yNodes.current?.observe(updateNodes);
+    yEdges.current?.observe(updateEdges);
 
     if (onSaveSnapshot && yDoc.current) {
       const interval = setInterval(() => {
@@ -104,7 +106,7 @@ export const useCollaboration = (
 
     yNodes.current.doc?.transact(() => {
       yNodes.current?.delete(0, yNodes.current?.length ?? 0);
-      yNodes.current?.push(updated);
+      yNodes.current?.insert(0, updated);
     });
   }, []);
 
