@@ -23,6 +23,7 @@ import { ModelSelector } from './nodes/model-selector';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
 
 type ProjectSettingsProps = {
   data: typeof projects.$inferSelect;
@@ -32,6 +33,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
   const [open, setOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [name, setName] = useState(data.name);
+  const [members, setMembers] = useState(data.members ?? []);
   const [transcriptionModel, setTranscriptionModel] = useState(
     data.transcriptionModel
   );
@@ -54,6 +56,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
         name,
         transcriptionModel,
         visionModel,
+        members,
       });
 
       if ('error' in response) {
@@ -131,6 +134,15 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               onChange={setVisionModel}
               width={462}
               disabled
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="members">Members</Label>
+            <Textarea
+              id="members"
+              placeholder="Enter members, separated by commas"
+              value={members.join(', ')}
+              onChange={({ target }) => setMembers(target.value.split(', '))}
             />
           </div>
           <Button type="submit" disabled={isUpdating || !name.trim()}>

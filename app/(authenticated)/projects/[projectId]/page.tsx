@@ -10,7 +10,7 @@ import {
   SubscriptionProvider,
 } from '@/providers/subscription';
 import { projects } from '@/schema';
-import { eq } from 'drizzle-orm';
+import { arrayContains, eq, or } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Suspense } from 'react';
@@ -45,7 +45,12 @@ const Project = async ({ params }: ProjectProps) => {
   const allProjects = await database
     .select()
     .from(projects)
-    .where(eq(projects.userId, user.id));
+    .where(
+      or(
+        eq(projects.userId, user.id),
+        user.email ? arrayContains(projects.members, [user.email]) : undefined
+      )
+    );
 
   if (!allProjects.length) {
     notFound();
