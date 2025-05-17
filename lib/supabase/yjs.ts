@@ -80,22 +80,22 @@ export default class SupabaseProvider extends EventEmitter {
   private async onConnect() {
     this.logger('connected');
 
-    const { data, error, status } = await this.supabase
-      .from(this.config.tableName)
-      .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
-      .eq(this.config.idName || 'id', this.config.id)
-      .single();
+    // const { data, error, status } = await this.supabase
+    //   .from(this.config.tableName)
+    //   .select<string, { [key: string]: number[] }>(`${this.config.columnName}`)
+    //   .eq(this.config.idName || 'id', this.config.id)
+    //   .single();
 
-    this.logger('retrieved data from supabase', status);
+    // this.logger('retrieved data from supabase', status);
 
-    if (data && data[this.config.columnName]) {
-      this.logger('applying update to yjs');
-      try {
-        this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
-      } catch (error) {
-        this.logger(error);
-      }
-    }
+    // if (data && data[this.config.columnName]) {
+    //   this.logger('applying update to yjs');
+    //   try {
+    //     this.applyUpdate(Uint8Array.from(data[this.config.columnName]));
+    //   } catch (error) {
+    //     this.logger(error);
+    //   }
+    // }
 
     this.logger('setting connected flag to true');
     this.isOnline(true);
