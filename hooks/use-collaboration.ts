@@ -7,144 +7,13 @@ import {
   type EdgeChange,
   type Node,
   type NodeChange,
+  applyEdgeChanges,
+  applyNodeChanges,
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback } from 'react';
 import { useRef } from 'react';
 import * as Y from 'yjs';
-
-const applyNodeChanges = (
-  yArray: Y.Array<Node>,
-  changes: NodeChange<Node>[]
-) => {
-  yArray.doc?.transact(() => {
-    for (const change of changes) {
-      switch (change.type) {
-        case 'add':
-          if (change.item) {
-            console.log('log:add', change.item);
-            yArray.push([change.item]);
-          }
-          break;
-        case 'remove':
-          if (change.id) {
-            console.log('log:remove', change.id);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.id);
-            if (index !== -1) yArray.delete(index, 1);
-          }
-          break;
-        case 'replace':
-          if (change.item) {
-            console.log('log:replace', change.item);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.item.id);
-
-            if (index !== -1) {
-              yArray.delete(index, 1);
-              yArray.insert(index, [change.item]);
-            }
-          }
-          break;
-        case 'dimensions':
-          if (change.id) {
-            console.log('log:dimensions', change.id);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.id);
-            if (index !== -1) {
-              const node = yArray.get(index);
-              if (node && change.dimensions) {
-                yArray.delete(index, 1);
-                yArray.insert(index, [
-                  {
-                    ...node,
-                    measured: change.dimensions,
-                  },
-                ]);
-              }
-            }
-          }
-          break;
-        case 'position':
-          if (change.id) {
-            console.log('log:position', change.id);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.id);
-
-            if (index !== -1) {
-              const node = yArray.get(index);
-              if (node && change.position) {
-                yArray.delete(index, 1);
-                yArray.insert(index, [
-                  {
-                    ...node,
-                    position: { ...change.position },
-                  },
-                ]);
-              }
-            }
-          }
-          break;
-        case 'select':
-          // Do nothing, we'll handle this in Presence.
-          break;
-        default:
-          console.log('log:default', change);
-          break;
-      }
-    }
-  });
-};
-
-const applyEdgeChanges = (
-  yArray: Y.Array<Edge>,
-  changes: EdgeChange<Edge>[]
-) => {
-  yArray.doc?.transact(() => {
-    for (const change of changes) {
-      switch (change.type) {
-        case 'add':
-          if (change.item) {
-            console.log('log:add', change.item);
-            yArray.push([change.item]);
-          }
-          break;
-        case 'remove':
-          if (change.id) {
-            console.log('log:remove', change.id);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.id);
-            if (index !== -1) yArray.delete(index, 1);
-          }
-          break;
-        case 'replace':
-          if (change.item) {
-            console.log('log:replace', change.item);
-            const index = yArray
-              .toArray()
-              .findIndex((item) => item.id === change.item.id);
-
-            if (index !== -1) {
-              yArray.delete(index, 1);
-              yArray.insert(index, [change.item]);
-            }
-          }
-          break;
-        case 'select':
-          // Do nothing, we'll handle this in Presence.
-          break;
-        default:
-          console.log('log:default', change);
-          break;
-      }
-    }
-  });
-};
 
 export const useCollaboration = (
   projectId: string,
@@ -161,16 +30,16 @@ export const useCollaboration = (
       return;
     }
 
-    console.log('Initializing collaboration...');
-
     const supabase = createClient();
 
     yDoc.current = new Y.Doc();
     yNodes.current = yDoc.current.getArray('nodes');
     yEdges.current = yDoc.current.getArray('edges');
 
-    yNodes.current.push(projectData.nodes);
-    yEdges.current.push(projectData.edges);
+    if (yNodes.current.length === 0 && yEdges.current.length === 0) {
+      yNodes.current.push(projectData.nodes);
+      yEdges.current.push(projectData.edges);
+    }
 
     const provider = new SupabaseProvider(yDoc.current, supabase, {
       channel: `${projectId}-canvas`,
@@ -181,13 +50,11 @@ export const useCollaboration = (
 
     // Initial data sync
     const updateNodes = () => {
-      console.log('log:updateNodes', yNodes.current?.toArray());
       const updated = yNodes.current?.toArray() ?? [];
       setNodes([...updated]); // spread to force React to detect change
     };
 
     const updateEdges = () => {
-      console.log('log:updateEdges', yEdges.current?.toArray());
       const updated = yEdges.current?.toArray() ?? [];
       setEdges([...updated]);
     };
@@ -228,17 +95,31 @@ export const useCollaboration = (
   }, [projectId, setNodes, setEdges, onSaveSnapshot, projectData]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
-    console.log('log:onNodesChange', changes, yNodes.current);
-    if (yNodes.current) {
-      applyNodeChanges(yNodes.current, changes);
+    if (!yNodes.current) {
+      return;
     }
+
+    const current = yNodes.current.toArray();
+    const updated = applyNodeChanges(changes, current);
+
+    yNodes.current.doc?.transact(() => {
+      yNodes.current?.delete(0, yNodes.current?.length ?? 0);
+      yNodes.current?.push(updated);
+    });
   }, []);
 
   const onEdgesChange = useCallback((changes: EdgeChange<Edge>[]) => {
-    console.log('log:onEdgesChange', changes, yEdges.current);
-    if (yEdges.current) {
-      applyEdgeChanges(yEdges.current, changes);
+    if (!yEdges.current) {
+      return;
     }
+
+    const current = yEdges.current.toArray();
+    const updated = applyEdgeChanges(changes, current);
+
+    yEdges.current.doc?.transact(() => {
+      yEdges.current?.delete(0, yEdges.current?.length ?? 0);
+      yEdges.current?.push(updated);
+    });
   }, []);
 
   return { init, yDoc, yNodes, yEdges, onNodesChange, onEdgesChange };
