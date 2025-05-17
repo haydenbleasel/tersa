@@ -55,11 +55,13 @@ export default class SupabaseProvider extends EventEmitter {
   }
 
   removeSelfFromAwarenessOnUnload() {
-    awarenessProtocol.removeAwarenessStates(
-      this.awareness,
-      [this.doc.clientID],
-      'window unload'
-    );
+    if (this.doc && this.awareness) {
+      awarenessProtocol.removeAwarenessStates(
+        this.awareness,
+        [this.doc.clientID],
+        'window unload'
+      );
+    }
   }
 
   async save() {
