@@ -1,6 +1,7 @@
 'use client';
 
 import { useAnalytics } from '@/hooks/use-analytics';
+import { useCollaboration } from '@/hooks/use-collaboration';
 import { useSaveProject } from '@/hooks/use-save-project';
 import { useUser } from '@/hooks/use-user';
 import { isValidSourceTarget } from '@/lib/xyflow';
@@ -27,7 +28,7 @@ import {
 import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import type { MouseEventHandler } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { ConnectionLine } from '../connection-line';
 import { Controls } from '../controls';
@@ -66,27 +67,45 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
   const analytics = useAnalytics();
+  const collaboration = useCollaboration(data.id);
+  const isCollaborative = data.members && data.members.length > 1;
+
+  useEffect(() => {
+    if (isCollaborative) {
+      collaboration.init();
+    }
+  }, [collaboration, isCollaborative]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<Node>[]) => {
+      if (isCollaborative) {
+        collaboration.onNodesChange(changes);
+        return;
+      }
+
       setNodes((current) => {
         const updated = applyNodeChanges(changes, current);
         save();
         return updated;
       });
     },
-    [save]
+    [save, isCollaborative, collaboration]
   );
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange<Edge>[]) => {
+      if (isCollaborative) {
+        collaboration.onEdgesChange(changes);
+        return;
+      }
+
       setEdges((current) => {
         const updated = applyEdgeChanges(changes, current);
         save();
         return updated;
       });
     },
-    [save]
+    [save, isCollaborative, collaboration]
   );
 
   const onConnect = useCallback(
