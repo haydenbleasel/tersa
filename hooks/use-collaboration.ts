@@ -38,8 +38,14 @@ const applyNodeChanges = (
         case 'replace':
           if (change.item) {
             console.log('log:replace', change.item);
-            yArray.delete(0, yArray.length);
-            yArray.push([change.item]);
+            const index = yArray
+              .toArray()
+              .findIndex((item) => item.id === change.item.id);
+
+            if (index !== -1) {
+              yArray.delete(index, 1);
+              yArray.insert(index, [change.item]);
+            }
           }
           break;
         case 'dimensions':
@@ -68,6 +74,7 @@ const applyNodeChanges = (
             const index = yArray
               .toArray()
               .findIndex((item) => item.id === change.id);
+
             if (index !== -1) {
               const node = yArray.get(index);
               if (node && change.position) {
@@ -75,7 +82,7 @@ const applyNodeChanges = (
                 yArray.insert(index, [
                   {
                     ...node,
-                    position: change.position,
+                    position: { ...change.position },
                   },
                 ]);
               }
@@ -118,8 +125,14 @@ const applyEdgeChanges = (
         case 'replace':
           if (change.item) {
             console.log('log:replace', change.item);
-            yArray.delete(0, yArray.length);
-            yArray.push([change.item]);
+            const index = yArray
+              .toArray()
+              .findIndex((item) => item.id === change.item.id);
+
+            if (index !== -1) {
+              yArray.delete(index, 1);
+              yArray.insert(index, [change.item]);
+            }
           }
           break;
         case 'select':
@@ -135,6 +148,7 @@ const applyEdgeChanges = (
 
 export const useCollaboration = (
   projectId: string,
+  projectData: { nodes: Node[]; edges: Edge[] },
   onSaveSnapshot?: (snapshot: { nodes: Node[]; edges: Edge[] }) => void
 ) => {
   const yDoc = useRef<Y.Doc | null>(null);
@@ -155,6 +169,9 @@ export const useCollaboration = (
     yNodes.current = yDoc.current.getArray('nodes');
     yEdges.current = yDoc.current.getArray('edges');
 
+    yNodes.current.push(projectData.nodes);
+    yEdges.current.push(projectData.edges);
+
     const provider = new SupabaseProvider(yDoc.current, supabase, {
       channel: `${projectId}-canvas`,
       tableName: 'project',
@@ -163,11 +180,20 @@ export const useCollaboration = (
     });
 
     // Initial data sync
-    const updateNodes = () => setNodes(yNodes.current?.toArray() ?? []);
-    const updateEdges = () => setEdges(yEdges.current?.toArray() ?? []);
+    const updateNodes = () => {
+      console.log('log:updateNodes', yNodes.current?.toArray());
+      const updated = yNodes.current?.toArray() ?? [];
+      setNodes([...updated]); // spread to force React to detect change
+    };
 
-    yNodes.current?.observe(updateNodes);
-    yEdges.current?.observe(updateEdges);
+    const updateEdges = () => {
+      console.log('log:updateEdges', yEdges.current?.toArray());
+      const updated = yEdges.current?.toArray() ?? [];
+      setEdges([...updated]);
+    };
+
+    yNodes.current?.observeDeep(updateNodes);
+    yEdges.current?.observeDeep(updateEdges);
 
     provider.on('sync', (isSynced: boolean) => {
       if (isSynced) {
@@ -199,7 +225,7 @@ export const useCollaboration = (
       provider.destroy();
       yDoc.current?.destroy();
     };
-  }, [projectId, setNodes, setEdges, onSaveSnapshot]);
+  }, [projectId, setNodes, setEdges, onSaveSnapshot, projectData]);
 
   const onNodesChange = useCallback((changes: NodeChange<Node>[]) => {
     console.log('log:onNodesChange', changes, yNodes.current);

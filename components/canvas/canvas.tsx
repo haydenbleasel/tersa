@@ -67,7 +67,11 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
   const { isSaving, lastSaved, save } = useSaveProject(data.id);
   const user = useUser();
   const analytics = useAnalytics();
-  const collaboration = useCollaboration(data.id, () => save());
+  const collaboration = useCollaboration(
+    data.id,
+    data.content as { nodes: Node[]; edges: Edge[] },
+    () => save()
+  );
   const isCollaborative = data.members && data.members.length > 0;
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     (changes: NodeChange<Node>[]) => {
       if (isCollaborative) {
         collaboration.onNodesChange(changes);
-        return;
+        // return;
       }
 
       setNodes((current) => {
@@ -96,7 +100,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
     (changes: EdgeChange<Edge>[]) => {
       if (isCollaborative) {
         collaboration.onEdgesChange(changes);
-        return;
+        // return;
       }
 
       setEdges((current) => {
