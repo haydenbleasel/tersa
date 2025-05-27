@@ -78,5 +78,7 @@ export const POST = async (req: Request) => {
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toDataStreamResponse({
+    sendReasoning: true,
+  });
 };
