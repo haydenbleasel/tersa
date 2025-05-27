@@ -65,6 +65,11 @@ export const TextTransform = ({
         updatedAt: new Date().toISOString(),
       });
 
+      setReasoning((oldReasoning) => ({
+        ...oldReasoning,
+        isGenerating: false,
+      }));
+
       toast.success('Text generated successfully');
 
       setTimeout(() => mutate('credits'), 5000);
@@ -221,8 +226,8 @@ export const TextTransform = ({
       message.parts.some((part) => part.type === 'reasoning')
     );
 
-    if (hasReasoning && !reasoning && status === 'streaming') {
-      setReasoning(true);
+    if (hasReasoning && !reasoning.isReasoning && status === 'streaming') {
+      setReasoning({ isReasoning: true, isGenerating: true });
     }
   }, [messages, reasoning, status, setReasoning]);
 
