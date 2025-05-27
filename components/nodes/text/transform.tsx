@@ -13,11 +13,12 @@ import {
   getTranscriptionFromAudioNodes,
   getTweetContentFromTweetNodes,
 } from '@/lib/xyflow';
+import { ReasoningTunnel, useReasoning } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import type { ChangeEventHandler, ComponentProps } from 'react';
+import { type ChangeEventHandler, type ComponentProps, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
@@ -50,6 +51,7 @@ export const TextTransform = ({
   const { projectId } = useParams();
   const modelId = data.model ?? getDefaultModel(textModels).id;
   const analytics = useAnalytics();
+  const [reasoning, setReasoning] = useReasoning();
   const { append, messages, setMessages, status, stop } = useChat({
     body: {
       modelId,
@@ -151,7 +153,7 @@ export const TextTransform = ({
       ),
     });
 
-    if (status === 'submitted') {
+    if (status === 'submitted' || status === 'streaming') {
       toolbar.push({
         tooltip: 'Stop',
         children: (
@@ -214,6 +216,16 @@ export const TextTransform = ({
 
   const nonUserMessages = messages.filter((message) => message.role !== 'user');
 
+  useEffect(() => {
+    const hasReasoning = messages.some((message) =>
+      message.parts.some((part) => part.type === 'reasoning')
+    );
+
+    if (hasReasoning && !reasoning && status === 'streaming') {
+      setReasoning(true);
+    }
+  }, [messages, reasoning, status, setReasoning]);
+
   return (
     <NodeLayout
       id={id}
@@ -257,6 +269,17 @@ export const TextTransform = ({
         placeholder="Enter instructions"
         className="shrink-0 resize-none rounded-none border-none bg-transparent! shadow-none focus-visible:ring-0"
       />
+      <ReasoningTunnel.In>
+        {messages.flatMap((message) =>
+          message.parts
+            .filter((part) => part.type === 'reasoning')
+            .flatMap((part) =>
+              part.details
+                .filter((detail) => detail.type === 'text')
+                .map((detail) => detail.text)
+            )
+        )}
+      </ReasoningTunnel.In>
     </NodeLayout>
   );
 };

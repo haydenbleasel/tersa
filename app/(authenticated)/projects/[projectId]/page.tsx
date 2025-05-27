@@ -1,4 +1,5 @@
 import { Canvas } from '@/components/canvas';
+import { Reasoning } from '@/components/reasoning';
 import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
 import { currentUser, currentUserProfile } from '@/lib/auth';
@@ -81,6 +82,7 @@ const Project = async ({ params }: ProjectProps) => {
       <Suspense fallback={null}>
         <TopRight id={projectId} />
       </Suspense>
+      <Reasoning />
     </div>
   );
 };
