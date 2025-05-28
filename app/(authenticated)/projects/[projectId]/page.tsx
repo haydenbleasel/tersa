@@ -66,6 +66,10 @@ const Project = async ({ params }: ProjectProps) => {
     plan = 'pro';
   }
 
+  if (!profile.onboardedAt) {
+    return redirect('/welcome');
+  }
+
   return (
     <div className="flex h-screen w-screen items-stretch overflow-hidden">
       <div className="relative flex-1">

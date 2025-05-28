@@ -21,4 +21,5 @@ export const profile = pgTable('profile', {
   customerId: text('customer_id'),
   subscriptionId: text('subscription_id'),
   productId: text('product_id'),
+  onboardedAt: timestamp('onboarded_at'),
 });

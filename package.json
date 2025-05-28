@@ -9,7 +9,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
-    "export": "email export"
+    "export": "email export",
+    "migrate": "npx drizzle-kit push"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^2.2.9",
@@ -128,6 +129,7 @@
     "react-tweet": "^3.2.2",
     "recharts": "^2.15.3",
     "resend": "^4.5.1",
+    "shadcn-prose": "^1.0.8",
     "sonner": "^2.0.3",
     "standardwebhooks": "^1.0.0",
     "stripe": "^18.1.1",
@@ -145,7 +147,6 @@
     "@auto-it/git-tag": "^11.3.0",
     "@biomejs/biome": "1.9.4",
     "@tailwindcss/postcss": "^4",
-    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
