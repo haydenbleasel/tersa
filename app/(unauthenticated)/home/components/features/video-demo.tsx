@@ -8,7 +8,7 @@ const nodes: Node[] = [
     position: { x: 0, y: 0 },
     data: {
       source: 'primitive',
-      text: 'A wild orchard of delphiniums',
+      text: 'A wild field of delphiniums',
       content: {
         type: 'doc',
         content: [
@@ -17,7 +17,7 @@ const nodes: Node[] = [
             content: [
               {
                 type: 'text',
-                text: 'A wild orchard of delphiniums',
+                text: 'A wild field of delphiniums',
               },
             ],
           },

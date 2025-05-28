@@ -115,7 +115,7 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
           Fantastic! That's the first node. Notice the little switch up the top
           right of the node is off? We can this a "human" node because you
           control the content. Try writing a few words or sentences in the node.
-          Our favourite is "a wild orchard of delphiniums".
+          Our favourite is "a wild field of delphiniums".
         </>
       ),
       complete: hasTextNode && hasFilledTextNode,
