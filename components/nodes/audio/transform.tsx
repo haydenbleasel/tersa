@@ -12,6 +12,7 @@ import {
   getDescriptionsFromImageNodes,
   getTextFromTextNodes,
 } from '@/lib/xyflow';
+import { useProject } from '@/providers/project';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import {
   ClockIcon,
@@ -20,7 +21,6 @@ import {
   PlayIcon,
   RotateCcwIcon,
 } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
@@ -51,7 +51,7 @@ export const AudioTransform = ({
 }: AudioTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const { projectId } = useParams();
+  const { project } = useProject();
   const modelId = data.model ?? getDefaultModel(speechModels).id;
   const model = speechModels
     .flatMap((model) => model.models)
@@ -59,7 +59,7 @@ export const AudioTransform = ({
   const analytics = useAnalytics();
 
   const handleGenerate = async () => {
-    if (loading || typeof projectId !== 'string') {
+    if (loading || !project?.id) {
       return;
     }
 
@@ -94,7 +94,7 @@ export const AudioTransform = ({
         text,
         nodeId: id,
         modelId,
-        projectId,
+        projectId: project.id,
         voice: data.voice,
         instructions,
       });

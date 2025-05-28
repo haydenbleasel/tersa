@@ -8,6 +8,7 @@ import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { videoModels } from '@/lib/models/video';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
+import { useProject } from '@/providers/project';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import {
   ClockIcon,
@@ -16,7 +17,6 @@ import {
   PlayIcon,
   RotateCcwIcon,
 } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
@@ -47,12 +47,12 @@ export const VideoTransform = ({
 }: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const { projectId } = useParams();
+  const { project } = useProject();
   const modelId = data.model ?? getDefaultModel(videoModels).id;
   const analytics = useAnalytics();
 
   const handleGenerate = async () => {
-    if (loading || typeof projectId !== 'string') {
+    if (loading || !project?.id) {
       return;
     }
 
@@ -80,7 +80,7 @@ export const VideoTransform = ({
         prompt: [data.instructions ?? '', ...textPrompts].join('\n'),
         images: images.slice(0, 1),
         nodeId: id,
-        projectId,
+        projectId: project.id,
       });
 
       if ('error' in response) {
@@ -127,7 +127,7 @@ export const VideoTransform = ({
               size="icon"
               className="rounded-full"
               onClick={handleGenerate}
-              disabled={loading || !projectId}
+              disabled={loading || !project?.id}
             >
               {data.generated?.url ? (
                 <RotateCcwIcon size={12} />

@@ -215,3 +215,7 @@
     @apply !-right-4;
   }
 }
+
+nextjs-portal {
+  @apply hidden;
+}

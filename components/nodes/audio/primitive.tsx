@@ -8,8 +8,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { handleError } from '@/lib/error/handle';
 import { uploadFile } from '@/lib/upload';
+import { useProject } from '@/providers/project';
 import { useReactFlow } from '@xyflow/react';
-import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { AudioNodeProps } from '.';
 
@@ -25,11 +25,11 @@ export const AudioPrimitive = ({
 }: AudioPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
   const [files, setFiles] = useState<File[] | undefined>();
-  const { projectId } = useParams();
+  const { project } = useProject();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleDrop = async (files: File[]) => {
-    if (isUploading) {
+    if (isUploading || !project?.id) {
       return;
     }
 
@@ -51,7 +51,7 @@ export const AudioPrimitive = ({
         },
       });
 
-      const response = await transcribeAction(url, projectId as string);
+      const response = await transcribeAction(url, project?.id);
 
       if ('error' in response) {
         throw new Error(response.error);

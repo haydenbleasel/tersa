@@ -1,7 +1,8 @@
 import { createProjectAction } from '@/app/actions/project/create';
 import { currentUser } from '@/lib/auth';
 import { database } from '@/lib/database';
-import { profile, projects } from '@/schema';
+import { ProjectProvider } from '@/providers/project';
+import { projects } from '@/schema';
 import { and, eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
@@ -22,12 +23,6 @@ const Welcome = async () => {
   if (!user) {
     return redirect('/sign-in');
   }
-
-  const allProfiles = await database
-    .select()
-    .from(profile)
-    .where(eq(profile.id, user.id));
-  const userProfile = allProfiles.at(0);
 
   const welcomeProjects = await database
     .select()
@@ -59,12 +54,13 @@ const Welcome = async () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <WelcomeDemo
-        title={title}
-        description={description}
-        data={welcomeProject}
-        subscribed={Boolean(userProfile?.subscriptionId)}
-      />
+      <ProjectProvider data={welcomeProject}>
+        <WelcomeDemo
+          title={title}
+          description={description}
+          data={welcomeProject}
+        />
+      </ProjectProvider>
     </div>
   );
 };

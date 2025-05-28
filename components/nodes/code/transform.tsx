@@ -10,11 +10,11 @@ import {
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
+import { useProject } from '@/providers/project';
 import { experimental_useObject as useObject } from '@ai-sdk/react';
 import Editor from '@monaco-editor/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import {
   type ChangeEventHandler,
   type ComponentProps,
@@ -51,7 +51,7 @@ export const CodeTransform = ({
   title,
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const { projectId } = useParams();
+  const { project } = useProject();
   const modelId = data.model ?? getDefaultModel(textModels).id;
   const analytics = useAnalytics();
   const { isLoading, object, stop, submit } = useObject({
@@ -184,7 +184,7 @@ export const CodeTransform = ({
             size="icon"
             className="rounded-full"
             onClick={stop}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             <SquareIcon size={12} />
           </Button>
@@ -198,7 +198,7 @@ export const CodeTransform = ({
             size="icon"
             className="rounded-full"
             onClick={handleGenerate}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             <RotateCcwIcon size={12} />
           </Button>
@@ -212,7 +212,7 @@ export const CodeTransform = ({
             size="icon"
             className="rounded-full"
             onClick={handleGenerate}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             {data.generated?.text ? (
               <RotateCcwIcon size={12} />
@@ -248,7 +248,7 @@ export const CodeTransform = ({
     handleLanguageChange,
     isLoading,
     object,
-    projectId,
+    project?.id,
     modelId,
   ]);
 

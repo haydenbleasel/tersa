@@ -1,17 +1,22 @@
 'use client';
 
+import { updateProfileAction } from '@/app/actions/profile/update';
 import { Canvas } from '@/components/canvas';
+import type { ImageNodeProps } from '@/components/nodes/image';
 import type { TextNodeProps } from '@/components/nodes/text';
 import { Toolbar } from '@/components/toolbar';
 import { Button } from '@/components/ui/button';
+import { useUser } from '@/hooks/use-user';
+import { handleError } from '@/lib/error/handle';
 import { nodeButtons } from '@/lib/node-buttons';
 import { ProjectProvider } from '@/providers/project';
-import { SubscriptionProvider } from '@/providers/subscription';
+import { useSubscription } from '@/providers/subscription';
 import type { projects } from '@/schema';
-import { type Edge, type Node, useReactFlow } from '@xyflow/react';
+import { type Edge, type Node, getIncomers, useReactFlow } from '@xyflow/react';
 import { PlayIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { redirect } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const TextNode = nodeButtons.find((button) => button.id === 'text');
 
@@ -23,7 +28,6 @@ type WelcomeDemoProps = {
   title: string;
   description: string;
   data: typeof projects.$inferSelect;
-  subscribed: boolean;
 };
 
 type ContentProps = {
@@ -31,27 +35,39 @@ type ContentProps = {
   edges: Edge[];
 };
 
-export const WelcomeDemo = ({
-  title,
-  description,
-  data,
-  subscribed,
-}: WelcomeDemoProps) => {
-  const { getNodes } = useReactFlow();
-  const content = data.content as ContentProps | null;
+export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
+  const { getNodes, getEdges } = useReactFlow();
   const [started, setStarted] = useState(false);
-  const [nodes, setNodes] = useState(content?.nodes ?? []);
+  const { isSubscribed } = useSubscription();
+  const stepsContainerRef = useRef<HTMLDivElement>(null);
 
-  const hasFilledTextNode = useMemo(
-    () =>
-      nodes.some((node) => node.type === 'text') &&
-      nodes.some((node) => {
-        const text = (node as unknown as TextNodeProps).data.text;
+  const [hasTextNode, setHasTextNode] = useState(false);
+  const [hasFilledTextNode, setHasFilledTextNode] = useState(false);
+  const [hasImageNode, setHasImageNode] = useState(false);
+  const [hasConnectedImageNode, setHasConnectedImageNode] = useState(false);
+  const [hasImageInstructions, setHasImageInstructions] = useState(false);
+  const [hasGeneratedImage, setHasGeneratedImage] = useState(false);
+  const user = useUser();
 
-        return text && text.length > 10;
-      }),
-    [nodes]
-  );
+  const handleFinishWelcome = async () => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      const response = await updateProfileAction(user.id, {
+        onboardedAt: new Date(),
+      });
+
+      if ('error' in response) {
+        throw new Error(response.error);
+      }
+
+      redirect('/projects');
+    } catch (error) {
+      handleError('Error finishing onboarding', error);
+    }
+  };
 
   const steps = [
     {
@@ -74,7 +90,7 @@ export const WelcomeDemo = ({
           </Button>
         </div>
       ),
-      complete: !subscribed,
+      complete: isSubscribed,
     },
     {
       instructions: (
@@ -84,7 +100,7 @@ export const WelcomeDemo = ({
           icon on the bottom toolbar. This will add a Text node to the canvas.
         </>
       ),
-      complete: nodes.filter((node) => node.type === 'text').length,
+      complete: hasTextNode,
     },
     {
       instructions: (
@@ -92,9 +108,10 @@ export const WelcomeDemo = ({
           Fantastic! That's the first node. Notice the little switch up the top
           right of the node is off? We can this a "human" node because you
           control the content. Try writing a few words or sentences in the node.
+          Our favourite is "a wild orchard of delphiniums".
         </>
       ),
-      complete: hasFilledTextNode,
+      complete: hasTextNode && hasFilledTextNode,
     },
     {
       instructions: (
@@ -104,7 +121,11 @@ export const WelcomeDemo = ({
           prompted to select a node type. Select the Image node.
         </>
       ),
-      complete: nodes.filter((node) => node.type === 'image').length,
+      complete:
+        hasTextNode &&
+        hasFilledTextNode &&
+        hasImageNode &&
+        hasConnectedImageNode,
     },
     {
       instructions: (
@@ -114,27 +135,134 @@ export const WelcomeDemo = ({
           nodes they're connected to.
           <br />
           <br />
-          Click the Image node to select it, then press the{' '}
+          You can also add a prompt to the Image node. This will be used to
+          influence the outcome. Try adding some instructions to the Image node,
+          maybe something like "make it anime style".
+        </>
+      ),
+      complete:
+        hasTextNode &&
+        hasFilledTextNode &&
+        hasImageNode &&
+        hasConnectedImageNode &&
+        hasImageInstructions,
+    },
+    {
+      instructions: (
+        <>
+          That's all the information we need to generate an awesome image! Click
+          the Image node to select it, then press the{' '}
           <PlayIcon className="-translate-y-0.5 inline-block size-4 text-primary" />{' '}
           button to generate content.
         </>
       ),
-      action: <Button>Continue</Button>,
+      complete:
+        hasTextNode &&
+        hasFilledTextNode &&
+        hasImageNode &&
+        hasConnectedImageNode &&
+        hasImageInstructions &&
+        hasGeneratedImage,
+    },
+    {
+      instructions: (
+        <>
+          That's it! You've created your first AI-powered workflow. You can
+          continue to add more nodes to a canvas to create more complex flows
+          and discover the power of Tersa.
+        </>
+      ),
+      action: (
+        <div className="not-prose">
+          <Button asChild onClick={handleFinishWelcome}>
+            <Link href="/projects">Continue</Link>
+          </Button>
+        </div>
+      ),
+      complete: false,
     },
   ];
 
   const activeStep = steps.find((step) => !step.complete) ?? steps[0];
   const previousSteps = steps.slice(0, steps.indexOf(activeStep));
 
-  const handleNodesChange = useCallback(() => {
-    const nodes = getNodes();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: "we want to listen to activeStep"
+  useEffect(() => {
+    if (stepsContainerRef.current) {
+      stepsContainerRef.current.scrollTo({
+        top: stepsContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [activeStep.instructions]);
 
-    setNodes(nodes);
-  }, [getNodes]);
+  const handleNodesChange = useCallback(() => {
+    const newEdges = getEdges();
+    const newNodes = getNodes();
+
+    const textNodes = newNodes.filter((node) => node.type === 'text');
+
+    if (!textNodes.length) {
+      setHasTextNode(false);
+      return;
+    }
+
+    setHasTextNode(true);
+
+    const textNode = textNodes.at(0);
+
+    if (!textNode) {
+      return;
+    }
+
+    const text = (textNode as unknown as TextNodeProps).data.text;
+
+    if (text && text.length > 10) {
+      setHasFilledTextNode(true);
+    } else {
+      setHasFilledTextNode(false);
+    }
+
+    const imageNodes = newNodes.filter((node) => node.type === 'image');
+    const imageNode = imageNodes.at(0);
+
+    if (!imageNode) {
+      setHasImageNode(false);
+      return;
+    }
+
+    setHasImageNode(true);
+
+    const sources = getIncomers(imageNode, newNodes, newEdges);
+    const textSource = sources.find((source) => source.id === textNode.id);
+
+    if (!textSource) {
+      setHasConnectedImageNode(false);
+      return;
+    }
+
+    setHasConnectedImageNode(true);
+
+    const image = imageNode as unknown as ImageNodeProps;
+    const instructions = image.data.instructions;
+
+    if (instructions && instructions.length > 5) {
+      setHasImageInstructions(true);
+    } else {
+      setHasImageInstructions(false);
+    }
+
+    if (!image.data.generated?.url) {
+      setHasGeneratedImage(false);
+      return;
+    }
+
+    setHasGeneratedImage(true);
+  }, [getNodes, getEdges]);
 
   return (
     <div className="grid h-screen w-screen grid-cols-3">
-      <div className="size-full overflow-auto p-16">
+      <div className="size-full overflow-auto p-16" ref={stepsContainerRef}>
         <div className="prose flex flex-col items-start gap-4">
           <h1 className="font-semibold! text-3xl!">{title}</h1>
           {previousSteps.map((step, index) => (
@@ -150,16 +278,14 @@ export const WelcomeDemo = ({
       <div className="col-span-2 p-8">
         <div className="relative size-full overflow-hidden rounded-3xl border">
           <ProjectProvider data={data}>
-            <SubscriptionProvider isSubscribed={false} plan={undefined}>
-              <Canvas
-                data={data}
-                canvasProps={{
-                  onNodesChange: handleNodesChange,
-                }}
-              >
-                {steps[0].complete && <Toolbar />}
-              </Canvas>
-            </SubscriptionProvider>
+            <Canvas
+              data={data}
+              canvasProps={{
+                onNodesChange: handleNodesChange,
+              }}
+            >
+              {steps[0].complete && <Toolbar />}
+            </Canvas>
           </ProjectProvider>
         </div>
       </div>

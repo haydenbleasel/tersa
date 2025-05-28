@@ -6,9 +6,9 @@ import { Dropzone } from '@/components/ui/kibo-ui/dropzone';
 import { Skeleton } from '@/components/ui/skeleton';
 import { handleError } from '@/lib/error/handle';
 import { uploadFile } from '@/lib/upload';
+import { useProject } from '@/providers/project';
 import { useReactFlow } from '@xyflow/react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { ImageNodeProps } from '.';
 
@@ -23,12 +23,12 @@ export const ImagePrimitive = ({
   title,
 }: ImagePrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const { projectId } = useParams();
+  const { project } = useProject();
   const [files, setFiles] = useState<File[] | undefined>();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleDrop = async (files: File[]) => {
-    if (isUploading) {
+    if (isUploading || !project?.id) {
       return;
     }
 
@@ -49,7 +49,7 @@ export const ImagePrimitive = ({
         },
       });
 
-      const description = await describeAction(url, projectId as string);
+      const description = await describeAction(url, project?.id);
 
       if ('error' in description) {
         throw new Error(description.error);

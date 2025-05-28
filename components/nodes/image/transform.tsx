@@ -9,6 +9,7 @@ import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { imageModels } from '@/lib/models/image';
 import { getImagesFromImageNodes, getTextFromTextNodes } from '@/lib/xyflow';
+import { useProject } from '@/providers/project';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import {
   ClockIcon,
@@ -18,7 +19,6 @@ import {
   RotateCcwIcon,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
 import {
   type ChangeEventHandler,
   type ComponentProps,
@@ -56,7 +56,7 @@ export const ImageTransform = ({
 }: ImageTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const { projectId } = useParams();
+  const { project } = useProject();
   const hasIncomingImageNodes =
     getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
       .length > 0;
@@ -78,7 +78,7 @@ export const ImageTransform = ({
   }));
 
   const handleGenerate = useCallback(async () => {
-    if (loading || typeof projectId !== 'string') {
+    if (loading || !project?.id) {
       return;
     }
 
@@ -106,7 +106,7 @@ export const ImageTransform = ({
             images: imageNodes,
             instructions: data.instructions,
             nodeId: id,
-            projectId,
+            projectId: project.id,
             modelId,
             size,
           })
@@ -114,7 +114,7 @@ export const ImageTransform = ({
             prompt: textNodes.join('\n'),
             modelId,
             instructions: data.instructions,
-            projectId,
+            projectId: project.id,
             nodeId: id,
             size,
           });
@@ -135,7 +135,7 @@ export const ImageTransform = ({
     }
   }, [
     loading,
-    projectId,
+    project?.id,
     size,
     id,
     analytics,
@@ -197,7 +197,7 @@ export const ImageTransform = ({
                 size="icon"
                 className="rounded-full"
                 onClick={handleGenerate}
-                disabled={loading || !projectId}
+                disabled={loading || !project?.id}
               >
                 {data.generated?.url ? (
                   <RotateCcwIcon size={12} />
@@ -251,7 +251,7 @@ export const ImageTransform = ({
     data.generated,
     data.updatedAt,
     handleGenerate,
-    projectId,
+    project?.id,
   ]);
 
   const aspectRatio = useMemo(() => {

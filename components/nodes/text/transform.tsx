@@ -14,11 +14,11 @@ import {
   getTranscriptionFromAudioNodes,
   getTweetContentFromTweetNodes,
 } from '@/lib/xyflow';
+import { useProject } from '@/providers/project';
 import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import { type ChangeEventHandler, type ComponentProps, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
@@ -49,7 +49,7 @@ export const TextTransform = ({
   title,
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const { projectId } = useParams();
+  const { project } = useProject();
   const modelId = data.model ?? getDefaultModel(textModels).id;
   const analytics = useAnalytics();
   const [reasoning, setReasoning] = useReasoning();
@@ -167,7 +167,7 @@ export const TextTransform = ({
             size="icon"
             className="rounded-full"
             onClick={stop}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             <SquareIcon size={12} />
           </Button>
@@ -181,7 +181,7 @@ export const TextTransform = ({
             size="icon"
             className="rounded-full"
             onClick={handleGenerate}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             <RotateCcwIcon size={12} />
           </Button>
@@ -195,7 +195,7 @@ export const TextTransform = ({
             size="icon"
             className="rounded-full"
             onClick={handleGenerate}
-            disabled={!projectId}
+            disabled={!project?.id}
           >
             <PlayIcon size={12} />
           </Button>
