@@ -1,8 +1,9 @@
 'use client';
 
+import { updateProjectAction } from '@/app/actions/project/update';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useSaveProject } from '@/hooks/use-save-project';
-import { useUser } from '@/hooks/use-user';
+import { handleError } from '@/lib/error/handle';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import { NodeOperationsProvider } from '@/providers/node-operations';
@@ -26,15 +27,13 @@ import {
 } from '@xyflow/react';
 import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import type { MouseEventHandler } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useDebouncedCallback } from 'use-debounce';
 import { ConnectionLine } from '../connection-line';
-import { Controls } from '../controls';
 import { edgeTypes } from '../edges';
 import { nodeTypes } from '../nodes';
-import { SaveIndicator } from '../save-indicator';
-import { Toolbar } from '../toolbar';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -54,18 +53,48 @@ type ProjectData = {
 export type CanvasProps = {
   data: typeof projects.$inferSelect;
   canvasProps?: ReactFlowProps;
+  children?: ReactNode;
 };
 
-export const Canvas = ({ data, canvasProps }: CanvasProps) => {
+export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
   const content = data.content as ProjectData['content'];
   const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
   const [copiedNodes, setCopiedNodes] = useState<Node[]>([]);
-  const { getEdges, screenToFlowPosition, getNodes, getNode, updateNode } =
-    useReactFlow();
-  const { isSaving, lastSaved, save } = useSaveProject(data.id);
-  const user = useUser();
+  const {
+    getEdges,
+    toObject,
+    screenToFlowPosition,
+    getNodes,
+    getNode,
+    updateNode,
+  } = useReactFlow();
   const analytics = useAnalytics();
+  const [saveState, setSaveState] = useSaveProject();
+
+  const save = useDebouncedCallback(async () => {
+    if (saveState.isSaving || !data.userId || !data.id) {
+      return;
+    }
+
+    try {
+      setSaveState((prev) => ({ ...prev, isSaving: true }));
+
+      const response = await updateProjectAction(data.id, {
+        content: toObject(),
+      });
+
+      if ('error' in response) {
+        throw new Error(response.error);
+      }
+
+      setSaveState((prev) => ({ ...prev, lastSaved: new Date() }));
+    } catch (error) {
+      handleError('Error saving project', error);
+    } finally {
+      setSaveState((prev) => ({ ...prev, isSaving: false }));
+    }
+  }, 1000);
 
   const onNodesChange = useCallback(
     (changes: NodeChange<Node>[]) => {
@@ -362,13 +391,7 @@ export const Canvas = ({ data, canvasProps }: CanvasProps) => {
               {...canvasProps}
             >
               <Background />
-              {!data.id.includes('demo') && user && (
-                <>
-                  <Controls />
-                  <Toolbar />
-                  <SaveIndicator lastSaved={lastSaved} saving={isSaving} />
-                </>
-              )}
+              {children}
             </ReactFlow>
           </ContextMenuTrigger>
           <ContextMenuContent>

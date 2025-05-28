@@ -1,3 +1,5 @@
+'use client';
+
 import { nodeButtons } from '@/lib/node-buttons';
 import { useNodeOperations } from '@/providers/node-operations';
 import { Panel, useReactFlow } from '@xyflow/react';

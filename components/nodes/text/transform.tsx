@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useAnalytics } from '@/hooks/use-analytics';
+import { useReasoning } from '@/hooks/use-reasoning';
 import { handleError } from '@/lib/error/handle';
 import { textModels } from '@/lib/models/text';
 import {
@@ -13,7 +14,7 @@ import {
   getTranscriptionFromAudioNodes,
   getTweetContentFromTweetNodes,
 } from '@/lib/xyflow';
-import { ReasoningTunnel, useReasoning } from '@/tunnels/reasoning';
+import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';

@@ -1,13 +1,17 @@
+'use client';
+
+import { useSaveProject } from '@/hooks/use-save-project';
+import { cn } from '@/lib/utils';
 import { useProject } from '@/providers/project';
 import { Panel } from '@xyflow/react';
 import { CheckIcon, Loader2Icon } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
-type SaveIndicatorProps = {
-  lastSaved: Date | null;
-  saving: boolean;
-};
+const getFormattedTime = (date: Date | undefined) => {
+  if (!date) {
+    return 'Never';
+  }
 
-const getFormattedTime = (date: Date) => {
   let unit: Intl.RelativeTimeFormatUnit = 'seconds';
   let value = Math.round((date.getTime() - Date.now()) / 1000);
   const absoluteValue = Math.abs(value);
@@ -48,24 +52,36 @@ const getFormattedTime = (date: Date) => {
   );
 };
 
-export const SaveIndicator = ({ lastSaved, saving }: SaveIndicatorProps) => {
+export const SaveIndicator = () => {
   const { project } = useProject();
-  const date = lastSaved ?? project?.updatedAt ?? project?.createdAt;
+  const [{ isSaving, lastSaved }] = useSaveProject();
 
   return (
     <Panel
       position="bottom-right"
-      className="m-4 flex items-center gap-1 rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm"
+      className={cn(
+        'm-4 flex max-w-[46px] items-center justify-end gap-1 overflow-hidden whitespace-nowrap rounded-full border bg-card/90 p-3 drop-shadow-xs backdrop-blur-sm',
+        'hover:max-w-none'
+      )}
     >
-      {date && (
-        <span className="mx-1 hidden text-muted-foreground text-sm sm:block">
-          Last saved: {getFormattedTime(date)}
-        </span>
-      )}
-      {saving && (
-        <Loader2Icon size={16} className="animate-spin text-primary" />
-      )}
-      {!saving && date && <CheckIcon size={16} className="text-primary" />}
+      <Tooltip>
+        <TooltipTrigger>
+          {isSaving ? (
+            <Loader2Icon
+              size={16}
+              className="shrink-0 animate-spin text-primary"
+            />
+          ) : (
+            <CheckIcon size={16} className="shrink-0 text-primary" />
+          )}
+        </TooltipTrigger>
+        <TooltipContent>
+          Last saved{' '}
+          {getFormattedTime(
+            lastSaved ?? project?.updatedAt ?? project?.createdAt
+          )}
+        </TooltipContent>
+      </Tooltip>
     </Panel>
   );
 };

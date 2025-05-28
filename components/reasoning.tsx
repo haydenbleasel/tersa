@@ -1,6 +1,7 @@
 'use client';
 
-import { ReasoningTunnel, useReasoning } from '@/tunnels/reasoning';
+import { useReasoning } from '@/hooks/use-reasoning';
+import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { CheckIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from './ui/button';

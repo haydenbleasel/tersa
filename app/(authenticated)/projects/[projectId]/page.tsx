@@ -1,5 +1,8 @@
 import { Canvas } from '@/components/canvas';
+import { Controls } from '@/components/controls';
 import { Reasoning } from '@/components/reasoning';
+import { SaveIndicator } from '@/components/save-indicator';
+import { Toolbar } from '@/components/toolbar';
 import { TopLeft } from '@/components/top-left';
 import { TopRight } from '@/components/top-right';
 import { currentUser, currentUserProfile } from '@/lib/auth';
@@ -66,9 +69,9 @@ const Project = async ({ params }: ProjectProps) => {
     plan = 'pro';
   }
 
-  if (!profile.onboardedAt) {
-    return redirect('/welcome');
-  }
+  // if (!profile.onboardedAt) {
+  //   return redirect('/welcome');
+  // }
 
   return (
     <div className="flex h-screen w-screen items-stretch overflow-hidden">
@@ -78,7 +81,11 @@ const Project = async ({ params }: ProjectProps) => {
             isSubscribed={Boolean(profile.subscriptionId)}
             plan={plan}
           >
-            <Canvas data={project} />
+            <Canvas data={project}>
+              <Controls />
+              <Toolbar />
+              <SaveIndicator />
+            </Canvas>
           </SubscriptionProvider>
         </ProjectProvider>
         <Suspense fallback={null}>
