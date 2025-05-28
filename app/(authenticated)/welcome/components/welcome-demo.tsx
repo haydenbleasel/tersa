@@ -12,7 +12,7 @@ import { nodeButtons } from '@/lib/node-buttons';
 import { ProjectProvider } from '@/providers/project';
 import { useSubscription } from '@/providers/subscription';
 import type { projects } from '@/schema';
-import { type Edge, type Node, getIncomers, useReactFlow } from '@xyflow/react';
+import { getIncomers, useReactFlow } from '@xyflow/react';
 import { PlayIcon } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -30,11 +30,6 @@ type WelcomeDemoProps = {
   data: typeof projects.$inferSelect;
 };
 
-type ContentProps = {
-  nodes: Node[];
-  edges: Edge[];
-};
-
 export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
   const { getNodes, getEdges } = useReactFlow();
   const [started, setStarted] = useState(false);
@@ -48,6 +43,11 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
   const [hasImageInstructions, setHasImageInstructions] = useState(false);
   const [hasGeneratedImage, setHasGeneratedImage] = useState(false);
   const user = useUser();
+
+  useEffect(() => {
+    // Run on mount to set initial state
+    handleNodesChange();
+  }, []);
 
   const handleFinishWelcome = async () => {
     if (!user) {
@@ -204,67 +204,69 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
   }, [activeStep.instructions]);
 
   const handleNodesChange = useCallback(() => {
-    const newEdges = getEdges();
-    const newNodes = getNodes();
+    setTimeout(() => {
+      const newEdges = getEdges();
+      const newNodes = getNodes();
 
-    const textNodes = newNodes.filter((node) => node.type === 'text');
+      const textNodes = newNodes.filter((node) => node.type === 'text');
 
-    if (!textNodes.length) {
-      setHasTextNode(false);
-      return;
-    }
+      if (!textNodes.length) {
+        setHasTextNode(false);
+        return;
+      }
 
-    setHasTextNode(true);
+      setHasTextNode(true);
 
-    const textNode = textNodes.at(0);
+      const textNode = textNodes.at(0);
 
-    if (!textNode) {
-      return;
-    }
+      if (!textNode) {
+        return;
+      }
 
-    const text = (textNode as unknown as TextNodeProps).data.text;
+      const text = (textNode as unknown as TextNodeProps).data.text;
 
-    if (text && text.length > 10) {
-      setHasFilledTextNode(true);
-    } else {
-      setHasFilledTextNode(false);
-    }
+      if (text && text.length > 10) {
+        setHasFilledTextNode(true);
+      } else {
+        setHasFilledTextNode(false);
+      }
 
-    const imageNodes = newNodes.filter((node) => node.type === 'image');
-    const imageNode = imageNodes.at(0);
+      const imageNodes = newNodes.filter((node) => node.type === 'image');
+      const imageNode = imageNodes.at(0);
 
-    if (!imageNode) {
-      setHasImageNode(false);
-      return;
-    }
+      if (!imageNode) {
+        setHasImageNode(false);
+        return;
+      }
 
-    setHasImageNode(true);
+      setHasImageNode(true);
 
-    const sources = getIncomers(imageNode, newNodes, newEdges);
-    const textSource = sources.find((source) => source.id === textNode.id);
+      const sources = getIncomers(imageNode, newNodes, newEdges);
+      const textSource = sources.find((source) => source.id === textNode.id);
 
-    if (!textSource) {
-      setHasConnectedImageNode(false);
-      return;
-    }
+      if (!textSource) {
+        setHasConnectedImageNode(false);
+        return;
+      }
 
-    setHasConnectedImageNode(true);
+      setHasConnectedImageNode(true);
 
-    const image = imageNode as unknown as ImageNodeProps;
-    const instructions = image.data.instructions;
+      const image = imageNode as unknown as ImageNodeProps;
+      const instructions = image.data.instructions;
 
-    if (instructions && instructions.length > 5) {
-      setHasImageInstructions(true);
-    } else {
-      setHasImageInstructions(false);
-    }
+      if (instructions && instructions.length > 5) {
+        setHasImageInstructions(true);
+      } else {
+        setHasImageInstructions(false);
+      }
 
-    if (!image.data.generated?.url) {
-      setHasGeneratedImage(false);
-      return;
-    }
+      if (!image.data.generated?.url) {
+        setHasGeneratedImage(false);
+        return;
+      }
 
-    setHasGeneratedImage(true);
+      setHasGeneratedImage(true);
+    }, 50);
   }, [getNodes, getEdges]);
 
   return (
