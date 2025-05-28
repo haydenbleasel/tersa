@@ -53,7 +53,7 @@ const getFormattedTime = (date: Date | undefined) => {
 };
 
 export const SaveIndicator = () => {
-  const { project } = useProject();
+  const project = useProject();
   const [{ isSaving, lastSaved }] = useSaveProject();
 
   return (

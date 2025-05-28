@@ -47,7 +47,7 @@ export const VideoTransform = ({
 }: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const { project } = useProject();
+  const project = useProject();
   const modelId = data.model ?? getDefaultModel(videoModels).id;
   const analytics = useAnalytics();
 

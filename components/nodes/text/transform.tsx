@@ -49,7 +49,7 @@ export const TextTransform = ({
   title,
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const { project } = useProject();
+  const project = useProject();
   const modelId = data.model ?? getDefaultModel(textModels).id;
   const analytics = useAnalytics();
   const [reasoning, setReasoning] = useReasoning();

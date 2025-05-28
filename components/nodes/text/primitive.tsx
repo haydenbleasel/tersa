@@ -19,7 +19,7 @@ export const TextPrimitive = ({
 }: TextPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
   const editor = useRef<Editor | null>(null);
-  const { project } = useProject();
+  const project = useProject();
 
   const handleUpdate = ({ editor }: { editor: Editor }) => {
     const json = editor.getJSON();

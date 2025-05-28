@@ -23,7 +23,7 @@ export const ImagePrimitive = ({
   title,
 }: ImagePrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const { project } = useProject();
+  const project = useProject();
   const [files, setFiles] = useState<File[] | undefined>();
   const [isUploading, setIsUploading] = useState(false);
 

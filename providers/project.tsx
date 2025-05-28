@@ -18,7 +18,7 @@ export const useProject = () => {
     throw new Error('useProject must be used within a ProjectProvider');
   }
 
-  return context;
+  return context.project;
 };
 
 export const ProjectProvider = ({

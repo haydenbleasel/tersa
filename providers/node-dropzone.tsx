@@ -18,7 +18,7 @@ export const NodeDropzoneProvider = ({
 }: NodeDropzoneProviderProps) => {
   const { getViewport } = useReactFlow();
   const { addNode } = useNodeOperations();
-  const { project } = useProject();
+  const project = useProject();
   const dropzone = useDropzone({
     noClick: true,
     autoFocus: false,

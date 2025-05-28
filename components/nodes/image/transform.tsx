@@ -56,7 +56,7 @@ export const ImageTransform = ({
 }: ImageTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const { project } = useProject();
+  const project = useProject();
   const hasIncomingImageNodes =
     getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
       .length > 0;

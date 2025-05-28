@@ -25,7 +25,7 @@ export const AudioPrimitive = ({
 }: AudioPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
   const [files, setFiles] = useState<File[] | undefined>();
-  const { project } = useProject();
+  const project = useProject();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleDrop = async (files: File[]) => {

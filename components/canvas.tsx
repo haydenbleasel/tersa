@@ -31,18 +31,18 @@ import type { MouseEventHandler } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useDebouncedCallback } from 'use-debounce';
-import { ConnectionLine } from '../connection-line';
-import { edgeTypes } from '../edges';
-import { nodeTypes } from '../nodes';
+import { ConnectionLine } from './connection-line';
+import { edgeTypes } from './edges';
+import { nodeTypes } from './nodes';
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from '../ui/context-menu';
+} from './ui/context-menu';
 
 export const Canvas = ({ children, ...props }: ReactFlowProps) => {
-  const { project } = useProject();
+  const project = useProject();
   const {
     onConnect,
     onConnectStart,
