@@ -1,4 +1,4 @@
-import type { CanvasProps } from './canvas';
+import type { ReactFlowProps } from '@xyflow/react';
 import { Canvas as CanvasComponent } from './canvas';
 
-export const Canvas = (props: CanvasProps) => <CanvasComponent {...props} />;
+export const Canvas = (props: ReactFlowProps) => <CanvasComponent {...props} />;

@@ -288,12 +288,7 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
       <div className="col-span-2 p-8">
         <div className="relative size-full overflow-hidden rounded-3xl border">
           <ProjectProvider data={data}>
-            <Canvas
-              data={data}
-              canvasProps={{
-                onNodesChange: handleNodesChange,
-              }}
-            >
+            <Canvas onNodesChange={handleNodesChange}>
               {steps[0].complete && <Toolbar />}
             </Canvas>
           </ProjectProvider>

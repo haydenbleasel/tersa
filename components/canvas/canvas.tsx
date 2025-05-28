@@ -7,7 +7,7 @@ import { handleError } from '@/lib/error/handle';
 import { isValidSourceTarget } from '@/lib/xyflow';
 import { NodeDropzoneProvider } from '@/providers/node-dropzone';
 import { NodeOperationsProvider } from '@/providers/node-operations';
-import type { projects } from '@/schema';
+import { useProject } from '@/providers/project';
 import {
   Background,
   type FinalConnectionState,
@@ -27,7 +27,7 @@ import {
 } from '@xyflow/react';
 import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import type { MouseEventHandler, ReactNode } from 'react';
+import type { MouseEventHandler } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useDebouncedCallback } from 'use-debounce';
@@ -41,25 +41,25 @@ import {
   ContextMenuTrigger,
 } from '../ui/context-menu';
 
-type ProjectData = {
-  content?:
-    | {
-        nodes: Node[];
-        edges: Edge[];
-      }
-    | undefined;
-};
-
-export type CanvasProps = {
-  data: typeof projects.$inferSelect;
-  canvasProps?: Omit<ReactFlowProps, 'nodes' | 'edges'>;
-  children?: ReactNode;
-};
-
-export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
-  const content = data.content as ProjectData['content'];
-  const [nodes, setNodes] = useState<Node[]>(content?.nodes ?? []);
-  const [edges, setEdges] = useState<Edge[]>(content?.edges ?? []);
+export const Canvas = ({ children, ...props }: ReactFlowProps) => {
+  const { project } = useProject();
+  const {
+    onConnect,
+    onConnectStart,
+    onConnectEnd,
+    onEdgesChange,
+    onNodesChange,
+    nodes: initialNodes,
+    edges: initialEdges,
+    ...rest
+  } = props ?? {};
+  const content = project?.content as { nodes: Node[]; edges: Edge[] };
+  const [nodes, setNodes] = useState<Node[]>(
+    initialNodes ?? content?.nodes ?? []
+  );
+  const [edges, setEdges] = useState<Edge[]>(
+    initialEdges ?? content?.edges ?? []
+  );
   const [copiedNodes, setCopiedNodes] = useState<Node[]>([]);
   const {
     getEdges,
@@ -71,24 +71,16 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
   } = useReactFlow();
   const analytics = useAnalytics();
   const [saveState, setSaveState] = useSaveProject();
-  const {
-    onConnect,
-    onConnectStart,
-    onConnectEnd,
-    onEdgesChange,
-    onNodesChange,
-    ...rest
-  } = canvasProps ?? {};
 
   const save = useDebouncedCallback(async () => {
-    if (saveState.isSaving || !data.userId || !data.id) {
+    if (saveState.isSaving || !project?.userId || !project?.id) {
       return;
     }
 
     try {
       setSaveState((prev) => ({ ...prev, isSaving: true }));
 
-      const response = await updateProjectAction(data.id, {
+      const response = await updateProjectAction(project.id, {
         content: toObject(),
       });
 

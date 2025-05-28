@@ -78,29 +78,13 @@ const edges: Edge[] = [
 export const TextDemo = () => (
   <ReactFlowProvider>
     <Canvas
-      data={{
-        createdAt: new Date(),
-        id: 'text-demo',
-        name: 'Demo Project',
-        userId: 'test',
-        transcriptionModel: 'gpt-4o-mini-transcribe',
-        visionModel: 'gpt-4.1-nano',
-        updatedAt: null,
-        image: null,
-        content: {
-          nodes,
-          edges,
-        },
-        members: [],
-        welcomeProject: false,
-      }}
-      canvasProps={{
-        panOnScroll: false,
-        zoomOnScroll: false,
-        preventScrolling: false,
-        fitViewOptions: {
-          minZoom: 0,
-        },
+      nodes={nodes}
+      edges={edges}
+      panOnScroll={false}
+      zoomOnScroll={false}
+      preventScrolling={false}
+      fitViewOptions={{
+        minZoom: 0,
       }}
     />
   </ReactFlowProvider>
