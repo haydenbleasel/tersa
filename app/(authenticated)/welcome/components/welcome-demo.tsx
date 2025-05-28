@@ -72,7 +72,14 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
   const steps = [
     {
       instructions: `${description} Sound good?`,
-      action: <Button onClick={() => setStarted(true)}>Sounds good!</Button>,
+      action: (
+        <div className="not-prose flex items-center gap-4">
+          <Button onClick={() => setStarted(true)}>Sounds good!</Button>
+          <Button variant="outline" onClick={handleFinishWelcome}>
+            Skip intro
+          </Button>
+        </div>
+      ),
       complete: started,
     },
     {
@@ -135,7 +142,7 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
           nodes they're connected to.
           <br />
           <br />
-          You can also add a prompt to the Image node. This will be used to
+          You can also add instructions to the Image node. This will be used to
           influence the outcome. Try adding some instructions to the Image node,
           maybe something like "make it anime style".
         </>
