@@ -168,7 +168,7 @@ export const AudioTransform = ({
               size="icon"
               className="rounded-full"
               onClick={handleGenerate}
-              disabled={loading || !projectId}
+              disabled={loading || !project?.id}
             >
               {data.generated?.url ? (
                 <RotateCcwIcon size={12} />

@@ -15,7 +15,7 @@ import type { projects } from '@/schema';
 import { getIncomers, useReactFlow } from '@xyflow/react';
 import { PlayIcon } from 'lucide-react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const TextNode = nodeButtons.find((button) => button.id === 'text');
@@ -43,6 +43,7 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
   const [hasImageInstructions, setHasImageInstructions] = useState(false);
   const [hasGeneratedImage, setHasGeneratedImage] = useState(false);
   const user = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     // Run on mount to set initial state
@@ -63,7 +64,7 @@ export const WelcomeDemo = ({ title, description, data }: WelcomeDemoProps) => {
         throw new Error(response.error);
       }
 
-      redirect('/projects');
+      router.push('/');
     } catch (error) {
       handleError('Error finishing onboarding', error);
     }
