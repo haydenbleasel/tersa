@@ -1,54 +1,70 @@
-import { Canvas } from '@/components/canvas';
-import { nodeButtons } from '@/lib/node-buttons';
-import { ProjectProvider } from '@/providers/project';
-import { SubscriptionProvider } from '@/providers/subscription';
-import type { projects } from '@/schema';
+import { createProjectAction } from '@/app/actions/project/create';
+import { currentUser } from '@/lib/auth';
+import { database } from '@/lib/database';
+import { profile, projects } from '@/schema';
+import { and, eq } from 'drizzle-orm';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { WelcomeDemo } from './components/welcome-demo';
 
-const TextNode = nodeButtons.find((button) => button.id === 'text');
+const title = 'Welcome to Tersa!';
+const description =
+  "Tersa is a platform for creating and sharing AI-powered projects. Let's get started by creating a flow, together.";
 
-if (!TextNode) {
-  throw new Error('Text node not found');
-}
+export const metadata: Metadata = {
+  title,
+  description,
+};
 
-const Welcome = () => {
-  const project: typeof projects.$inferSelect = {
-    id: '1',
-    name: 'Project 1',
-    transcriptionModel: 'whisper',
-    visionModel: 'openai',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    content: {},
-    userId: '1',
-    image: null,
-    members: [],
-  };
+const Welcome = async () => {
+  const user = await currentUser();
+
+  if (!user) {
+    return redirect('/sign-in');
+  }
+
+  const allProfiles = await database
+    .select()
+    .from(profile)
+    .where(eq(profile.id, user.id));
+  const userProfile = allProfiles.at(0);
+
+  const welcomeProjects = await database
+    .select()
+    .from(projects)
+    .where(
+      and(eq(projects.userId, user.id), eq(projects.welcomeProject, true))
+    );
+  let welcomeProject = welcomeProjects.at(0);
+
+  if (!welcomeProject) {
+    const response = await createProjectAction('Welcome', true);
+
+    if ('error' in response) {
+      return <div>Error: {response.error}</div>;
+    }
+
+    const project = await database
+      .select()
+      .from(projects)
+      .where(eq(projects.id, response.id))
+      .limit(1);
+
+    welcomeProject = project.at(0);
+  }
+
+  if (!welcomeProject) {
+    throw new Error('Failed to create welcome project');
+  }
 
   return (
-    <div className="grid h-screen w-screen grid-cols-3">
-      <div className="self-center px-16 py-8">
-        <div className="prose">
-          <h1 className="font-semibold! text-3xl!">Welcome to Tersa!</h1>
-          <p className="lead">
-            Tersa is a platform for creating and sharing AI-powered projects.
-            Let's get started by creating a flow, together.
-          </p>
-          <p>
-            First, click the{' '}
-            <TextNode.icon className="inline-block size-4 align-text-bottom" />{' '}
-            Text node on the bottom toolbar.
-          </p>
-        </div>
-      </div>
-      <div className="col-span-2 p-8">
-        <div className="relative size-full overflow-hidden rounded-3xl border">
-          <ProjectProvider data={project}>
-            <SubscriptionProvider isSubscribed={false} plan={undefined}>
-              <Canvas data={project} />
-            </SubscriptionProvider>
-          </ProjectProvider>
-        </div>
-      </div>
+    <div className="flex flex-col gap-4">
+      <WelcomeDemo
+        title={title}
+        description={description}
+        data={welcomeProject}
+        subscribed={Boolean(userProfile?.subscriptionId)}
+      />
     </div>
   );
 };

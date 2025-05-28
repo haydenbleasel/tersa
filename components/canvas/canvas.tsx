@@ -52,7 +52,7 @@ type ProjectData = {
 
 export type CanvasProps = {
   data: typeof projects.$inferSelect;
-  canvasProps?: ReactFlowProps;
+  canvasProps?: Omit<ReactFlowProps, 'nodes' | 'edges'>;
   children?: ReactNode;
 };
 
@@ -71,6 +71,14 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
   } = useReactFlow();
   const analytics = useAnalytics();
   const [saveState, setSaveState] = useSaveProject();
+  const {
+    onConnect,
+    onConnectStart,
+    onConnectEnd,
+    onEdgesChange,
+    onNodesChange,
+    ...rest
+  } = canvasProps ?? {};
 
   const save = useDebouncedCallback(async () => {
     if (saveState.isSaving || !data.userId || !data.id) {
@@ -96,29 +104,31 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
     }
   }, 1000);
 
-  const onNodesChange = useCallback(
+  const handleNodesChange = useCallback(
     (changes: NodeChange<Node>[]) => {
       setNodes((current) => {
         const updated = applyNodeChanges(changes, current);
         save();
+        onNodesChange?.(changes);
         return updated;
       });
     },
-    [save]
+    [save, onNodesChange]
   );
 
-  const onEdgesChange = useCallback(
+  const handleEdgesChange = useCallback(
     (changes: EdgeChange<Edge>[]) => {
       setEdges((current) => {
         const updated = applyEdgeChanges(changes, current);
         save();
+        onEdgesChange?.(changes);
         return updated;
       });
     },
-    [save]
+    [save, onEdgesChange]
   );
 
-  const onConnect = useCallback(
+  const handleConnect = useCallback(
     (connection: Connection) => {
       const newEdge: Edge = {
         id: nanoid(),
@@ -127,8 +137,9 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
       };
       setEdges((eds: Edge[]) => eds.concat(newEdge));
       save();
+      onConnect?.(connection);
     },
-    [save]
+    [save, onConnect]
   );
 
   const addNode = useCallback(
@@ -185,7 +196,7 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
     [addNode, getNode, updateNode]
   );
 
-  const onConnectEnd = useCallback(
+  const handleConnectEnd = useCallback(
     (event: MouseEvent | TouchEvent, connectionState: FinalConnectionState) => {
       // when a connection is dropped on the pane it's not valid
 
@@ -268,7 +279,7 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
     [getNodes, getEdges]
   );
 
-  const onConnectStart = useCallback(() => {
+  const handleConnectStart = useCallback(() => {
     // Delete any drop nodes when starting to drag a node
     setNodes((nds: Node[]) => nds.filter((n: Node) => n.type !== 'drop'));
     setEdges((eds: Edge[]) => eds.filter((e: Edge) => e.type !== 'temporary'));
@@ -372,12 +383,12 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
             <ReactFlow
               deleteKeyCode={['Backspace', 'Delete']}
               nodes={nodes}
-              onNodesChange={onNodesChange}
+              onNodesChange={handleNodesChange}
               edges={edges}
-              onEdgesChange={onEdgesChange}
-              onConnectStart={onConnectStart}
-              onConnect={onConnect}
-              onConnectEnd={onConnectEnd}
+              onEdgesChange={handleEdgesChange}
+              onConnectStart={handleConnectStart}
+              onConnect={handleConnect}
+              onConnectEnd={handleConnectEnd}
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               isValidConnection={isValidConnection}
@@ -388,7 +399,7 @@ export const Canvas = ({ data, canvasProps, children }: CanvasProps) => {
               panOnDrag={false}
               selectionOnDrag={true}
               onDoubleClick={addDropNode}
-              {...canvasProps}
+              {...rest}
             >
               <Background />
               {children}
