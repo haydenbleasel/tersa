@@ -2,7 +2,13 @@ import { bedrock } from '@ai-sdk/amazon-bedrock';
 import { openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import type { ImageModel } from 'ai';
-import { AmazonIcon, OpenAiIcon, XaiIcon } from '../icons';
+import {
+  AmazonIcon,
+  BlackForestLabsIcon,
+  OpenAiIcon,
+  XaiIcon,
+} from '../../icons';
+import { blackForestLabs } from './black-forest-labs';
 
 const million = 1000000;
 
@@ -209,6 +215,91 @@ export const imageModels: {
 
           throw new Error('Size is not supported');
         },
+      },
+    ],
+  },
+  {
+    label: 'Black Forest Labs',
+    models: [
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-pro-1.1',
+        label: 'FLUX Pro 1.1',
+        model: blackForestLabs.image('flux-pro-1.1'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.04,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-pro',
+        label: 'FLUX Pro',
+        model: blackForestLabs.image('flux-pro'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-dev',
+        label: 'FLUX Dev',
+        model: blackForestLabs.image('flux-dev'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.025,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-pro-1.0-fill',
+        label: 'FLUX Pro 1.0 Fill',
+        model: blackForestLabs.image('flux-pro-1.0-fill'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-pro-1.0-canny',
+        label: 'FLUX Pro 1.0 Canny',
+        model: blackForestLabs.image('flux-pro-1.0-canny'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-pro-1.0-depth',
+        label: 'FLUX Pro 1.0 Depth',
+        model: blackForestLabs.image('flux-pro-1.0-depth'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-kontext-pro',
+        label: 'FLUX Kontext Pro',
+        model: blackForestLabs.image('flux-kontext-pro'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.04,
+      },
+      {
+        icon: BlackForestLabsIcon,
+        id: 'black-forest-labs/flux-kontext-max',
+        label: 'FLUX Kontext Max',
+        model: blackForestLabs.image('flux-kontext-max'),
+        sizes: ['1024x1024', '822x1440', '1440x822'],
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.08,
       },
     ],
   },
