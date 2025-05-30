@@ -257,17 +257,6 @@ export const imageModels: {
       },
       {
         icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-pro-1.0-fill',
-        label: 'FLUX Pro 1.0 Fill',
-        model: blackForestLabs.image('flux-pro-1.0-fill'),
-        sizes: ['1024x1024', '822x1440', '1440x822'],
-        supportsEdit: true,
-
-        // https://bfl.ai/pricing/api
-        getCost: () => 0.05,
-      },
-      {
-        icon: BlackForestLabsIcon,
         id: 'black-forest-labs/flux-pro-1.0-canny',
         label: 'FLUX Pro 1.0 Canny',
         model: blackForestLabs.image('flux-pro-1.0-canny'),

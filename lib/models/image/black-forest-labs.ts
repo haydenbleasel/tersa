@@ -1,7 +1,7 @@
 import { env } from '@/lib/env';
 import type { paths } from '@/openapi/bfl';
 import type { ImageModel } from 'ai';
-import createFetchClient from 'openapi-fetch';
+import createFetchClient, { type Client } from 'openapi-fetch';
 
 const createClient = () =>
   createFetchClient<paths>({
@@ -17,14 +17,177 @@ const models = [
   'flux-pro-1.1',
   'flux-pro',
   'flux-dev',
-  'flux-pro-1.1-ultra',
-  'flux-pro-1.0-fill',
-  'flux-pro-1.0-expand',
   'flux-pro-1.0-canny',
   'flux-pro-1.0-depth',
   'flux-kontext-pro',
   'flux-kontext-max',
 ] as const;
+
+type CreateJobParams = {
+  client: Client<paths>;
+  modelId: (typeof models)[number];
+  prompt: string;
+  size: `${string}x${string}` | undefined;
+  seed: number | undefined;
+  abortSignal: AbortSignal | undefined;
+  headers: Record<string, string | undefined> | undefined;
+  imagePrompt: string | undefined;
+};
+
+const createJob = async ({
+  client,
+  modelId,
+  prompt,
+  size,
+  seed,
+  abortSignal,
+  headers,
+  imagePrompt,
+}: CreateJobParams) => {
+  const [width, height] = size?.split('x').map(Number) ?? [1024, 1024];
+
+  // Convert to smallest possible aspect ratio
+  const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+  const divisor = gcd(width, height);
+  const simplifiedW = width / divisor;
+  const simplifiedH = height / divisor;
+
+  if (simplifiedW > 21 || simplifiedH > 21) {
+    // Check if simplified ratio is within bounds
+    throw new Error('Aspect ratio must be between 21:9 and 9:21');
+  }
+
+  switch (modelId) {
+    case 'flux-dev':
+      return await client.POST('/v1/flux-dev', {
+        body: {
+          prompt,
+          width,
+          height,
+          seed,
+          steps: 28,
+          prompt_upsampling: true,
+          guidance: 3,
+          safety_tolerance: 2,
+          output_format: 'png',
+          image_prompt: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-pro-1.1':
+      return await client.POST('/v1/flux-pro-1.1', {
+        body: {
+          prompt,
+          width,
+          height,
+          seed,
+          prompt_upsampling: true,
+          safety_tolerance: 2,
+          output_format: 'png',
+          image_prompt: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-pro':
+      return await client.POST('/v1/flux-pro', {
+        body: {
+          prompt,
+          width,
+          height,
+          seed,
+          steps: 40,
+          prompt_upsampling: true,
+          guidance: 2.5,
+          safety_tolerance: 2,
+          output_format: 'png',
+          image_prompt: imagePrompt,
+          interval: 2,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-pro-1.1-ultra':
+      return await client.POST('/v1/flux-pro-1.1-ultra', {
+        body: {
+          prompt,
+          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
+          seed,
+          prompt_upsampling: true,
+          safety_tolerance: 2,
+          output_format: 'png',
+          image_prompt: imagePrompt,
+          image_prompt_strength: 0.1,
+          raw: false,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-pro-1.0-canny':
+      return await client.POST('/v1/flux-pro-1.0-canny', {
+        body: {
+          prompt,
+          canny_low_threshold: 50,
+          canny_high_threshold: 200,
+          prompt_upsampling: true,
+          seed,
+          steps: 50,
+          guidance: 30,
+          safety_tolerance: 2,
+          output_format: 'png',
+          preprocessed_image: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-pro-1.0-depth':
+      return await client.POST('/v1/flux-pro-1.0-depth', {
+        body: {
+          prompt,
+          prompt_upsampling: true,
+          seed,
+          steps: 50,
+          guidance: 15,
+          safety_tolerance: 2,
+          output_format: 'png',
+          preprocessed_image: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-kontext-pro':
+      return await client.POST('/v1/flux-kontext-pro', {
+        body: {
+          prompt,
+          prompt_upsampling: true,
+          seed,
+          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
+          output_format: 'png',
+          safety_tolerance: 2,
+          input_image: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    case 'flux-kontext-max':
+      return await client.POST('/v1/flux-kontext-max', {
+        body: {
+          prompt,
+          prompt_upsampling: true,
+          seed,
+          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
+          output_format: 'png',
+          safety_tolerance: 2,
+          input_image: imagePrompt,
+        },
+        signal: abortSignal,
+        headers,
+      });
+    default:
+      throw new Error(`Model ${modelId} not supported`);
+  }
+};
 
 export const blackForestLabs = {
   image: (modelId: (typeof models)[number]): ImageModel => ({
@@ -33,8 +196,6 @@ export const blackForestLabs = {
     specificationVersion: 'v1',
     maxImagesPerCall: 1,
     doGenerate: async ({
-      aspectRatio,
-      // n,
       prompt,
       providerOptions,
       seed,
@@ -44,60 +205,21 @@ export const blackForestLabs = {
     }) => {
       const client = createClient();
 
-      let width = 1024;
-      let height = 1024;
-
-      if (size) {
-        const [w, h] = size.split('x').map(Number);
-        width = w;
-        height = h;
-      } else if (aspectRatio) {
-        const [w, h] = aspectRatio.split('x').map(Number);
-        const ratio = w / h;
-
-        // Convert to smallest possible aspect ratio
-        const gcd = (a: number, b: number): number =>
-          b === 0 ? a : gcd(b, a % b);
-        const divisor = gcd(w, h);
-        const simplifiedW = w / divisor;
-        const simplifiedH = h / divisor;
-
-        // Check if simplified ratio is within bounds
-        if (simplifiedW > 21 || simplifiedH > 21) {
-          throw new Error('Aspect ratio must be between 21:9 and 9:21');
-        }
-
-        if (ratio > 1) {
-          width = 1024;
-          height = Math.round(1024 / ratio);
-        } else {
-          height = 1024;
-          width = Math.round(1024 * ratio);
-        }
-      }
-
       let imagePrompt: string | undefined;
 
       if (typeof providerOptions?.bfl?.image === 'string') {
         imagePrompt = providerOptions.bfl.image;
       }
 
-      const jobResponse = await client.POST(`/v1/${modelId}`, {
-        body: {
-          prompt,
-          width,
-          height,
-          seed,
-          aspect_ratio: `${width}:${height}`,
-          safety_tolerance: 2,
-          output_format: 'png',
-          prompt_upsampling: false,
-          image_prompt: imagePrompt,
-          preprocessed_image: imagePrompt,
-          input_image: imagePrompt,
-        },
-        signal: abortSignal,
+      const jobResponse = await createJob({
+        client,
+        modelId,
+        prompt,
+        size,
+        seed,
+        abortSignal,
         headers,
+        imagePrompt,
       });
 
       if (jobResponse.error) {
