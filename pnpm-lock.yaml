@@ -308,6 +308,9 @@ importers:
       openai:
         specifier: ^4.103.0
         version: 4.103.0(ws@8.18.1)(zod@3.25.28)
+      openapi-fetch:
+        specifier: ^0.14.0
+        version: 0.14.0
       perfect-cursors:
         specifier: ^1.0.5
         version: 1.0.5
@@ -4267,6 +4270,12 @@ packages:
         optional: true
       zod:
         optional: true
+
+  openapi-fetch@0.14.0:
+    resolution: {integrity: sha512-PshIdm1NgdLvb05zp8LqRQMNSKzIlPkyMxYFxwyHR+UlKD4t2nUjkDhNxeRbhRSEd3x5EUNh2w5sJYwkhOH4fg==}
+
+  openapi-typescript-helpers@0.0.15:
+    resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
 
   ora@8.2.0:
     resolution: {integrity: sha512-weP+BZ8MVNnlCm8c0Qdc1WSWq4Qn7I+9CJGm7Qali6g44e/PUzbjNqJX5NJ9ljlNMosfJvg1fKEGILklK9cwnw==}
@@ -9081,6 +9090,12 @@ snapshots:
       zod: 3.25.28
     transitivePeerDependencies:
       - encoding
+
+  openapi-fetch@0.14.0:
+    dependencies:
+      openapi-typescript-helpers: 0.0.15
+
+  openapi-typescript-helpers@0.0.15: {}
 
   ora@8.2.0:
     dependencies:
