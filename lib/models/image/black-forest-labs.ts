@@ -1,3 +1,4 @@
+import { env } from '@/lib/env';
 import type { paths } from '@/openapi/bfl';
 import type { ImageModel } from 'ai';
 import createFetchClient from 'openapi-fetch';
@@ -7,7 +8,7 @@ const createClient = () =>
     baseUrl: 'https://api.us1.bfl.ai',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.BF_API_KEY}`,
+      'X-Key': env.BF_API_KEY,
     },
     fetch: fetch,
   });
@@ -53,6 +54,19 @@ export const blackForestLabs = {
       } else if (aspectRatio) {
         const [w, h] = aspectRatio.split('x').map(Number);
         const ratio = w / h;
+
+        // Convert to smallest possible aspect ratio
+        const gcd = (a: number, b: number): number =>
+          b === 0 ? a : gcd(b, a % b);
+        const divisor = gcd(w, h);
+        const simplifiedW = w / divisor;
+        const simplifiedH = h / divisor;
+
+        // Check if simplified ratio is within bounds
+        if (simplifiedW > 21 || simplifiedH > 21) {
+          throw new Error('Aspect ratio must be between 21:9 and 9:21');
+        }
+
         if (ratio > 1) {
           width = 1024;
           height = Math.round(1024 / ratio);
@@ -74,17 +88,22 @@ export const blackForestLabs = {
           width,
           height,
           seed,
-          safety_tolerance: 6,
+          aspect_ratio: `${width}:${height}`,
+          safety_tolerance: 2,
           output_format: 'png',
           prompt_upsampling: false,
           image_prompt: imagePrompt,
+          preprocessed_image: imagePrompt,
+          input_image: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
 
       if (jobResponse.error) {
-        throw new Error(`API error: ${jobResponse.error.detail}`);
+        throw new Error(
+          jobResponse.error.detail?.at(0)?.msg ?? 'Unknown error'
+        );
       }
 
       if (!jobResponse.data?.id) {
@@ -108,11 +127,13 @@ export const blackForestLabs = {
         });
 
         if (queryJobResponse.error) {
-          throw new Error(`API error: ${queryJobResponse.error.detail}`);
+          throw new Error(
+            queryJobResponse.error.detail?.at(0)?.msg ?? 'Unknown error'
+          );
         }
 
         if (queryJobResponse.data?.status === 'Error') {
-          throw new Error(`API error: Job ${jobResponse.data.id} failed`);
+          throw new Error(`Job ${jobResponse.data.id} failed`);
         }
 
         if (queryJobResponse.data?.status === 'Content Moderated') {
@@ -120,7 +141,7 @@ export const blackForestLabs = {
         }
 
         if (queryJobResponse.data?.status === 'Task not found') {
-          throw new Error(`API error: Job ${jobResponse.data.id} not found`);
+          throw new Error(`${jobResponse.data.id} not found`);
         }
 
         if (queryJobResponse.data?.status === 'Request Moderated') {

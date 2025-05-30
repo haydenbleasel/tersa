@@ -227,6 +227,7 @@ export const imageModels: {
         label: 'FLUX Pro 1.1',
         model: blackForestLabs.image('flux-pro-1.1'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
@@ -237,6 +238,7 @@ export const imageModels: {
         label: 'FLUX Pro',
         model: blackForestLabs.image('flux-pro'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
@@ -247,6 +249,8 @@ export const imageModels: {
         label: 'FLUX Dev',
         model: blackForestLabs.image('flux-dev'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
+        priceIndicator: 'low',
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.025,
@@ -257,6 +261,7 @@ export const imageModels: {
         label: 'FLUX Pro 1.0 Fill',
         model: blackForestLabs.image('flux-pro-1.0-fill'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
@@ -267,6 +272,7 @@ export const imageModels: {
         label: 'FLUX Pro 1.0 Canny',
         model: blackForestLabs.image('flux-pro-1.0-canny'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
@@ -277,6 +283,7 @@ export const imageModels: {
         label: 'FLUX Pro 1.0 Depth',
         model: blackForestLabs.image('flux-pro-1.0-depth'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
@@ -287,6 +294,7 @@ export const imageModels: {
         label: 'FLUX Kontext Pro',
         model: blackForestLabs.image('flux-kontext-pro'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
@@ -297,6 +305,7 @@ export const imageModels: {
         label: 'FLUX Kontext Max',
         model: blackForestLabs.image('flux-kontext-max'),
         sizes: ['1024x1024', '822x1440', '1440x822'],
+        supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.08,

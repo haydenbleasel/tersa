@@ -48,6 +48,7 @@ export const env = createEnv({
     MINIMAX_API_KEY: z.string().min(1),
     RUNWAYML_API_SECRET: z.string().min(1).startsWith('key_'),
     LUMAAI_API_KEY: z.string().min(1).startsWith('luma-'),
+    BF_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
@@ -98,5 +99,6 @@ export const env = createEnv({
     VERCEL_API_KEY: process.env.VERCEL_API_KEY,
     HUME_API_KEY: process.env.HUME_API_KEY,
     LMNT_API_KEY: process.env.LMNT_API_KEY,
+    BF_API_KEY: process.env.BF_API_KEY,
   },
 });
