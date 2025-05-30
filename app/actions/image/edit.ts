@@ -8,6 +8,10 @@ import { trackCreditUsage } from '@/lib/stripe';
 import { createClient } from '@/lib/supabase/server';
 import { projects } from '@/schema';
 import type { Edge, Node, Viewport } from '@xyflow/react';
+import {
+  type Experimental_GenerateImageResult,
+  experimental_generateImage as generateImage,
+} from 'ai';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import OpenAI, { toFile } from 'openai';
@@ -22,6 +26,60 @@ type EditImageActionProps = {
   nodeId: string;
   projectId: string;
   size?: string;
+};
+
+const generateGptImage1Image = async ({
+  prompt,
+  size,
+  images,
+}: {
+  prompt: string;
+  size?: string;
+  images: {
+    url: string;
+    type: string;
+  }[];
+}) => {
+  const openai = new OpenAI();
+  const promptImages = await Promise.all(
+    images.map(async (image) => {
+      const response = await fetch(image.url);
+      const blob = await response.blob();
+
+      return toFile(blob, nanoid(), {
+        type: image.type,
+      });
+    })
+  );
+
+  const response = await openai.images.edit({
+    model: 'gpt-image-1',
+    image: promptImages,
+    prompt,
+    size: size as never | undefined,
+    quality: 'high',
+  });
+
+  const json = response.data?.at(0)?.b64_json;
+
+  if (!json) {
+    throw new Error('No response JSON found');
+  }
+
+  const image: Experimental_GenerateImageResult['image'] = {
+    base64: json,
+    uint8Array: Buffer.from(json, 'base64'),
+    mimeType: 'image/png',
+  };
+
+  return {
+    image,
+    usage: {
+      textInput: response.usage?.input_tokens_details.text_tokens,
+      imageInput: response.usage?.input_tokens_details.image_tokens,
+      output: response.usage?.output_tokens,
+    },
+  };
 };
 
 export const editImageAction = async ({
@@ -42,7 +100,6 @@ export const editImageAction = async ({
   try {
     const client = await createClient();
     const user = await getSubscribedUser();
-    const openai = new OpenAI();
 
     const model = imageModels
       .flatMap((m) => m.models)
@@ -56,16 +113,7 @@ export const editImageAction = async ({
       throw new Error('Model does not support editing');
     }
 
-    const promptImages = await Promise.all(
-      images.map(async (image) => {
-        const response = await fetch(image.url);
-        const blob = await response.blob();
-
-        return toFile(blob, nanoid(), {
-          type: image.type,
-        });
-      })
-    );
+    let image: Experimental_GenerateImageResult['image'] | undefined;
 
     const defaultPrompt =
       images.length > 1
@@ -75,36 +123,49 @@ export const editImageAction = async ({
     const prompt =
       !instructions || instructions === '' ? defaultPrompt : instructions;
 
-    const response = await openai.images.edit({
-      model: model.model.modelId,
-      image: promptImages,
-      prompt,
-      user: user.id,
-      size: size as never | undefined,
-      quality: 'high',
-    });
-
-    if (!response.usage) {
-      throw new Error('No usage found');
-    }
-
-    await trackCreditUsage({
-      action: 'edit_image',
-      cost: model.getCost({
-        textInput: response.usage.input_tokens_details.text_tokens,
-        imageInput: response.usage.input_tokens_details.image_tokens,
-        output: response.usage.output_tokens,
+    if (model.model.modelId === 'gpt-image-1') {
+      const generatedImageResponse = await generateGptImage1Image({
+        prompt,
+        images,
         size,
-      }),
-    });
+      });
 
-    const json = response.data?.at(0)?.b64_json;
+      await trackCreditUsage({
+        action: 'generate_image',
+        cost: model.getCost({
+          ...generatedImageResponse.usage,
+          size,
+        }),
+      });
 
-    if (!json) {
-      throw new Error('No url found');
+      image = generatedImageResponse.image;
+    } else {
+      const base64Image = await fetch(images[0].url)
+        .then((res) => res.arrayBuffer())
+        .then((buffer) => Buffer.from(buffer).toString('base64'));
+
+      const generatedImageResponse = await generateImage({
+        model: model.model,
+        prompt,
+        size: size as never,
+        providerOptions: {
+          bfl: {
+            image: base64Image,
+          },
+        },
+      });
+
+      await trackCreditUsage({
+        action: 'generate_image',
+        cost: model.getCost({
+          size,
+        }),
+      });
+
+      image = generatedImageResponse.image;
     }
 
-    const bytes = Buffer.from(json, 'base64');
+    const bytes = Buffer.from(image.base64, 'base64');
     const contentType = 'image/png';
 
     const blob = await client.storage

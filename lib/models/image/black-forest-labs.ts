@@ -62,6 +62,12 @@ export const blackForestLabs = {
         }
       }
 
+      let imagePrompt: string | undefined;
+
+      if (typeof providerOptions?.bfl?.image === 'string') {
+        imagePrompt = providerOptions.bfl.image;
+      }
+
       const jobResponse = await client.POST(`/v1/${modelId}`, {
         body: {
           prompt,
@@ -71,6 +77,7 @@ export const blackForestLabs = {
           safety_tolerance: 6,
           output_format: 'png',
           prompt_upsampling: false,
+          image_prompt: imagePrompt,
         },
         signal: abortSignal,
         headers,
