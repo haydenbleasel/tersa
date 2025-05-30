@@ -52,8 +52,9 @@ const createJob = async ({
   const simplifiedW = width / divisor;
   const simplifiedH = height / divisor;
 
-  if (simplifiedW > 21 || simplifiedH > 21) {
-    // Check if simplified ratio is within bounds
+  const ratio = width / height;
+
+  if (ratio > 21 / 9 || ratio < 9 / 21) {
     throw new Error('Aspect ratio must be between 21:9 and 9:21');
   }
 
@@ -104,22 +105,6 @@ const createJob = async ({
           output_format: 'png',
           image_prompt: imagePrompt,
           interval: 2,
-        },
-        signal: abortSignal,
-        headers,
-      });
-    case 'flux-pro-1.1-ultra':
-      return await client.POST('/v1/flux-pro-1.1-ultra', {
-        body: {
-          prompt,
-          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
-          seed,
-          prompt_upsampling: true,
-          safety_tolerance: 2,
-          output_format: 'png',
-          image_prompt: imagePrompt,
-          image_prompt_strength: 0.1,
-          raw: false,
         },
         signal: abortSignal,
         headers,
