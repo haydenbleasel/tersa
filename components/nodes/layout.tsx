@@ -143,7 +143,9 @@ export const NodeLayout = ({
               </div>
             </div>
           </div>
-          <Handle type="source" position={Position.Right} />
+          {type !== 'video' && (
+            <Handle type="source" position={Position.Right} />
+          )}
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem onClick={() => duplicateNode(id)}>
