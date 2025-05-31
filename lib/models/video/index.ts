@@ -14,7 +14,7 @@ export type VideoModel = {
     duration: number;
     aspectRatio: string;
   }) => Promise<string>;
-  getCost: () => number;
+  getCost: ({ duration }: { duration: number }) => number;
   default?: boolean;
 };
 
@@ -117,17 +117,16 @@ export const videoModels: VideoProvider[] = [
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
-        getCost: () => {
+        getCost: ({ duration }) => {
           const unitCost = 0.0032;
           const frames = 24;
           const width = 1920;
           const height = 1080;
-          const seconds = 5;
 
           const pixels = width * height;
           const frameCost = (pixels / million) * unitCost;
 
-          return frameCost * frames * seconds;
+          return frameCost * frames * duration;
         },
       },
       {
@@ -138,17 +137,16 @@ export const videoModels: VideoProvider[] = [
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
-        getCost: () => {
+        getCost: ({ duration }) => {
           const unitCost = 0.0064;
           const frames = 24;
-          const width = 1920;
+          const width = 1920; // 1920x1080
           const height = 1080;
-          const seconds = 5;
 
           const pixels = width * height;
           const frameCost = (pixels / million) * unitCost;
 
-          return frameCost * frames * seconds;
+          return frameCost * frames * duration;
         },
       },
       {
@@ -159,17 +157,16 @@ export const videoModels: VideoProvider[] = [
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
-        getCost: () => {
+        getCost: ({ duration }) => {
           const unitCost = 0.0022;
           const frames = 24;
           const width = 1920;
           const height = 1080;
-          const seconds = 5;
 
           const pixels = width * height;
           const frameCost = (pixels / million) * unitCost;
 
-          return frameCost * frames * seconds;
+          return frameCost * frames * duration;
         },
       },
     ],
@@ -184,11 +181,10 @@ export const videoModels: VideoProvider[] = [
         model: replicate.kling1p6standard,
 
         // https://replicate.com/kwaivgi/kling-v1.6-standard
-        getCost: () => {
+        getCost: ({ duration }) => {
           const unitCost = 0.05;
-          const seconds = 5;
 
-          return unitCost * seconds;
+          return unitCost * duration;
         },
       },
     ],

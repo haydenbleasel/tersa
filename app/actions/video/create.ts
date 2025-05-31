@@ -71,7 +71,7 @@ export const generateVideoAction = async ({
 
     await trackCreditUsage({
       action: 'generate_video',
-      cost: model.getCost(),
+      cost: model.getCost({ duration: 5 }),
     });
 
     const blob = await client.storage
