@@ -47,7 +47,6 @@ export const generateVideoAction = async ({
       throw new Error('Model not found');
     }
 
-    let videoArrayBuffer: ArrayBuffer | undefined;
     let firstFrameImage = images.at(0)?.url;
 
     if (firstFrameImage && process.env.NODE_ENV !== 'production') {

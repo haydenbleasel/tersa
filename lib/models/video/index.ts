@@ -1,5 +1,6 @@
 import { ReplicateIcon } from '@/lib/icons';
 import { LumaIcon, MinimaxIcon, RunwayIcon } from '@/lib/icons';
+import { luma } from './luma';
 import { replicate } from './replicate';
 
 const million = 1000000;
@@ -8,12 +9,15 @@ export type VideoModel = {
   icon: typeof MinimaxIcon;
   id: string;
   label: string;
-  model: (props: {
-    prompt: string;
-    imagePrompt: string | undefined;
-    duration: number;
-    aspectRatio: string;
-  }) => Promise<string>;
+  model: {
+    modelId: string;
+    generate: (props: {
+      prompt: string;
+      imagePrompt: string | undefined;
+      duration: number;
+      aspectRatio: string;
+    }) => Promise<string>;
+  };
   getCost: ({ duration }: { duration: number }) => number;
   default?: boolean;
 };
@@ -113,7 +117,7 @@ export const videoModels: VideoProvider[] = [
         icon: LumaIcon,
         id: 'luma-ray-1.6',
         label: 'Ray 1.6',
-        model: 'ray-1-6',
+        model: luma('ray-1-6'),
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
@@ -133,7 +137,7 @@ export const videoModels: VideoProvider[] = [
         icon: LumaIcon,
         id: 'luma-ray-2',
         label: 'Ray 2',
-        model: 'ray-2',
+        model: luma('ray-2'),
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
@@ -153,7 +157,7 @@ export const videoModels: VideoProvider[] = [
         icon: LumaIcon,
         id: 'luma-ray-flash-2',
         label: 'Ray Flash 2',
-        model: 'ray-flash-2',
+        model: luma('ray-flash-2'),
 
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
