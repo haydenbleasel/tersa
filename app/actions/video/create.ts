@@ -58,7 +58,7 @@ export const generateVideoAction = async ({
       firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
     }
 
-    const url = await model.model({
+    const url = await model.model.generate({
       prompt,
       imagePrompt: firstFrameImage,
       duration: 5,
