@@ -130,6 +130,7 @@
     "react-resizable-panels": "^3.0.2",
     "react-tweet": "^3.2.2",
     "recharts": "^2.15.3",
+    "replicate": "^1.0.1",
     "resend": "^4.5.1",
     "shadcn-prose": "^1.0.8",
     "sonner": "^2.0.3",
