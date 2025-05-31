@@ -3,6 +3,7 @@ import { LumaIcon, MinimaxIcon, RunwayIcon } from '@/lib/icons';
 import { luma } from './luma';
 import { minimax } from './minimax';
 import { replicate } from './replicate';
+import { runway } from './runway';
 
 const million = 1000000;
 
@@ -15,7 +16,7 @@ export type VideoModel = {
     generate: (props: {
       prompt: string;
       imagePrompt: string | undefined;
-      duration: number;
+      duration: 5;
       aspectRatio: string;
     }) => Promise<string>;
   };
@@ -95,7 +96,7 @@ export const videoModels: VideoProvider[] = [
         icon: RunwayIcon,
         id: 'runway-gen4-turbo',
         label: 'Gen4 Turbo',
-        model: 'gen4_turbo',
+        model: runway('gen4_turbo'),
         default: true,
         // https://docs.dev.runwayml.com/#price
         getCost: () => 0.5,
@@ -104,7 +105,7 @@ export const videoModels: VideoProvider[] = [
         icon: RunwayIcon,
         id: 'runway-gen3a-turbo',
         label: 'Gen3a Turbo',
-        model: 'gen3a_turbo',
+        model: runway('gen3a_turbo'),
 
         // https://docs.dev.runwayml.com/#price
         getCost: () => 0.5,

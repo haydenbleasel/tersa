@@ -56,7 +56,7 @@ export const minimax = (
   modelId: CreateJobProps['model']
 ): VideoModel['model'] => ({
   modelId,
-  generate: async ({ prompt, imagePrompt, duration, aspectRatio }) => {
+  generate: async ({ prompt, imagePrompt }) => {
     const props: CreateJobProps = {
       model: modelId,
       prompt,

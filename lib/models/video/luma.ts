@@ -2,9 +2,11 @@ import { env } from '@/lib/env';
 import type { VideoModel } from '@/lib/models/video';
 import { LumaAI } from 'lumaai';
 
-export const luma = (modelId: string): VideoModel['model'] => ({
+export const luma = (
+  modelId: 'ray-1-6' | 'ray-2' | 'ray-flash-2'
+): VideoModel['model'] => ({
   modelId,
-  generate: async ({ prompt, imagePrompt, duration, aspectRatio }) => {
+  generate: async ({ prompt, imagePrompt, duration }) => {
     const luma = new LumaAI({
       authToken: env.LUMAAI_API_KEY,
     });
@@ -15,7 +17,7 @@ export const luma = (modelId: string): VideoModel['model'] => ({
 
     const response = await luma.generations.video.create({
       prompt,
-      model: modelId as 'ray-1-6' | 'ray-2' | 'ray-flash-2',
+      model: modelId,
       duration: `${duration}s`,
       keyframes: imagePrompt
         ? {
