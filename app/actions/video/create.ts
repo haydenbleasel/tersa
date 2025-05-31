@@ -10,9 +10,6 @@ import { projects } from '@/schema';
 import type { Edge, Node, Viewport } from '@xyflow/react';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
-import { generateLumaVideo } from './lib/create-luma';
-import { generateMinimaxVideo } from './lib/create-minimax';
-import { generateRunwayVideo } from './lib/create-runway';
 
 type GenerateVideoActionProps = {
   modelId: string;
@@ -62,27 +59,15 @@ export const generateVideoAction = async ({
       firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
     }
 
-    if (model.id.startsWith('runway-')) {
-      videoArrayBuffer = await generateRunwayVideo({
-        model,
-        prompt,
-        image: firstFrameImage,
-      });
-    } else if (model.id.startsWith('minimax-')) {
-      videoArrayBuffer = await generateMinimaxVideo({
-        model,
-        prompt,
-        image: firstFrameImage,
-      });
-    } else if (model.id.startsWith('luma-')) {
-      videoArrayBuffer = await generateLumaVideo({
-        model,
-        prompt,
-        image: firstFrameImage,
-      });
-    } else {
-      throw new Error('Invalid model');
-    }
+    const url = await model.model({
+      prompt,
+      imagePrompt: firstFrameImage,
+      duration: 5,
+      aspectRatio: '16:9',
+    });
+
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
 
     await trackCreditUsage({
       action: 'generate_video',
@@ -91,7 +76,7 @@ export const generateVideoAction = async ({
 
     const blob = await client.storage
       .from('files')
-      .upload(`${user.id}/${nanoid()}.mp4`, videoArrayBuffer, {
+      .upload(`${user.id}/${nanoid()}.mp4`, arrayBuffer, {
         contentType: 'video/mp4',
       });
 

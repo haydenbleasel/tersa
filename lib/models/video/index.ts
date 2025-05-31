@@ -1,18 +1,29 @@
-import { LumaIcon, MinimaxIcon, RunwayIcon } from '../icons';
+import { ReplicateIcon } from '@/lib/icons';
+import { LumaIcon, MinimaxIcon, RunwayIcon } from '@/lib/icons';
+import { replicate } from './replicate';
 
 const million = 1000000;
 
-export const videoModels: {
+export type VideoModel = {
+  icon: typeof MinimaxIcon;
+  id: string;
   label: string;
-  models: {
-    icon: typeof MinimaxIcon;
-    id: string;
-    label: string;
-    model: string;
-    getCost: () => number;
-    default?: boolean;
-  }[];
-}[] = [
+  model: (props: {
+    prompt: string;
+    imagePrompt: string | undefined;
+    duration: number;
+    aspectRatio: string;
+  }) => Promise<string>;
+  getCost: () => number;
+  default?: boolean;
+};
+
+export type VideoProvider = {
+  label: string;
+  models: VideoModel[];
+};
+
+export const videoModels: VideoProvider[] = [
   {
     label: 'Minimax',
     models: [
@@ -159,6 +170,25 @@ export const videoModels: {
           const frameCost = (pixels / million) * unitCost;
 
           return frameCost * frames * seconds;
+        },
+      },
+    ],
+  },
+  {
+    label: 'Replicate',
+    models: [
+      {
+        icon: ReplicateIcon,
+        id: 'replicate-kling-v1.6-standard',
+        label: 'Kling 1.6 Standard',
+        model: replicate.kling1p6standard,
+
+        // https://replicate.com/kwaivgi/kling-v1.6-standard
+        getCost: () => {
+          const unitCost = 0.05;
+          const seconds = 5;
+
+          return unitCost * seconds;
         },
       },
     ],
