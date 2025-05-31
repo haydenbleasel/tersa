@@ -1,5 +1,5 @@
 import { env } from '@/lib/env';
-import type { videoModels } from '@/lib/models/video';
+import type { VideoModel } from '@/lib/models/video';
 
 type CreateJobProps = {
   model:
@@ -52,107 +52,98 @@ type RetrieveUrlResponse = {
 
 const baseUrl = 'https://api.minimaxi.chat/';
 
-type GenerateVideoProps = {
-  model: (typeof videoModels)[number]['models'][number];
-  prompt: string;
-  image?: string;
-};
+export const minimax = (
+  modelId: CreateJobProps['model']
+): VideoModel['model'] => ({
+  modelId,
+  generate: async ({ prompt, imagePrompt, duration, aspectRatio }) => {
+    const props: CreateJobProps = {
+      model: modelId,
+      prompt,
+      first_frame_image: imagePrompt,
+    };
 
-export const generateMinimaxVideo = async ({
-  model,
-  prompt,
-  image,
-}: GenerateVideoProps) => {
-  const props: CreateJobProps = {
-    model: model.model as CreateJobProps['model'],
-    prompt,
-    first_frame_image: image,
-  };
+    // Create job
+    const createJobResponse = await fetch(
+      new URL('/v1/video_generation', baseUrl),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${env.MINIMAX_API_KEY}`,
+        },
+        body: JSON.stringify(props),
+      }
+    );
 
-  // Create job
-  const createJobResponse = await fetch(
-    new URL('/v1/video_generation', baseUrl),
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-      },
-      body: JSON.stringify(props),
+    const createJobData = (await createJobResponse.json()) as CreateJobResponse;
+
+    if (createJobData.base_resp.status_code !== 0) {
+      throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
     }
-  );
 
-  const createJobData = (await createJobResponse.json()) as CreateJobResponse;
+    const taskId = createJobData.task_id;
+    // Poll for job completion (max 2 minutes)
+    let isCompleted = false;
+    let fileId: string | null = null;
+    const startTime = Date.now();
+    const maxPollTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-  if (createJobData.base_resp.status_code !== 0) {
-    throw new Error(`API error: ${createJobData.base_resp.status_msg}`);
-  }
+    while (!isCompleted && Date.now() - startTime < maxPollTime) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  const taskId = createJobData.task_id;
-  // Poll for job completion (max 2 minutes)
-  let isCompleted = false;
-  let fileId: string | null = null;
-  const startTime = Date.now();
-  const maxPollTime = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const queryJobResponse = await fetch(
+        new URL(`/v1/query/video_generation?task_id=${taskId}`, baseUrl),
+        {
+          headers: {
+            authorization: `Bearer ${env.MINIMAX_API_KEY}`,
+          },
+        }
+      );
 
-  while (!isCompleted && Date.now() - startTime < maxPollTime) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+      const queryJobData = (await queryJobResponse.json()) as QueryJobResponse;
 
-    const queryJobResponse = await fetch(
-      new URL(`/v1/query/video_generation?task_id=${taskId}`, baseUrl),
+      if (queryJobData.base_resp.status_code !== 0) {
+        throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
+      }
+
+      if (queryJobData.status === 'Success') {
+        isCompleted = true;
+        fileId = queryJobData.file_id as string;
+      } else if (queryJobData.status === 'Fail') {
+        throw new Error('Video generation failed');
+      }
+    }
+
+    if (!isCompleted) {
+      throw new Error('Video generation timed out after 2 minutes');
+    }
+
+    if (!fileId) {
+      throw new Error('Failed to get file_id');
+    }
+
+    // Retrieve download URL
+    const retrieveUrlResponse = await fetch(
+      new URL(
+        `/v1/files/retrieve?GroupId=${env.MINIMAX_GROUP_ID}&file_id=${fileId}`,
+        baseUrl
+      ),
       {
         headers: {
+          authority: 'api.minimaxi.chat',
           authorization: `Bearer ${env.MINIMAX_API_KEY}`,
         },
       }
     );
 
-    const queryJobData = (await queryJobResponse.json()) as QueryJobResponse;
+    const retrieveUrlData =
+      (await retrieveUrlResponse.json()) as RetrieveUrlResponse;
 
-    if (queryJobData.base_resp.status_code !== 0) {
-      throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
+    if (retrieveUrlData.base_resp.status_code !== 0) {
+      throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
     }
 
-    if (queryJobData.status === 'Success') {
-      isCompleted = true;
-      fileId = queryJobData.file_id as string;
-    } else if (queryJobData.status === 'Fail') {
-      throw new Error('Video generation failed');
-    }
-  }
-
-  if (!isCompleted) {
-    throw new Error('Video generation timed out after 2 minutes');
-  }
-
-  if (!fileId) {
-    throw new Error('Failed to get file_id');
-  }
-
-  // Retrieve download URL
-  const retrieveUrlResponse = await fetch(
-    new URL(
-      `/v1/files/retrieve?GroupId=${env.MINIMAX_GROUP_ID}&file_id=${fileId}`,
-      baseUrl
-    ),
-    {
-      headers: {
-        authority: 'api.minimaxi.chat',
-        authorization: `Bearer ${env.MINIMAX_API_KEY}`,
-      },
-    }
-  );
-
-  const retrieveUrlData =
-    (await retrieveUrlResponse.json()) as RetrieveUrlResponse;
-
-  if (retrieveUrlData.base_resp.status_code !== 0) {
-    throw new Error(`API error: ${retrieveUrlData.base_resp.status_msg}`);
-  }
-
-  // Download the video
-  const videoResponse = await fetch(retrieveUrlData.file.download_url);
-  const videoArrayBuffer = await videoResponse.arrayBuffer();
-
-  return videoArrayBuffer;
-};
+    return retrieveUrlData.file.download_url;
+  },
+});

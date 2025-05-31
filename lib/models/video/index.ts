@@ -1,6 +1,7 @@
 import { ReplicateIcon } from '@/lib/icons';
 import { LumaIcon, MinimaxIcon, RunwayIcon } from '@/lib/icons';
 import { luma } from './luma';
+import { minimax } from './minimax';
 import { replicate } from './replicate';
 
 const million = 1000000;
@@ -35,7 +36,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-t2v-01-director',
         label: 'T2V-01-Director',
-        model: 'T2V-01-Director',
+        model: minimax('T2V-01-Director'),
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
@@ -44,7 +45,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-i2v-01-director',
         label: 'I2V-01-Director',
-        model: 'I2V-01-Director',
+        model: minimax('I2V-01-Director'),
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
@@ -53,7 +54,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-s2v-01',
         label: 'S2V-01',
-        model: 'S2V-01',
+        model: minimax('S2V-01'),
 
         // https://www.minimax.io/price
         getCost: () => 0.65,
@@ -62,7 +63,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-i2v-01',
         label: 'I2V-01',
-        model: 'I2V-01',
+        model: minimax('I2V-01'),
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
@@ -71,7 +72,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-i2v-01-live',
         label: 'I2V-01-live',
-        model: 'I2V-01-live',
+        model: minimax('I2V-01-live'),
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
@@ -80,7 +81,7 @@ export const videoModels: VideoProvider[] = [
         icon: MinimaxIcon,
         id: 'minimax-t2v-01',
         label: 'T2V-01',
-        model: 'T2V-01',
+        model: minimax('T2V-01'),
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
