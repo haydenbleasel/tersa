@@ -217,7 +217,12 @@ export const AudioTransform = ({
   return (
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       {loading && (
-        <Skeleton className="h-[50px] w-full animate-pulse rounded-full" />
+        <Skeleton className="flex h-[50px] w-full animate-pulse items-center justify-center">
+          <Loader2Icon
+            size={16}
+            className="size-4 animate-spin text-muted-foreground"
+          />
+        </Skeleton>
       )}
       {!loading && !data.generated?.url && (
         <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">

@@ -10,6 +10,7 @@ import { handleError } from '@/lib/error/handle';
 import { uploadFile } from '@/lib/upload';
 import { useProject } from '@/providers/project';
 import { useReactFlow } from '@xyflow/react';
+import { Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import type { AudioNodeProps } from '.';
 
@@ -70,7 +71,12 @@ export const AudioPrimitive = ({
   return (
     <NodeLayout id={id} data={data} type={type} title={title}>
       {isUploading && (
-        <Skeleton className="h-[50px] w-full animate-pulse rounded-full" />
+        <Skeleton className="flex h-[50px] w-full animate-pulse items-center justify-center">
+          <Loader2Icon
+            size={16}
+            className="size-4 animate-spin text-muted-foreground"
+          />
+        </Skeleton>
       )}
       {!isUploading && data.content && (
         // biome-ignore lint/a11y/useMediaCaption: <explanation>

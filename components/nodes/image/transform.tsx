@@ -267,9 +267,14 @@ export const ImageTransform = ({
     <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
       {loading && (
         <Skeleton
-          className="w-full animate-pulse rounded-b-xl"
+          className="flex w-full animate-pulse items-center justify-center rounded-b-xl"
           style={{ aspectRatio }}
-        />
+        >
+          <Loader2Icon
+            size={16}
+            className="size-4 animate-spin text-muted-foreground"
+          />
+        </Skeleton>
       )}
       {!loading && !data.generated?.url && (
         <div
