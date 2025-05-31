@@ -7,9 +7,7 @@ export const luma = (
 ): VideoModel['model'] => ({
   modelId,
   generate: async ({ prompt, imagePrompt, duration }) => {
-    const luma = new LumaAI({
-      authToken: env.LUMAAI_API_KEY,
-    });
+    const luma = new LumaAI({ authToken: env.LUMAAI_API_KEY });
 
     if (process.env.NODE_ENV !== 'production' && imagePrompt) {
       throw new Error('Luma does not support base64 image input.');

@@ -1,3 +1,4 @@
+import { env } from '@/lib/env';
 import type { VideoModel } from '@/lib/models/video';
 import RunwayML from '@runwayml/sdk';
 
@@ -6,11 +7,11 @@ export const runway = (
 ): VideoModel['model'] => ({
   modelId,
   generate: async ({ prompt, imagePrompt, duration }) => {
-    const client = new RunwayML();
-
     if (!imagePrompt) {
       throw new Error('Runway requires at least one image');
     }
+
+    const client = new RunwayML({ apiKey: env.RUNWAYML_API_SECRET });
 
     const response = await client.imageToVideo.create({
       model: modelId,
