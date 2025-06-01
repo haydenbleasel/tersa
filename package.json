@@ -112,7 +112,7 @@
     "modern-screenshot": "^4.6.0",
     "motion": "^12.12.2",
     "nanoid": "^5.1.5",
-    "next": "15.3.2",
+    "next": "15.3.3",
     "next-themes": "^0.4.6",
     "openai": "^4.103.0",
     "openapi-fetch": "^0.14.0",
