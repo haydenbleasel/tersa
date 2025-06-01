@@ -182,13 +182,65 @@ export const videoModels: VideoProvider[] = [
     models: [
       {
         icon: ReplicateIcon,
-        id: 'replicate-kling-v1.6-standard',
-        label: 'Kling 1.6 Standard',
-        model: replicate.kling1p6standard,
+        id: 'replicate-kwaivgi/kling-v1.5-standard',
+        label: 'Kling v1.5 Standard',
+        model: replicate.kling('kwaivgi/kling-v1.5-standard'),
+
+        // https://replicate.com/kwaivgi/kling-v1.5-standard
+        getCost: ({ duration }) => {
+          const unitCost = 0.05;
+
+          return unitCost * duration;
+        },
+      },
+      {
+        icon: ReplicateIcon,
+        id: 'replicate-kwaivgi/kling-v1.5-pro',
+        label: 'Kling v1.5 Pro',
+        model: replicate.kling('kwaivgi/kling-v1.5-pro'),
+
+        // https://replicate.com/kwaivgi/kling-v1.5-pro
+        getCost: ({ duration }) => {
+          const unitCost = 0.095;
+
+          return unitCost * duration;
+        },
+      },
+      {
+        icon: ReplicateIcon,
+        id: 'replicate-kwaivgi/kling-v1.6-standard',
+        label: 'Kling v1.6 Standard',
+        model: replicate.kling('kwaivgi/kling-v1.6-standard'),
 
         // https://replicate.com/kwaivgi/kling-v1.6-standard
         getCost: ({ duration }) => {
           const unitCost = 0.05;
+
+          return unitCost * duration;
+        },
+      },
+      {
+        icon: ReplicateIcon,
+        id: 'replicate-kwaivgi/kling-v1.6-pro',
+        label: 'Kling v1.6 Pro',
+        model: replicate.kling('kwaivgi/kling-v1.6-pro'),
+
+        // https://replicate.com/kwaivgi/kling-v1.6-pro
+        getCost: ({ duration }) => {
+          const unitCost = 0.095;
+
+          return unitCost * duration;
+        },
+      },
+      {
+        icon: ReplicateIcon,
+        id: 'replicate-kwaivgi/kling-v2.0',
+        label: 'Kling v2.0',
+        model: replicate.kling('kwaivgi/kling-v2.0'),
+
+        // https://replicate.com/kwaivgi/kling-v2.0
+        getCost: ({ duration }) => {
+          const unitCost = 0.28;
 
           return unitCost * duration;
         },
