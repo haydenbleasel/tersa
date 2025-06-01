@@ -121,7 +121,7 @@
     "posthog-js": "^1.246.0",
     "posthog-node": "^4.17.2",
     "react": "^19.1.0",
-    "react-day-picker": "8.10.1",
+    "react-day-picker": "9.7.0",
     "react-dom": "^19.1.0",
     "react-dropzone": "^14.3.8",
     "react-fast-marquee": "^1.6.5",
