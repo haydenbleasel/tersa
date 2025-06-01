@@ -141,7 +141,7 @@
     "tailwind-merge": "^3.3.0",
     "tippy.js": "^6.3.7",
     "tunnel-rat": "^0.1.2",
-    "tw-animate-css": "^1.3.0",
+    "tw-animate-css": "^1.3.3",
     "use-debounce": "^10.0.4",
     "vaul": "^1.1.2",
     "zod": "^3.25.28"
