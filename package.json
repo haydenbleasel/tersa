@@ -35,7 +35,7 @@
     "@ai-sdk/vercel": "^0.0.1",
     "@ai-sdk/xai": "^1.2.16",
     "@hookform/resolvers": "^5.0.1",
-    "@icons-pack/react-simple-icons": "^12.8.0",
+    "@icons-pack/react-simple-icons": "^13.0.0",
     "@marsidev/react-turnstile": "^1.1.0",
     "@monaco-editor/react": "4.7.0",
     "@number-flow/react": "^0.5.9",

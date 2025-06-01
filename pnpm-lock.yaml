@@ -72,8 +72,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.56.4(react@19.1.0))
       '@icons-pack/react-simple-icons':
-        specifier: ^12.8.0
-        version: 12.9.0(react@19.1.0)
+        specifier: ^13.0.0
+        version: 13.0.0(react@19.1.0)
       '@marsidev/react-turnstile':
         specifier: ^1.1.0
         version: 1.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1053,8 +1053,8 @@ packages:
     peerDependencies:
       react-hook-form: ^7.55.0
 
-  '@icons-pack/react-simple-icons@12.9.0':
-    resolution: {integrity: sha512-GLb2ayO78ZjjmI7GMpCDlXcELEr3DPO89nordI/JC8dMiJDMzuPb3qeOTt+SWcFOyJ+SAh9C/feUCpiBSM8ZLQ==}
+  '@icons-pack/react-simple-icons@13.0.0':
+    resolution: {integrity: sha512-Dmofr27ZlfBHS/2HDBKodKTUTnIjhH7cjw36WPt1CLg+1gytjr+LeabwWZ6khu/QUxmLjs3e1KrNPiuvOkEpJQ==}
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
@@ -5887,7 +5887,7 @@ snapshots:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.56.4(react@19.1.0)
 
-  '@icons-pack/react-simple-icons@12.9.0(react@19.1.0)':
+  '@icons-pack/react-simple-icons@13.0.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
