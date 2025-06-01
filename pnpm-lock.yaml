@@ -309,8 +309,8 @@ importers:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       openai:
-        specifier: ^4.103.0
-        version: 4.104.0(ws@8.18.1)(zod@3.25.46)
+        specifier: ^5.0.1
+        version: 5.0.1(ws@8.18.1)(zod@3.25.46)
       openapi-fetch:
         specifier: ^0.14.0
         version: 0.14.0
@@ -4320,8 +4320,8 @@ packages:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
 
-  openai@4.104.0:
-    resolution: {integrity: sha512-p99EFNsA/yX6UhVO93f5kJsDRLAg+CTA2RBqdHK4RtK8u5IJw32Hyb2dTGKbnnFmnuoBv5r7Z2CURI9sGZpSuA==}
+  openai@5.0.1:
+    resolution: {integrity: sha512-Do6vxhbDv7cXhji/4ct1lrpZYMAOmjYbhyA9LJTuG7OfpbWMpuS+EIXkRT7R+XxpRB1OZhU/op4FU3p3uxU6gw==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -9225,20 +9225,10 @@ snapshots:
     dependencies:
       mimic-function: 5.0.1
 
-  openai@4.104.0(ws@8.18.1)(zod@3.25.46):
-    dependencies:
-      '@types/node': 18.19.110
-      '@types/node-fetch': 2.6.12
-      abort-controller: 3.0.0
-      agentkeepalive: 4.6.0
-      form-data-encoder: 1.7.2
-      formdata-node: 4.4.1
-      node-fetch: 2.7.0
+  openai@5.0.1(ws@8.18.1)(zod@3.25.46):
     optionalDependencies:
       ws: 8.18.1
       zod: 3.25.46
-    transitivePeerDependencies:
-      - encoding
 
   openapi-fetch@0.14.0:
     dependencies:
