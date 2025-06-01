@@ -8,6 +8,7 @@ import { handleError } from '@/lib/error/handle';
 import { uploadFile } from '@/lib/upload';
 import { useProject } from '@/providers/project';
 import { useReactFlow } from '@xyflow/react';
+import { Loader2Icon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import type { ImageNodeProps } from '.';
