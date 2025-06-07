@@ -534,37 +534,6 @@ export const textModels: {
       },
     ],
   },
-
-  // {
-  //   label: 'Cerebras',
-  //   models: [
-  //     {
-  //       icon: CerebrasIcon,
-  //       id: 'cerebras-llama3.1-8b',
-  //       label: 'Llama 3.1 8B',
-  //       model: cerebras('llama3.1-8b'),
-  //       getCost: ({ input, output }: { input: number; output: number }) => {
-  //         const inputCost = (input / million) * 0.1;
-  //         const outputCost = (output / million) * 0.1;
-
-  //         return inputCost + outputCost;
-  //       },
-  //     },
-  //     {
-  //       icon: CerebrasIcon,
-  //       id: 'cerebras-llama3.3-70b',
-  //       label: 'Llama 3.3 70B',
-  //       model: cerebras('llama3.3-70b'),
-  //       getCost: ({ input, output }: { input: number; output: number }) => {
-  //         const inputCost = (input / million) * 0.85;
-  //         const outputCost = (output / million) * 1.2;
-
-  //         return inputCost + outputCost;
-  //       },
-  //     },
-  //   ],
-  // },
-
   {
     label: 'Groq',
     models: [
