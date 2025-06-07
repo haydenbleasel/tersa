@@ -31,7 +31,6 @@ const million = 1000000;
 
 type TersaTextModel = {
   icon: typeof OpenAiIcon;
-  id: string;
   label: string;
   model: LanguageModelV1;
   getCost: ({ input, output }: { input: number; output: number }) => number;
@@ -44,14 +43,13 @@ type TersaTextModel = {
 // Median input cost: 2.7
 export const textModels: {
   label: string;
-  models: TersaTextModel[];
+  models: Record<string, TersaTextModel>;
 }[] = [
   {
     label: 'OpenAI',
-    models: [
-      {
+    models: {
+      'openai-gpt-3.5-turbo': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-3.5-turbo',
         label: 'GPT-3.5 Turbo',
         model: openai('gpt-3.5-turbo'),
         priceIndicator: 'lowest',
@@ -62,9 +60,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4',
         label: 'GPT-4',
         model: openai('gpt-4'),
         priceIndicator: 'highest',
@@ -75,9 +72,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4.1': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4.1',
         label: 'GPT-4.1',
         model: openai('gpt-4.1'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -87,9 +83,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4.1-mini': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4.1-mini',
         label: 'GPT-4.1 Mini',
         model: openai('gpt-4.1-mini'),
         priceIndicator: 'lowest',
@@ -100,9 +95,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4.1-nano': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4.1-nano',
         label: 'GPT-4.1 Nano',
         model: openai('gpt-4.1-nano'),
         priceIndicator: 'lowest',
@@ -113,9 +107,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4o': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4o',
         label: 'GPT-4o',
         model: openai('gpt-4o'),
         default: true,
@@ -126,9 +119,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-gpt-4o-mini': {
         icon: OpenAiIcon,
-        id: 'openai-gpt-4o-mini',
         label: 'GPT-4o Mini',
         model: openai('gpt-4o-mini'),
         priceIndicator: 'lowest',
@@ -139,9 +131,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-o1': {
         icon: OpenAiIcon,
-        id: 'openai-o1',
         label: 'O1',
         model: openai('o1'),
         priceIndicator: 'highest',
@@ -152,9 +143,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-o1-mini': {
         icon: OpenAiIcon,
-        id: 'openai-o1-mini',
         label: 'O1 Mini',
         model: openai('o1-mini'),
         priceIndicator: 'low',
@@ -165,9 +155,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-o3': {
         icon: OpenAiIcon,
-        id: 'openai-o3',
         label: 'O3',
         model: openai('o3'),
         priceIndicator: 'high',
@@ -178,9 +167,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-o3-mini': {
         icon: OpenAiIcon,
-        id: 'openai-o3-mini',
         label: 'O3 Mini',
         model: openai('o3-mini'),
         priceIndicator: 'low',
@@ -191,9 +179,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'openai-o4-mini': {
         icon: OpenAiIcon,
-        id: 'openai-o4-mini',
         label: 'O4 Mini',
         model: openai('o4-mini'),
         priceIndicator: 'low',
@@ -204,14 +191,13 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
   {
     label: 'xAI',
-    models: [
-      {
+    models: {
+      'xai-grok-3': {
         icon: XaiIcon,
-        id: 'xai-grok-3',
         label: 'Grok-3',
         model: xai('grok-3'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -221,9 +207,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'xai-grok-3-fast': {
         icon: XaiIcon,
-        id: 'xai-grok-3-fast',
         label: 'Grok-3 Fast',
         model: xai('grok-3-fast'),
         priceIndicator: 'high',
@@ -234,9 +219,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'xai-grok-3-mini': {
         icon: XaiIcon,
-        id: 'xai-grok-3-mini',
         label: 'Grok-3 Mini',
         model: xai('grok-3-mini'),
         priceIndicator: 'lowest',
@@ -247,9 +231,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'xai-grok-3-mini-fast': {
         icon: XaiIcon,
-        id: 'xai-grok-3-mini-fast',
         label: 'Grok-3 Mini Fast',
         model: xai('grok-3-mini-fast'),
         priceIndicator: 'lowest',
@@ -260,9 +243,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'xai-grok-2': {
         icon: XaiIcon,
-        id: 'xai-grok-2',
         label: 'Grok 2',
         model: xai('grok-2'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -272,9 +254,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'xai-grok-beta': {
         icon: XaiIcon,
-        id: 'xai-grok-beta',
         label: 'Grok Beta',
         model: xai('grok-beta'),
         priceIndicator: 'high',
@@ -285,15 +266,14 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 
   {
     label: 'Anthropic',
-    models: [
-      {
+    models: {
+      'anthropic-claude-4-opus-20250514': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-4-opus-20250514',
         label: 'Claude 4 Opus',
         model: anthropic('claude-4-opus-20250514'),
         priceIndicator: 'highest',
@@ -304,9 +284,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'anthropic-claude-4-sonnet-20250514': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-4-sonnet-20250514',
         label: 'Claude 4 Sonnet',
         model: anthropic('claude-4-sonnet-20250514'),
         priceIndicator: 'low',
@@ -317,9 +296,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'anthropic-claude-3-5-haiku-latest': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-3-5-haiku-latest',
         label: 'Claude 3.5 Haiku',
         model: anthropic('claude-3-5-haiku-latest'),
         priceIndicator: 'low',
@@ -330,9 +308,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'anthropic-claude-3-5-sonnet-latest': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-3-5-sonnet-latest',
         label: 'Claude 3.5 Sonnet',
         model: anthropic('claude-3-5-sonnet-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -343,9 +320,8 @@ export const textModels: {
         },
         legacy: true,
       },
-      {
+      'anthropic-claude-3-haiku-20240307': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-3-haiku-20240307',
         label: 'Claude 3 Haiku',
         model: anthropic('claude-3-haiku-20240307'),
         priceIndicator: 'lowest',
@@ -357,9 +333,8 @@ export const textModels: {
         },
         legacy: true,
       },
-      {
+      'anthropic-claude-3-7-sonnet-20250219': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-3-7-sonnet-20250219',
         label: 'Claude 3.7 Sonnet',
         model: anthropic('claude-3-7-sonnet-20250219'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -369,9 +344,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'anthropic-claude-3-opus-latest': {
         icon: AnthropicIcon,
-        id: 'anthropic-claude-3-opus-latest',
         label: 'Claude 3 Opus',
         model: anthropic('claude-3-opus-latest'),
         priceIndicator: 'highest',
@@ -382,15 +356,14 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 
   {
     label: 'Vercel',
-    models: [
-      {
+    models: {
+      'vercel-v0-1.0-md': {
         icon: VercelIcon,
-        id: 'vercel-v0-1.0-md',
         label: 'v0-1.0-md',
         model: vercel('v0-1.0-md'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -400,15 +373,14 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 
   {
     label: 'Mistral',
-    models: [
-      {
+    models: {
+      'mistral-pixtral-large-latest': {
         icon: MistralIcon,
-        id: 'mistral-pixtral-large-latest',
         label: 'Pixtral Large',
         model: mistral('pixtral-large-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -418,9 +390,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'mistral-mistral-large-latest': {
         icon: MistralIcon,
-        id: 'mistral-mistral-large-latest',
         label: 'Mistral Large',
         model: mistral('mistral-large-latest'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -430,9 +401,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'mistral-ministral-8b-latest': {
         icon: MistralIcon,
-        id: 'mistral-ministral-8b-latest',
         label: 'Ministral 8B',
         model: mistral('ministral-8b-latest'),
         priceIndicator: 'lowest',
@@ -443,9 +413,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'mistral-ministral-3b-latest': {
         icon: MistralIcon,
-        id: 'mistral-ministral-3b-latest',
         label: 'Ministral 3B',
         model: mistral('ministral-3b-latest'),
         priceIndicator: 'lowest',
@@ -456,15 +425,14 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 
   {
     label: 'Google',
-    models: [
-      {
+    models: {
+      'google-gemini-2.0-flash': {
         icon: GoogleIcon,
-        id: 'google-gemini-2.0-flash',
         label: 'Gemini 2.0 Flash',
         model: google('gemini-2.0-flash-001'),
         priceIndicator: 'lowest',
@@ -475,9 +443,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'google-gemini-1.5-flash': {
         icon: GoogleIcon,
-        id: 'google-gemini-1.5-flash',
         label: 'Gemini 1.5 Flash',
         model: google('gemini-1.5-flash'),
         priceIndicator: 'lowest',
@@ -488,9 +455,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'google-gemini-1.5-pro': {
         icon: GoogleIcon,
-        id: 'google-gemini-1.5-pro',
         label: 'Gemini 1.5 Pro',
         model: google('gemini-1.5-pro'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -500,15 +466,14 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 
   {
     label: 'DeepSeek',
-    models: [
-      {
+    models: {
+      'deepseek-deepseek-chat': {
         icon: DeepSeekIcon,
-        id: 'deepseek-deepseek-chat',
         label: 'DeepSeek V3 (Chat)',
         model: deepseek('deepseek-chat'),
         priceIndicator: 'lowest',
@@ -519,9 +484,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'deepseek-deepseek-reasoner': {
         icon: DeepSeekIcon,
-        id: 'deepseek-deepseek-reasoner',
         label: 'DeepSeek R1 (Reasoner)',
         model: deepseek('deepseek-reasoner'),
         priceIndicator: 'lowest',
@@ -532,14 +496,13 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
   {
     label: 'Groq',
-    models: [
-      {
+    models: {
+      'groq-meta-llama/llama-4-scout-17b-16e-instruct': {
         icon: GroqIcon,
-        id: 'groq-meta-llama/llama-4-scout-17b-16e-instruct',
         label: 'Llama 4 Scout 17B',
         model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
         priceIndicator: 'lowest',
@@ -550,9 +513,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-llama-3.3-70b-versatile': {
         icon: GroqIcon,
-        id: 'groq-llama-3.3-70b-versatile',
         label: 'Llama 3.3 70B Versatile',
         model: groq('llama-3.3-70b-versatile'),
         priceIndicator: 'lowest',
@@ -563,9 +525,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-llama-3.1-8b-instant': {
         icon: GroqIcon,
-        id: 'groq-llama-3.1-8b-instant',
         label: 'Llama 3.1 8B Instant',
         model: groq('llama-3.1-8b-instant'),
         priceIndicator: 'lowest',
@@ -576,9 +537,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-gemma2-9b-it': {
         icon: GroqIcon,
-        id: 'groq-gemma2-9b-it',
         label: 'Gemma 2 9B',
         model: groq('gemma2-9b-it'),
         priceIndicator: 'lowest',
@@ -589,9 +549,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-deepseek-r1-distill-llama-70b': {
         icon: GroqIcon,
-        id: 'groq-deepseek-r1-distill-llama-70b',
         label: 'DeepSeek R1 Distill Llama 70B',
         model: wrapLanguageModel({
           model: groq('deepseek-r1-distill-llama-70b'),
@@ -605,9 +564,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-qwen-2.5-32b': {
         icon: GroqIcon,
-        id: 'groq-qwen-2.5-32b',
         label: 'Qwen 2.5 32B',
         model: groq('qwen-2.5-32b'),
         priceIndicator: 'lowest',
@@ -618,9 +576,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-mistral-saba-24b': {
         icon: GroqIcon,
-        id: 'groq-mistral-saba-24b',
         label: 'Mistral Saba 24B',
         model: groq('mistral-saba-24b'),
         priceIndicator: 'lowest',
@@ -631,9 +588,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'groq-llama-guard-3-8b': {
         icon: GroqIcon,
-        id: 'groq-llama-guard-3-8b',
         label: 'Llama Guard 3 8B',
         model: groq('llama-guard-3-8b'),
         priceIndicator: 'lowest',
@@ -644,14 +600,13 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
   {
     label: 'Cohere',
-    models: [
-      {
+    models: {
+      'cohere-command-a-03-2025': {
         icon: CohereIcon,
-        id: 'cohere-command-a-03-2025',
         label: 'Command A',
         model: cohere('command-a-03-2025'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -661,9 +616,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'cohere-command-r': {
         icon: CohereIcon,
-        id: 'cohere-command-r',
         label: 'Command R',
         model: cohere('command-r'),
         priceIndicator: 'lowest',
@@ -674,9 +628,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'cohere-command-r-plus': {
         icon: CohereIcon,
-        id: 'cohere-command-r-plus',
         label: 'Command R Plus',
         model: cohere('command-r-plus'),
         getCost: ({ input, output }: { input: number; output: number }) => {
@@ -686,9 +639,8 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-      {
+      'cohere-command-r7b-12-2024': {
         icon: CohereIcon,
-        id: 'cohere-command-r7b-12-2024',
         label: 'Command R7B',
         model: cohere('command-r7b-12-2024'),
         priceIndicator: 'lowest',
@@ -699,6 +651,6 @@ export const textModels: {
           return inputCost + outputCost;
         },
       },
-    ],
+    },
   },
 ];
