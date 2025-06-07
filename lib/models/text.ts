@@ -29,20 +29,22 @@ export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
 
 const million = 1000000;
 
+type TersaTextModel = {
+  icon: typeof OpenAiIcon;
+  id: string;
+  label: string;
+  model: LanguageModelV1;
+  getCost: ({ input, output }: { input: number; output: number }) => number;
+  legacy?: boolean;
+  priceIndicator?: PriceBracket;
+  disabled?: boolean;
+  default?: boolean;
+};
+
 // Median input cost: 2.7
 export const textModels: {
   label: string;
-  models: {
-    icon: typeof OpenAiIcon;
-    id: string;
-    label: string;
-    model: LanguageModelV1;
-    getCost: ({ input, output }: { input: number; output: number }) => number;
-    legacy?: boolean;
-    priceIndicator?: PriceBracket;
-    disabled?: boolean;
-    default?: boolean;
-  }[];
+  models: TersaTextModel[];
 }[] = [
   {
     label: 'OpenAI',
