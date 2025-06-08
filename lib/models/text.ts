@@ -32,8 +32,8 @@ type TersaTextModel = {
   chef: TersaProvider;
   providers: (TersaProvider & {
     model: LanguageModelV1;
+    getCost: ({ input, output }: { input: number; output: number }) => number;
   })[];
-  getCost: ({ input, output }: { input: number; output: number }) => number;
   legacy?: boolean;
   priceIndicator?: PriceBracket;
   disabled?: boolean;
@@ -49,15 +49,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-3.5-turbo'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.5;
+          const outputCost = (output / million) * 1.5;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.5;
-      const outputCost = (output / million) * 1.5;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4': {
     label: 'GPT-4',
@@ -66,15 +66,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 30;
+          const outputCost = (output / million) * 60;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'highest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 30;
-      const outputCost = (output / million) * 60;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4.1': {
     label: 'GPT-4.1',
@@ -83,14 +83,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4.1'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 8;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2;
-      const outputCost = (output / million) * 8;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4.1-mini': {
     label: 'GPT-4.1 Mini',
@@ -99,15 +99,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4.1-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.4;
+          const outputCost = (output / million) * 1.6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.4;
-      const outputCost = (output / million) * 1.6;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4.1-nano': {
     label: 'GPT-4.1 Nano',
@@ -116,15 +116,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4.1-nano'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.1;
-      const outputCost = (output / million) * 0.4;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4o': {
     label: 'GPT-4o',
@@ -133,15 +133,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4o'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     default: true,
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2.5;
-      const outputCost = (output / million) * 10;
-
-      return inputCost + outputCost;
-    },
   },
   'gpt-4o-mini': {
     label: 'GPT-4o Mini',
@@ -150,15 +150,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('gpt-4o-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.15;
+          const outputCost = (output / million) * 0.6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.15;
-      const outputCost = (output / million) * 0.6;
-
-      return inputCost + outputCost;
-    },
   },
   o1: {
     label: 'O1',
@@ -167,15 +167,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('o1'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 15;
+          const outputCost = (output / million) * 60;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'highest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 15;
-      const outputCost = (output / million) * 60;
-
-      return inputCost + outputCost;
-    },
   },
   'o1-mini': {
     label: 'O1 Mini',
@@ -184,15 +184,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('o1-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'low',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 1.1;
-      const outputCost = (output / million) * 4.4;
-
-      return inputCost + outputCost;
-    },
   },
   o3: {
     label: 'O3',
@@ -201,15 +201,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('o3'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 10;
+          const outputCost = (output / million) * 40;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'high',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 10;
-      const outputCost = (output / million) * 40;
-
-      return inputCost + outputCost;
-    },
   },
   'o3-mini': {
     label: 'O3 Mini',
@@ -218,15 +218,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('o3-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'low',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 1.1;
-      const outputCost = (output / million) * 4.4;
-
-      return inputCost + outputCost;
-    },
   },
   'o4-mini': {
     label: 'O4 Mini',
@@ -235,15 +235,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.openai,
         model: openai('o4-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1.1;
+          const outputCost = (output / million) * 4.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'low',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 1.1;
-      const outputCost = (output / million) * 4.4;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-3': {
     icon: GrokIcon,
@@ -253,14 +253,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-3'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 3;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-3-fast': {
     icon: GrokIcon,
@@ -270,15 +270,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-3-fast'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 5;
+          const outputCost = (output / million) * 25;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'high',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 5;
-      const outputCost = (output / million) * 25;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-3-mini': {
     icon: GrokIcon,
@@ -288,15 +288,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-3-mini'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.3;
+          const outputCost = (output / million) * 0.5;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.3;
-      const outputCost = (output / million) * 0.5;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-3-mini-fast': {
     icon: GrokIcon,
@@ -306,15 +306,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-3-mini-fast'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.6;
+          const outputCost = (output / million) * 4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.6;
-      const outputCost = (output / million) * 4;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-2': {
     icon: GrokIcon,
@@ -324,14 +324,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-2'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2;
-      const outputCost = (output / million) * 10;
-
-      return inputCost + outputCost;
-    },
   },
   'grok-beta': {
     icon: GrokIcon,
@@ -341,15 +341,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.xai,
         model: xai('grok-beta'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 5;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'high',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 5;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
   },
 
   'claude-4-opus-20250514': {
@@ -360,15 +360,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-4-opus-20250514'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 15;
+          const outputCost = (output / million) * 75;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'highest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 15;
-      const outputCost = (output / million) * 75;
-
-      return inputCost + outputCost;
-    },
   },
   'claude-4-sonnet-20250514': {
     icon: ClaudeIcon,
@@ -378,15 +378,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-4-sonnet-20250514'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'low',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 3;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
   },
   'claude-3-5-haiku-latest': {
     icon: ClaudeIcon,
@@ -396,15 +396,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-3-5-haiku-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.8;
+          const outputCost = (output / million) * 4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'low',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.8;
-      const outputCost = (output / million) * 4;
-
-      return inputCost + outputCost;
-    },
   },
   'claude-3-5-sonnet-latest': {
     icon: ClaudeIcon,
@@ -414,14 +414,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-3-5-sonnet-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 3;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
     legacy: true,
   },
   'claude-3-haiku-20240307': {
@@ -432,15 +432,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-3-haiku-20240307'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.25;
+          const outputCost = (output / million) * 1.25;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.25;
-      const outputCost = (output / million) * 1.25;
-
-      return inputCost + outputCost;
-    },
     legacy: true,
   },
   'claude-3-7-sonnet-20250219': {
@@ -451,14 +451,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-3-7-sonnet-20250219'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 3;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
   },
   'claude-3-opus-latest': {
     icon: ClaudeIcon,
@@ -468,15 +468,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.anthropic,
         model: anthropic('claude-3-opus-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 15;
+          const outputCost = (output / million) * 75;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'highest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 15;
-      const outputCost = (output / million) * 75;
-
-      return inputCost + outputCost;
-    },
   },
 
   'vercel-v0-1.0-md': {
@@ -486,14 +486,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.vercel,
         model: vercel('v0-1.0-md'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 3;
-      const outputCost = (output / million) * 15;
-
-      return inputCost + outputCost;
-    },
   },
 
   'pixtral-large-latest': {
@@ -503,14 +503,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.mistral,
         model: mistral('pixtral-large-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2;
-      const outputCost = (output / million) * 6;
-
-      return inputCost + outputCost;
-    },
   },
   'mistral-large-latest': {
     label: 'Mistral Large',
@@ -519,14 +519,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.mistral,
         model: mistral('mistral-large-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2;
-      const outputCost = (output / million) * 6;
-
-      return inputCost + outputCost;
-    },
   },
   'ministral-8b-latest': {
     label: 'Ministral 8B',
@@ -535,15 +535,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.mistral,
         model: mistral('ministral-8b-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.1;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.1;
-      const outputCost = (output / million) * 0.1;
-
-      return inputCost + outputCost;
-    },
   },
   'ministral-3b-latest': {
     label: 'Ministral 3B',
@@ -552,15 +552,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.mistral,
         model: mistral('ministral-3b-latest'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.04;
+          const outputCost = (output / million) * 0.04;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.04;
-      const outputCost = (output / million) * 0.04;
-
-      return inputCost + outputCost;
-    },
   },
   'mistral-saba-24b': {
     label: 'Mistral Saba 24B',
@@ -569,15 +569,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('mistral-saba-24b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.79;
+          const outputCost = (output / million) * 0.79;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.79;
-      const outputCost = (output / million) * 0.79;
-
-      return inputCost + outputCost;
-    },
   },
 
   'gemini-2.0-flash': {
@@ -588,15 +588,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.google,
         model: google('gemini-2.0-flash-001'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.1;
+          const outputCost = (output / million) * 0.4;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.1;
-      const outputCost = (output / million) * 0.4;
-
-      return inputCost + outputCost;
-    },
   },
   'gemini-1.5-flash': {
     icon: GeminiIcon,
@@ -606,15 +606,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.google,
         model: google('gemini-1.5-flash'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.15;
+          const outputCost = (output / million) * 0.6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.15;
-      const outputCost = (output / million) * 0.6;
-
-      return inputCost + outputCost;
-    },
   },
   'gemini-1.5-pro': {
     icon: GeminiIcon,
@@ -624,14 +624,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.google,
         model: google('gemini-1.5-pro'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2.5;
-      const outputCost = (output / million) * 10;
-
-      return inputCost + outputCost;
-    },
   },
   'gemma2-9b-it': {
     icon: GemmaIcon,
@@ -641,15 +641,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('gemma2-9b-it'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.2;
+          const outputCost = (output / million) * 0.2;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.2;
-      const outputCost = (output / million) * 0.2;
-
-      return inputCost + outputCost;
-    },
   },
 
   'deepseek-v3': {
@@ -659,15 +659,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.deepseek,
         model: deepseek('deepseek-chat'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.27;
+          const outputCost = (output / million) * 1.1;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.27;
-      const outputCost = (output / million) * 1.1;
-
-      return inputCost + outputCost;
-    },
   },
   'deepseek-r1': {
     label: 'DeepSeek R1 (Reasoner)',
@@ -676,15 +676,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.deepseek,
         model: deepseek('deepseek-reasoner'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.55;
+          const outputCost = (output / million) * 2.19;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.55;
-      const outputCost = (output / million) * 2.19;
-
-      return inputCost + outputCost;
-    },
   },
   'deepseek-r1-distill-llama-70b': {
     label: 'DeepSeek R1 Distill Llama 70B',
@@ -696,15 +696,15 @@ export const textModels: Record<string, TersaTextModel> = {
           model: groq('deepseek-r1-distill-llama-70b'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.75;
+          const outputCost = (output / million) * 0.99;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.75;
-      const outputCost = (output / million) * 0.99;
-
-      return inputCost + outputCost;
-    },
   },
 
   'llama-4-scout-17b-16e-instruct': {
@@ -714,15 +714,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('meta-llama/llama-4-scout-17b-16e-instruct'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.11;
+          const outputCost = (output / million) * 0.34;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.11;
-      const outputCost = (output / million) * 0.34;
-
-      return inputCost + outputCost;
-    },
   },
   'llama-3.3-70b-versatile': {
     label: 'Llama 3.3 70B Versatile',
@@ -731,15 +731,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('llama-3.3-70b-versatile'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.59;
+          const outputCost = (output / million) * 0.79;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.59;
-      const outputCost = (output / million) * 0.79;
-
-      return inputCost + outputCost;
-    },
   },
   'llama-3.1-8b-instant': {
     label: 'Llama 3.1 8B Instant',
@@ -748,15 +748,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('llama-3.1-8b-instant'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.05;
+          const outputCost = (output / million) * 0.08;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.05;
-      const outputCost = (output / million) * 0.08;
-
-      return inputCost + outputCost;
-    },
   },
   'llama-guard-3-8b': {
     label: 'Llama Guard 3 8B',
@@ -765,15 +765,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('llama-guard-3-8b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.2;
+          const outputCost = (output / million) * 0.2;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.2;
-      const outputCost = (output / million) * 0.2;
-
-      return inputCost + outputCost;
-    },
   },
 
   'qwen-2.5-32b': {
@@ -783,15 +783,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.groq,
         model: groq('qwen-2.5-32b'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.29;
+          const outputCost = (output / million) * 0.39;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.29;
-      const outputCost = (output / million) * 0.39;
-
-      return inputCost + outputCost;
-    },
   },
 
   'command-a-03-2025': {
@@ -801,14 +801,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.cohere,
         model: cohere('command-a-03-2025'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2.5;
-      const outputCost = (output / million) * 10;
-
-      return inputCost + outputCost;
-    },
   },
   'command-r': {
     label: 'Command R',
@@ -817,15 +817,15 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.cohere,
         model: cohere('command-r'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.15;
+          const outputCost = (output / million) * 0.6;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.15;
-      const outputCost = (output / million) * 0.6;
-
-      return inputCost + outputCost;
-    },
   },
   'command-r-plus': {
     label: 'Command R Plus',
@@ -834,14 +834,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.cohere,
         model: cohere('command-r-plus'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 2.5;
+          const outputCost = (output / million) * 10;
+
+          return inputCost + outputCost;
+        },
       },
     ],
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 2.5;
-      const outputCost = (output / million) * 10;
-
-      return inputCost + outputCost;
-    },
   },
   'command-r7b-12-2024': {
     label: 'Command R7B',
@@ -850,14 +850,14 @@ export const textModels: Record<string, TersaTextModel> = {
       {
         ...providers.cohere,
         model: cohere('command-r7b-12-2024'),
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 0.0375;
+          const outputCost = (output / million) * 0.15;
+
+          return inputCost + outputCost;
+        },
       },
     ],
     priceIndicator: 'lowest',
-    getCost: ({ input, output }: { input: number; output: number }) => {
-      const inputCost = (input / million) * 0.0375;
-      const outputCost = (output / million) * 0.15;
-
-      return inputCost + outputCost;
-    },
   },
 };
