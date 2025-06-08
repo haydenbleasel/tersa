@@ -64,11 +64,11 @@ const icons = [
 
 const allModels = [
   ...textModels.flatMap((model) => Object.values(model.models)),
-  ...imageModels.flatMap((model) => model.models),
-  ...speechModels.flatMap((model) => model.models),
-  ...transcriptionModels.flatMap((model) => model.models),
-  ...videoModels.flatMap((model) => model.models),
-  ...visionModels.flatMap((model) => model.models),
+  ...imageModels.flatMap((model) => Object.values(model.models)),
+  ...speechModels.flatMap((model) => Object.values(model.models)),
+  ...transcriptionModels.flatMap((model) => Object.values(model.models)),
+  ...videoModels.flatMap((model) => Object.values(model.models)),
+  ...visionModels.flatMap((model) => Object.values(model.models)),
 ].length;
 
 export const Providers = () => (
