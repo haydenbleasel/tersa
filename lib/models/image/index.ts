@@ -3,8 +3,10 @@ import { openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import type { ImageModel } from 'ai';
 import {
+  AmazonBedrockIcon,
   AmazonIcon,
   BlackForestLabsIcon,
+  GrokIcon,
   OpenAiIcon,
   XaiIcon,
 } from '../../icons';
@@ -14,35 +16,48 @@ const million = 1000000;
 
 export type ImageSize = `${number}x${number}`;
 
-export const imageModels: {
+type TersaImageModel = {
+  // Inherits from chef if not provided
+  icon?: typeof OpenAiIcon;
   label: string;
-  models: {
-    icon: typeof XaiIcon;
-    id: string;
-    label: string;
+  providers: {
+    // Inherits from chef if not provided
+    icon?: typeof OpenAiIcon;
+    name: string;
     model: ImageModel;
-    sizes?: ImageSize[];
-    getCost: (props?: {
-      textInput?: number;
-      imageInput?: number;
-      output?: number;
-      size?: string;
-    }) => number;
-    supportsEdit?: boolean;
-    disabled?: boolean;
-    providerOptions?: Record<string, Record<string, string>>;
-    priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
-    default?: boolean;
   }[];
+  sizes?: ImageSize[];
+  getCost: (props?: {
+    textInput?: number;
+    imageInput?: number;
+    output?: number;
+    size?: string;
+  }) => number;
+  supportsEdit?: boolean;
+  disabled?: boolean;
+  providerOptions?: Record<string, Record<string, string>>;
+  priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
+  default?: boolean;
+};
+
+export const imageModels: {
+  icon: typeof OpenAiIcon;
+  label: string;
+  models: Record<string, TersaImageModel>;
 }[] = [
   {
     label: 'xAI',
-    models: [
-      {
-        icon: XaiIcon,
-        id: 'xai-grok-2-image',
+    icon: XaiIcon,
+    models: {
+      'grok-2-image': {
+        icon: GrokIcon,
         label: 'Grok',
-        model: xai.image('grok-2-image'),
+        providers: [
+          {
+            name: 'xAI',
+            model: xai.image('grok-2-image'),
+          },
+        ],
 
         // xAI does not support size or quality
         // size: '1024x1024',
@@ -51,16 +66,20 @@ export const imageModels: {
         // https://docs.x.ai/docs/models#models-and-pricing
         getCost: () => 0.07,
       },
-    ],
+    },
   },
   {
     label: 'OpenAI',
-    models: [
-      {
-        icon: OpenAiIcon,
-        id: 'openai-dall-e-3',
+    icon: OpenAiIcon,
+    models: {
+      'dall-e-3': {
         label: 'DALL-E 3',
-        model: openai.image('dall-e-3'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.image('dall-e-3'),
+          },
+        ],
         sizes: ['1024x1024', '1024x1792', '1792x1024'],
         providerOptions: {
           openai: {
@@ -89,11 +108,14 @@ export const imageModels: {
           throw new Error('Size is not supported');
         },
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-dall-e-2',
+      'dall-e-2': {
         label: 'DALL-E 2',
-        model: openai.image('dall-e-2'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.image('dall-e-2'),
+          },
+        ],
         sizes: ['1024x1024', '512x512', '256x256'],
         priceIndicator: 'low',
         providerOptions: {
@@ -125,11 +147,14 @@ export const imageModels: {
           throw new Error('Size is not supported');
         },
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-image-1',
+      'gpt-image-1': {
         label: 'GPT Image 1',
-        model: openai.image('gpt-image-1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.image('gpt-image-1'),
+          },
+        ],
         supportsEdit: true,
         sizes: ['1024x1024', '1024x1536', '1536x1024'],
         default: true,
@@ -177,16 +202,21 @@ export const imageModels: {
           return textInputCost + imageInputCost + outputCost;
         },
       },
-    ],
+    },
   },
   {
-    label: 'Amazon Bedrock',
-    models: [
-      {
-        icon: AmazonIcon,
-        id: 'amazon-nova-canvas-v1',
+    label: 'Amazon',
+    icon: AmazonIcon,
+    models: {
+      'amazon-nova-canvas-v1': {
         label: 'Nova Canvas',
-        model: bedrock.image('amazon.nova-canvas-v1:0'),
+        providers: [
+          {
+            name: 'Amazon Bedrock',
+            icon: AmazonBedrockIcon,
+            model: bedrock.image('amazon.nova-canvas-v1:0'),
+          },
+        ],
 
         // Each side must be between 320-4096 pixels, inclusive.
         sizes: ['1024x1024', '2048x2048'],
@@ -216,38 +246,48 @@ export const imageModels: {
           throw new Error('Size is not supported');
         },
       },
-    ],
+    },
   },
   {
     label: 'Black Forest Labs',
-    models: [
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-pro-1.1',
+    icon: BlackForestLabsIcon,
+    models: {
+      'flux-pro-1.1': {
         label: 'FLUX Pro 1.1',
-        model: blackForestLabs.image('flux-pro-1.1'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-pro-1.1'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-pro',
+      'flux-pro': {
         label: 'FLUX Pro',
-        model: blackForestLabs.image('flux-pro'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-pro'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-dev',
+      'flux-dev': {
         label: 'FLUX Dev',
-        model: blackForestLabs.image('flux-dev'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-dev'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
         priceIndicator: 'low',
@@ -255,51 +295,63 @@ export const imageModels: {
         // https://bfl.ai/pricing/api
         getCost: () => 0.025,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-pro-1.0-canny',
+      'flux-pro-1.0-canny': {
         label: 'FLUX Pro 1.0 Canny',
-        model: blackForestLabs.image('flux-pro-1.0-canny'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-pro-1.0-canny'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-pro-1.0-depth',
+      'flux-pro-1.0-depth': {
         label: 'FLUX Pro 1.0 Depth',
-        model: blackForestLabs.image('flux-pro-1.0-depth'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-pro-1.0-depth'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.05,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-kontext-pro',
+      'flux-kontext-pro': {
         label: 'FLUX Kontext Pro',
-        model: blackForestLabs.image('flux-kontext-pro'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-kontext-pro'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
       },
-      {
-        icon: BlackForestLabsIcon,
-        id: 'black-forest-labs/flux-kontext-max',
+      'flux-kontext-max': {
         label: 'FLUX Kontext Max',
-        model: blackForestLabs.image('flux-kontext-max'),
+        providers: [
+          {
+            name: 'Black Forest Labs',
+            model: blackForestLabs.image('flux-kontext-max'),
+          },
+        ],
         sizes: ['1024x1024', '832x1440', '1440x832'],
         supportsEdit: true,
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.08,
       },
-    ],
+    },
   },
   // {
   //   label: 'Fal',
