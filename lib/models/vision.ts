@@ -1,89 +1,147 @@
 import { openai } from '@ai-sdk/openai';
+import type { LanguageModelV1 } from 'ai';
 import { OpenAiIcon } from '../icons';
 
-export const visionModels = [
+type TersaVisionModel = {
+  // Inherits from chef if not provided
+  icon?: typeof OpenAiIcon;
+  label: string;
+  providers: {
+    // Inherits from chef if not provided
+    icon?: typeof OpenAiIcon;
+    name: string;
+    model: LanguageModelV1;
+  }[];
+  default?: boolean;
+};
+
+export const visionModels: {
+  icon: typeof OpenAiIcon;
+  label: string;
+  models: Record<string, TersaVisionModel>;
+}[] = [
   {
     label: 'OpenAI',
-    models: [
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4.1',
+    icon: OpenAiIcon,
+    models: {
+      'openai-gpt-4.1': {
         label: 'GPT-4.1',
-        model: openai('gpt-4.1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4.1'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4.1-mini',
+      'openai-gpt-4.1-mini': {
         label: 'GPT-4.1 Mini',
-        model: openai('gpt-4.1-mini'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4.1-mini'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4.1-nano',
+      'openai-gpt-4.1-nano': {
         label: 'GPT-4.1 Nano',
-        model: openai('gpt-4.1-nano'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4.1-nano'),
+          },
+        ],
         default: true,
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-o3',
+      'openai-o3': {
         label: 'O3',
-        model: openai('o3'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('o3'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-o4-mini',
+      'openai-o4-mini': {
         label: 'O4 Mini',
-        model: openai('o4-mini'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('o4-mini'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-o1',
+      'openai-o1': {
         label: 'O1',
-        model: openai('o1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('o1'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-o1-pro',
+      'openai-o1-pro': {
         label: 'O1 Pro',
-        model: openai('o1-pro'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('o1-pro'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4o',
+      'openai-gpt-4o': {
         label: 'GPT-4o',
-        model: openai('gpt-4o'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4o'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4o-2024-05-13',
+      'openai-gpt-4o-2024-05-13': {
         label: 'GPT-4o (2024-05-13)',
-        model: openai('gpt-4o-2024-05-13'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4o-2024-05-13'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4o-mini',
+      'openai-gpt-4o-mini': {
         label: 'GPT-4o Mini',
-        model: openai('gpt-4o-mini'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4o-mini'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-computer-use-preview',
+      'openai-computer-use-preview': {
         label: 'Computer Use Preview',
-        model: openai('computer-use-preview'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('computer-use-preview'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4.5-preview',
+      'openai-gpt-4.5-preview': {
         label: 'GPT-4.5 Preview',
-        model: openai('gpt-4.5-preview'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-4.5-preview'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-image-1',
+      'openai-gpt-image-1': {
         label: 'GPT Image 1',
-        model: openai('gpt-image-1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai('gpt-image-1'),
+          },
+        ],
       },
-    ],
+    },
   },
 ];
