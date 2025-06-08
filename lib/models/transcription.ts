@@ -1,29 +1,57 @@
 import { openai } from '@ai-sdk/openai';
+import type { TranscriptionModel } from 'ai';
 import { OpenAiIcon } from '../icons';
 
-export const transcriptionModels = [
+type TersaTranscriptionModel = {
+  // Inherits from chef if not provided
+  icon?: typeof OpenAiIcon;
+  label: string;
+  providers: {
+    // Inherits from chef if not provided
+    icon?: typeof OpenAiIcon;
+    name: string;
+    model: TranscriptionModel;
+  }[];
+  default?: boolean;
+};
+
+export const transcriptionModels: {
+  icon: typeof OpenAiIcon;
+  label: string;
+  models: Record<string, TersaTranscriptionModel>;
+}[] = [
   {
     label: 'OpenAI',
-    models: [
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4o-mini-transcribe',
+    icon: OpenAiIcon,
+    models: {
+      'gpt-4o-mini-transcribe': {
         label: 'GPT-4o Mini Transcribe',
-        model: openai.transcription('gpt-4o-mini-transcribe'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.transcription('gpt-4o-mini-transcribe'),
+          },
+        ],
         default: true,
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-whisper-1',
+      'whisper-1': {
         label: 'Whisper 1',
-        model: openai.transcription('whisper-1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.transcription('whisper-1'),
+          },
+        ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-gpt-4o-transcribe',
+      'gpt-4o-transcribe': {
         label: 'GPT-4o Transcribe',
-        model: openai.transcription('gpt-4o-transcribe'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.transcription('gpt-4o-transcribe'),
+          },
+        ],
       },
-    ],
+    },
   },
 ];
