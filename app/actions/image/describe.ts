@@ -32,9 +32,7 @@ export const describeAction = async (
       throw new Error('Project not found');
     }
 
-    const model = visionModels
-      .flatMap((model) => model.models)
-      .find((model) => model.id === project.visionModel);
+    const model = visionModels[project.visionModel];
 
     if (!model) {
       throw new Error('Model not found');
@@ -50,7 +48,7 @@ export const describeAction = async (
     }
 
     const response = await openai.chat.completions.create({
-      model: model.model.modelId,
+      model: model.providers[0].model.modelId,
       messages: [
         {
           role: 'user',

@@ -40,16 +40,14 @@ export const generateSpeechAction = async ({
     const client = await createClient();
     const user = await getSubscribedUser();
 
-    const model = speechModels
-      .flatMap((m) => m.models)
-      .find((m) => m.id === modelId);
+    const model = speechModels[modelId];
 
     if (!model) {
       throw new Error('Model not found');
     }
 
     const { audio } = await generateSpeech({
-      model: model.model,
+      model: model.providers[0].model,
       text,
       outputFormat: 'mp3',
       instructions,

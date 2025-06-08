@@ -7,13 +7,13 @@ import { transcriptionModels } from '@/lib/models/transcription';
 import { visionModels } from '@/lib/models/vision';
 import { projects } from '@/schema';
 
-const defaultTranscriptionModel = transcriptionModels
-  .flatMap((model) => model.models)
-  .find((model) => model.default);
+const defaultTranscriptionModel = Object.entries(transcriptionModels).find(
+  ([_, model]) => model.default
+);
 
-const defaultVisionModel = visionModels
-  .flatMap((model) => model.models)
-  .find((model) => model.default);
+const defaultVisionModel = Object.entries(visionModels).find(
+  ([_, model]) => model.default
+);
 
 if (!defaultTranscriptionModel) {
   throw new Error('No default transcription model found');
@@ -46,8 +46,8 @@ export const createProjectAction = async (
       .values({
         name,
         userId: user.id,
-        transcriptionModel: defaultTranscriptionModel.id,
-        visionModel: defaultVisionModel.id,
+        transcriptionModel: defaultTranscriptionModel[0],
+        visionModel: defaultVisionModel[0],
         welcomeProject,
       })
       .returning({ id: projects.id });

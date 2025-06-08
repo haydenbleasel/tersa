@@ -63,12 +63,12 @@ const icons = [
 ];
 
 const allModels = [
-  ...textModels.flatMap((model) => Object.values(model.models)),
-  ...imageModels.flatMap((model) => Object.values(model.models)),
-  ...speechModels.flatMap((model) => Object.values(model.models)),
-  ...transcriptionModels.flatMap((model) => Object.values(model.models)),
-  ...videoModels.flatMap((model) => Object.values(model.models)),
-  ...visionModels.flatMap((model) => Object.values(model.models)),
+  ...Object.keys(textModels),
+  ...Object.keys(imageModels),
+  ...Object.keys(speechModels),
+  ...Object.keys(transcriptionModels),
+  ...Object.keys(videoModels),
+  ...Object.keys(visionModels),
 ].length;
 
 export const Providers = () => (

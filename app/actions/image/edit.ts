@@ -101,9 +101,7 @@ export const editImageAction = async ({
     const client = await createClient();
     const user = await getSubscribedUser();
 
-    const model = imageModels
-      .flatMap((m) => m.models)
-      .find((m) => m.id === modelId);
+    const model = imageModels[modelId];
 
     if (!model) {
       throw new Error('Model not found');
@@ -123,7 +121,7 @@ export const editImageAction = async ({
     const prompt =
       !instructions || instructions === '' ? defaultPrompt : instructions;
 
-    if (model.model.modelId === 'gpt-image-1') {
+    if (model.providers[0].model.modelId === 'gpt-image-1') {
       const generatedImageResponse = await generateGptImage1Image({
         prompt,
         images,
@@ -145,7 +143,7 @@ export const editImageAction = async ({
         .then((buffer) => Buffer.from(buffer).toString('base64'));
 
       const generatedImageResponse = await generateImage({
-        model: model.model,
+        model: model.providers[0].model,
         prompt,
         size: size as never,
         providerOptions: {
