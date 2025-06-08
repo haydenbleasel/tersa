@@ -27,7 +27,12 @@ import {
   XaiIcon,
 } from './icons';
 
-export const providers = {
+export type TersaProvider = {
+  name: string;
+  icon: typeof OpenAiIcon;
+};
+
+export const providers: Record<string, TersaProvider> = {
   openai: {
     name: 'OpenAI',
     icon: OpenAiIcon,
