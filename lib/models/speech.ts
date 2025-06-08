@@ -7,26 +7,38 @@ import { HumeIcon, LmntIcon, OpenAiIcon } from '../icons';
 const million = 1000000;
 const thousand = 1000;
 
-export const speechModels: {
+type TersaSpeechModel = {
+  // Inherits from chef if not provided
+  icon?: typeof OpenAiIcon;
   label: string;
-  models: {
-    icon: typeof OpenAiIcon;
-    id: string;
-    label: string;
+  providers: {
+    // Inherits from chef if not provided
+    icon?: typeof OpenAiIcon;
+    name: string;
     model: SpeechModel;
-    voices: string[];
-    getCost: (tokens: number) => number;
-    default?: boolean;
   }[];
+  getCost: (characters: number) => number;
+  default?: boolean;
+  voices: string[];
+};
+
+export const speechModels: {
+  icon: typeof OpenAiIcon;
+  label: string;
+  models: Record<string, TersaSpeechModel>;
 }[] = [
   {
     label: 'OpenAI',
-    models: [
-      {
-        icon: OpenAiIcon,
-        id: 'openai-tts-1',
+    icon: OpenAiIcon,
+    models: {
+      'tts-1': {
         label: 'TTS-1',
-        model: openai.speech('tts-1'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.speech('tts-1'),
+          },
+        ],
         getCost: (characters: number) => (characters / million) * 15,
         voices: [
           'alloy',
@@ -41,11 +53,14 @@ export const speechModels: {
           'shimmer',
         ],
       },
-      {
-        icon: OpenAiIcon,
-        id: 'openai-tts-1-hd',
+      'tts-1-hd': {
         label: 'TTS-1-HD',
-        model: openai.speech('tts-1-hd'),
+        providers: [
+          {
+            name: 'OpenAI',
+            model: openai.speech('tts-1-hd'),
+          },
+        ],
         default: true,
         getCost: (characters: number) => (characters / million) * 30,
         voices: [
@@ -61,23 +76,20 @@ export const speechModels: {
           'shimmer',
         ],
       },
-      // {
-      //   icon: OpenAiIcon,
-      //   id: 'openai-gpt-4o-mini-tts',
-      //   label: 'GPT-4o Mini TTS',
-      //   model: openai.speech('gpt-4o-mini-tts'),
-      //   getCost: (tokens: number) => (tokens / million) * 0.6,
-      // },
-    ],
+    },
   },
   {
     label: 'LMNT',
-    models: [
-      {
-        icon: LmntIcon,
-        id: 'lmnt-aurora',
+    icon: LmntIcon,
+    models: {
+      aurora: {
         label: 'Aurora',
-        model: lmnt.speech('aurora'),
+        providers: [
+          {
+            name: 'LMNT',
+            model: lmnt.speech('aurora'),
+          },
+        ],
         getCost: (characters: number) => (characters / thousand) * 0.05,
         voices: [
           'amy',
@@ -103,11 +115,14 @@ export const speechModels: {
           'zoe',
         ],
       },
-      {
-        icon: LmntIcon,
-        id: 'lmnt-blizzard',
+      blizzard: {
         label: 'Blizzard',
-        model: lmnt.speech('blizzard'),
+        providers: [
+          {
+            name: 'LMNT',
+            model: lmnt.speech('blizzard'),
+          },
+        ],
         getCost: (characters: number) => (characters / thousand) * 0.05,
         voices: [
           'amy',
@@ -133,20 +148,24 @@ export const speechModels: {
           'zoe',
         ],
       },
-    ],
+    },
   },
   {
     label: 'Hume',
-    models: [
-      {
-        icon: HumeIcon,
-        id: 'hume-default',
+    icon: HumeIcon,
+    models: {
+      default: {
         label: 'Default',
-        model: hume.speech(),
+        providers: [
+          {
+            name: 'Hume',
+            model: hume.speech(),
+          },
+        ],
         // Creator plan pricing
         getCost: (characters: number) => (characters / thousand) * 0.2,
         voices: [],
       },
-    ],
+    },
   },
 ];
