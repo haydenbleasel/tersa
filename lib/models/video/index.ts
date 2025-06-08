@@ -221,11 +221,11 @@ export const videoModels: {
     models: {
       'kling-v1.5-standard': {
         label: 'Kling v1.5 Standard',
-        icon: ReplicateIcon,
         providers: [
           {
             name: 'Replicate',
             model: replicate.kling('kwaivgi/kling-v1.5-standard'),
+            icon: ReplicateIcon,
           },
         ],
 
@@ -237,11 +237,11 @@ export const videoModels: {
         },
       },
       'kling-v1.5-pro': {
-        icon: ReplicateIcon,
         label: 'Kling v1.5 Pro',
         providers: [
           {
             name: 'Replicate',
+            icon: ReplicateIcon,
             model: replicate.kling('kwaivgi/kling-v1.5-pro'),
           },
         ],
@@ -254,11 +254,11 @@ export const videoModels: {
         },
       },
       'kling-v1.6-standard': {
-        icon: ReplicateIcon,
         label: 'Kling v1.6 Standard',
         providers: [
           {
             name: 'Replicate',
+            icon: ReplicateIcon,
             model: replicate.kling('kwaivgi/kling-v1.6-standard'),
           },
         ],
@@ -271,11 +271,11 @@ export const videoModels: {
         },
       },
       'kling-v1.6-pro': {
-        icon: ReplicateIcon,
         label: 'Kling v1.6 Pro',
         providers: [
           {
             name: 'Replicate',
+            icon: ReplicateIcon,
             model: replicate.kling('kwaivgi/kling-v1.6-pro'),
           },
         ],
@@ -288,11 +288,11 @@ export const videoModels: {
         },
       },
       'kling-v2.0': {
-        icon: ReplicateIcon,
         label: 'Kling v2.0',
         providers: [
           {
             name: 'Replicate',
+            icon: ReplicateIcon,
             model: replicate.kling('kwaivgi/kling-v2.0'),
           },
         ],

@@ -63,7 +63,7 @@ const icons = [
 ];
 
 const allModels = [
-  ...textModels.flatMap((model) => model.models),
+  ...textModels.flatMap((model) => Object.values(model.models)),
   ...imageModels.flatMap((model) => model.models),
   ...speechModels.flatMap((model) => model.models),
   ...transcriptionModels.flatMap((model) => model.models),
