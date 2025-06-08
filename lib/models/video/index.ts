@@ -1,4 +1,4 @@
-import { ReplicateIcon } from '@/lib/icons';
+import { KlingIcon, ReplicateIcon } from '@/lib/icons';
 import { LumaIcon, MinimaxIcon, RunwayIcon } from '@/lib/icons';
 import { luma } from './luma';
 import { minimax } from './minimax';
@@ -7,120 +7,154 @@ import { runway } from './runway';
 
 const million = 1000000;
 
-export type VideoModel = {
-  icon: typeof MinimaxIcon;
-  id: string;
+type VideoModel = {
+  modelId: string;
+  generate: (props: {
+    prompt: string;
+    imagePrompt: string | undefined;
+    duration: 5;
+    aspectRatio: string;
+  }) => Promise<string>;
+};
+
+export type TersaVideoModel = {
+  // Inherits from chef if not provided
+  icon?: typeof MinimaxIcon;
   label: string;
-  model: {
-    modelId: string;
-    generate: (props: {
-      prompt: string;
-      imagePrompt: string | undefined;
-      duration: 5;
-      aspectRatio: string;
-    }) => Promise<string>;
-  };
+  providers: {
+    // Inherits from chef if not provided
+    icon?: typeof MinimaxIcon;
+    name: string;
+    model: VideoModel;
+  }[];
   getCost: ({ duration }: { duration: number }) => number;
   default?: boolean;
 };
 
-export type VideoProvider = {
+export const videoModels: {
+  icon: typeof MinimaxIcon;
   label: string;
-  models: VideoModel[];
-};
-
-export const videoModels: VideoProvider[] = [
+  models: Record<string, TersaVideoModel>;
+}[] = [
   {
     label: 'Minimax',
-    models: [
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-t2v-01-director',
+    icon: MinimaxIcon,
+    models: {
+      'minimax-t2v-01-director': {
         label: 'T2V-01-Director',
-        model: minimax('T2V-01-Director'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('T2V-01-Director'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
       },
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-i2v-01-director',
+      'minimax-i2v-01-director': {
         label: 'I2V-01-Director',
-        model: minimax('I2V-01-Director'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('I2V-01-Director'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
       },
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-s2v-01',
+      'minimax-s2v-01': {
         label: 'S2V-01',
-        model: minimax('S2V-01'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('S2V-01'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.65,
       },
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-i2v-01',
+      'minimax-i2v-01': {
         label: 'I2V-01',
-        model: minimax('I2V-01'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('I2V-01'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
       },
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-i2v-01-live',
+      'minimax-i2v-01-live': {
         label: 'I2V-01-live',
-        model: minimax('I2V-01-live'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('I2V-01-live'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
       },
-      {
-        icon: MinimaxIcon,
-        id: 'minimax-t2v-01',
+      'minimax-t2v-01': {
         label: 'T2V-01',
-        model: minimax('T2V-01'),
+        providers: [
+          {
+            name: 'Minimax',
+            model: minimax('T2V-01'),
+          },
+        ],
 
         // https://www.minimax.io/price
         getCost: () => 0.43,
       },
-    ],
+    },
   },
   {
     label: 'Runway',
-    models: [
-      {
-        icon: RunwayIcon,
-        id: 'runway-gen4-turbo',
+    icon: RunwayIcon,
+    models: {
+      'runway-gen4-turbo': {
         label: 'Gen4 Turbo',
-        model: runway('gen4_turbo'),
+        providers: [
+          {
+            name: 'Runway',
+            model: runway('gen4_turbo'),
+          },
+        ],
         default: true,
         // https://docs.dev.runwayml.com/#price
         getCost: () => 0.5,
       },
-      {
-        icon: RunwayIcon,
-        id: 'runway-gen3a-turbo',
+      'runway-gen3a-turbo': {
         label: 'Gen3a Turbo',
-        model: runway('gen3a_turbo'),
-
+        providers: [
+          {
+            name: 'Runway',
+            model: runway('gen3a_turbo'),
+          },
+        ],
         // https://docs.dev.runwayml.com/#price
         getCost: () => 0.5,
       },
-    ],
+    },
   },
   {
     label: 'Luma',
-    models: [
-      {
-        icon: LumaIcon,
-        id: 'luma-ray-1.6',
+    icon: LumaIcon,
+    models: {
+      'luma-ray-1.6': {
         label: 'Ray 1.6',
-        model: luma('ray-1-6'),
-
+        providers: [
+          {
+            name: 'Luma',
+            model: luma('ray-1-6'),
+          },
+        ],
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
         getCost: ({ duration }) => {
@@ -135,12 +169,14 @@ export const videoModels: VideoProvider[] = [
           return frameCost * frames * duration;
         },
       },
-      {
-        icon: LumaIcon,
-        id: 'luma-ray-2',
+      'luma-ray-2': {
         label: 'Ray 2',
-        model: luma('ray-2'),
-
+        providers: [
+          {
+            name: 'Luma',
+            model: luma('ray-2'),
+          },
+        ],
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
         getCost: ({ duration }) => {
@@ -155,12 +191,14 @@ export const videoModels: VideoProvider[] = [
           return frameCost * frames * duration;
         },
       },
-      {
-        icon: LumaIcon,
-        id: 'luma-ray-flash-2',
+      'luma-ray-flash-2': {
         label: 'Ray Flash 2',
-        model: luma('ray-flash-2'),
-
+        providers: [
+          {
+            name: 'Luma',
+            model: luma('ray-flash-2'),
+          },
+        ],
         // https://lumalabs.ai/api/pricing
         // Luma pricing isn't well documented, "API Cost" refers to per frame.
         getCost: ({ duration }) => {
@@ -175,16 +213,21 @@ export const videoModels: VideoProvider[] = [
           return frameCost * frames * duration;
         },
       },
-    ],
+    },
   },
   {
-    label: 'Replicate',
-    models: [
-      {
-        icon: ReplicateIcon,
-        id: 'replicate-kwaivgi/kling-v1.5-standard',
+    label: 'Kling',
+    icon: KlingIcon,
+    models: {
+      'kling-v1.5-standard': {
         label: 'Kling v1.5 Standard',
-        model: replicate.kling('kwaivgi/kling-v1.5-standard'),
+        icon: ReplicateIcon,
+        providers: [
+          {
+            name: 'Replicate',
+            model: replicate.kling('kwaivgi/kling-v1.5-standard'),
+          },
+        ],
 
         // https://replicate.com/kwaivgi/kling-v1.5-standard
         getCost: ({ duration }) => {
@@ -193,11 +236,15 @@ export const videoModels: VideoProvider[] = [
           return unitCost * duration;
         },
       },
-      {
+      'kling-v1.5-pro': {
         icon: ReplicateIcon,
-        id: 'replicate-kwaivgi/kling-v1.5-pro',
         label: 'Kling v1.5 Pro',
-        model: replicate.kling('kwaivgi/kling-v1.5-pro'),
+        providers: [
+          {
+            name: 'Replicate',
+            model: replicate.kling('kwaivgi/kling-v1.5-pro'),
+          },
+        ],
 
         // https://replicate.com/kwaivgi/kling-v1.5-pro
         getCost: ({ duration }) => {
@@ -206,11 +253,15 @@ export const videoModels: VideoProvider[] = [
           return unitCost * duration;
         },
       },
-      {
+      'kling-v1.6-standard': {
         icon: ReplicateIcon,
-        id: 'replicate-kwaivgi/kling-v1.6-standard',
         label: 'Kling v1.6 Standard',
-        model: replicate.kling('kwaivgi/kling-v1.6-standard'),
+        providers: [
+          {
+            name: 'Replicate',
+            model: replicate.kling('kwaivgi/kling-v1.6-standard'),
+          },
+        ],
 
         // https://replicate.com/kwaivgi/kling-v1.6-standard
         getCost: ({ duration }) => {
@@ -219,11 +270,15 @@ export const videoModels: VideoProvider[] = [
           return unitCost * duration;
         },
       },
-      {
+      'kling-v1.6-pro': {
         icon: ReplicateIcon,
-        id: 'replicate-kwaivgi/kling-v1.6-pro',
         label: 'Kling v1.6 Pro',
-        model: replicate.kling('kwaivgi/kling-v1.6-pro'),
+        providers: [
+          {
+            name: 'Replicate',
+            model: replicate.kling('kwaivgi/kling-v1.6-pro'),
+          },
+        ],
 
         // https://replicate.com/kwaivgi/kling-v1.6-pro
         getCost: ({ duration }) => {
@@ -232,11 +287,15 @@ export const videoModels: VideoProvider[] = [
           return unitCost * duration;
         },
       },
-      {
+      'kling-v2.0': {
         icon: ReplicateIcon,
-        id: 'replicate-kwaivgi/kling-v2.0',
         label: 'Kling v2.0',
-        model: replicate.kling('kwaivgi/kling-v2.0'),
+        providers: [
+          {
+            name: 'Replicate',
+            model: replicate.kling('kwaivgi/kling-v2.0'),
+          },
+        ],
 
         // https://replicate.com/kwaivgi/kling-v2.0
         getCost: ({ duration }) => {
@@ -245,6 +304,6 @@ export const videoModels: VideoProvider[] = [
           return unitCost * duration;
         },
       },
-    ],
+    },
   },
 ];
