@@ -15,8 +15,8 @@ type TersaSpeechModel = {
   chef: TersaProvider;
   providers: (TersaProvider & {
     model: SpeechModel;
+    getCost: (characters: number) => number;
   })[];
-  getCost: (characters: number) => number;
   default?: boolean;
   voices: string[];
 };
@@ -29,9 +29,9 @@ export const speechModels: Record<string, TersaSpeechModel> = {
       {
         ...providers.openai,
         model: openai.speech('tts-1'),
+        getCost: (characters: number) => (characters / million) * 15,
       },
     ],
-    getCost: (characters: number) => (characters / million) * 15,
     voices: [
       'alloy',
       'ash',
@@ -52,10 +52,10 @@ export const speechModels: Record<string, TersaSpeechModel> = {
       {
         ...providers.openai,
         model: openai.speech('tts-1-hd'),
+        getCost: (characters: number) => (characters / million) * 30,
       },
     ],
     default: true,
-    getCost: (characters: number) => (characters / million) * 30,
     voices: [
       'alloy',
       'ash',
@@ -76,9 +76,9 @@ export const speechModels: Record<string, TersaSpeechModel> = {
       {
         ...providers.lmnt,
         model: lmnt.speech('aurora'),
+        getCost: (characters: number) => (characters / thousand) * 0.05,
       },
     ],
-    getCost: (characters: number) => (characters / thousand) * 0.05,
     voices: [
       'amy',
       'ava',
@@ -110,9 +110,9 @@ export const speechModels: Record<string, TersaSpeechModel> = {
       {
         ...providers.lmnt,
         model: lmnt.speech('blizzard'),
+        getCost: (characters: number) => (characters / thousand) * 0.05,
       },
     ],
-    getCost: (characters: number) => (characters / thousand) * 0.05,
     voices: [
       'amy',
       'ava',
@@ -144,10 +144,11 @@ export const speechModels: Record<string, TersaSpeechModel> = {
       {
         ...providers.hume,
         model: hume.speech(),
+
+        // Creator plan pricing
+        getCost: (characters: number) => (characters / thousand) * 0.2,
       },
     ],
-    // Creator plan pricing
-    getCost: (characters: number) => (characters / thousand) * 0.2,
     voices: [],
   },
 };
