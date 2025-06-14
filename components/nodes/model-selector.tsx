@@ -25,7 +25,7 @@ import {
   ChevronsDownIcon,
   ChevronsUpIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 type ModelSelectorProps = {
@@ -142,6 +142,12 @@ export const ModelSelector = ({
   const { plan } = useSubscription();
   const activeModel = options[value];
 
+  useEffect(() => {
+    if (value && !options[value]) {
+      onChange?.(Object.keys(options)[0]);
+    }
+  }, [value, options, onChange]);
+
   const groupedOptions = Object.entries(options).reduce(
     (acc, [id, model]) => {
       const chef = model.chef.id;
@@ -203,7 +209,11 @@ export const ModelSelector = ({
           {sortedChefs.map((chef) => (
             <ComboboxGroup
               key={chef}
-              heading={<ComboboxGroupHeading data={providers[chef]} />}
+              heading={
+                <ComboboxGroupHeading
+                  data={providers[chef as keyof typeof providers]}
+                />
+              }
             >
               {Object.entries(groupedOptions[chef]).map(([id, model]) => (
                 <ComboboxItem
@@ -222,7 +232,7 @@ export const ModelSelector = ({
                   <div className="flex items-center gap-2 overflow-hidden">
                     <ModelIcon
                       data={model}
-                      chef={providers[chef]}
+                      chef={providers[chef as keyof typeof providers]}
                       className={value === id ? 'text-primary-foreground' : ''}
                     />
                     <span className="block truncate">{model.label}</span>
