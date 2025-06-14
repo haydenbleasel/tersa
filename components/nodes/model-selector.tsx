@@ -1,13 +1,4 @@
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxTrigger,
-} from '@/components/ui/kibo-ui/combobox';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import type { PriceBracket } from '@/lib/models/text';
 import {
   type TersaModel,
@@ -26,6 +17,15 @@ import {
   ChevronsUpIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../ui/command';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 type ModelSelectorProps = {
@@ -106,7 +106,7 @@ const getModelDisabled = (
   return false;
 };
 
-const ComboboxGroupHeading = ({ data }: { data: TersaProvider }) => (
+const CommandGroupHeading = ({ data }: { data: TersaProvider }) => (
   <div className="flex items-center gap-2">
     <data.icon className="size-4 shrink-0" />
     <span className="block truncate">{data.name}</span>
@@ -174,90 +174,83 @@ export const ModelSelector = ({
   });
 
   return (
-    <Combobox
-      open={open}
-      onOpenChange={setOpen}
-      value={value}
-      onValueChange={onChange}
-      data={Object.entries(options).map(([id, model]) => ({
-        label: model.label,
-        value: id,
-      }))}
-      type="model"
-    >
-      <ComboboxTrigger
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
         className={className}
         id={id}
         style={{ width }}
         disabled={disabled}
+        asChild
       >
-        {activeModel && (
-          <div className="flex w-full items-center gap-2 overflow-hidden">
-            <ModelIcon data={activeModel} chef={activeModel.chef} />
-            <span className="block truncate">{activeModel.label}</span>
-          </div>
-        )}
-      </ComboboxTrigger>
-      <ComboboxContent
-        popoverOptions={{
-          sideOffset: 8,
-        }}
-      >
-        <ComboboxInput />
-        <ComboboxList>
-          <ComboboxEmpty />
-          {sortedChefs.map((chef) => (
-            <ComboboxGroup
-              key={chef}
-              heading={
-                <ComboboxGroupHeading
-                  data={providers[chef as keyof typeof providers]}
-                />
-              }
-            >
-              {Object.entries(groupedOptions[chef]).map(([id, model]) => (
-                <ComboboxItem
-                  key={id}
-                  value={id}
-                  onSelect={() => {
-                    onChange?.(id);
-                    setOpen(false);
-                  }}
-                  disabled={getModelDisabled(model, plan)}
-                  className={cn(
-                    value === id &&
-                      'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
-                  )}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <ModelIcon
-                      data={model}
-                      chef={providers[chef as keyof typeof providers]}
-                      className={value === id ? 'text-primary-foreground' : ''}
-                    />
-                    <span className="block truncate">{model.label}</span>
-                  </div>
-                  {model.priceIndicator && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="ml-auto">
-                          {getCostBracketIcon(
-                            model.priceIndicator,
-                            value === id ? 'text-primary-foreground' : ''
-                          )}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">
-                        <p>{getCostBracketLabel(model.priceIndicator)}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </ComboboxItem>
-              ))}
-            </ComboboxGroup>
-          ))}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+        <Button variant="outline" className="w-full">
+          {activeModel && (
+            <div className="flex w-full items-center gap-2 overflow-hidden">
+              <ModelIcon data={activeModel} chef={activeModel.chef} />
+              <span className="block truncate">{activeModel.label}</span>
+            </div>
+          )}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="p-0">
+        <Command>
+          <CommandInput />
+          <CommandList>
+            <CommandEmpty />
+            {sortedChefs.map((chef) => (
+              <CommandGroup
+                key={chef}
+                heading={
+                  <CommandGroupHeading
+                    data={providers[chef as keyof typeof providers]}
+                  />
+                }
+              >
+                {Object.entries(groupedOptions[chef]).map(([id, model]) => (
+                  <CommandItem
+                    key={id}
+                    value={id}
+                    onSelect={() => {
+                      onChange?.(id);
+                      setOpen(false);
+                    }}
+                    disabled={getModelDisabled(model, plan)}
+                    className={cn(
+                      value === id &&
+                        'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
+                    )}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <ModelIcon
+                        data={model}
+                        chef={providers[chef as keyof typeof providers]}
+                        className={
+                          value === id ? 'text-primary-foreground' : ''
+                        }
+                      />
+                      <span className="block truncate">{model.label}</span>
+                    </div>
+                    {model.priceIndicator && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="ml-auto">
+                            {getCostBracketIcon(
+                              model.priceIndicator,
+                              value === id ? 'text-primary-foreground' : ''
+                            )}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          <p>{getCostBracketLabel(model.priceIndicator)}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </Command>
+      </DialogContent>
+    </Dialog>
   );
 };
