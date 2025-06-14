@@ -32,7 +32,7 @@ type TersaImageModel = TersaModel & {
 export const imageModels: Record<string, TersaImageModel> = {
   'grok-2-image': {
     icon: GrokIcon,
-    label: 'Grok',
+    label: 'Grok 2 Image',
     chef: providers.xai,
     providers: [
       {

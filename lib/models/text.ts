@@ -550,7 +550,7 @@ export const textModels: Record<string, TersaTextModel> = {
   },
   'mistral-saba-24b': {
     label: 'Mistral Saba 24B',
-    chef: providers.groq,
+    chef: providers.mistral,
     providers: [
       {
         ...providers.groq,
@@ -622,7 +622,7 @@ export const textModels: Record<string, TersaTextModel> = {
   'gemma2-9b-it': {
     icon: GemmaIcon,
     label: 'Gemma 2 9B',
-    chef: providers.groq,
+    chef: providers.google,
     providers: [
       {
         ...providers.groq,
@@ -674,7 +674,7 @@ export const textModels: Record<string, TersaTextModel> = {
   },
   'deepseek-r1-distill-llama-70b': {
     label: 'DeepSeek R1 Distill Llama 70B',
-    chef: providers.groq,
+    chef: providers.deepseek,
     providers: [
       {
         ...providers.groq,
@@ -695,7 +695,7 @@ export const textModels: Record<string, TersaTextModel> = {
 
   'llama-4-scout-17b-16e-instruct': {
     label: 'Llama 4 Scout 17B',
-    chef: providers.groq,
+    chef: providers.meta,
     providers: [
       {
         ...providers.groq,
@@ -712,7 +712,7 @@ export const textModels: Record<string, TersaTextModel> = {
   },
   'llama-3.3-70b-versatile': {
     label: 'Llama 3.3 70B Versatile',
-    chef: providers.groq,
+    chef: providers.meta,
     providers: [
       {
         ...providers.groq,
@@ -729,7 +729,7 @@ export const textModels: Record<string, TersaTextModel> = {
   },
   'llama-3.1-8b-instant': {
     label: 'Llama 3.1 8B Instant',
-    chef: providers.groq,
+    chef: providers.meta,
     providers: [
       {
         ...providers.groq,
@@ -746,7 +746,7 @@ export const textModels: Record<string, TersaTextModel> = {
   },
   'llama-guard-3-8b': {
     label: 'Llama Guard 3 8B',
-    chef: providers.groq,
+    chef: providers.meta,
     providers: [
       {
         ...providers.groq,
@@ -764,7 +764,7 @@ export const textModels: Record<string, TersaTextModel> = {
 
   'qwen-2.5-32b': {
     label: 'Qwen 2.5 32B',
-    chef: providers.groq,
+    chef: providers['alibaba-cloud'],
     providers: [
       {
         ...providers.groq,

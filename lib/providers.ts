@@ -34,7 +34,7 @@ export type TersaProvider = {
   icon: typeof OpenAiIcon;
 };
 
-export const providers: Record<string, TersaProvider> = {
+export const providers = {
   openai: {
     id: 'openai',
     name: 'OpenAI',
