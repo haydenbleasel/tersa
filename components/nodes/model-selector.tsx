@@ -9,7 +9,11 @@ import {
   ComboboxTrigger,
 } from '@/components/ui/kibo-ui/combobox';
 import type { PriceBracket } from '@/lib/models/text';
-import type { TersaModel } from '@/lib/providers';
+import {
+  type TersaModel,
+  type TersaProvider,
+  providers,
+} from '@/lib/providers';
 import { cn } from '@/lib/utils';
 import {
   type SubscriptionContextType,
@@ -102,6 +106,29 @@ const getModelDisabled = (
   return false;
 };
 
+const ComboboxGroupHeading = ({ data }: { data: TersaProvider }) => (
+  <div className="flex items-center gap-2">
+    <data.icon className="size-4 shrink-0" />
+    <span className="block truncate">{data.name}</span>
+  </div>
+);
+
+const ModelIcon = ({
+  data,
+  chef,
+  className,
+}: {
+  data: TersaModel;
+  chef: TersaProvider;
+  className?: string;
+}) => {
+  if (data.icon) {
+    return <data.icon className={cn('size-4 shrink-0', className)} />;
+  }
+
+  return <chef.icon className={cn('size-4 shrink-0', className)} />;
+};
+
 export const ModelSelector = ({
   id,
   value,
@@ -114,6 +141,31 @@ export const ModelSelector = ({
   const [open, setOpen] = useState(false);
   const { plan } = useSubscription();
   const activeModel = options[value];
+
+  const groupedOptions = Object.entries(options).reduce(
+    (acc, [id, model]) => {
+      const chef = model.chef.id;
+
+      if (!acc[chef]) {
+        acc[chef] = {};
+      }
+
+      acc[chef][id] = model;
+      return acc;
+    },
+    {} as Record<string, Record<string, TersaModel>>
+  );
+
+  const sortedChefs = Object.keys(groupedOptions).sort((a, b) => {
+    const aName = Object.values(providers)
+      .find((provider) => provider.id === a)
+      ?.name.toLowerCase();
+    const bName = Object.values(providers)
+      .find((provider) => provider.name === b)
+      ?.name.toLowerCase();
+
+    return aName?.localeCompare(bName ?? '') ?? 0;
+  });
 
   return (
     <Combobox
@@ -135,9 +187,7 @@ export const ModelSelector = ({
       >
         {activeModel && (
           <div className="flex w-full items-center gap-2 overflow-hidden">
-            {activeModel.icon && (
-              <activeModel.icon className="size-4 shrink-0" />
-            )}
+            <ModelIcon data={activeModel} chef={activeModel.chef} />
             <span className="block truncate">{activeModel.label}</span>
           </div>
         )}
@@ -150,10 +200,12 @@ export const ModelSelector = ({
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
-          {Object.entries(options)
-            .filter(([_, model]) => model.providers.length)
-            .map(([id, model]) => (
-              <ComboboxGroup key={id} heading={model.label}>
+          {sortedChefs.map((chef) => (
+            <ComboboxGroup
+              key={chef}
+              heading={<ComboboxGroupHeading data={providers[chef]} />}
+            >
+              {Object.entries(groupedOptions[chef]).map(([id, model]) => (
                 <ComboboxItem
                   key={id}
                   value={id}
@@ -168,14 +220,11 @@ export const ModelSelector = ({
                   )}
                 >
                   <div className="flex items-center gap-2 overflow-hidden">
-                    {model.icon && (
-                      <model.icon
-                        className={cn(
-                          'size-4 shrink-0',
-                          value === id && 'text-primary-foreground'
-                        )}
-                      />
-                    )}
+                    <ModelIcon
+                      data={model}
+                      chef={providers[chef]}
+                      className={value === id ? 'text-primary-foreground' : ''}
+                    />
                     <span className="block truncate">{model.label}</span>
                   </div>
                   {model.priceIndicator && (
@@ -194,8 +243,9 @@ export const ModelSelector = ({
                     </Tooltip>
                   )}
                 </ComboboxItem>
-              </ComboboxGroup>
-            ))}
+              ))}
+            </ComboboxGroup>
+          ))}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
