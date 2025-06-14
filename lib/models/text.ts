@@ -188,8 +188,8 @@ export const textModels: Record<string, TersaTextModel> = {
         ...providers.openai,
         model: openai('o3'),
         getCost: ({ input, output }: { input: number; output: number }) => {
-          const inputCost = (input / million) * 10;
-          const outputCost = (output / million) * 40;
+          const inputCost = (input / million) * 2;
+          const outputCost = (output / million) * 8;
 
           return inputCost + outputCost;
         },
