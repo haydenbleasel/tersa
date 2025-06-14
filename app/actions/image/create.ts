@@ -105,7 +105,9 @@ export const generateImageAction = async ({
 
     let image: Experimental_GenerateImageResult['image'] | undefined;
 
-    if (model.providers[0].model.modelId === 'gpt-image-1') {
+    const provider = model.providers[0];
+
+    if (provider.model.modelId === 'gpt-image-1') {
       const generatedImageResponse = await generateGptImage1Image({
         instructions,
         prompt,
@@ -114,7 +116,7 @@ export const generateImageAction = async ({
 
       await trackCreditUsage({
         action: 'generate_image',
-        cost: model.getCost({
+        cost: provider.getCost({
           ...generatedImageResponse.usage,
           size,
         }),
@@ -123,7 +125,7 @@ export const generateImageAction = async ({
       image = generatedImageResponse.image;
     } else {
       const generatedImageResponse = await generateImage({
-        model: model.providers[0].model,
+        model: provider.model,
         prompt: [
           'Generate an image based on the following instructions and context.',
           '---',
@@ -138,7 +140,7 @@ export const generateImageAction = async ({
 
       await trackCreditUsage({
         action: 'generate_image',
-        cost: model.getCost({
+        cost: provider.getCost({
           size,
         }),
       });

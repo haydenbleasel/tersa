@@ -111,6 +111,8 @@ export const editImageAction = async ({
       throw new Error('Model does not support editing');
     }
 
+    const provider = model.providers[0];
+
     let image: Experimental_GenerateImageResult['image'] | undefined;
 
     const defaultPrompt =
@@ -121,7 +123,7 @@ export const editImageAction = async ({
     const prompt =
       !instructions || instructions === '' ? defaultPrompt : instructions;
 
-    if (model.providers[0].model.modelId === 'gpt-image-1') {
+    if (provider.model.modelId === 'gpt-image-1') {
       const generatedImageResponse = await generateGptImage1Image({
         prompt,
         images,
@@ -130,7 +132,7 @@ export const editImageAction = async ({
 
       await trackCreditUsage({
         action: 'generate_image',
-        cost: model.getCost({
+        cost: provider.getCost({
           ...generatedImageResponse.usage,
           size,
         }),
@@ -143,7 +145,7 @@ export const editImageAction = async ({
         .then((buffer) => Buffer.from(buffer).toString('base64'));
 
       const generatedImageResponse = await generateImage({
-        model: model.providers[0].model,
+        model: provider.model,
         prompt,
         size: size as never,
         providerOptions: {
@@ -155,7 +157,7 @@ export const editImageAction = async ({
 
       await trackCreditUsage({
         action: 'generate_image',
-        cost: model.getCost({
+        cost: provider.getCost({
           size,
         }),
       });

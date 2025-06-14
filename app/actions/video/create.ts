@@ -39,9 +39,8 @@ export const generateVideoAction = async ({
   try {
     const client = await createClient();
     const user = await getSubscribedUser();
-    const model = videoModels
-      .flatMap((model) => model.models)
-      .find((model) => model.id === modelId);
+    const model = videoModels[modelId];
+    const provider = model.providers[0];
 
     if (!model) {
       throw new Error('Model not found');
@@ -58,7 +57,7 @@ export const generateVideoAction = async ({
       firstFrameImage = `data:${images.at(0)?.type};base64,${base64}`;
     }
 
-    const url = await model.model.generate({
+    const url = await provider.model.generate({
       prompt,
       imagePrompt: firstFrameImage,
       duration: 5,
@@ -70,7 +69,7 @@ export const generateVideoAction = async ({
 
     await trackCreditUsage({
       action: 'generate_video',
-      cost: model.getCost({ duration: 5 }),
+      cost: provider.getCost({ duration: 5 }),
     });
 
     const blob = await client.storage

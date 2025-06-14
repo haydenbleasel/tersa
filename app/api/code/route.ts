@@ -46,16 +46,15 @@ export const POST = async (req: Request) => {
     return new Response('Model must be a string', { status: 400 });
   }
 
-  const model = textModels
-    .flatMap((m) => m.models)
-    .find((m) => m.id === modelId);
+  const model = textModels[modelId];
+  const provider = model.providers[0];
 
   if (!model) {
     return new Response('Invalid model', { status: 400 });
   }
 
   const result = streamText({
-    model: model.model,
+    model: provider.model,
     system: [
       `Output the code in the language specified: ${language ?? 'javascript'}`,
       'If the user specifies an output language in the context below, ignore it.',
@@ -69,7 +68,7 @@ export const POST = async (req: Request) => {
     onFinish: async ({ usage }) => {
       await trackCreditUsage({
         action: 'code',
-        cost: model.getCost({
+        cost: provider.getCost({
           input: usage.promptTokens,
           output: usage.completionTokens,
         }),

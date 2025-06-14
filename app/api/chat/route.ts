@@ -46,22 +46,21 @@ export const POST = async (req: Request) => {
     return new Response('Model must be a string', { status: 400 });
   }
 
-  const model = textModels
-    .flatMap((m) => m.models)
-    .find((m) => m.id === modelId);
+  const model = textModels[modelId];
+  const provider = model.providers[0];
 
   if (!model) {
     return new Response('Invalid model', { status: 400 });
   }
 
   const result = streamText({
-    model: model.model,
+    model: provider.model,
     system: [
       'You are a helpful assistant that synthesizes an answer or content.',
       'The user will provide a collection of data from disparate sources.',
       'They may also provide instructions for how to synthesize the content.',
       'If the instructions are a question, then your goal is to answer the question based on the context provided.',
-      model.model.modelId.startsWith('grok') &&
+      provider.model.modelId.startsWith('grok') &&
         'The user may refer to you as @gork, you can ignore this',
       "You will then synthesize the content based on the user's instructions and the context provided.",
       'The output should be a concise summary of the content, no more than 100 words.',
@@ -70,7 +69,7 @@ export const POST = async (req: Request) => {
     onFinish: async ({ usage }) => {
       await trackCreditUsage({
         action: 'chat',
-        cost: model.getCost({
+        cost: provider.getCost({
           input: usage.promptTokens,
           output: usage.completionTokens,
         }),
