@@ -27,7 +27,7 @@ import {
 } from '@xyflow/react';
 import { BoxSelectIcon, PlusIcon } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import type { MouseEventHandler } from 'react';
+import type { MouseEvent, MouseEventHandler } from 'react';
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useDebouncedCallback } from 'use-debounce';
@@ -343,6 +343,15 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     }
   }, [getNodes, duplicateNode]);
 
+  const handleContextMenu = useCallback((event: MouseEvent) => {
+    if (
+      !(event.target instanceof HTMLElement) ||
+      !event.target.classList.contains('react-flow__pane')
+    ) {
+      event.preventDefault();
+    }
+  }, []);
+
   useHotkeys('meta+a', handleSelectAll, {
     enableOnContentEditable: false,
     preventDefault: true,
@@ -367,7 +376,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
       <NodeDropzoneProvider>
         <ContextMenu>
-          <ContextMenuTrigger>
+          <ContextMenuTrigger onContextMenu={handleContextMenu}>
             <ReactFlow
               deleteKeyCode={['Backspace', 'Delete']}
               nodes={nodes}
