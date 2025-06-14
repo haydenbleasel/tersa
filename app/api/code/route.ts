@@ -47,11 +47,12 @@ export const POST = async (req: Request) => {
   }
 
   const model = textModels[modelId];
-  const provider = model.providers[0];
 
   if (!model) {
     return new Response('Invalid model', { status: 400 });
   }
+
+  const provider = model.providers[0];
 
   const result = streamText({
     model: provider.model,
