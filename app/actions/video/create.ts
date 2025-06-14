@@ -40,11 +40,12 @@ export const generateVideoAction = async ({
     const client = await createClient();
     const user = await getSubscribedUser();
     const model = videoModels[modelId];
-    const provider = model.providers[0];
 
     if (!model) {
       throw new Error('Model not found');
     }
+
+    const provider = model.providers[0];
 
     let firstFrameImage = images.at(0)?.url;
 

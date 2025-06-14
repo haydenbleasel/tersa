@@ -41,11 +41,12 @@ export const generateSpeechAction = async ({
     const user = await getSubscribedUser();
 
     const model = speechModels[modelId];
-    const provider = model.providers[0];
 
     if (!model) {
       throw new Error('Model not found');
     }
+
+    const provider = model.providers[0];
 
     const { audio } = await generateSpeech({
       model: provider.model,
