@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import type { PriceBracket } from '@/lib/models/text';
 import {
   type TersaModel,
@@ -192,8 +198,13 @@ export const ModelSelector = ({
         </Button>
       </DialogTrigger>
       <DialogContent className="p-0">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Select a model</DialogTitle>
+        </DialogHeader>
         <Command>
-          <CommandInput />
+          <div className="[&>div]:h-12">
+            <CommandInput />
+          </div>
           <CommandList>
             <CommandEmpty />
             {sortedChefs.map((chef) => (
@@ -219,7 +230,7 @@ export const ModelSelector = ({
                         'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
                     )}
                   >
-                    <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="flex flex-1 items-center gap-2 overflow-hidden">
                       <ModelIcon
                         data={model}
                         chef={providers[chef as keyof typeof providers]}
@@ -229,10 +240,32 @@ export const ModelSelector = ({
                       />
                       <span className="block truncate">{model.label}</span>
                     </div>
-                    {model.priceIndicator && (
+                    {model.providers.map((provider, index) => (
+                      <div
+                        key={provider.id}
+                        className={cn(index && 'opacity-50')}
+                      >
+                        <div
+                          className={cn(
+                            'flex size-4 items-center justify-center rounded-full bg-secondary',
+                            value === id && 'bg-primary-foreground/10'
+                          )}
+                        >
+                          <provider.icon
+                            className={cn(
+                              'size-3 shrink-0',
+                              value === id
+                                ? 'text-primary-foreground'
+                                : 'text-muted-foreground'
+                            )}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {model.priceIndicator ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="ml-auto">
+                          <div>
                             {getCostBracketIcon(
                               model.priceIndicator,
                               value === id ? 'text-primary-foreground' : ''
@@ -243,6 +276,8 @@ export const ModelSelector = ({
                           <p>{getCostBracketLabel(model.priceIndicator)}</p>
                         </TooltipContent>
                       </Tooltip>
+                    ) : (
+                      <div className="size-4" />
                     )}
                   </CommandItem>
                 ))}
