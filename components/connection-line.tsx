@@ -1,11 +1,11 @@
-import type { ConnectionLineComponentProps } from '@xyflow/react';
+import type { ConnectionLineComponent } from '@xyflow/react';
 
-export const ConnectionLine = ({
+export const ConnectionLine: ConnectionLineComponent = ({
   fromX,
   fromY,
   toX,
   toY,
-}: ConnectionLineComponentProps) => (
+}) => (
   <g>
     <path
       fill="none"
