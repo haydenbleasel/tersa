@@ -173,7 +173,7 @@ export const ModelSelector = ({
       .find((provider) => provider.id === a)
       ?.name.toLowerCase();
     const bName = Object.values(providers)
-      .find((provider) => provider.name === b)
+      .find((provider) => provider.id === b)
       ?.name.toLowerCase();
 
     return aName?.localeCompare(bName ?? '') ?? 0;
