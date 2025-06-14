@@ -1,17 +1,11 @@
 import { openai } from '@ai-sdk/openai';
 import type { LanguageModelV1 } from 'ai';
-import type { OpenAiIcon } from '../icons';
-import { type TersaProvider, providers } from '../providers';
+import { type TersaModel, type TersaProvider, providers } from '../providers';
 
-type TersaVisionModel = {
-  // Inherits from chef if not provided
-  icon?: typeof OpenAiIcon;
-  label: string;
-  chef: TersaProvider;
+type TersaVisionModel = TersaModel & {
   providers: (TersaProvider & {
     model: LanguageModelV1;
   })[];
-  default?: boolean;
 };
 
 export const visionModels: Record<string, TersaVisionModel> = {

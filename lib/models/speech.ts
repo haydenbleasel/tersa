@@ -2,22 +2,16 @@ import { hume } from '@ai-sdk/hume';
 import { lmnt } from '@ai-sdk/lmnt';
 import { openai } from '@ai-sdk/openai';
 import type { SpeechModel } from 'ai';
-import type { OpenAiIcon } from '../icons';
-import { type TersaProvider, providers } from '../providers';
+import { type TersaModel, type TersaProvider, providers } from '../providers';
 
 const million = 1000000;
 const thousand = 1000;
 
-type TersaSpeechModel = {
-  // Inherits from chef if not provided
-  icon?: typeof OpenAiIcon;
-  label: string;
-  chef: TersaProvider;
+type TersaSpeechModel = TersaModel & {
   providers: (TersaProvider & {
     model: SpeechModel;
     getCost: (characters: number) => number;
   })[];
-  default?: boolean;
   voices: string[];
 };
 

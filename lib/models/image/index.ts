@@ -1,20 +1,20 @@
-import { type TersaProvider, providers } from '@/lib/providers';
+import {
+  type TersaModel,
+  type TersaProvider,
+  providers,
+} from '@/lib/providers';
 import { bedrock } from '@ai-sdk/amazon-bedrock';
 import { openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import type { ImageModel } from 'ai';
-import { AmazonBedrockIcon, GrokIcon, type OpenAiIcon } from '../../icons';
+import { AmazonBedrockIcon, GrokIcon } from '../../icons';
 import { blackForestLabs } from './black-forest-labs';
 
 const million = 1000000;
 
 export type ImageSize = `${number}x${number}`;
 
-type TersaImageModel = {
-  // Inherits from chef if not provided
-  icon?: typeof OpenAiIcon;
-  label: string;
-  chef: TersaProvider;
+type TersaImageModel = TersaModel & {
   providers: (TersaProvider & {
     model: ImageModel;
     getCost: (props?: {
@@ -26,10 +26,7 @@ type TersaImageModel = {
   })[];
   sizes?: ImageSize[];
   supportsEdit?: boolean;
-  disabled?: boolean;
   providerOptions?: Record<string, Record<string, string>>;
-  priceIndicator?: 'lowest' | 'low' | 'high' | 'highest';
-  default?: boolean;
 };
 
 export const imageModels: Record<string, TersaImageModel> = {
@@ -321,12 +318,12 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-kontext-max'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.08,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.08,
   },
 };

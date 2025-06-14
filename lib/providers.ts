@@ -26,6 +26,7 @@ import {
   VercelIcon,
   XaiIcon,
 } from './icons';
+import type { PriceBracket } from './models/text';
 
 export type TersaProvider = {
   name: string;
@@ -137,4 +138,16 @@ export const providers: Record<string, TersaProvider> = {
     name: 'Replicate',
     icon: ReplicateIcon,
   },
+};
+
+export type TersaModel = {
+  // Inherits from chef if not provided
+  icon?: typeof OpenAiIcon;
+  label: string;
+  chef: TersaProvider;
+  providers: TersaProvider[];
+  legacy?: boolean;
+  priceIndicator?: PriceBracket;
+  disabled?: boolean;
+  default?: boolean;
 };

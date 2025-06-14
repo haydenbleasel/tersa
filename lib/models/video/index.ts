@@ -1,6 +1,9 @@
 import { ReplicateIcon } from '@/lib/icons';
-import type { MinimaxIcon } from '@/lib/icons';
-import { type TersaProvider, providers } from '@/lib/providers';
+import {
+  type TersaModel,
+  type TersaProvider,
+  providers,
+} from '@/lib/providers';
 import { luma } from './luma';
 import { minimax } from './minimax';
 import { replicate } from './replicate';
@@ -18,16 +21,11 @@ type VideoModel = {
   }) => Promise<string>;
 };
 
-export type TersaVideoModel = {
-  // Inherits from chef if not provided
-  icon?: typeof MinimaxIcon;
-  label: string;
-  chef: TersaProvider;
+export type TersaVideoModel = TersaModel & {
   providers: (TersaProvider & {
     model: VideoModel;
     getCost: ({ duration }: { duration: number }) => number;
   })[];
-  default?: boolean;
 };
 
 export const videoModels: Record<string, TersaVideoModel> = {

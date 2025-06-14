@@ -12,32 +12,18 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';
-import {
-  ClaudeIcon,
-  GeminiIcon,
-  GemmaIcon,
-  GrokIcon,
-  type OpenAiIcon,
-} from '../icons';
-import { type TersaProvider, providers } from '../providers';
+import { ClaudeIcon, GeminiIcon, GemmaIcon, GrokIcon } from '../icons';
+import { type TersaModel, type TersaProvider, providers } from '../providers';
 
 export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
 
 const million = 1000000;
 
-type TersaTextModel = {
-  // Inherits from chef if not provided
-  icon?: typeof OpenAiIcon;
-  label: string;
-  chef: TersaProvider;
+type TersaTextModel = TersaModel & {
   providers: (TersaProvider & {
     model: LanguageModelV1;
     getCost: ({ input, output }: { input: number; output: number }) => number;
   })[];
-  legacy?: boolean;
-  priceIndicator?: PriceBracket;
-  disabled?: boolean;
-  default?: boolean;
 };
 
 // Median input cost: 2.7

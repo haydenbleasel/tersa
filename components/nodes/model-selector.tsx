@@ -9,6 +9,7 @@ import {
   ComboboxTrigger,
 } from '@/components/ui/kibo-ui/combobox';
 import type { PriceBracket } from '@/lib/models/text';
+import type { TersaModel } from '@/lib/providers';
 import { cn } from '@/lib/utils';
 import {
   type SubscriptionContextType,
@@ -20,26 +21,17 @@ import {
   ChevronsDownIcon,
   ChevronsUpIcon,
 } from 'lucide-react';
-import { type ComponentType, type SVGProps, useState } from 'react';
+import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 type ModelSelectorProps = {
-  id?: string;
+  id: string;
+  options: Record<string, TersaModel>;
   value: string;
   width?: number | string;
   className?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
-  options: {
-    label: string;
-    models: {
-      icon?: ComponentType<SVGProps<SVGSVGElement>>;
-      id: string;
-      label: string;
-      disabled?: boolean;
-      priceIndicator?: PriceBracket;
-    }[];
-  }[];
 };
 
 const getCostBracketIcon = (bracket: PriceBracket, className?: string) => {
@@ -93,7 +85,7 @@ const getCostBracketLabel = (bracket: PriceBracket) => {
 };
 
 const getModelDisabled = (
-  model: ModelSelectorProps['options'][number]['models'][number],
+  model: TersaModel,
   plan: SubscriptionContextType['plan']
 ) => {
   if (model.disabled) {
@@ -121,9 +113,7 @@ export const ModelSelector = ({
 }: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
   const { plan } = useSubscription();
-  const activeModel = options
-    .flatMap((option) => option.models)
-    .find((model) => model.id === value);
+  const activeModel = options[value];
 
   return (
     <Combobox
@@ -131,12 +121,10 @@ export const ModelSelector = ({
       onOpenChange={setOpen}
       value={value}
       onValueChange={onChange}
-      data={options
-        .flatMap((option) => option.models)
-        .map((model) => ({
-          label: model.label,
-          value: model.id,
-        }))}
+      data={Object.entries(options).map(([id, model]) => ({
+        label: model.label,
+        value: id,
+      }))}
       type="model"
     >
       <ComboboxTrigger
@@ -162,54 +150,50 @@ export const ModelSelector = ({
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
-          {options
-            .filter((option) => option.models.length)
-            .map((option) => (
-              <ComboboxGroup key={option.label} heading={option.label}>
-                {option.models.map((model) => (
-                  <ComboboxItem
-                    key={model.id}
-                    value={model.id}
-                    onSelect={() => {
-                      onChange?.(model.id);
-                      setOpen(false);
-                    }}
-                    disabled={getModelDisabled(model, plan)}
-                    className={cn(
-                      value === model.id &&
-                        'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
+          {Object.entries(options)
+            .filter(([_, model]) => model.providers.length)
+            .map(([id, model]) => (
+              <ComboboxGroup key={id} heading={model.label}>
+                <ComboboxItem
+                  key={id}
+                  value={id}
+                  onSelect={() => {
+                    onChange?.(id);
+                    setOpen(false);
+                  }}
+                  disabled={getModelDisabled(model, plan)}
+                  className={cn(
+                    value === id &&
+                      'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
+                  )}
+                >
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    {model.icon && (
+                      <model.icon
+                        className={cn(
+                          'size-4 shrink-0',
+                          value === id && 'text-primary-foreground'
+                        )}
+                      />
                     )}
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      {model.icon && (
-                        <model.icon
-                          className={cn(
-                            'size-4 shrink-0',
-                            value === model.id && 'text-primary-foreground'
+                    <span className="block truncate">{model.label}</span>
+                  </div>
+                  {model.priceIndicator && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="ml-auto">
+                          {getCostBracketIcon(
+                            model.priceIndicator,
+                            value === id ? 'text-primary-foreground' : ''
                           )}
-                        />
-                      )}
-                      <span className="block truncate">{model.label}</span>
-                    </div>
-                    {model.priceIndicator && (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="ml-auto">
-                            {getCostBracketIcon(
-                              model.priceIndicator,
-                              value === model.id
-                                ? 'text-primary-foreground'
-                                : ''
-                            )}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>{getCostBracketLabel(model.priceIndicator)}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                  </ComboboxItem>
-                ))}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{getCostBracketLabel(model.priceIndicator)}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </ComboboxItem>
               </ComboboxGroup>
             ))}
         </ComboboxList>
