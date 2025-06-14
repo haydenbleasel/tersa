@@ -105,15 +105,19 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Add node">
-              {nodeButtons.map((button) => (
-                <CommandItem
-                  key={button.id}
-                  onSelect={() => handleSelect(button.id, button.data)}
-                >
-                  <button.icon size={16} />
-                  {button.label}
-                </CommandItem>
-              ))}
+              {nodeButtons
+                .filter(
+                  (button) => button.id !== 'file' && button.id !== 'tweet'
+                )
+                .map((button) => (
+                  <CommandItem
+                    key={button.id}
+                    onSelect={() => handleSelect(button.id, button.data)}
+                  >
+                    <button.icon size={16} />
+                    {button.label}
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>
