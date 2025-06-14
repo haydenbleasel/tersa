@@ -145,12 +145,9 @@ export const ImageTransform = ({
         key,
         {
           ...model,
-          models: hasIncomingImageNodes
-            ? {
-                ...model.providers[0],
-                disabled: !model.supportsEdit,
-              }
-            : model.providers[0],
+          disabled: hasIncomingImageNodes
+            ? !model.supportsEdit
+            : model.disabled,
         },
       ])
     );
