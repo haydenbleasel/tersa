@@ -94,14 +94,14 @@ export const NodeLayout = ({
 
   return (
     <>
+      {type !== 'drop' && toolbar?.length && (
+        <NodeToolbar id={id} items={toolbar} />
+      )}
+      {type !== 'file' && type !== 'tweet' && (
+        <Handle type="target" position={Position.Left} />
+      )}
       <ContextMenu onOpenChange={handleSelect}>
         <ContextMenuTrigger>
-          {type !== 'drop' && toolbar?.length && (
-            <NodeToolbar id={id} items={toolbar} />
-          )}
-          {type !== 'file' && type !== 'tweet' && (
-            <Handle type="target" position={Position.Left} />
-          )}
           <div className="relative size-full h-auto w-sm">
             {type !== 'drop' && (
               <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
@@ -121,9 +121,6 @@ export const NodeLayout = ({
               </div>
             </div>
           </div>
-          {type !== 'video' && (
-            <Handle type="source" position={Position.Right} />
-          )}
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem onClick={() => duplicateNode(id)}>
@@ -150,6 +147,7 @@ export const NodeLayout = ({
           )}
         </ContextMenuContent>
       </ContextMenu>
+      {type !== 'video' && <Handle type="source" position={Position.Right} />}
       <Dialog open={showData} onOpenChange={setShowData}>
         <DialogContent>
           <DialogHeader>
