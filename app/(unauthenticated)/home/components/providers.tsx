@@ -4,31 +4,7 @@ import {
   MarqueeFade,
   MarqueeItem,
 } from '@/components/ui/kibo-ui/marquee';
-
-import {
-  AmazonIcon,
-  AnthropicIcon,
-  BlackForestLabsIcon,
-  CohereIcon,
-  // CerebrasIcon,
-  DeepSeekIcon,
-  // DeepinfraIcon,
-  // FalIcon,
-  // FireworksIcon,
-  GoogleIcon,
-  GroqIcon,
-  HumeIcon,
-  LmntIcon,
-  LumaIcon,
-  MinimaxIcon,
-  MistralIcon,
-  OpenAiIcon,
-  ReplicateIcon,
-  RunwayIcon,
-  VercelIcon,
-  // TogetherIcon,
-  XaiIcon,
-} from '@/lib/icons';
+import type { OpenAiIcon } from '@/lib/icons';
 
 import { imageModels } from '@/lib/models/image';
 import { speechModels } from '@/lib/models/speech';
@@ -36,40 +12,22 @@ import { textModels } from '@/lib/models/text';
 import { transcriptionModels } from '@/lib/models/transcription';
 import { videoModels } from '@/lib/models/video';
 import { visionModels } from '@/lib/models/vision';
-
-const icons = [
-  AmazonIcon,
-  AnthropicIcon,
-  BlackForestLabsIcon,
-  // CerebrasIcon,
-  CohereIcon,
-  DeepSeekIcon,
-  // DeepinfraIcon,
-  // FalIcon,
-  // FireworksIcon,
-  GoogleIcon,
-  GroqIcon,
-  HumeIcon,
-  LmntIcon,
-  LumaIcon,
-  MinimaxIcon,
-  MistralIcon,
-  OpenAiIcon,
-  ReplicateIcon,
-  RunwayIcon,
-  // TogetherIcon,
-  XaiIcon,
-  VercelIcon,
-];
+import { providers } from '@/lib/providers';
 
 const allModels = [
-  ...Object.keys(textModels),
-  ...Object.keys(imageModels),
-  ...Object.keys(speechModels),
-  ...Object.keys(transcriptionModels),
-  ...Object.keys(videoModels),
-  ...Object.keys(visionModels),
-].length;
+  ...Object.values(textModels),
+  ...Object.values(imageModels),
+  ...Object.values(speechModels),
+  ...Object.values(transcriptionModels),
+  ...Object.values(videoModels),
+  ...Object.values(visionModels),
+];
+
+const icons = new Set<typeof OpenAiIcon>();
+
+for (const model of Object.values(allModels)) {
+  icons.add(model.icon ?? model.chef.icon);
+}
 
 export const Providers = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -111,8 +69,9 @@ export const Providers = () => (
           </h2>
 
           <p className="mx-auto max-w-lg text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
-            Connect your workflows to {allModels} models from the world's top AI
-            providers, including OpenAI, Anthropic, and more.
+            Connect your workflows to {allModels.length} models from{' '}
+            {Object.keys(providers).length} of the world's top AI providers,
+            including OpenAI, Anthropic, and more.
           </p>
         </div>
 
@@ -120,7 +79,7 @@ export const Providers = () => (
           <MarqueeFade side="left" />
           <MarqueeFade side="right" />
           <MarqueeContent pauseOnHover={false}>
-            {icons.map((Icon, index) => (
+            {Array.from(icons).map((Icon, index) => (
               <MarqueeItem key={index} className="h-32 w-32 p-8">
                 <Icon className="size-full" />
               </MarqueeItem>
