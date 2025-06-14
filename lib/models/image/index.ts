@@ -183,7 +183,8 @@ export const imageModels: Record<string, TersaImageModel> = {
   },
   'amazon-nova-canvas-v1': {
     label: 'Nova Canvas',
-    chef: providers['amazon-bedrock'],
+    icon: AmazonBedrockIcon,
+    chef: providers.amazon,
     providers: [
       {
         ...providers['amazon-bedrock'],
