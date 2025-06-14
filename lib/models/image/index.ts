@@ -17,14 +17,14 @@ type TersaImageModel = {
   chef: TersaProvider;
   providers: (TersaProvider & {
     model: ImageModel;
+    getCost: (props?: {
+      textInput?: number;
+      imageInput?: number;
+      output?: number;
+      size?: string;
+    }) => number;
   })[];
   sizes?: ImageSize[];
-  getCost: (props?: {
-    textInput?: number;
-    imageInput?: number;
-    output?: number;
-    size?: string;
-  }) => number;
   supportsEdit?: boolean;
   disabled?: boolean;
   providerOptions?: Record<string, Record<string, string>>;
@@ -41,15 +41,15 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers.xai,
         model: xai.image('grok-2-image'),
+
+        // https://docs.x.ai/docs/models#models-and-pricing
+        getCost: () => 0.07,
       },
     ],
 
     // xAI does not support size or quality
     // size: '1024x1024',
     // providerOptions: {},
-
-    // https://docs.x.ai/docs/models#models-and-pricing
-    getCost: () => 0.07,
   },
   'dall-e-3': {
     label: 'DALL-E 3',
@@ -58,6 +58,27 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers.openai,
         model: openai.image('dall-e-3'),
+
+        // https://platform.openai.com/docs/pricing#image-generation
+        getCost: (props) => {
+          if (!props) {
+            throw new Error('Props are required');
+          }
+
+          if (!props.size) {
+            throw new Error('Size is required');
+          }
+
+          if (props.size === '1024x1024') {
+            return 0.08;
+          }
+
+          if (props.size === '1024x1792' || props.size === '1792x1024') {
+            return 0.12;
+          }
+
+          throw new Error('Size is not supported');
+        },
       },
     ],
     sizes: ['1024x1024', '1024x1792', '1792x1024'],
@@ -65,27 +86,6 @@ export const imageModels: Record<string, TersaImageModel> = {
       openai: {
         quality: 'hd',
       },
-    },
-
-    // https://platform.openai.com/docs/pricing#image-generation
-    getCost: (props) => {
-      if (!props) {
-        throw new Error('Props are required');
-      }
-
-      if (!props.size) {
-        throw new Error('Size is required');
-      }
-
-      if (props.size === '1024x1024') {
-        return 0.08;
-      }
-
-      if (props.size === '1024x1792' || props.size === '1792x1024') {
-        return 0.12;
-      }
-
-      throw new Error('Size is not supported');
     },
   },
   'dall-e-2': {
@@ -95,6 +95,29 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers.openai,
         model: openai.image('dall-e-2'),
+
+        // https://platform.openai.com/docs/pricing#image-generation
+        getCost: (props) => {
+          if (!props) {
+            throw new Error('Props are required');
+          }
+
+          const { size } = props;
+
+          if (size === '1024x1024') {
+            return 0.02;
+          }
+
+          if (size === '512x512') {
+            return 0.018;
+          }
+
+          if (size === '256x256') {
+            return 0.016;
+          }
+
+          throw new Error('Size is not supported');
+        },
       },
     ],
     sizes: ['1024x1024', '512x512', '256x256'],
@@ -104,29 +127,6 @@ export const imageModels: Record<string, TersaImageModel> = {
         quality: 'standard',
       },
     },
-
-    // https://platform.openai.com/docs/pricing#image-generation
-    getCost: (props) => {
-      if (!props) {
-        throw new Error('Props are required');
-      }
-
-      const { size } = props;
-
-      if (size === '1024x1024') {
-        return 0.02;
-      }
-
-      if (size === '512x512') {
-        return 0.018;
-      }
-
-      if (size === '256x256') {
-        return 0.016;
-      }
-
-      throw new Error('Size is not supported');
-    },
   },
   'gpt-image-1': {
     label: 'GPT Image 1',
@@ -135,6 +135,44 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers.openai,
         model: openai.image('gpt-image-1'),
+
+        // Input (Text): https://platform.openai.com/docs/pricing#latest-models
+        // Input (Image): https://platform.openai.com/docs/pricing#text-generation
+        // Output: https://platform.openai.com/docs/pricing#image-generation
+        getCost: (props) => {
+          const priceMap: Record<ImageSize, number> = {
+            '1024x1024': 0.167,
+            '1024x1536': 0.25,
+            '1536x1024': 0.25,
+          };
+
+          if (!props) {
+            throw new Error('Props are required');
+          }
+
+          if (typeof props.size !== 'string') {
+            throw new Error('Size is required');
+          }
+
+          if (typeof props.output !== 'number') {
+            throw new Error('Output is required');
+          }
+
+          if (typeof props.textInput !== 'number') {
+            throw new Error('Text input is required');
+          }
+
+          if (typeof props.imageInput !== 'number') {
+            throw new Error('Image input is required');
+          }
+
+          const { textInput, imageInput, output, size } = props;
+          const textInputCost = textInput ? (textInput / million) * 5 : 0;
+          const imageInputCost = imageInput ? (imageInput / million) * 10 : 0;
+          const outputCost = (output / million) * priceMap[size as ImageSize];
+
+          return textInputCost + imageInputCost + outputCost;
+        },
       },
     ],
     supportsEdit: true,
@@ -145,44 +183,6 @@ export const imageModels: Record<string, TersaImageModel> = {
         quality: 'high',
       },
     },
-
-    // Input (Text): https://platform.openai.com/docs/pricing#latest-models
-    // Input (Image): https://platform.openai.com/docs/pricing#text-generation
-    // Output: https://platform.openai.com/docs/pricing#image-generation
-    getCost: (props) => {
-      const priceMap: Record<ImageSize, number> = {
-        '1024x1024': 0.167,
-        '1024x1536': 0.25,
-        '1536x1024': 0.25,
-      };
-
-      if (!props) {
-        throw new Error('Props are required');
-      }
-
-      if (typeof props.size !== 'string') {
-        throw new Error('Size is required');
-      }
-
-      if (typeof props.output !== 'number') {
-        throw new Error('Output is required');
-      }
-
-      if (typeof props.textInput !== 'number') {
-        throw new Error('Text input is required');
-      }
-
-      if (typeof props.imageInput !== 'number') {
-        throw new Error('Image input is required');
-      }
-
-      const { textInput, imageInput, output, size } = props;
-      const textInputCost = textInput ? (textInput / million) * 5 : 0;
-      const imageInputCost = imageInput ? (imageInput / million) * 10 : 0;
-      const outputCost = (output / million) * priceMap[size as ImageSize];
-
-      return textInputCost + imageInputCost + outputCost;
-    },
   },
   'amazon-nova-canvas-v1': {
     label: 'Nova Canvas',
@@ -192,6 +192,25 @@ export const imageModels: Record<string, TersaImageModel> = {
         ...providers['amazon-bedrock'],
         icon: AmazonBedrockIcon,
         model: bedrock.image('amazon.nova-canvas-v1:0'),
+
+        // https://aws.amazon.com/bedrock/pricing/
+        getCost: (props) => {
+          if (!props) {
+            throw new Error('Props are required');
+          }
+
+          const { size } = props;
+
+          if (size === '1024x1024') {
+            return 0.06;
+          }
+
+          if (size === '2048x2048') {
+            return 0.08;
+          }
+
+          throw new Error('Size is not supported');
+        },
       },
     ],
 
@@ -203,25 +222,6 @@ export const imageModels: Record<string, TersaImageModel> = {
         quality: 'premium',
       },
     },
-
-    // https://aws.amazon.com/bedrock/pricing/
-    getCost: (props) => {
-      if (!props) {
-        throw new Error('Props are required');
-      }
-
-      const { size } = props;
-
-      if (size === '1024x1024') {
-        return 0.06;
-      }
-
-      if (size === '2048x2048') {
-        return 0.08;
-      }
-
-      throw new Error('Size is not supported');
-    },
   },
   'flux-pro-1.1': {
     label: 'FLUX Pro 1.1',
@@ -230,13 +230,13 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-pro-1.1'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.04,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.04,
   },
   'flux-pro': {
     label: 'FLUX Pro',
@@ -245,13 +245,13 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-pro'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.05,
   },
   'flux-dev': {
     label: 'FLUX Dev',
@@ -260,14 +260,14 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-dev'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.025,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
     priceIndicator: 'low',
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.025,
   },
   'flux-pro-1.0-canny': {
     label: 'FLUX Pro 1.0 Canny',
@@ -276,13 +276,13 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-pro-1.0-canny'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.05,
   },
   'flux-pro-1.0-depth': {
     label: 'FLUX Pro 1.0 Depth',
@@ -291,13 +291,13 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-pro-1.0-depth'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.05,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.05,
   },
   'flux-kontext-pro': {
     label: 'FLUX Kontext Pro',
@@ -306,13 +306,13 @@ export const imageModels: Record<string, TersaImageModel> = {
       {
         ...providers['black-forest-labs'],
         model: blackForestLabs.image('flux-kontext-pro'),
+
+        // https://bfl.ai/pricing/api
+        getCost: () => 0.04,
       },
     ],
     sizes: ['1024x1024', '832x1440', '1440x832'],
     supportsEdit: true,
-
-    // https://bfl.ai/pricing/api
-    getCost: () => 0.04,
   },
   'flux-kontext-max': {
     label: 'FLUX Kontext Max',
