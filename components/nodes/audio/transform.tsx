@@ -7,7 +7,6 @@ import { useAnalytics } from '@/hooks/use-analytics';
 import { download } from '@/lib/download';
 import { handleError } from '@/lib/error/handle';
 import { speechModels } from '@/lib/models/speech';
-import { capitalize } from '@/lib/utils';
 import {
   getDescriptionsFromImageNodes,
   getTextFromTextNodes,
@@ -26,21 +25,22 @@ import { toast } from 'sonner';
 import { mutate } from 'swr';
 import type { AudioNodeProps } from '.';
 import { ModelSelector } from '../model-selector';
+import { VoiceSelector } from './voice-selector';
 
 type AudioTransformProps = AudioNodeProps & {
   title: string;
 };
 
 const getDefaultModel = (models: typeof speechModels) => {
-  const defaultModel = models
-    .flatMap((model) => model.models)
-    .find((model) => model.default);
+  const defaultModel = Object.entries(models).find(
+    ([_, model]) => model.default
+  );
 
   if (!defaultModel) {
     throw new Error('No default model found');
   }
 
-  return defaultModel;
+  return defaultModel[0];
 };
 
 export const AudioTransform = ({
@@ -52,10 +52,8 @@ export const AudioTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const project = useProject();
-  const modelId = data.model ?? getDefaultModel(speechModels).id;
-  const model = speechModels
-    .flatMap((model) => model.models)
-    .find((model) => model.id === modelId);
+  const modelId = data.model ?? getDefaultModel(speechModels);
+  const model = speechModels[modelId];
   const analytics = useAnalytics();
 
   const handleGenerate = async () => {
@@ -132,17 +130,9 @@ export const AudioTransform = ({
   if (model?.voices.length) {
     toolbar.push({
       children: (
-        <ModelSelector
+        <VoiceSelector
           value={data.voice ?? model.voices[0]}
-          options={[
-            {
-              label: `${modelId} voices`,
-              models: model.voices.map((voice) => ({
-                id: voice,
-                label: capitalize(voice),
-              })),
-            },
-          ]}
+          options={model.voices}
           key={id}
           className="w-[200px] rounded-full"
           onChange={(value) => updateNodeData(id, { voice: value })}

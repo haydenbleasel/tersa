@@ -30,16 +30,15 @@ export const transcribeAction = async (
       throw new Error('Project not found');
     }
 
-    const model = transcriptionModels
-      .flatMap((model) => model.models)
-      .find((model) => model.id === project.transcriptionModel);
+    const model = transcriptionModels[project.transcriptionModel];
 
     if (!model) {
       throw new Error('Model not found');
     }
 
+    const provider = model.providers[0];
     const transcript = await transcribe({
-      model: model.model,
+      model: provider.model,
       audio: new URL(url),
     });
 

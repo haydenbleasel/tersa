@@ -52,9 +52,7 @@ type RetrieveUrlResponse = {
 
 const baseUrl = 'https://api.minimaxi.chat/';
 
-export const minimax = (
-  modelId: CreateJobProps['model']
-): VideoModel['model'] => ({
+export const minimax = (modelId: CreateJobProps['model']): VideoModel => ({
   modelId,
   generate: async ({ prompt, imagePrompt }) => {
     const props: CreateJobProps = {

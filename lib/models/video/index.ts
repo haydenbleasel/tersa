@@ -11,7 +11,7 @@ import { runway } from './runway';
 
 const million = 1000000;
 
-type VideoModel = {
+export type VideoModel = {
   modelId: string;
   generate: (props: {
     prompt: string;

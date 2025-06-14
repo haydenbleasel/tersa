@@ -4,7 +4,7 @@ import { LumaAI } from 'lumaai';
 
 export const luma = (
   modelId: 'ray-1-6' | 'ray-2' | 'ray-flash-2'
-): VideoModel['model'] => ({
+): VideoModel => ({
   modelId,
   generate: async ({ prompt, imagePrompt, duration }) => {
     const luma = new LumaAI({ authToken: env.LUMAAI_API_KEY });

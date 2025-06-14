@@ -2,9 +2,7 @@ import { env } from '@/lib/env';
 import type { VideoModel } from '@/lib/models/video';
 import RunwayML from '@runwayml/sdk';
 
-export const runway = (
-  modelId: 'gen4_turbo' | 'gen3a_turbo'
-): VideoModel['model'] => ({
+export const runway = (modelId: 'gen4_turbo' | 'gen3a_turbo'): VideoModel => ({
   modelId,
   generate: async ({ prompt, imagePrompt, duration }) => {
     if (!imagePrompt) {

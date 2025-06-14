@@ -25,7 +25,7 @@ import { useState } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 type ModelSelectorProps = {
-  id: string;
+  id?: string;
   options: Record<string, TersaModel>;
   value: string;
   width?: number | string;

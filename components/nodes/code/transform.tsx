@@ -33,15 +33,15 @@ type CodeTransformProps = CodeNodeProps & {
 };
 
 const getDefaultModel = (models: typeof textModels) => {
-  const defaultModel = models
-    .flatMap((model) => model.models)
-    .find((model) => model.default);
+  const defaultModel = Object.entries(models).find(
+    ([_, model]) => model.default
+  );
 
   if (!defaultModel) {
     throw new Error('No default model found');
   }
 
-  return defaultModel;
+  return defaultModel[0];
 };
 
 export const CodeTransform = ({
@@ -52,7 +52,7 @@ export const CodeTransform = ({
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const project = useProject();
-  const modelId = data.model ?? getDefaultModel(textModels).id;
+  const modelId = data.model ?? getDefaultModel(textModels);
   const language = data.generated?.language ?? 'javascript';
   const analytics = useAnalytics();
   const { append, messages, setMessages, status, stop } = useChat({

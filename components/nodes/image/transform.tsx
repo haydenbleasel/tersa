@@ -37,15 +37,15 @@ type ImageTransformProps = ImageNodeProps & {
 };
 
 const getDefaultModel = (models: typeof imageModels) => {
-  const defaultModel = models
-    .flatMap((model) => model.models)
-    .find((model) => model.default);
+  const defaultModel = Object.entries(models).find(
+    ([_, model]) => model.default
+  );
 
   if (!defaultModel) {
     throw new Error('No default model found');
   }
 
-  return defaultModel;
+  return defaultModel[0];
 };
 
 export const ImageTransform = ({
@@ -60,22 +60,10 @@ export const ImageTransform = ({
   const hasIncomingImageNodes =
     getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
       .length > 0;
-  const modelId = data.model ?? getDefaultModel(imageModels).id;
+  const modelId = data.model ?? getDefaultModel(imageModels);
   const analytics = useAnalytics();
-  const selectedModel = imageModels
-    .flatMap((provider) => provider.models)
-    .find((model) => model.id === modelId);
+  const selectedModel = imageModels[modelId];
   const size = data.size ?? selectedModel?.sizes?.at(0);
-
-  const availableModels = imageModels.map((provider) => ({
-    ...provider,
-    models: hasIncomingImageNodes
-      ? provider.models.map((model) => ({
-          ...model,
-          disabled: !model.supportsEdit,
-        }))
-      : provider.models,
-  }));
 
   const handleGenerate = useCallback(async () => {
     if (loading || !project?.id) {
@@ -152,6 +140,21 @@ export const ImageTransform = ({
   ) => updateNodeData(id, { instructions: event.target.value });
 
   const toolbar = useMemo<ComponentProps<typeof NodeLayout>['toolbar']>(() => {
+    const availableModels = Object.fromEntries(
+      Object.entries(imageModels).map(([key, model]) => [
+        key,
+        {
+          ...model,
+          models: hasIncomingImageNodes
+            ? {
+                ...model.providers[0],
+                disabled: !model.supportsEdit,
+              }
+            : model.providers[0],
+        },
+      ])
+    );
+
     const items: ComponentProps<typeof NodeLayout>['toolbar'] = [
       {
         children: (
@@ -242,7 +245,7 @@ export const ImageTransform = ({
     return items;
   }, [
     modelId,
-    availableModels,
+    hasIncomingImageNodes,
     id,
     updateNodeData,
     selectedModel?.sizes,

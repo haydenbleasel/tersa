@@ -28,15 +28,15 @@ type VideoTransformProps = VideoNodeProps & {
 };
 
 const getDefaultModel = (models: typeof videoModels) => {
-  const defaultModel = models
-    .flatMap((model) => model.models)
-    .find((model) => model.default);
+  const defaultModel = Object.entries(models).find(
+    ([_, model]) => model.default
+  );
 
   if (!defaultModel) {
     throw new Error('No default model found');
   }
 
-  return defaultModel;
+  return defaultModel[0];
 };
 
 export const VideoTransform = ({
@@ -48,7 +48,7 @@ export const VideoTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const project = useProject();
-  const modelId = data.model ?? getDefaultModel(videoModels).id;
+  const modelId = data.model ?? getDefaultModel(videoModels);
   const analytics = useAnalytics();
 
   const handleGenerate = async () => {
