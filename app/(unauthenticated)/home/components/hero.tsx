@@ -64,10 +64,11 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
         )}
 
         <h1 className="mt-6 mb-5 text-center font-medium text-4xl tracking-[-0.12rem] md:text-6xl">
-          <span className="mr-1 font-semibold font-serif text-5xl italic md:text-7xl">
-            Visualize
+          A
+          <span className="mx-1 font-semibold font-serif text-5xl italic md:text-7xl">
+            visual
           </span>{' '}
-          your AI workflows
+          AI playground
         </h1>
 
         <p className="max-w-2xl text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">

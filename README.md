@@ -2,7 +2,7 @@
 
 # Tersa
 
-Visualize your AI workflows. Tersa is an open source canvas for building AI workflows. Drag, drop connect and run nodes to build your own workflows powered by various industry-leading AI models.
+A visual AI playground. Tersa is an open source canvas for building AI workflows. Drag, drop connect and run nodes to build your own workflows powered by various industry-leading AI models.
 
 ## Features
 

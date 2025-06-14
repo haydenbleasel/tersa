@@ -6,7 +6,7 @@ import { Providers } from './components/providers';
 import { Tweets } from './components/tweets';
 
 export const metadata: Metadata = {
-  title: 'Visualize your AI workflows | Tersa',
+  title: 'A visual AI playground | Tersa',
   description:
     'Tersa is an open source canvas for building AI workflows. Drag, drop connect and run nodes to build your own workflows powered by various industry-leading AI models.',
 };
