@@ -2,6 +2,7 @@ import {
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
+  ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
@@ -51,7 +52,7 @@ export const VoiceSelector = ({
       >
         {activeVoice && (
           <div className="flex w-full items-center gap-2 overflow-hidden">
-            <span className="block truncate">{activeVoice}</span>
+            <span className="block truncate capitalize">{activeVoice}</span>
           </div>
         )}
       </ComboboxTrigger>
@@ -63,24 +64,26 @@ export const VoiceSelector = ({
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
-          {options.map((voice) => (
-            <ComboboxItem
-              key={voice}
-              value={voice}
-              onSelect={() => {
-                onChange?.(voice);
-                setOpen(false);
-              }}
-              className={cn(
-                value === voice &&
-                  'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
-              )}
-            >
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="block truncate">{capitalize(voice)}</span>
-              </div>
-            </ComboboxItem>
-          ))}
+          <ComboboxGroup>
+            {options.map((voice) => (
+              <ComboboxItem
+                key={voice}
+                value={voice}
+                onSelect={() => {
+                  onChange?.(voice);
+                  setOpen(false);
+                }}
+                className={cn(
+                  value === voice &&
+                    'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
+                )}
+              >
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="block truncate capitalize">{voice}</span>
+                </div>
+              </ComboboxItem>
+            ))}
+          </ComboboxGroup>
         </ComboboxList>
       </ComboboxContent>
     </Combobox>

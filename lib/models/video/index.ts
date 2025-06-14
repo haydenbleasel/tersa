@@ -208,7 +208,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
   },
   'kling-v1.5-standard': {
     label: 'Kling v1.5 Standard',
-    chef: providers.replicate,
+    chef: providers.kling,
     providers: [
       {
         ...providers.replicate,
@@ -226,7 +226,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
   },
   'kling-v1.5-pro': {
     label: 'Kling v1.5 Pro',
-    chef: providers.replicate,
+    chef: providers.kling,
     providers: [
       {
         ...providers.replicate,
@@ -244,7 +244,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
   },
   'kling-v1.6-standard': {
     label: 'Kling v1.6 Standard',
-    chef: providers.replicate,
+    chef: providers.kling,
     providers: [
       {
         ...providers.replicate,
@@ -262,7 +262,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
   },
   'kling-v1.6-pro': {
     label: 'Kling v1.6 Pro',
-    chef: providers.replicate,
+    chef: providers.kling,
     providers: [
       {
         ...providers.replicate,
@@ -280,7 +280,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
   },
   'kling-v2.0': {
     label: 'Kling v2.0',
-    chef: providers.replicate,
+    chef: providers.kling,
     providers: [
       {
         ...providers.replicate,
