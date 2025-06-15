@@ -259,8 +259,6 @@ export const TextTransform = ({
     stop,
   ]);
 
-  console.log(messages, 'x');
-
   const nonUserMessages = messages.filter((message) => message.role !== 'user');
 
   useEffect(() => {
