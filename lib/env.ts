@@ -42,6 +42,7 @@ export const env = createEnv({
     MISTRAL_API_KEY: z.string().min(1),
     HUME_API_KEY: z.string().min(1),
     LMNT_API_KEY: z.string().min(1),
+    PERPLEXITY_API_KEY: z.string().min(1).startsWith('pplx-'),
 
     // Other Models
     MINIMAX_GROUP_ID: z.string().min(1),
@@ -100,5 +101,6 @@ export const env = createEnv({
     HUME_API_KEY: process.env.HUME_API_KEY,
     LMNT_API_KEY: process.env.LMNT_API_KEY,
     BF_API_KEY: process.env.BF_API_KEY,
+    PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
   },
 });

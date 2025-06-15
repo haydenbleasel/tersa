@@ -67,7 +67,8 @@ export const POST = async (req: Request) => {
       'The output should be a concise summary of the content, no more than 100 words.',
     ].join('\n'),
     messages,
-    onFinish: async ({ usage }) => {
+    onFinish: async ({ usage, reasoning, response, providerMetadata }) => {
+      console.log(usage, reasoning, response, providerMetadata, 'x');
       await trackCreditUsage({
         action: 'chat',
         cost: provider.getCost({
