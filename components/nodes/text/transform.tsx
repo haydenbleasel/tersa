@@ -79,7 +79,7 @@ export const TextTransform = ({
       updateNodeData(id, {
         generated: {
           text: message.content,
-          sources: message.parts?.filter((part) => part.type === 'source'),
+          sources: message.parts?.filter((part) => part.type === 'source') ?? [],
         },
         updatedAt: new Date().toISOString(),
       });
