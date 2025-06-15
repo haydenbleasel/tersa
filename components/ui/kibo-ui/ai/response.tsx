@@ -40,7 +40,7 @@ const components: Options['components'] = {
     </li>
   ),
   ul: ({ node, children, className, ...props }) => (
-    <ul className={cn('ml-4 list-outside list-decimal', className)} {...props}>
+    <ul className={cn('ml-4 list-outside list-disc', className)} {...props}>
       {children}
     </ul>
   ),
