@@ -1,5 +1,16 @@
 import { NodeLayout } from '@/components/nodes/layout';
 import { Button } from '@/components/ui/button';
+import {
+  AIMessage,
+  AIMessageContent,
+} from '@/components/ui/kibo-ui/ai/message';
+import { AIResponse } from '@/components/ui/kibo-ui/ai/response';
+import {
+  AISource,
+  AISources,
+  AISourcesContent,
+  AISourcesTrigger,
+} from '@/components/ui/kibo-ui/ai/source';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useAnalytics } from '@/hooks/use-analytics';
@@ -68,6 +79,7 @@ export const TextTransform = ({
       updateNodeData(id, {
         generated: {
           text: message.content,
+          sources: message.parts?.filter((part) => part.type === 'source'),
         },
         updatedAt: new Date().toISOString(),
       });
@@ -288,8 +300,40 @@ export const TextTransform = ({
           )}
         {Boolean(nonUserMessages.length) &&
           status !== 'submitted' &&
-          nonUserMessages.map((message, index) => (
-            <ReactMarkdown key={index}>{message.content}</ReactMarkdown>
+          nonUserMessages.map((message) => (
+            <AIMessage
+              key={message.id}
+              from={message.role === 'assistant' ? 'assistant' : 'user'}
+              className="p-0 [&>div]:max-w-none"
+            >
+              <div>
+                {message.parts.filter((part) => part.type === 'source')
+                  ?.length && (
+                  <AISources>
+                    <AISourcesTrigger
+                      count={
+                        message.parts.filter((part) => part.type === 'source')
+                          .length
+                      }
+                    />
+                    <AISourcesContent>
+                      {message.parts
+                        .filter((part) => part.type === 'source')
+                        .map(({ source }) => (
+                          <AISource
+                            key={source.url}
+                            href={source.url}
+                            title={source.title ?? new URL(source.url).hostname}
+                          />
+                        ))}
+                    </AISourcesContent>
+                  </AISources>
+                )}
+                <AIMessageContent className="bg-transparent p-0">
+                  <AIResponse>{message.content}</AIResponse>
+                </AIMessageContent>
+              </div>
+            </AIMessage>
           ))}
       </div>
       <Textarea
