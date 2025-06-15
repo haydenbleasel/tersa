@@ -20,6 +20,7 @@ import {
   MinimaxIcon,
   MistralIcon,
   OpenAiIcon,
+  PerplexityIcon,
   ReplicateIcon,
   RunwayIcon,
   TogetherIcon,
@@ -164,6 +165,11 @@ export const providers = {
     id: 'replicate',
     name: 'Replicate',
     icon: ReplicateIcon,
+  },
+  perplexity: {
+    id: 'perplexity',
+    name: 'Perplexity',
+    icon: PerplexityIcon,
   },
 };
 

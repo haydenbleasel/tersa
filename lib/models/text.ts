@@ -5,6 +5,7 @@ import { google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
 import { mistral } from '@ai-sdk/mistral';
 import { openai } from '@ai-sdk/openai';
+import { perplexity } from '@ai-sdk/perplexity';
 import { vercel } from '@ai-sdk/vercel';
 import { xai } from '@ai-sdk/xai';
 import {
@@ -12,12 +13,19 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';
-import { ClaudeIcon, GeminiIcon, GemmaIcon, GrokIcon } from '../icons';
+import {
+  ClaudeIcon,
+  GeminiIcon,
+  GemmaIcon,
+  GrokIcon,
+  PerplexityIcon,
+} from '../icons';
 import { type TersaModel, type TersaProvider, providers } from '../providers';
 
 export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
 
 const million = 1000000;
+const thousand = 1000;
 
 type TersaTextModel = TersaModel & {
   providers: (TersaProvider & {
@@ -845,5 +853,43 @@ export const textModels: Record<string, TersaTextModel> = {
       },
     ],
     priceIndicator: 'lowest',
+  },
+  sonar: {
+    icon: PerplexityIcon,
+    label: 'Sonar',
+    chef: providers.perplexity,
+    providers: [
+      {
+        ...providers.perplexity,
+        model: perplexity('sonar'),
+
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 1;
+          const outputCost = (output / million) * 1;
+          const pricePerRequest = 12 / thousand;
+
+          return inputCost + outputCost + pricePerRequest;
+        },
+      },
+    ],
+  },
+  'sonar-pro': {
+    icon: PerplexityIcon,
+    label: 'Sonar Pro',
+    chef: providers.perplexity,
+    providers: [
+      {
+        ...providers.perplexity,
+        model: perplexity('sonar-pro'),
+
+        getCost: ({ input, output }: { input: number; output: number }) => {
+          const inputCost = (input / million) * 3;
+          const outputCost = (output / million) * 15;
+          const pricePerRequest = 14 / thousand;
+
+          return inputCost + outputCost + pricePerRequest;
+        },
+      },
+    ],
   },
 };
