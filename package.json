@@ -159,7 +159,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.0",
     "drizzle-kit": "^0.31.1",
     "prettier": "^3.5.3",
     "react-email": "4.0.16",
