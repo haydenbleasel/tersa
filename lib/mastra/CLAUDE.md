@@ -4,6 +4,16 @@
 
 The Tersa Agent is an intelligent AI assistant integrated into the Tersa visual workflow builder. It uses the Mastra AI framework to provide natural language understanding, workflow generation, and canvas manipulation capabilities.
 
+## Phase 2 Updates
+
+### Enhanced Features
+- **Supabase Memory Adapter**: User-specific memory persistence
+- **Credit Integration**: Usage tracking with Stripe billing
+- **Visual Feedback**: Toast notifications and animations for canvas operations
+- **Reasoning Visibility**: Optional display of agent thought process
+- **Mobile Support**: Responsive UI with touch-friendly interactions
+- **Natural Language Workflows**: Parse descriptions into visual workflows
+
 ## Architecture
 
 ### Core Components

@@ -9,7 +9,8 @@ import { AgentContextTags } from './agent-context-tags';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Sparkles, Minimize2, Maximize2, X } from 'lucide-react';
+import { Sparkles, Minimize2, Maximize2, X, Zap } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -30,6 +31,7 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [taggedNodes, setTaggedNodes] = useState<string[]>([]);
+  const [isExecutingAction, setIsExecutingAction] = useState(false);
   
   const { generateResponse, streamResponse } = useTersaAgent();
   const { selectedNodes, canvasState, executeCanvasOperation } = useCanvasBridge();
@@ -84,9 +86,25 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
             )
           );
         } else if (chunk.type === 'tool-call') {
-          // Handle canvas operations
+          // Handle canvas operations with visual feedback
           if (chunk.toolName.startsWith('canvas-')) {
-            await executeCanvasOperation(chunk.toolName, chunk.args);
+            setIsExecutingAction(true);
+            
+            // Show toast for the action
+            const actionName = chunk.toolName.replace('canvas-', '').replace(/-/g, ' ');
+            toast.info(`Executing: ${actionName}`, {
+              icon: <Zap className="h-4 w-4" />,
+              duration: 2000,
+            });
+            
+            try {
+              await executeCanvasOperation(chunk.toolName, chunk.args);
+              
+              // Add a small delay for visual effect
+              await new Promise(resolve => setTimeout(resolve, 500));
+            } finally {
+              setIsExecutingAction(false);
+            }
           }
         }
       }
@@ -101,16 +119,23 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
   return (
     <Card
       className={cn(
-        'flex flex-col bg-background/95 backdrop-blur-sm border shadow-lg',
-        mode === 'overlay' && 'fixed bottom-4 right-4 w-96 h-[500px] z-50',
-        mode === 'sidebar' && 'fixed top-0 right-0 w-[400px] h-full z-40',
-        mode === 'modal' && 'fixed inset-4 max-w-4xl mx-auto z-50'
+        'flex flex-col bg-background/95 backdrop-blur-sm border shadow-lg transition-all duration-300 ease-in-out',
+        mode === 'overlay' && 'fixed bottom-4 right-4 w-96 h-[500px] z-50 animate-in slide-in-from-bottom-2 fade-in-0',
+        mode === 'sidebar' && 'fixed top-0 right-0 w-[400px] h-full z-40 animate-in slide-in-from-right',
+        mode === 'modal' && 'fixed inset-4 max-w-4xl mx-auto z-50 animate-in zoom-in-95 fade-in-0',
+        // Mobile responsive
+        'max-sm:bottom-0 max-sm:right-0 max-sm:left-0 max-sm:top-auto max-sm:w-full max-sm:h-[80vh] max-sm:rounded-t-xl max-sm:rounded-b-none'
       )}
     >
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <Sparkles className={cn("h-5 w-5 text-primary", isExecutingAction && "animate-pulse")} />
           <h3 className="font-semibold">Tersa Agent</h3>
+          {isExecutingAction && (
+            <span className="text-xs text-muted-foreground animate-pulse">
+              Executing action...
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1">
           {mode === 'overlay' && (

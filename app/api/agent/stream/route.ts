@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { tersaAgent } from '@/lib/mastra';
+import { createTersaAgent } from '@/lib/mastra/agents/factory';
+import { getCredits } from '@/app/actions/credits/get';
+import { trackCreditUsage } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,11 +20,15 @@ export async function POST(request: NextRequest) {
       return new Response('Message is required', { status: 400 });
     }
     
-    // TODO: Implement credit checking
-    // const credits = await getCredits(user.id);
-    // if (credits < 1) {
-    //   return new Response('Insufficient credits', { status: 402 });
-    // }
+    // Check credits
+    const creditsResult = await getCredits();
+    if ('error' in creditsResult) {
+      return new Response(creditsResult.error, { status: 500 });
+    }
+    
+    if (creditsResult.credits < 1) {
+      return new Response('Insufficient credits', { status: 402 });
+    }
     
     // Get user profile for preferences
     const { data: profile } = await supabase
@@ -30,6 +36,9 @@ export async function POST(request: NextRequest) {
       .select('*')
       .eq('id', user.id)
       .single();
+    
+    // Create user-specific agent instance
+    const tersaAgent = createTersaAgent(user.id);
     
     // Create runtime context
     const runtimeContext = new Map([
@@ -87,10 +96,14 @@ export async function POST(request: NextRequest) {
         // Send completion signal
         await writer.write(encoder.encode('data: [DONE]\n\n'));
         
-        // TODO: Implement credit deduction
-        // const tokensUsed = 100; // Estimate for now
-        // const creditCost = Math.ceil(tokensUsed / 1000);
-        // await deductCredits(user.id, creditCost);
+        // Track credit usage (estimate for streaming)
+        const tokensUsed = 500; // Estimate for streaming response
+        const creditCost = tokensUsed * 0.00001;
+        
+        await trackCreditUsage({
+          action: 'tersa-agent-stream',
+          cost: creditCost,
+        });
         
       } catch (error) {
         console.error('Streaming error:', error);

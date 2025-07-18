@@ -30,4 +30,14 @@ export const profile = pgTable('profile', {
   subscriptionId: text('subscription_id'),
   productId: text('product_id'),
   onboardedAt: timestamp('onboarded_at'),
+  mcpServers: json('mcp_servers').$type<Array<{ url: string; key?: string }>>(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const agentMemory = pgTable('agent_memory', {
+  key: varchar('key').primaryKey().notNull(),
+  value: json('value').notNull(),
+  userId: varchar('user_id').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
