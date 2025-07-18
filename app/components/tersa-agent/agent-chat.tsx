@@ -102,13 +102,13 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
               await new Promise<void>((resolve) => {
                 setPendingApproval({
                   messageId: assistantMessage.id,
-                  toolName: chunk.toolName,
+                  toolName: chunk.toolName || '',
                   args: chunk.args,
                   resolve,
                 });
                 
                 // Update the message to show approval request
-                const actionName = chunk.toolName.replace('canvas-', '').replace(/-/g, ' ');
+                const actionName = (chunk.toolName || '').replace('canvas-', '').replace(/-/g, ' ');
                 assistantMessage.content += `\n\n⚠️ **Approval Required**: This action will ${actionName}. Please confirm to proceed.`;
                 setMessages((prev) => 
                   prev.map((msg) =>

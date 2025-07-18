@@ -4,8 +4,8 @@ import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { analysisTools } from '../../tools/analysis-tools';
-import { searchTools } from '../../tools/search-tools';
+import * as analysisTools from '../../tools/analysis-tools';
+import * as searchTools from '../../tools/search-tools';
 
 // Load instructions from XML file
 const loadInstructions = async () => {
@@ -30,14 +30,15 @@ export const createReasoningAgent = (memory: Memory) => {
       const baseInstructions = await loadInstructions();
       const currentGoal = runtimeContext?.get('current-goal') || '';
       const canvasState = runtimeContext?.get('canvas-state') || {};
+      const canvasData = canvasState as any;
       
       return `
         ${baseInstructions}
         
         Current context:
         - Goal: ${currentGoal}
-        - Canvas nodes: ${Object.keys(canvasState.nodes || {}).length}
-        - Canvas edges: ${Object.keys(canvasState.edges || {}).length}
+        - Canvas nodes: ${Object.keys(canvasData.nodes || {}).length}
+        - Canvas edges: ${Object.keys(canvasData.edges || {}).length}
         
         Focus on providing deep analysis and structured reasoning for complex workflows.
       `;
@@ -66,7 +67,7 @@ export const createReasoningAgent = (memory: Memory) => {
           connections: { type: 'array', description: 'List of connections between nodes' },
           reasoning: { type: 'string', description: 'Explanation of the design choices' },
         },
-        execute: async ({ nodes, connections, reasoning }) => {
+        execute: async ({ nodes, connections, reasoning }: { nodes: any[]; connections: any[]; reasoning: string }) => {
           return {
             recommendation: {
               nodes,
@@ -78,6 +79,5 @@ export const createReasoningAgent = (memory: Memory) => {
         },
       },
     },
-    maxSteps: 5, // Reasoning should be focused
   });
 };

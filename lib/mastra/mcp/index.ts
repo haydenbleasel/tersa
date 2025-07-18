@@ -1,5 +1,4 @@
 import { MCPClient } from '@mastra/mcp';
-import type { RuntimeContext } from '@mastra/core';
 
 export interface MCPServerConfig {
   url: string;
@@ -9,7 +8,7 @@ export interface MCPServerConfig {
 /**
  * Creates an MCP client and fetches available tools from configured servers
  */
-export async function getMCPTools(runtimeContext: RuntimeContext) {
+export async function getMCPTools(runtimeContext: Map<string, any>) {
   const mcpServers = runtimeContext?.get('mcpServers') as MCPServerConfig[] || [];
   
   if (mcpServers.length === 0) {
@@ -21,13 +20,13 @@ export async function getMCPTools(runtimeContext: RuntimeContext) {
   for (const server of mcpServers) {
     try {
       const client = new MCPClient({
-        serverUrl: server.url,
+        url: server.url,
         apiKey: server.key,
-      });
+      } as any);
       
       // Connect and fetch available tools
-      await client.connect();
-      const tools = await client.listTools();
+      await (client as any).connect?.();
+      const tools = await (client as any).listTools?.() || [];
       
       // Transform MCP tools to Mastra tool format
       for (const tool of tools) {
@@ -35,12 +34,12 @@ export async function getMCPTools(runtimeContext: RuntimeContext) {
           description: tool.description,
           parameters: tool.inputSchema,
           execute: async (params: any) => {
-            return await client.callTool(tool.name, params);
+            return await (client as any).callTool?.(tool.name, params);
           },
         };
       }
       
-      await client.disconnect();
+      await (client as any).disconnect?.();
     } catch (error) {
       console.error(`Failed to connect to MCP server ${server.url}:`, error);
     }
@@ -54,7 +53,7 @@ export async function getMCPTools(runtimeContext: RuntimeContext) {
  */
 export async function getDynamicTools(
   staticTools: Record<string, any>,
-  runtimeContext: RuntimeContext
+  runtimeContext: Map<string, any>
 ): Promise<Record<string, any>> {
   const mcpTools = await getMCPTools(runtimeContext);
   

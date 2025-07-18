@@ -11,7 +11,13 @@
     "lint": "next lint",
     "export": "email export",
     "migrate": "npx drizzle-kit push",
-    "generate": "npx -y openapi-typescript@latest https://api.us1.bfl.ai/openapi.json -o ./openapi/bfl.d.ts"
+    "generate": "npx -y openapi-typescript@latest https://api.us1.bfl.ai/openapi.json -o ./openapi/bfl.d.ts",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "pnpm test && pnpm test:e2e"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^2.2.10",
@@ -159,17 +165,24 @@
     "@auto-it/first-time-contributor": "^11.3.0",
     "@auto-it/git-tag": "^11.3.0",
     "@biomejs/biome": "1.9.4",
+    "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/ui": "^3.2.4",
     "concurrently": "^9.2.0",
     "drizzle-kit": "^0.31.1",
+    "happy-dom": "^18.0.1",
     "prettier": "^3.5.3",
     "react-email": "4.0.16",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "ultracite": "4.2.10"
+    "ultracite": "4.2.10",
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@10.12.1"
 }

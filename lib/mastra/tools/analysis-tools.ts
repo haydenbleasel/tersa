@@ -27,8 +27,8 @@ export const analyzeWorkflowTool = createTool({
       impact: z.enum(['high', 'medium', 'low']),
     })),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const analysis = await canvasApi.analyzeWorkflow(context);
@@ -60,8 +60,8 @@ export const getNodeStatsTool = createTool({
       })).optional(),
     })),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const stats = await canvasApi.getNodeStats(context);
@@ -84,8 +84,8 @@ export const detectBottlenecksTool = createTool({
       suggestions: z.array(z.string()),
     })),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const bottlenecks = await canvasApi.detectBottlenecks({
@@ -116,8 +116,8 @@ export const suggestModelsTool = createTool({
       }),
     })),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const suggestions = await canvasApi.suggestModels(context);
@@ -147,8 +147,8 @@ export const validateWorkflowTool = createTool({
       message: z.string(),
     })),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const validation = await canvasApi.validateWorkflow(context);

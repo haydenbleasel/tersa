@@ -21,12 +21,11 @@ export const workflows = {
   optimization: optimizationWorkflow,
 };
 
-// Create the Mastra instance with agents, tools, and workflows
+// Create the Mastra instance with agents and workflows
 export const mastra = new Mastra({
   agents: {
     tersaAgent,
   },
-  tools,
   workflows,
 });
 

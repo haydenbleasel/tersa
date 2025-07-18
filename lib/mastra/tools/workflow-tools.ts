@@ -13,8 +13,8 @@ export const executeWorkflowTool = createTool({
     executionTime: z.number(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const startTime = Date.now();
@@ -43,8 +43,8 @@ export const saveWorkflowTool = createTool({
     workflowId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const workflow = await canvasApi.saveWorkflow(context);
@@ -68,8 +68,8 @@ export const loadWorkflowTool = createTool({
     edgesLoaded: z.number(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const result = await canvasApi.loadWorkflow({
@@ -96,8 +96,8 @@ export const duplicateWorkflowTool = createTool({
     newWorkflowId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const newWorkflow = await canvasApi.duplicateWorkflow(context);
@@ -121,8 +121,8 @@ export const exportWorkflowTool = createTool({
     format: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const exported = await canvasApi.exportWorkflow(context);

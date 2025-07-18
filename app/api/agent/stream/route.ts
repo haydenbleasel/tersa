@@ -67,29 +67,56 @@ export async function POST(request: NextRequest) {
     // Start streaming in the background
     (async () => {
       try {
-        const response = await tersaAgent.stream({
-          messages: [
+        const response = await tersaAgent.stream(
+          [
             {
               role: 'user',
               content: message,
             },
-          ],
-          runtimeContext,
-        });
+          ]
+        );
         
-        for await (const chunk of response) {
-          if (chunk.type === 'text-delta') {
-            await writer.write(
-              encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: chunk.text })}\n\n`)
-            );
-          } else if (chunk.type === 'tool-call') {
-            await writer.write(
-              encoder.encode(`data: ${JSON.stringify({ 
-                type: 'tool-call', 
-                toolName: chunk.toolName,
-                args: chunk.args 
-              })}\n\n`)
-            );
+        // Handle streaming response
+        if (response) {
+          // Try to iterate over the response if it's an async iterable
+          try {
+            // Type assertion to handle the async iterator
+            const asyncResponse = response as unknown as AsyncIterable<any>;
+            for await (const chunk of asyncResponse) {
+              if (chunk.type === 'text-delta') {
+                await writer.write(
+                  encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: chunk.text })}\n\n`)
+                );
+              } else if (chunk.type === 'tool-call') {
+                await writer.write(
+                  encoder.encode(`data: ${JSON.stringify({ 
+                    type: 'tool-call', 
+                    toolName: chunk.toolName,
+                    args: chunk.args 
+                  })}\n\n`)
+                );
+              }
+            }
+          } catch (iterError) {
+            // If not async iterable, try other methods
+            const streamResponse = response as any;
+            if (streamResponse?.textStream) {
+              const reader = streamResponse.textStream.getReader();
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                // Write the raw text chunks
+                await writer.write(
+                  encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: value })}\n\n`)
+                );
+              }
+            } else {
+              // Fallback: treat as a single response
+              await writer.write(
+                encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: String(response) })}\n\n`)
+              );
+            }
           }
         }
         

@@ -11,7 +11,7 @@ interface UseMCPReturn {
 }
 
 export function useMCP(): UseMCPReturn {
-  const { user } = useUser();
+  const user = useUser();
   const supabase = createClient();
   
   const { data, error, isLoading, mutate } = useSWR(

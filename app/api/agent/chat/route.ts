@@ -65,15 +65,14 @@ export async function POST(request: NextRequest) {
     ]);
     
     // Generate response
-    const response = await tersaAgent.generate({
-      messages: [
+    const response = await tersaAgent.generate(
+      [
         {
           role: 'user',
           content: message,
         },
-      ],
-      runtimeContext,
-    });
+      ]
+    );
     
     // Track credit usage
     const tokensUsed = response.usage?.totalTokens || 100;

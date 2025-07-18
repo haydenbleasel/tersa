@@ -90,5 +90,4 @@ export const tersaAgent = new Agent({
     
     return baseTools;
   },
-  maxSteps: 10,
 });

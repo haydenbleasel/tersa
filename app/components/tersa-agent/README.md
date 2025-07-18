@@ -1,155 +1,113 @@
-# Tersa Agent Integration Guide
+# Tersa Agent Components
 
-## Quick Start
+This directory contains the UI components for the Tersa Agent - an intelligent AI assistant integrated into the Tersa visual workflow builder.
 
-### 1. Add the Command Menu to Your Layout
+## Components
 
-In your main layout or page component:
+### `agent-chat.tsx`
+The main chat interface component that handles:
+- Message display and streaming
+- Multiple view modes (overlay, sidebar, modal)
+- Approval flow for destructive operations
+- Real-time status updates
+- Mobile-responsive design
+
+### `agent-prompt-input.tsx`
+Multi-modal input component featuring:
+- Text input with auto-resize
+- File upload support (drag & drop)
+- Node tagging with `@` mentions
+- Keyboard shortcuts (Enter to send, Shift+Enter for newline)
+- Loading states during streaming
+
+### `agent-streaming.tsx`
+Markdown rendering component that:
+- Renders streaming responses with proper formatting
+- Supports code blocks with syntax highlighting
+- Handles inline code and formatting
+- Provides smooth animation for incoming text
+
+### `agent-context-tags.tsx`
+Visual context indicator showing:
+- Currently selected nodes
+- Tagged nodes in messages
+- Click to focus on canvas
+- Remove tags functionality
+
+### `mcp-config-modal.tsx`
+Configuration modal for MCP (Model Context Protocol) servers:
+- Add/remove MCP server endpoints
+- Manage API keys securely
+- Test connections
+- Dynamic tool discovery
+
+## Usage
 
 ```tsx
-import { CommandMenu } from '@/app/components/command-menu';
+import { AgentChat } from '@/app/components/tersa-agent/agent-chat';
 
-export default function Layout({ children }) {
+function MyComponent() {
+  const [agentMode, setAgentMode] = useState<'overlay' | 'sidebar' | 'modal'>('overlay');
+  const [showAgent, setShowAgent] = useState(false);
+
   return (
     <>
-      {children}
-      <CommandMenu />
+      {showAgent && (
+        <AgentChat
+          mode={agentMode}
+          onModeChange={setAgentMode}
+          onClose={() => setShowAgent(false)}
+        />
+      )}
     </>
   );
 }
 ```
 
-### 2. Wrap Canvas with Required Providers
+## Features
 
-The agent needs access to ReactFlow and NodeOperations contexts:
+### Streaming Responses
+The agent uses Server-Sent Events (SSE) to stream responses in real-time, providing immediate feedback as the AI processes requests.
 
-```tsx
-import { ReactFlowProvider } from '@xyflow/react';
-import { NodeOperationsProvider } from '@/providers/node-operations';
-import { Canvas } from '@/components/canvas';
+### Approval Flow
+Destructive operations (like deleting nodes) require explicit user approval:
+1. Agent proposes the action
+2. User sees Approve/Reject buttons
+3. Action executes only after approval
 
-export default function WorkflowPage() {
-  return (
-    <ReactFlowProvider>
-      <Canvas>
-        {/* Your canvas content */}
-      </Canvas>
-    </ReactFlowProvider>
-  );
-}
-```
+### Context Awareness
+The agent maintains awareness of:
+- Selected nodes on the canvas
+- Current workflow structure
+- Previous conversation history
+- User preferences and tier
 
-### 3. Open the Agent
+### Real-time Collaboration
+When multiple users are working on the same project:
+- Agent actions are broadcast to all users
+- Canvas updates appear in real-time
+- Conflict resolution through operation ordering
 
-- Press `⌘K` to open command menu, then select "Ask Tersa Agent"
-- Press `⌘⇧K` to open agent directly
+## Styling
 
-## Example Commands
+Components use:
+- Tailwind CSS for utility-first styling
+- CSS-in-JS for dynamic styles
+- Framer Motion for animations
+- Responsive design patterns
 
-### Basic Node Operations
-- "Add a text node"
-- "Create a GPT-4 transform node"
-- "Connect the selected nodes"
-- "Delete all transform nodes"
+## Accessibility
 
-### Workflow Generation
-- "Create a workflow that transcribes audio and summarizes it"
-- "Build a pipeline for processing images with AI"
-- "Generate a chatbot workflow"
+- Keyboard navigation support
+- ARIA labels for screen readers
+- Focus management
+- High contrast mode support
 
-### Analysis & Optimization
-- "Analyze this workflow for bottlenecks"
-- "Optimize for speed"
-- "What's the estimated cost of running this?"
-- "Suggest better AI models for my use case"
+## Testing
 
-## API Integration
-
-### Direct API Usage
-
-```tsx
-// In a server action or API route
-import { tersaAgent } from '@/lib/mastra';
-
-const response = await tersaAgent.generate({
-  messages: [{ role: 'user', content: 'Create a summarization workflow' }],
-  runtimeContext: new Map([
-    ['user-tier', 'pro'],
-    ['canvas-state', canvasState],
-  ]),
-});
-```
-
-### Custom Hook Usage
-
-```tsx
-import { useTersaAgent } from '@/lib/hooks/use-tersa-agent';
-
-function MyComponent() {
-  const { streamResponse, isGenerating } = useTersaAgent();
-  
-  const handleQuery = async (message: string) => {
-    const stream = await streamResponse({
-      message,
-      context: { canvasState },
-    });
-    
-    for await (const chunk of stream) {
-      if (chunk.type === 'text-delta') {
-        // Handle text updates
-      } else if (chunk.type === 'tool-call') {
-        // Handle canvas operations
-      }
-    }
-  };
-}
-```
-
-## Customization
-
-### Adding Custom Tools
-
-1. Create a new tool in `lib/mastra/tools/`:
-
-```typescript
-export const myCustomTool = createTool({
-  id: 'my-custom-tool',
-  description: 'Does something custom',
-  inputSchema: z.object({
-    param: z.string(),
-  }),
-  outputSchema: z.object({
-    result: z.string(),
-  }),
-  execute: async ({ context }) => {
-    // Your implementation
-    return { result: 'Success' };
-  },
-});
-```
-
-2. Add to agent configuration in `lib/mastra/agents/tersa-agent/index.ts`
-
-### Customizing UI
-
-The agent UI components are in `app/components/tersa-agent/`:
-- `agent-chat.tsx` - Main chat interface
-- `agent-prompt-input.tsx` - Input handling
-- `agent-streaming.tsx` - Response rendering
-
-## Troubleshooting
-
-### Agent not responding
-- Check browser console for errors
-- Verify API keys are set in environment
-- Ensure user is authenticated
-
-### Canvas operations not working
-- Verify ReactFlowProvider is wrapping your component
-- Check that NodeOperationsProvider is configured
-- Ensure canvas bridge hook has access to ReactFlow instance
-
-### Memory/Context issues
-- Agent memory is stored in LibSQL database
-- Clear memory by deleting `tersa-agent-memory.db`
-- Check runtime context is properly configured
+See `tests/components/agent-chat.test.tsx` for component tests covering:
+- User interactions
+- Streaming behavior
+- Approval flow
+- Mode switching
+- Error handling

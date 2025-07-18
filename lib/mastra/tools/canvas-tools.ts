@@ -20,8 +20,8 @@ export const addNodeTool = createTool({
     nodeId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const newNode = await canvasApi.addNode({
@@ -50,8 +50,8 @@ export const connectNodesTool = createTool({
     edgeId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const edge = await canvasApi.connectNodes(context);
@@ -81,8 +81,8 @@ export const updateNodeTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.updateNode(context.nodeId, context.updates);
@@ -101,8 +101,8 @@ export const deleteNodeTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.deleteNode(context.nodeId);
@@ -121,8 +121,8 @@ export const deleteEdgeTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.deleteEdge(context.edgeId);
@@ -154,7 +154,7 @@ export const getCanvasStateTool = createTool({
     })),
   }),
   execute: async ({ runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const state = await canvasApi.getCanvasState();
@@ -174,8 +174,8 @@ export const layoutNodesTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.layoutNodes(context);
@@ -193,7 +193,7 @@ export const rollbackLastTool = createTool({
     message: z.string(),
   }),
   execute: async ({ runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api');
+    const canvasApi = runtimeContext?.get('canvas-api') as any;
     
     if (!canvasApi) throw new Error('Canvas API not available');
     
@@ -218,7 +218,7 @@ export const rollbackLastTool = createTool({
     } catch (error) {
       return {
         success: false,
-        message: `Failed to rollback: ${error.message}`,
+        message: `Failed to rollback: ${(error as Error).message}`,
       };
     }
   },

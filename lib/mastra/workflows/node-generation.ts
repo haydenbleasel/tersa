@@ -85,8 +85,8 @@ const generateLayoutStep = createStep({
   execute: async ({ inputData }) => {
     const { nodes, layout } = inputData;
     const nodeSpacing = layout.direction === 'horizontal' ? 250 : 150;
-    const positionedNodes = [];
-    const edges = [];
+    const positionedNodes: any[] = [];
+    const edges: any[] = [];
     
     // Calculate positions based on layout type
     nodes.forEach((node: any, index: number) => {

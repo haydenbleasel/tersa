@@ -16,7 +16,7 @@ export interface AgentFactory {
 export function createTersaAgents(userId: string): AgentFactory {
   // Create user-specific memory with Supabase adapter
   const memory = new Memory({
-    storage: new SupabaseMemoryAdapter(userId),
+    storage: new SupabaseMemoryAdapter(userId) as any,
     options: {
       lastMessages: 30,
       semanticRecall: {
@@ -100,22 +100,22 @@ export function createTersaAgents(userId: string): AgentFactory {
             prompt: { type: 'string', description: 'The complex task or question to analyze' },
             context: { type: 'object', description: 'Additional context for the reasoning agent' },
           },
-          execute: async ({ prompt, context }) => {
+          execute: async ({ prompt, context }: { prompt: string; context?: any }) => {
             // Execute the reasoning agent with the same runtime context
-            const result = await reasoningAgent.execute(prompt, {
+            const result = await (reasoningAgent as any).execute(prompt, {
               ...runtimeContext,
               ...(context || {}),
             });
             
             // Extract structured recommendations if present
             const reasoning = result.messages
-              .filter(m => m.role === 'assistant')
-              .map(m => m.content)
+              .filter((m: any) => m.role === 'assistant')
+              .map((m: any) => m.content)
               .join('\n');
             
             return {
               reasoning,
-              structured: result.toolCalls?.find(tc => tc.toolName === 'formatWorkflowRecommendation')?.args,
+              structured: result.toolCalls?.find((tc: any) => tc.toolName === 'formatWorkflowRecommendation')?.args,
             };
           },
         },
@@ -132,9 +132,8 @@ export function createTersaAgents(userId: string): AgentFactory {
       }
       
       // Add dynamic MCP tools
-      return await getDynamicTools(allTools, runtimeContext);
+      return await getDynamicTools(allTools, runtimeContext as unknown as Map<string, any>);
     },
-    maxSteps: 15, // Increased for Phase 2
   });
 
   return {

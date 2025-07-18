@@ -25,9 +25,9 @@ const analyzeWorkflowStep = createStep({
   }),
   execute: async ({ inputData }) => {
     const { nodes, edges } = inputData;
-    const bottlenecks = [];
-    const redundancies = [];
-    const suggestions = [];
+    const bottlenecks: any[] = [];
+    const redundancies: any[] = [];
+    const suggestions: any[] = [];
     
     // Analyze for bottlenecks
     const nodeConnectionCount = new Map();
@@ -118,7 +118,7 @@ const optimizeLayoutStep = createStep({
   }),
   execute: async ({ inputData }) => {
     const { nodes, edges, bottlenecks } = inputData;
-    const layoutChanges = [];
+    const layoutChanges: any[] = [];
     
     // Create a copy of nodes to modify
     const optimizedNodes = nodes.map((n: any) => ({ ...n }));

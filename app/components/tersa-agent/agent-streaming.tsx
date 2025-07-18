@@ -48,7 +48,8 @@ export function AgentStreaming({ content, isStreaming = false, showReasoning = f
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
-            code({ node, inline, className, children, ...props }) {
+            code({ className, children, ...props }: any) {
+              const inline = !className?.includes('language-');
               return (
                 <code 
                   className={className || (inline ? '' : 'block bg-gray-100 dark:bg-gray-800 p-2 rounded')} 

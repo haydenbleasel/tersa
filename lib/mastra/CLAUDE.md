@@ -73,20 +73,53 @@ The Tersa Agent is an intelligent AI assistant integrated into the Tersa visual 
 ### Basic Commands
 
 ```
+# Creating Nodes
+"Create a text node with a prompt for blog post ideas"
+"Add a GPT-4 transform node to summarize content"
+"Create an image generation node using DALL-E"
+
+# Working with Workflows
 "Create a workflow that transcribes audio and summarizes it"
-"Add a GPT-4 transform node"
+"Build a content pipeline that extracts text from PDFs and translates it"
+"Design a parallel processing system for batch image optimization"
+
+# Canvas Operations
 "Connect the selected nodes"
-"Optimize this workflow for speed"
+"Arrange nodes in a horizontal layout"
+"Delete unused nodes" (requires approval)
+"Show me all transform nodes"
+
+# Analysis & Optimization
+"Analyze this workflow for bottlenecks"
+"Optimize for speed vs cost"
 "What AI models work best for code generation?"
+"Check for redundant operations"
 ```
 
 ### Advanced Commands
 
 ```
-"Delete this node" (will request approval)
+# Complex Workflows
+"Create a multi-stage pipeline that:
+ 1. Accepts user input
+ 2. Generates variations with different models
+ 3. Scores each variation
+ 4. Picks the best one"
+
+# Reasoning & Planning
+"Help me design a content moderation system"
+"Plan a workflow for processing customer feedback"
+"Reason through the best approach for real-time translation"
+
+# Destructive Operations (require approval)
+"Delete all nodes"
+"Clear the canvas"
+"Remove all connections"
+
+# History & Rollback
 "Rollback the last change"
-"Reason through a complex multi-step workflow"
-"Create a parallel processing pipeline"
+"Undo the last 3 operations"
+"Show me what changed in the last action"
 ```
 
 ### MCP Configuration
@@ -96,13 +129,27 @@ The Tersa Agent is an intelligent AI assistant integrated into the Tersa visual 
 3. Add MCP server URLs and optional API keys
 4. Tools from servers will be available in next chat
 
+Example MCP servers:
+- `http://localhost:8080/mcp` - Local development server
+- `https://api.example.com/mcp` - Production MCP endpoint
+
 ### Context-Aware Features
 
 The agent automatically:
-- Knows which nodes are selected
-- Understands the current canvas state
-- Remembers conversation history
-- Adapts to user tier and preferences
+- Knows which nodes are selected on the canvas
+- Understands the current workflow structure
+- Remembers conversation history for continuity
+- Adapts responses based on user tier (basic/pro)
+- Provides visual feedback for canvas operations
+- Broadcasts changes for real-time collaboration
+
+### Pro Tips
+
+1. **Selection Context**: Select nodes before asking questions about them
+2. **Natural Language**: Describe what you want to achieve, not how
+3. **Iterative Building**: Start simple and refine with follow-up commands
+4. **Approval Flow**: Review destructive operations before confirming
+5. **Undo Safety**: Use rollback if an operation has unexpected results
 
 ## Implementation Details
 

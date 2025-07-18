@@ -52,6 +52,32 @@ export function useCanvasBridge() {
     }
   }, [reactFlowInstance]);
   
+  // Save current state to history
+  const saveStateToHistory = useCallback(() => {
+    if (reactFlowInstance) {
+      const nodes = reactFlowInstance.getNodes();
+      const edges = reactFlowInstance.getEdges();
+      
+      // Keep only the last 10 states
+      canvasHistory.current = [
+        ...canvasHistory.current.slice(-9),
+        {
+          nodes: JSON.parse(JSON.stringify(nodes)),
+          edges: JSON.parse(JSON.stringify(edges)),
+          timestamp: Date.now(),
+        },
+      ];
+    }
+  }, [reactFlowInstance]);
+  
+  // Apply a saved state
+  const applyState = useCallback((state: { nodes: Node[]; edges: Edge[] }) => {
+    if (reactFlowInstance) {
+      reactFlowInstance.setNodes(state.nodes);
+      reactFlowInstance.setEdges(state.edges);
+    }
+  }, [reactFlowInstance]);
+  
   // Forward declaration for executeCanvasOperation
   const executeCanvasOperation = useCallback(async (
     operation: string,
@@ -203,32 +229,6 @@ export function useCanvasBridge() {
       channel.unsubscribe();
     };
   }, [projectId, user?.id, executeRemoteAction]);
-  
-  // Save current state to history
-  const saveStateToHistory = useCallback(() => {
-    if (reactFlowInstance) {
-      const nodes = reactFlowInstance.getNodes();
-      const edges = reactFlowInstance.getEdges();
-      
-      // Keep only the last 10 states
-      canvasHistory.current = [
-        ...canvasHistory.current.slice(-9),
-        {
-          nodes: JSON.parse(JSON.stringify(nodes)),
-          edges: JSON.parse(JSON.stringify(edges)),
-          timestamp: Date.now(),
-        },
-      ];
-    }
-  }, [reactFlowInstance]);
-  
-  // Apply a saved state
-  const applyState = useCallback((state: { nodes: Node[]; edges: Edge[] }) => {
-    if (reactFlowInstance) {
-      reactFlowInstance.setNodes(state.nodes);
-      reactFlowInstance.setEdges(state.edges);
-    }
-  }, [reactFlowInstance]);
   
   const getCanvasApi = useCallback(() => {
     if (!reactFlowInstance) return null;

@@ -1,5 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
-import type { StorageAdapter } from '@mastra/memory';
+// StorageAdapter interface - defined locally since @mastra/memory might not export it
+interface StorageAdapter {
+  get(key: string): any | Promise<any>;
+  set(key: string, value: any): void | Promise<void>;
+  delete(key: string): void | Promise<void>;
+  has(key: string): boolean | Promise<boolean>;
+  clear(): void | Promise<void>;
+  keys(): string[] | Promise<string[]>;
+}
 
 // In-memory storage fallback
 class InMemoryStorage {

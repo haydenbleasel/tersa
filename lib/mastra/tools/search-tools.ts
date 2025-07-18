@@ -127,7 +127,7 @@ export const searchNodeTemplatesTool = createTool({
   }),
   execute: async ({ context }) => {
     // Return common templates based on node type
-    const templates = {
+    const templates: Record<string, any[]> = {
       text: [
         {
           id: 'text-prompt',
