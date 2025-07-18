@@ -1,20 +1,44 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useReactFlow, Node, Edge } from '@xyflow/react';
 import { nanoid } from 'nanoid';
 import { useNodeOperations } from '@/providers/node-operations';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-user';
+import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface CanvasOperation {
   type: string;
   args: any;
 }
 
+interface CanvasHistoryState {
+  nodes: Node[];
+  edges: Edge[];
+  timestamp: number;
+}
+
+interface AgentActionPayload {
+  operation: string;
+  args: any;
+  userId: string;
+  userName?: string;
+}
+
 export function useCanvasBridge() {
   const reactFlowInstance = useReactFlow();
   const { addNode } = useNodeOperations();
+  const user = useUser();
+  const params = useParams();
+  const projectId = params.projectId as string;
   const [canvasState, setCanvasState] = useState<{
     nodes: Node[];
     edges: Edge[];
   }>({ nodes: [], edges: [] });
+  
+  // Store canvas history for rollback
+  const canvasHistory = useRef<CanvasHistoryState[]>([]);
+  const channelRef = useRef<any>(null);
   
   // Get selected nodes from ReactFlow
   const selectedNodes = reactFlowInstance?.getNodes().filter(node => node.selected) || [];
@@ -28,12 +52,33 @@ export function useCanvasBridge() {
     }
   }, [reactFlowInstance]);
   
+  // Forward declaration for executeCanvasOperation
   const executeCanvasOperation = useCallback(async (
     operation: string,
-    args: any
-  ) => {
+    args: any,
+    shouldBroadcast = true
+  ): Promise<any> => {
     if (!reactFlowInstance) {
       throw new Error('ReactFlow instance not available');
+    }
+    
+    // Save state before destructive operations
+    if (['canvas-delete-node', 'canvas-delete-edge', 'canvas-layout-nodes'].includes(operation)) {
+      saveStateToHistory();
+    }
+    
+    // Broadcast the action to other users if needed
+    if (shouldBroadcast && channelRef.current && user?.id) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'agent-action',
+        payload: {
+          operation,
+          args,
+          userId: user.id,
+          userName: 'Agent',
+        } as AgentActionPayload,
+      });
     }
     
     switch (operation) {
@@ -117,6 +162,72 @@ export function useCanvasBridge() {
       default:
         throw new Error(`Unknown canvas operation: ${operation}`);
     }
+  }, [reactFlowInstance, addNode, saveStateToHistory, user]);
+  
+  // Execute an action from another user
+  const executeRemoteAction = useCallback(async (action: AgentActionPayload) => {
+    try {
+      await executeCanvasOperation(action.operation, action.args, false); // Don't broadcast again
+      
+      // Show notification
+      toast.info(`${action.userName || 'Another user'} performed: ${action.operation.replace('canvas-', '').replace(/-/g, ' ')}`, {
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error('Failed to execute remote action:', error);
+    }
+  }, [executeCanvasOperation]);
+  
+  // Set up Supabase channel for collaboration
+  useEffect(() => {
+    if (!projectId || !user?.id) return;
+    
+    const supabase = createClient();
+    
+    // Create a channel for this project
+    const channel = supabase.channel(`project:${projectId}`)
+      .on('broadcast', { event: 'agent-action' }, (payload) => {
+        const action = payload.payload as AgentActionPayload;
+        
+        // Ignore our own actions
+        if (action.userId === user.id) return;
+        
+        // Apply the action from another user
+        executeRemoteAction(action);
+      })
+      .subscribe();
+    
+    channelRef.current = channel;
+    
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [projectId, user?.id, executeRemoteAction]);
+  
+  // Save current state to history
+  const saveStateToHistory = useCallback(() => {
+    if (reactFlowInstance) {
+      const nodes = reactFlowInstance.getNodes();
+      const edges = reactFlowInstance.getEdges();
+      
+      // Keep only the last 10 states
+      canvasHistory.current = [
+        ...canvasHistory.current.slice(-9),
+        {
+          nodes: JSON.parse(JSON.stringify(nodes)),
+          edges: JSON.parse(JSON.stringify(edges)),
+          timestamp: Date.now(),
+        },
+      ];
+    }
+  }, [reactFlowInstance]);
+  
+  // Apply a saved state
+  const applyState = useCallback((state: { nodes: Node[]; edges: Edge[] }) => {
+    if (reactFlowInstance) {
+      reactFlowInstance.setNodes(state.nodes);
+      reactFlowInstance.setEdges(state.edges);
+    }
   }, [reactFlowInstance]);
   
   const getCanvasApi = useCallback(() => {
@@ -137,8 +248,13 @@ export function useCanvasBridge() {
         const maxY = Math.max(...nodes.map((n) => n.position.y), 0);
         return { x: maxX + 250, y: maxY };
       },
+      applyState: (state: { nodes: Node[]; edges: Edge[] }) => applyState(state),
+      getLastState: () => {
+        const lastState = canvasHistory.current[canvasHistory.current.length - 1];
+        return lastState ? { nodes: lastState.nodes, edges: lastState.edges } : null;
+      },
     };
-  }, [reactFlowInstance, executeCanvasOperation, canvasState]);
+  }, [reactFlowInstance, executeCanvasOperation, canvasState, applyState]);
   
   return {
     selectedNodes: selectedNodes.map(node => node.id),

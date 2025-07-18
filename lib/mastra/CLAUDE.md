@@ -7,12 +7,31 @@ The Tersa Agent is an intelligent AI assistant integrated into the Tersa visual 
 ## Phase 2 Updates
 
 ### Enhanced Features
-- **Supabase Memory Adapter**: User-specific memory persistence
+- **Supabase Memory Adapter**: User-specific memory persistence with in-memory fallback
 - **Credit Integration**: Usage tracking with Stripe billing
 - **Visual Feedback**: Toast notifications and animations for canvas operations
 - **Reasoning Visibility**: Optional display of agent thought process
 - **Mobile Support**: Responsive UI with touch-friendly interactions
 - **Natural Language Workflows**: Parse descriptions into visual workflows
+- **Sub-Agents**: Reasoning sub-agent for complex NL tasks
+- **Dynamic Tools**: MCP support for user-configurable tools
+
+## Phase 3 Features
+
+### MCP Integration
+- **Configuration Modal**: Access via ⌘⇧M in command menu
+- **Dynamic Tool Loading**: Tools from MCP servers available at runtime
+- **Server Management**: Add/remove MCP servers with optional API keys
+
+### Autonomy Features
+- **Approval Flow**: Destructive operations require user confirmation
+- **Rollback**: Undo last canvas operation with history tracking
+- **Visual Indicators**: Clear approval/rejection status in chat
+
+### Collaboration
+- **Real-time Broadcast**: Agent actions shared across users
+- **Project Channels**: Supabase channels for multi-user sessions
+- **Action Notifications**: Toast alerts for remote user actions
 
 ## Architecture
 
@@ -60,6 +79,22 @@ The Tersa Agent is an intelligent AI assistant integrated into the Tersa visual 
 "Optimize this workflow for speed"
 "What AI models work best for code generation?"
 ```
+
+### Advanced Commands
+
+```
+"Delete this node" (will request approval)
+"Rollback the last change"
+"Reason through a complex multi-step workflow"
+"Create a parallel processing pipeline"
+```
+
+### MCP Configuration
+
+1. Press `⌘K` to open command menu
+2. Select "Configure MCP Tools" or press `⌘⇧M`
+3. Add MCP server URLs and optional API keys
+4. Tools from servers will be available in next chat
 
 ### Context-Aware Features
 

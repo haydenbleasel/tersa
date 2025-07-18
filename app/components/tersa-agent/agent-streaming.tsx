@@ -16,7 +16,7 @@ export function AgentStreaming({ content, isStreaming = false, showReasoning = f
   
   useEffect(() => {
     // Parse content for reasoning blocks
-    const reasoningRegex = /\[reasoning\](.*?)\[\/reasoning\]/gs;
+    const reasoningRegex = /\[reasoning\]([\s\S]*?)\[\/reasoning\]/g;
     const matches = [...content.matchAll(reasoningRegex)];
     
     if (matches.length > 0 && showReasoning) {

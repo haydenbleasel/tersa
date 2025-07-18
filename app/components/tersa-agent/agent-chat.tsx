@@ -32,6 +32,12 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [taggedNodes, setTaggedNodes] = useState<string[]>([]);
   const [isExecutingAction, setIsExecutingAction] = useState(false);
+  const [pendingApproval, setPendingApproval] = useState<{
+    messageId: string;
+    toolName: string;
+    args: any;
+    resolve: () => void;
+  } | null>(null);
   
   const { generateResponse, streamResponse } = useTersaAgent();
   const { selectedNodes, canvasState, executeCanvasOperation } = useCanvasBridge();
@@ -85,25 +91,51 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
                 : msg
             )
           );
-        } else if (chunk.type === 'tool-call') {
+        } else if (chunk.type === 'tool-call' && chunk.toolName) {
           // Handle canvas operations with visual feedback
           if (chunk.toolName.startsWith('canvas-')) {
-            setIsExecutingAction(true);
+            // Check if this is a destructive operation that needs confirmation
+            const needsConfirm = ['canvas-delete-node', 'canvas-delete-edge'].includes(chunk.toolName);
             
-            // Show toast for the action
-            const actionName = chunk.toolName.replace('canvas-', '').replace(/-/g, ' ');
-            toast.info(`Executing: ${actionName}`, {
-              icon: <Zap className="h-4 w-4" />,
-              duration: 2000,
-            });
-            
-            try {
-              await executeCanvasOperation(chunk.toolName, chunk.args);
+            if (needsConfirm) {
+              // Pause the stream and wait for approval
+              await new Promise<void>((resolve) => {
+                setPendingApproval({
+                  messageId: assistantMessage.id,
+                  toolName: chunk.toolName,
+                  args: chunk.args,
+                  resolve,
+                });
+                
+                // Update the message to show approval request
+                const actionName = chunk.toolName.replace('canvas-', '').replace(/-/g, ' ');
+                assistantMessage.content += `\n\n⚠️ **Approval Required**: This action will ${actionName}. Please confirm to proceed.`;
+                setMessages((prev) => 
+                  prev.map((msg) =>
+                    msg.id === assistantMessage.id
+                      ? { ...msg, content: assistantMessage.content }
+                      : msg
+                  )
+                );
+              });
+            } else {
+              setIsExecutingAction(true);
               
-              // Add a small delay for visual effect
-              await new Promise(resolve => setTimeout(resolve, 500));
-            } finally {
-              setIsExecutingAction(false);
+              // Show toast for the action
+              const actionName = chunk.toolName.replace('canvas-', '').replace(/-/g, ' ');
+              toast.info(`Executing: ${actionName}`, {
+                icon: <Zap className="h-4 w-4" />,
+                duration: 2000,
+              });
+              
+              try {
+                await executeCanvasOperation(chunk.toolName, chunk.args);
+                
+                // Add a small delay for visual effect
+                await new Promise(resolve => setTimeout(resolve, 500));
+              } finally {
+                setIsExecutingAction(false);
+              }
             }
           }
         }
@@ -114,6 +146,54 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
       setIsStreaming(false);
       setTaggedNodes([]);
     }
+  };
+  
+  const handleApproval = async (approved: boolean) => {
+    if (!pendingApproval) return;
+    
+    const { messageId, toolName, args, resolve } = pendingApproval;
+    setPendingApproval(null);
+    
+    if (approved) {
+      setIsExecutingAction(true);
+      
+      // Show toast for the action
+      const actionName = toolName.replace('canvas-', '').replace(/-/g, ' ');
+      toast.info(`Executing: ${actionName}`, {
+        icon: <Zap className="h-4 w-4" />,
+        duration: 2000,
+      });
+      
+      try {
+        await executeCanvasOperation(toolName, args);
+        
+        // Update the message to show it was approved
+        setMessages((prev) => 
+          prev.map((msg) =>
+            msg.id === messageId
+              ? { ...msg, content: msg.content.replace(/⚠️ \*\*Approval Required\*\*:.*$/, '✅ Action approved and executed.') }
+              : msg
+          )
+        );
+        
+        // Add a small delay for visual effect
+        await new Promise(r => setTimeout(r, 500));
+      } finally {
+        setIsExecutingAction(false);
+      }
+    } else {
+      // Update the message to show it was rejected
+      setMessages((prev) => 
+        prev.map((msg) =>
+          msg.id === messageId
+            ? { ...msg, content: msg.content.replace(/⚠️ \*\*Approval Required\*\*:.*$/, '❌ Action rejected by user.') }
+            : msg
+        )
+      );
+    }
+    
+    // Resume the stream
+    resolve();
   };
   
   return (
@@ -187,6 +267,27 @@ export function AgentChat({ mode, onModeChange, onClose }: AgentChatProps) {
               {message.taggedNodes && message.taggedNodes.length > 0 && (
                 <div className="mt-2">
                   <AgentContextTags nodeIds={message.taggedNodes} />
+                </div>
+              )}
+              {pendingApproval && pendingApproval.messageId === message.id && (
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => handleApproval(true)}
+                    disabled={isExecutingAction}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleApproval(false)}
+                    disabled={isExecutingAction}
+                    className="border-red-600 text-red-600 hover:bg-red-50"
+                  >
+                    Reject
+                  </Button>
                 </div>
               )}
             </div>

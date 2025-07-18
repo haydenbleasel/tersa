@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import { useUser } from '@clerk/nextjs';
+import { useUser } from '@/hooks/use-user';
 import { createClient } from '@/lib/supabase/client';
 import type { MCPServerConfig } from '@/lib/mastra/mcp';
 

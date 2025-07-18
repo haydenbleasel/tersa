@@ -94,6 +94,7 @@ export const updateNodeTool = createTool({
 export const deleteNodeTool = createTool({
   id: 'delete-node',
   description: 'Delete a node from the canvas',
+  needsConfirm: true,
   inputSchema: z.object({
     nodeId: z.string(),
   }),
@@ -108,11 +109,12 @@ export const deleteNodeTool = createTool({
     
     return { success: true };
   },
-});
+} as any);
 
 export const deleteEdgeTool = createTool({
   id: 'delete-edge',
   description: 'Delete a connection between nodes',
+  needsConfirm: true,
   inputSchema: z.object({
     edgeId: z.string(),
   }),
@@ -127,7 +129,7 @@ export const deleteEdgeTool = createTool({
     
     return { success: true };
   },
-});
+} as any);
 
 export const getCanvasStateTool = createTool({
   id: 'get-canvas-state',
@@ -179,5 +181,45 @@ export const layoutNodesTool = createTool({
     await canvasApi.layoutNodes(context);
     
     return { success: true };
+  },
+});
+
+export const rollbackLastTool = createTool({
+  id: 'rollback-last',
+  description: 'Rollback the last canvas operation to the previous state',
+  inputSchema: z.object({}),
+  outputSchema: z.object({
+    success: z.boolean(),
+    message: z.string(),
+  }),
+  execute: async ({ runtimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api');
+    
+    if (!canvasApi) throw new Error('Canvas API not available');
+    
+    try {
+      // Get the last state from canvas history
+      const lastState = await canvasApi.getLastState();
+      
+      if (!lastState) {
+        return {
+          success: false,
+          message: 'No previous state found to rollback to',
+        };
+      }
+      
+      // Apply the previous state
+      await canvasApi.applyState(lastState);
+      
+      return {
+        success: true,
+        message: 'Successfully rolled back to previous state',
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to rollback: ${error.message}`,
+      };
+    }
   },
 });

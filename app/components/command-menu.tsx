@@ -21,19 +21,23 @@ import {
   Settings,
   HelpCircle,
   FileText,
-  Zap
+  Zap,
+  Server
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useNodeOperations } from '@/providers/node-operations';
 import { useSaveProject } from '@/hooks/use-save-project';
+import { MCPConfigModal } from './tersa-agent/mcp-config-modal';
 
 export function CommandMenu() {
   const [open, setOpen] = useState(false);
   const [showAgent, setShowAgent] = useState(false);
+  const [showMCPConfig, setShowMCPConfig] = useState(false);
   const [agentMode, setAgentMode] = useState<'overlay' | 'sidebar' | 'modal'>('overlay');
   const router = useRouter();
   const { addNode } = useNodeOperations();
-  const { save } = useSaveProject();
+  const [saveState, setSaveState] = useSaveProject();
+  const save = () => setSaveState(prev => ({ ...prev, isSaving: true }));
   
   // Open command menu with cmd+k
   useHotkeys('meta+k', () => setOpen(true), {
@@ -45,6 +49,15 @@ export function CommandMenu() {
   useHotkeys('meta+shift+k', () => {
     setOpen(false);
     setShowAgent(true);
+  }, {
+    preventDefault: true,
+    enableOnContentEditable: false,
+  });
+  
+  // Open MCP config with cmd+shift+m
+  useHotkeys('meta+shift+m', () => {
+    setOpen(false);
+    setShowMCPConfig(true);
   }, {
     preventDefault: true,
     enableOnContentEditable: false,
@@ -69,6 +82,14 @@ export function CommandMenu() {
               <Sparkles className="mr-2 h-4 w-4 text-primary" />
               <span className="font-medium">Ask Tersa Agent</span>
               <CommandShortcut>⌘⇧K</CommandShortcut>
+            </CommandItem>
+            <CommandItem
+              onSelect={() => runCommand(() => setShowMCPConfig(true))}
+              className="bg-primary/5 border border-primary/10"
+            >
+              <Server className="mr-2 h-4 w-4 text-primary" />
+              <span className="font-medium">Configure MCP Tools</span>
+              <CommandShortcut>⌘⇧M</CommandShortcut>
             </CommandItem>
           </CommandGroup>
           
@@ -124,6 +145,11 @@ export function CommandMenu() {
           onClose={() => setShowAgent(false)}
         />
       )}
+      
+      <MCPConfigModal
+        open={showMCPConfig}
+        onOpenChange={setShowMCPConfig}
+      />
     </>
   );
 }
