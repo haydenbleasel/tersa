@@ -16,7 +16,7 @@ export interface AgentFactory {
 export function createTersaAgents(userId: string): AgentFactory {
   // Create user-specific memory with Supabase adapter
   const memory = new Memory({
-    storage: new SupabaseMemoryAdapter(userId) as any,
+    storage: new SupabaseMemoryAdapter(userId),
     options: {
       lastMessages: 30,
       semanticRecall: {
@@ -100,22 +100,40 @@ export function createTersaAgents(userId: string): AgentFactory {
             prompt: { type: 'string', description: 'The complex task or question to analyze' },
             context: { type: 'object', description: 'Additional context for the reasoning agent' },
           },
-          execute: async ({ prompt, context }: { prompt: string; context?: any }) => {
+          execute: async ({ prompt, context }: { prompt: string; context?: Record<string, unknown> }) => {
             // Execute the reasoning agent with the same runtime context
-            const result = await (reasoningAgent as any).execute(prompt, {
-              ...runtimeContext,
-              ...(context || {}),
+            const combinedContext = new Map<string, unknown>([
+              ...(runtimeContext as Map<string, unknown>).entries(),
+              ...Object.entries(context || {}),
+            ]);
+            
+            const result = await reasoningAgent.generate(prompt, {
+              runtimeContext: combinedContext,
             });
             
-            // Extract structured recommendations if present
-            const reasoning = result.messages
-              .filter((m: any) => m.role === 'assistant')
-              .map((m: any) => m.content)
-              .join('\n');
+            // Extract reasoning from the response
+            let reasoning = '';
+            let structured = null;
+            
+            if (result && 'messages' in result) {
+              const messages = result.messages as Array<{ role: string; content: string }>;
+              reasoning = messages
+                .filter((m) => m.role === 'assistant')
+                .map((m) => m.content)
+                .join('\n');
+            }
+            
+            if (result && 'toolCalls' in result) {
+              const toolCalls = result.toolCalls as Array<{ toolName: string; args: unknown }>;
+              const recommendation = toolCalls.find((tc) => tc.toolName === 'formatWorkflowRecommendation');
+              if (recommendation) {
+                structured = recommendation.args;
+              }
+            }
             
             return {
               reasoning,
-              structured: result.toolCalls?.find((tc: any) => tc.toolName === 'formatWorkflowRecommendation')?.args,
+              structured,
             };
           },
         },
@@ -132,7 +150,7 @@ export function createTersaAgents(userId: string): AgentFactory {
       }
       
       // Add dynamic MCP tools
-      return await getDynamicTools(allTools, runtimeContext as unknown as Map<string, any>);
+      return await getDynamicTools(allTools, runtimeContext as Map<string, unknown>);
     },
   });
 

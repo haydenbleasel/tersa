@@ -48,12 +48,12 @@ export async function POST(request: NextRequest) {
       ['canvas-state', context.canvasState || {}],
       ['canvas-api', {
         // Placeholder implementations - actual calls will be made client-side
-        addNode: async (nodeData: any) => ({ nodeId: 'temp-id', success: true }),
-        connectNodes: async (edgeData: any) => ({ edgeId: 'temp-id', success: true }),
-        updateNode: async (nodeId: string, updates: any) => ({ success: true }),
+        addNode: async (nodeData: { type: string; position: { x: number; y: number }; data?: Record<string, unknown> }) => ({ nodeId: 'temp-id', success: true }),
+        connectNodes: async (edgeData: { source: string; target: string; sourceHandle?: string; targetHandle?: string }) => ({ edgeId: 'temp-id', success: true }),
+        updateNode: async (nodeId: string, updates: Record<string, unknown>) => ({ success: true }),
         deleteNode: async (nodeId: string) => ({ success: true }),
         deleteEdge: async (edgeId: string) => ({ success: true }),
-        layoutNodes: async (options: any) => ({ success: true }),
+        layoutNodes: async (options: { direction?: string; spacing?: number }) => ({ success: true }),
         getCanvasState: async () => context.canvasState || { nodes: [], edges: [] },
         getNextPosition: () => ({ x: 100, y: 100 }),
       }],
@@ -78,45 +78,56 @@ export async function POST(request: NextRequest) {
         
         // Handle streaming response
         if (response) {
-          // Try to iterate over the response if it's an async iterable
-          try {
-            // Type assertion to handle the async iterator
-            const asyncResponse = response as unknown as AsyncIterable<any>;
-            for await (const chunk of asyncResponse) {
-              if (chunk.type === 'text-delta') {
-                await writer.write(
-                  encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: chunk.text })}\n\n`)
-                );
-              } else if (chunk.type === 'tool-call') {
-                await writer.write(
-                  encoder.encode(`data: ${JSON.stringify({ 
-                    type: 'tool-call', 
-                    toolName: chunk.toolName,
-                    args: chunk.args 
-                  })}\n\n`)
-                );
+          // Check if response implements async iterable protocol
+          if (response && typeof response === 'object' && Symbol.asyncIterator in response) {
+            try {
+              // Safely iterate over the async iterable
+              for await (const chunk of response as AsyncIterable<{ type: string; text?: string; toolName?: string; args?: any }>) {
+                if (chunk.type === 'text-delta') {
+                  await writer.write(
+                    encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: chunk.text })}\n\n`)
+                  );
+                } else if (chunk.type === 'tool-call') {
+                  await writer.write(
+                    encoder.encode(`data: ${JSON.stringify({ 
+                      type: 'tool-call', 
+                      toolName: chunk.toolName,
+                      args: chunk.args 
+                    })}\n\n`)
+                  );
+                }
               }
-            }
-          } catch (iterError) {
-            // If not async iterable, try other methods
-            const streamResponse = response as any;
-            if (streamResponse?.textStream) {
-              const reader = streamResponse.textStream.getReader();
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                
-                // Write the raw text chunks
-                await writer.write(
-                  encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: value })}\n\n`)
-                );
-              }
-            } else {
+            } catch (iterError) {
+              console.error('Error iterating over response:', iterError);
               // Fallback: treat as a single response
               await writer.write(
-                encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: String(response) })}\n\n`)
+                encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: 'Error processing stream' })}\n\n`)
               );
             }
+          } else if (response && typeof response === 'object' && 'textStream' in response) {
+            // Handle response with textStream property
+            const streamResponse = response as { textStream?: ReadableStream<string> };
+            if (streamResponse.textStream) {
+              const reader = streamResponse.textStream.getReader();
+              try {
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+                  
+                  // Write the raw text chunks
+                  await writer.write(
+                    encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: value })}\n\n`)
+                  );
+                }
+              } finally {
+                reader.releaseLock();
+              }
+            }
+          } else {
+            // Fallback: treat as a single response
+            await writer.write(
+              encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', text: String(response) })}\n\n`)
+            );
           }
         }
         

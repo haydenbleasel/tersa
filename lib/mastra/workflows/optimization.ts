@@ -1,11 +1,27 @@
 import { createWorkflow, createStep } from '@mastra/core/workflows';
 import { z } from 'zod';
+import {
+  WorkflowNodeSchema,
+  WorkflowEdgeSchema,
+  BottleneckSchema,
+  RedundancySchema,
+  SuggestionSchema,
+  LayoutChangeSchema,
+} from './types';
+import type {
+  WorkflowNode,
+  WorkflowEdge,
+  Bottleneck,
+  Redundancy,
+  Suggestion,
+  LayoutChange,
+} from './types';
 
 const analyzeWorkflowStep = createStep({
   id: 'analyze-workflow',
   inputSchema: z.object({
-    nodes: z.array(z.any()),
-    edges: z.array(z.any()),
+    nodes: z.array(WorkflowNodeSchema),
+    edges: z.array(WorkflowEdgeSchema),
   }),
   outputSchema: z.object({
     bottlenecks: z.array(z.object({
@@ -25,13 +41,13 @@ const analyzeWorkflowStep = createStep({
   }),
   execute: async ({ inputData }) => {
     const { nodes, edges } = inputData;
-    const bottlenecks: any[] = [];
-    const redundancies: any[] = [];
-    const suggestions: any[] = [];
+    const bottlenecks: Bottleneck[] = [];
+    const redundancies: Redundancy[] = [];
+    const suggestions: Suggestion[] = [];
     
     // Analyze for bottlenecks
     const nodeConnectionCount = new Map();
-    edges.forEach((edge: any) => {
+    edges.forEach((edge) => {
       nodeConnectionCount.set(edge.target, (nodeConnectionCount.get(edge.target) || 0) + 1);
     });
     
@@ -46,11 +62,11 @@ const analyzeWorkflowStep = createStep({
       }
     });
     
-    // Find redundant transform nodes
-    const transformNodes = nodes.filter((n: any) => n.type === 'transform');
+    // Find redundant AI model usage patterns
+    const transformNodes = nodes.filter((n) => n.type.includes('transform'));
     const modelGroups = new Map();
     
-    transformNodes.forEach((node: any) => {
+    transformNodes.forEach((node) => {
       const model = node.data?.model || 'unknown';
       if (!modelGroups.has(model)) {
         modelGroups.set(model, []);
@@ -58,20 +74,48 @@ const analyzeWorkflowStep = createStep({
       modelGroups.get(model).push(node.id);
     });
     
+    // Check for redundant model usage that could be combined
     modelGroups.forEach((nodeIds, model) => {
       if (nodeIds.length > 1) {
-        redundancies.push({
-          nodeIds,
-          reason: `Multiple ${model} transform nodes could be combined`,
+        // Check if these nodes could potentially be combined
+        const nodesCanBeCombined = nodeIds.every((nodeId) => {
+          const node = nodes.find((n) => n.id === nodeId);
+          const incomingEdges = edges.filter((e) => e.target === nodeId);
+          // Can combine if nodes have similar input patterns
+          return node && incomingEdges.length <= 2;
         });
+        
+        if (nodesCanBeCombined) {
+          redundancies.push({
+            nodeIds,
+            reason: `Multiple ${model} transform nodes processing similar inputs could be combined to reduce API costs`,
+          });
+        }
       }
     });
     
-    // Generate suggestions
+    // Check for expensive model usage where cheaper alternatives might work
+    const expensiveModels = ['gpt-4', 'claude-4-opus', 'o1'];
+    nodes.forEach((node) => {
+      if (node.data?.model && expensiveModels.includes(node.data.model)) {
+        const hasSimpleTask = node.data?.instructions?.length < 100 || 
+                             node.data?.instructions?.toLowerCase().includes('summarize') ||
+                             node.data?.instructions?.toLowerCase().includes('classify');
+        if (hasSimpleTask) {
+          suggestions.push({
+            type: 'cost-optimization',
+            description: `Consider using a cheaper model like GPT-4o-mini or Claude Haiku for simple tasks`,
+            nodeIds: [node.id],
+          });
+        }
+      }
+    });
+    
+    // Generate AI-specific suggestions
     if (bottlenecks.length > 0) {
       suggestions.push({
         type: 'parallelization',
-        description: 'Consider parallelizing independent branches to reduce bottlenecks',
+        description: 'Consider parallelizing independent AI model calls to reduce latency',
       });
     }
     
@@ -82,16 +126,43 @@ const analyzeWorkflowStep = createStep({
       });
     }
     
-    // Check for missing error handling
-    const hasErrorHandling = nodes.some((n: any) => 
-      n.data?.content?.toLowerCase().includes('error') ||
-      n.data?.label?.toLowerCase().includes('fallback')
+    // Check for multimodal optimization opportunities
+    const hasMultimodalNodes = nodes.some((n) => 
+      n.type === 'image/transform' || n.type === 'audio/transform' || n.type === 'video/transform'
+    );
+    const hasTextNodes = nodes.some((n) => n.type === 'text/transform');
+    
+    if (hasMultimodalNodes && hasTextNodes) {
+      suggestions.push({
+        type: 'multimodal-optimization',
+        description: 'Consider using models with native multimodal support (e.g., GPT-4o, Gemini) for better integration',
+      });
+    }
+    
+    // Check for missing validation
+    const hasValidation = nodes.some((n) => 
+      n.data?.instructions?.toLowerCase().includes('validate') ||
+      n.data?.instructions?.toLowerCase().includes('check') ||
+      n.data?.label?.toLowerCase().includes('validation')
     );
     
-    if (!hasErrorHandling) {
+    if (!hasValidation && nodes.length > 3) {
       suggestions.push({
-        type: 'error-handling',
-        description: 'Add error handling nodes for better reliability',
+        type: 'validation',
+        description: 'Add validation nodes to ensure output quality, especially for critical workflows',
+      });
+    }
+    
+    // Check for prompt optimization
+    const longPrompts = nodes.filter((n) => 
+      n.data?.instructions?.length > 500 || n.data?.content?.length > 500
+    );
+    
+    if (longPrompts.length > 0) {
+      suggestions.push({
+        type: 'prompt-optimization',
+        description: 'Consider breaking down long prompts into smaller, focused instructions for better results',
+        nodeIds: longPrompts.map((n) => n.id),
       });
     }
     
@@ -102,41 +173,54 @@ const analyzeWorkflowStep = createStep({
 const optimizeLayoutStep = createStep({
   id: 'optimize-layout',
   inputSchema: z.object({
-    nodes: z.array(z.any()),
-    edges: z.array(z.any()),
-    bottlenecks: z.array(z.any()),
-    redundancies: z.array(z.any()),
+    nodes: z.array(WorkflowNodeSchema),
+    edges: z.array(WorkflowEdgeSchema),
+    bottlenecks: z.array(BottleneckSchema),
+    redundancies: z.array(RedundancySchema),
   }),
   outputSchema: z.object({
-    nodes: z.array(z.any()),
-    edges: z.array(z.any()),
-    layoutChanges: z.array(z.object({
-      nodeId: z.string(),
-      oldPosition: z.object({ x: z.number(), y: z.number() }),
-      newPosition: z.object({ x: z.number(), y: z.number() }),
-    })),
+    nodes: z.array(WorkflowNodeSchema),
+    edges: z.array(WorkflowEdgeSchema),
+    layoutChanges: z.array(LayoutChangeSchema),
   }),
   execute: async ({ inputData }) => {
     const { nodes, edges, bottlenecks } = inputData;
-    const layoutChanges: any[] = [];
+    const layoutChanges: LayoutChange[] = [];
     
     // Create a copy of nodes to modify
-    const optimizedNodes = nodes.map((n: any) => ({ ...n }));
+    const optimizedNodes = nodes.map((n) => ({ ...n }));
     
-    // Reposition bottleneck nodes to be more central
-    bottlenecks.forEach((bottleneck: any) => {
-      const node = optimizedNodes.find((n: any) => n.id === bottleneck.nodeId);
+    // Group related AI nodes together for better organization
+    const nodeTypeGroups = new Map();
+    optimizedNodes.forEach((node) => {
+      const baseType = node.type.split('/')[0]; // e.g., 'text', 'image', 'audio'
+      if (!nodeTypeGroups.has(baseType)) {
+        nodeTypeGroups.set(baseType, []);
+      }
+      nodeTypeGroups.get(baseType).push(node);
+    });
+    
+    // Position bottleneck nodes strategically
+    bottlenecks.forEach((bottleneck) => {
+      const node = optimizedNodes.find((n) => n.id === bottleneck.nodeId);
       if (node && bottleneck.impact === 'high') {
         const oldPosition = { ...node.position };
         
-        // Move high-impact bottlenecks to more accessible positions
-        node.position.y = 0; // Move to top row
+        // High-impact nodes should be easily accessible
+        const connectedEdges = edges.filter((e) => e.source === node.id || e.target === node.id);
+        if (connectedEdges.length > 4) {
+          // Central position for highly connected nodes
+          node.position.x = 400;
+          node.position.y = 200;
+        }
         
-        layoutChanges.push({
-          nodeId: node.id,
-          oldPosition,
-          newPosition: node.position,
-        });
+        if (oldPosition.x !== node.position.x || oldPosition.y !== node.position.y) {
+          layoutChanges.push({
+            nodeId: node.id,
+            oldPosition,
+            newPosition: node.position,
+          });
+        }
       }
     });
     
@@ -149,7 +233,7 @@ const optimizeLayoutStep = createStep({
       visited.add(nodeId);
       levelMap.set(nodeId, level);
       
-      edges.forEach((edge: any) => {
+      edges.forEach((edge) => {
         if (edge.source === nodeId) {
           assignLevels(edge.target, level + 1);
         }
@@ -157,11 +241,11 @@ const optimizeLayoutStep = createStep({
     }
     
     // Find root nodes (no incoming edges)
-    const rootNodes = optimizedNodes.filter((node: any) => 
-      !edges.some((edge: any) => edge.target === node.id)
+    const rootNodes = optimizedNodes.filter((node) => 
+      !edges.some((edge) => edge.target === node.id)
     );
     
-    rootNodes.forEach((root: any) => assignLevels(root.id, 0));
+    rootNodes.forEach((root) => assignLevels(root.id, 0));
     
     // Reposition nodes based on levels
     const levelNodes = new Map();
@@ -174,7 +258,7 @@ const optimizeLayoutStep = createStep({
     
     levelNodes.forEach((nodeIds, level) => {
       nodeIds.forEach((nodeId: string, index: number) => {
-        const node = optimizedNodes.find((n: any) => n.id === nodeId);
+        const node = optimizedNodes.find((n) => n.id === nodeId);
         if (node) {
           const oldPosition = { ...node.position };
           node.position = {
@@ -204,12 +288,12 @@ const optimizeLayoutStep = createStep({
 const generateOptimizationReportStep = createStep({
   id: 'generate-report',
   inputSchema: z.object({
-    nodes: z.array(z.any()),
-    edges: z.array(z.any()),
-    bottlenecks: z.array(z.any()),
-    redundancies: z.array(z.any()),
-    suggestions: z.array(z.any()),
-    layoutChanges: z.array(z.any()),
+    nodes: z.array(WorkflowNodeSchema),
+    edges: z.array(WorkflowEdgeSchema),
+    bottlenecks: z.array(BottleneckSchema),
+    redundancies: z.array(RedundancySchema),
+    suggestions: z.array(SuggestionSchema),
+    layoutChanges: z.array(LayoutChangeSchema),
   }),
   outputSchema: z.object({
     report: z.object({
@@ -223,8 +307,8 @@ const generateOptimizationReportStep = createStep({
       nextSteps: z.array(z.string()),
     }),
     optimizedWorkflow: z.object({
-      nodes: z.array(z.any()),
-      edges: z.array(z.any()),
+      nodes: z.array(WorkflowNodeSchema),
+      edges: z.array(WorkflowEdgeSchema),
     }),
   }),
   execute: async ({ inputData }) => {
@@ -248,11 +332,11 @@ const generateOptimizationReportStep = createStep({
       summary: `Workflow optimization complete. Found ${bottlenecks.length + redundancies.length} improvement opportunities.`,
       optimizationsApplied,
       estimatedImprovement: {
-        performance: bottlenecks.length > 0 ? '20-30% faster execution' : 'No significant change',
-        cost: redundancies.length > 0 ? '15-25% reduction in API costs' : 'No significant change',
-        reliability: suggestions.some((s: any) => s.type === 'error-handling') ? 'Improved error resilience' : 'Already robust',
+        performance: bottlenecks.length > 0 ? '20-30% faster execution through parallel API calls' : 'No significant latency improvements',
+        cost: redundancies.length > 0 ? '15-25% reduction in API costs through consolidation' : 'Already cost-optimized',
+        reliability: suggestions.some((s) => s.type === 'validation') ? 'Improved output quality with validation' : 'Current reliability maintained',
       },
-      nextSteps: suggestions.map((s: any) => s.description),
+      nextSteps: suggestions.map((s) => s.description),
     };
     
     return {
@@ -272,8 +356,8 @@ export const optimizationWorkflow = createWorkflow({
   outputSchema: z.object({
     report: z.any(),
     optimizedWorkflow: z.object({
-      nodes: z.array(z.any()),
-      edges: z.array(z.any()),
+      nodes: z.array(WorkflowNodeSchema),
+      edges: z.array(WorkflowEdgeSchema),
     }),
   }),
 })

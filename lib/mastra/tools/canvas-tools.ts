@@ -1,27 +1,33 @@
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
+import type {
+  AddNodeContext,
+  ConnectNodesContext,
+  UpdateNodeContext,
+  DeleteNodeContext,
+  DeleteEdgeContext,
+  LayoutNodesContext,
+  CanvasApi,
+  RuntimeContext,
+  NodeTypeSchema,
+  PositionSchema,
+  NodeDataSchema,
+} from './types';
 
 export const addNodeTool = createTool({
   id: 'add-node',
   description: 'Add a new node to the canvas',
   inputSchema: z.object({
-    type: z.enum(['text', 'image', 'audio', 'video', 'code', 'tweet', 'transform']),
-    position: z.object({
-      x: z.number(),
-      y: z.number(),
-    }).optional(),
-    data: z.object({
-      label: z.string(),
-      content: z.string().optional(),
-      model: z.string().optional(),
-    }),
+    type: NodeTypeSchema,
+    position: PositionSchema.optional(),
+    data: NodeDataSchema,
   }),
   outputSchema: z.object({
     nodeId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: AddNodeContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const newNode = await canvasApi.addNode({
@@ -50,8 +56,8 @@ export const connectNodesTool = createTool({
     edgeId: z.string(),
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: ConnectNodesContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const edge = await canvasApi.connectNodes(context);
@@ -72,17 +78,14 @@ export const updateNodeTool = createTool({
       label: z.string().optional(),
       content: z.string().optional(),
       model: z.string().optional(),
-      position: z.object({
-        x: z.number(),
-        y: z.number(),
-      }).optional(),
+      position: PositionSchema.optional(),
     }),
   }),
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: UpdateNodeContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.updateNode(context.nodeId, context.updates);
@@ -101,8 +104,8 @@ export const deleteNodeTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: DeleteNodeContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.deleteNode(context.nodeId);
@@ -121,8 +124,8 @@ export const deleteEdgeTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: DeleteEdgeContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.deleteEdge(context.edgeId);
@@ -153,8 +156,8 @@ export const getCanvasStateTool = createTool({
       targetHandle: z.string().optional(),
     })),
   }),
-  execute: async ({ runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ runtimeContext }: { runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     const state = await canvasApi.getCanvasState();
@@ -174,8 +177,8 @@ export const layoutNodesTool = createTool({
   outputSchema: z.object({
     success: z.boolean(),
   }),
-  execute: async ({ context, runtimeContext }: { context: any; runtimeContext: any }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ context, runtimeContext }: { context: LayoutNodesContext; runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     if (!canvasApi) throw new Error('Canvas API not available');
     
     await canvasApi.layoutNodes(context);
@@ -192,8 +195,8 @@ export const rollbackLastTool = createTool({
     success: z.boolean(),
     message: z.string(),
   }),
-  execute: async ({ runtimeContext }) => {
-    const canvasApi = runtimeContext?.get('canvas-api') as any;
+  execute: async ({ runtimeContext }: { runtimeContext: RuntimeContext }) => {
+    const canvasApi = runtimeContext?.get('canvas-api') as CanvasApi;
     
     if (!canvasApi) throw new Error('Canvas API not available');
     

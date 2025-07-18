@@ -114,6 +114,11 @@ export function useCanvasBridge() {
           data: args.data,
         });
         
+        // Fit view to show the new node
+        setTimeout(() => {
+          reactFlowInstance.fitView({ padding: 0.2, duration: 300 });
+        }, 100);
+        
         return { nodeId, success: true };
       }
       
@@ -127,6 +132,10 @@ export function useCanvasBridge() {
         };
         
         reactFlowInstance.addEdges(newEdge);
+        // Fit view to show the new connection
+        setTimeout(() => {
+          reactFlowInstance.fitView({ padding: 0.2, duration: 300 });
+        }, 100);
         return { edgeId: newEdge.id, success: true };
       }
       
@@ -182,6 +191,10 @@ export function useCanvasBridge() {
         }));
         
         reactFlowInstance.setNodes(layoutedNodes);
+        // Fit view after layout change
+        setTimeout(() => {
+          reactFlowInstance.fitView({ padding: 0.2, duration: 300 });
+        }, 100);
         return { success: true };
       }
       

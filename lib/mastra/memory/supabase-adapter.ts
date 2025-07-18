@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '../logger';
+
 // StorageAdapter interface - defined locally since @mastra/memory might not export it
 interface StorageAdapter {
   get(key: string): any | Promise<any>;
@@ -68,14 +70,14 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .single();
       
       if (error) {
-        console.warn('Supabase memory read failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory read failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         return this.inMemoryFallback.get(`${this.userId}:${key}`);
       }
       
       return data?.value || null;
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       return this.inMemoryFallback.get(`${this.userId}:${key}`);
     }
@@ -102,12 +104,12 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         });
         
       if (error) {
-        console.warn('Supabase memory write failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory write failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         this.inMemoryFallback.set(fullKey, value);
       }
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       this.inMemoryFallback.set(fullKey, value);
     }
@@ -130,12 +132,12 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .eq('key', fullKey);
         
       if (error) {
-        console.warn('Supabase memory delete failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory delete failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         this.inMemoryFallback.delete(fullKey);
       }
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       this.inMemoryFallback.delete(fullKey);
     }
@@ -157,14 +159,14 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .eq('key', fullKey);
         
       if (error) {
-        console.warn('Supabase memory check failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory check failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         return this.inMemoryFallback.has(fullKey);
       }
       
       return (count ?? 0) > 0;
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       return this.inMemoryFallback.has(fullKey);
     }
@@ -188,14 +190,14 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .eq('userId', this.userId);
         
       if (error) {
-        console.warn('Supabase memory clear failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory clear failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         const keysToDelete = this.inMemoryFallback.keys()
           .filter(key => key.startsWith(`${this.userId}:`));
         keysToDelete.forEach(key => this.inMemoryFallback.delete(key));
       }
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       const keysToDelete = this.inMemoryFallback.keys()
         .filter(key => key.startsWith(`${this.userId}:`));
@@ -219,7 +221,7 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .eq('userId', this.userId);
         
       if (error) {
-        console.warn('Supabase memory keys failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory keys failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         return this.inMemoryFallback.keys()
           .filter(key => key.startsWith(`${this.userId}:`))
@@ -228,7 +230,7 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
       
       return data?.map(row => row.key.replace(`${this.userId}:`, '')) || [];
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       return this.inMemoryFallback.keys()
         .filter(key => key.startsWith(`${this.userId}:`))
@@ -252,7 +254,7 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
         .eq('userId', this.userId);
         
       if (error) {
-        console.warn('Supabase memory size failed, falling back to in-memory:', error.message);
+        logger.warn('Supabase memory size failed, falling back to in-memory', { component: 'SupabaseMemoryAdapter', error });
         this.useInMemory = true;
         return this.inMemoryFallback.keys()
           .filter(key => key.startsWith(`${this.userId}:`))
@@ -261,7 +263,7 @@ export class SupabaseMemoryAdapter implements StorageAdapter {
       
       return count || 0;
     } catch (error) {
-      console.warn('Supabase connection failed, using in-memory storage');
+      logger.warn('Supabase connection failed, using in-memory storage', { component: 'SupabaseMemoryAdapter' });
       this.useInMemory = true;
       return this.inMemoryFallback.keys()
         .filter(key => key.startsWith(`${this.userId}:`))
