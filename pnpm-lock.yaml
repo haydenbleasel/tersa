@@ -21,8 +21,8 @@ importers:
         specifier: ^1.2.10
         version: 1.2.10(zod@3.25.64)
       '@ai-sdk/deepinfra':
-        specifier: ^0.2.15
-        version: 0.2.15(zod@3.25.64)
+        specifier: ^0.2.17
+        version: 0.2.17(zod@3.25.64)
       '@ai-sdk/deepseek':
         specifier: ^0.2.14
         version: 0.2.14(zod@3.25.64)
@@ -486,8 +486,8 @@ packages:
     peerDependencies:
       zod: ^3.0.0
 
-  '@ai-sdk/deepinfra@0.2.15':
-    resolution: {integrity: sha512-oRWZydmKg0G6KZTh4mOi0Kb3rW4v6hMBv/dGUH5xfo/nNyV6gAwgtoXtZ96KRbkjqCgVQgebfN1OCba1lflP0A==}
+  '@ai-sdk/deepinfra@0.2.17':
+    resolution: {integrity: sha512-vmnfTjzjmhvEEf5ZTVuqiQQ0ENyo4UinSSZ63ORXhlZqi4Utw1NDskIOSKP2EEwbP+ur8dh57fqBO4QFvw4SaA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -548,6 +548,12 @@ packages:
 
   '@ai-sdk/openai-compatible@0.2.14':
     resolution: {integrity: sha512-icjObfMCHKSIbywijaoLdZ1nSnuRnWgMEMLgwoxPJgxsUHMx0aVORnsLUid4SPtdhHI3X2masrt6iaEQLvOSFw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+
+  '@ai-sdk/openai-compatible@0.2.16':
+    resolution: {integrity: sha512-LkvfcM8slJedRyJa/MiMiaOzcMjV1zNDwzTHEGz7aAsgsQV0maLfmJRi/nuSwf5jmp0EouC+JXXDUj2l94HgQw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -5484,9 +5490,9 @@ snapshots:
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.64)
       zod: 3.25.64
 
-  '@ai-sdk/deepinfra@0.2.15(zod@3.25.64)':
+  '@ai-sdk/deepinfra@0.2.17(zod@3.25.64)':
     dependencies:
-      '@ai-sdk/openai-compatible': 0.2.14(zod@3.25.64)
+      '@ai-sdk/openai-compatible': 0.2.16(zod@3.25.64)
       '@ai-sdk/provider': 1.1.3
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.64)
       zod: 3.25.64
@@ -5548,6 +5554,12 @@ snapshots:
       zod: 3.25.64
 
   '@ai-sdk/openai-compatible@0.2.14(zod@3.25.64)':
+    dependencies:
+      '@ai-sdk/provider': 1.1.3
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.64)
+      zod: 3.25.64
+
+  '@ai-sdk/openai-compatible@0.2.16(zod@3.25.64)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
       '@ai-sdk/provider-utils': 2.2.8(zod@3.25.64)
