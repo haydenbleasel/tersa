@@ -81,7 +81,7 @@
     "@tiptap/extension-placeholder": "^2.14.0",
     "@tiptap/extension-subscript": "^2.14.0",
     "@tiptap/extension-superscript": "^2.14.0",
-    "@tiptap/extension-table": "^2.14.0",
+    "@tiptap/extension-table": "^2.26.1",
     "@tiptap/extension-table-cell": "^2.14.0",
     "@tiptap/extension-table-header": "^2.14.0",
     "@tiptap/extension-table-row": "^2.14.0",
