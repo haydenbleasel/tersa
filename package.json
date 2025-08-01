@@ -19,7 +19,7 @@
     "@ai-sdk/cerebras": "^0.2.14",
     "@ai-sdk/cohere": "^1.2.10",
     "@ai-sdk/deepinfra": "^0.2.15",
-    "@ai-sdk/deepseek": "^0.2.14",
+    "@ai-sdk/deepseek": "^0.2.16",
     "@ai-sdk/fal": "^0.1.12",
     "@ai-sdk/fireworks": "^0.2.14",
     "@ai-sdk/google": "^1.2.19",
