@@ -70,12 +70,12 @@ export const POST = async (req: Request) => {
       await trackCreditUsage({
         action: 'code',
         cost: provider.getCost({
-          input: usage.promptTokens,
-          output: usage.completionTokens,
+          input: usage.inputTokens,
+          output: usage.outputTokens,
         }),
       });
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toUIMessageStreamResponse();
 };
