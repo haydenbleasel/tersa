@@ -42,7 +42,7 @@ export const TweetPrimitive = ({
       updateNodeData(id, {
         content: {
           id: tweetId,
-          text: response.text.text,
+          text: response.text,
           author: response.author,
           date: response.date,
         },

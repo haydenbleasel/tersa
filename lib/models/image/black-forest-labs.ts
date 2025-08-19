@@ -178,7 +178,7 @@ export const blackForestLabs = {
   image: (modelId: (typeof models)[number]): ImageModel => ({
     modelId,
     provider: 'black-forest-labs',
-    specificationVersion: 'v1',
+    specificationVersion: 'v2',
     maxImagesPerCall: 1,
     doGenerate: async ({
       prompt,

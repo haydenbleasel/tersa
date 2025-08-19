@@ -69,7 +69,7 @@ const generateGptImage1Image = async ({
   const image: Experimental_GenerateImageResult['image'] = {
     base64: json,
     uint8Array: Buffer.from(json, 'base64'),
-    mimeType: 'image/png',
+    mediaType: 'image/png',
   };
 
   return {
