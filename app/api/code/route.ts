@@ -1,8 +1,8 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { parseError } from '@/lib/error/parse';
+import { gateway } from '@/lib/gateway';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { trackCreditUsage } from '@/lib/stripe';
-import { gateway } from '@ai-sdk/gateway';
 import { streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds

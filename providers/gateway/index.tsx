@@ -1,4 +1,4 @@
-import { gateway } from '@ai-sdk/gateway';
+import { gateway } from '@/lib/gateway';
 import type { ReactNode } from 'react';
 import { GatewayProviderClient } from './client';
 
