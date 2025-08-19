@@ -3,7 +3,7 @@ import { parseError } from '@/lib/error/parse';
 import { gateway } from '@/lib/gateway';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { trackCreditUsage } from '@/lib/stripe';
-import { streamText } from 'ai';
+import { convertToModelMessages, streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -62,7 +62,7 @@ export const POST = async (req: Request) => {
       'Respond with the code only, no other text.',
       'Do not format the code as Markdown, just return the code as is.',
     ].join('\n'),
-    messages,
+    messages: convertToModelMessages(messages),
     onError: (error) => {
       console.error(error);
     },

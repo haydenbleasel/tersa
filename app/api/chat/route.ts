@@ -3,7 +3,7 @@ import { parseError } from '@/lib/error/parse';
 import { gateway } from '@/lib/gateway';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { trackCreditUsage } from '@/lib/stripe';
-import { streamText } from 'ai';
+import { convertToModelMessages, streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -66,7 +66,7 @@ export const POST = async (req: Request) => {
       "You will then synthesize the content based on the user's instructions and the context provided.",
       'The output should be a concise summary of the content, no more than 100 words.',
     ].join('\n'),
-    messages,
+    messages: convertToModelMessages(messages),
     onFinish: async ({ usage }) => {
       const inputCost = model.pricing?.input
         ? Number.parseFloat(model.pricing.input)
