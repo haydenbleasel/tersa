@@ -212,7 +212,11 @@ export const ModelSelector = ({
                 key={chef}
                 heading={
                   <CommandGroupHeading
-                    data={providers[chef as keyof typeof providers]}
+                    data={
+                      chef in providers
+                        ? providers[chef as keyof typeof providers]
+                        : providers.unknown
+                    }
                   />
                 }
               >
@@ -233,7 +237,11 @@ export const ModelSelector = ({
                     <div className="flex flex-1 items-center gap-2 overflow-hidden">
                       <ModelIcon
                         data={model}
-                        chef={providers[chef as keyof typeof providers]}
+                        chef={
+                          chef in providers
+                            ? providers[chef as keyof typeof providers]
+                            : providers.unknown
+                        }
                         className={
                           value === id ? 'text-primary-foreground' : ''
                         }

@@ -3,6 +3,8 @@ import {
   AmazonBedrockIcon,
   AmazonIcon,
   AnthropicIcon,
+  AzureIcon,
+  BasetenIcon,
   BlackForestLabsIcon,
   CerebrasIcon,
   CohereIcon,
@@ -13,19 +15,25 @@ import {
   GoogleIcon,
   GroqIcon,
   HumeIcon,
+  InceptionIcon,
   KlingIcon,
   LmntIcon,
   LumaIcon,
   MetaIcon,
   MinimaxIcon,
   MistralIcon,
+  MoonshotAiIcon,
+  MorphIcon,
+  NovitaIcon,
   OpenAiIcon,
   PerplexityIcon,
   ReplicateIcon,
   RunwayIcon,
   TogetherIcon,
+  UnknownIcon,
   VercelIcon,
   XaiIcon,
+  ZaiIcon,
 } from './icons';
 import type { PriceBracket } from './models/text';
 
@@ -49,6 +57,11 @@ export const providers = {
   google: {
     id: 'google',
     name: 'Google',
+    icon: GoogleIcon,
+  },
+  vertex: {
+    id: 'vertex',
+    name: 'Vertex',
     icon: GoogleIcon,
   },
   meta: {
@@ -121,13 +134,13 @@ export const providers = {
     name: 'Together',
     icon: TogetherIcon,
   },
-  'alibaba-cloud': {
-    id: 'alibaba-cloud',
+  alibaba: {
+    id: 'alibaba',
     name: 'Alibaba Cloud',
     icon: AlibabaCloudIcon,
   },
-  'amazon-bedrock': {
-    id: 'amazon-bedrock',
+  bedrock: {
+    id: 'bedrock',
     name: 'Amazon Bedrock',
     icon: AmazonBedrockIcon,
   },
@@ -170,6 +183,46 @@ export const providers = {
     id: 'perplexity',
     name: 'Perplexity',
     icon: PerplexityIcon,
+  },
+  baseten: {
+    id: 'baseten',
+    name: 'Baseten',
+    icon: BasetenIcon,
+  },
+  azure: {
+    id: 'azure',
+    name: 'Azure',
+    icon: AzureIcon,
+  },
+  moonshotai: {
+    id: 'moonshotai',
+    name: 'Moonshot AI',
+    icon: MoonshotAiIcon,
+  },
+  morph: {
+    id: 'morph',
+    name: 'Morph',
+    icon: MorphIcon,
+  },
+  inception: {
+    id: 'inception',
+    name: 'Inception',
+    icon: InceptionIcon,
+  },
+  zai: {
+    id: 'zai',
+    name: 'Zai',
+    icon: ZaiIcon,
+  },
+  novita: {
+    id: 'novita',
+    name: 'Novita',
+    icon: NovitaIcon,
+  },
+  unknown: {
+    id: 'unknown',
+    name: 'Other',
+    icon: UnknownIcon,
   },
 };
 

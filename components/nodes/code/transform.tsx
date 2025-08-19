@@ -4,13 +4,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { handleError } from '@/lib/error/handle';
-import { textModels } from '@/lib/models/text';
 import {
   getCodeFromCodeNodes,
   getDescriptionsFromImageNodes,
   getTextFromTextNodes,
   getTranscriptionFromAudioNodes,
 } from '@/lib/xyflow';
+import { useGateway } from '@/providers/gateway/client';
 import { useProject } from '@/providers/project';
 import { useChat } from '@ai-sdk/react';
 import Editor from '@monaco-editor/react';
@@ -32,13 +32,13 @@ type CodeTransformProps = CodeNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof textModels) => {
+const getDefaultModel = (models: ReturnType<typeof useGateway>['models']) => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
 
   if (!defaultModel) {
-    throw new Error('No default model found');
+    return 'claude-3-5-sonnet';
   }
 
   return defaultModel[0];
@@ -52,6 +52,7 @@ export const CodeTransform = ({
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const project = useProject();
+  const { models: textModels } = useGateway();
   const modelId = data.model ?? getDefaultModel(textModels);
   const language = data.generated?.language ?? 'javascript';
   const analytics = useAnalytics();
@@ -251,6 +252,7 @@ export const CodeTransform = ({
     project?.id,
     modelId,
     language,
+    textModels,
   ]);
 
   const nonUserMessages = messages.filter((message) => message.role !== 'user');

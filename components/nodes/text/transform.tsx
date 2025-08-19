@@ -16,7 +16,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAnalytics } from '@/hooks/use-analytics';
 import { useReasoning } from '@/hooks/use-reasoning';
 import { handleError } from '@/lib/error/handle';
-import { textModels } from '@/lib/models/text';
 import {
   getDescriptionsFromImageNodes,
   getFilesFromFileNodes,
@@ -25,6 +24,7 @@ import {
   getTranscriptionFromAudioNodes,
   getTweetContentFromTweetNodes,
 } from '@/lib/xyflow';
+import { useGateway } from '@/providers/gateway/client';
 import { useProject } from '@/providers/project';
 import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
@@ -53,13 +53,13 @@ type TextTransformProps = TextNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof textModels) => {
+const getDefaultModel = (models: ReturnType<typeof useGateway>['models']) => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
 
   if (!defaultModel) {
-    throw new Error('No default model found');
+    return 'o3';
   }
 
   return defaultModel[0];
@@ -73,7 +73,8 @@ export const TextTransform = ({
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const project = useProject();
-  const modelId = data.model ?? getDefaultModel(textModels);
+  const { models } = useGateway();
+  const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
   const [reasoning, setReasoning] = useReasoning();
   const { append, messages, setMessages, status, stop } = useChat({
@@ -191,7 +192,7 @@ export const TextTransform = ({
       children: (
         <ModelSelector
           value={modelId}
-          options={textModels}
+          options={models}
           key={id}
           className="w-[200px] rounded-full"
           onChange={(value) => updateNodeData(id, { model: value })}
@@ -291,6 +292,7 @@ export const TextTransform = ({
     status,
     stop,
     handleCopy,
+    models,
   ]);
 
   const nonUserMessages = messages.filter((message) => message.role !== 'user');
