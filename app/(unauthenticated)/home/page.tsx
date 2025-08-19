@@ -1,3 +1,4 @@
+import { GatewayProvider } from '@/providers/gateway';
 import type { Metadata } from 'next';
 import { Demo } from './components/demo';
 import { Features } from './components/features';
@@ -23,7 +24,7 @@ const buttons = [
 ];
 
 const Home = () => (
-  <>
+  <GatewayProvider>
     <Hero
       announcement={{
         title: 'Tersa is now open source!',
@@ -48,7 +49,7 @@ const Home = () => (
         '1916494270262813000',
       ]}
     />
-  </>
+  </GatewayProvider>
 );
 
 export default Home;
