@@ -20,6 +20,7 @@
     "@ai-sdk/lmnt": "^1.0.4",
     "@ai-sdk/luma": "^1.0.4",
     "@ai-sdk/openai": "^2.0.16",
+    "@ai-sdk/provider": "^2.0.0",
     "@ai-sdk/react": "^2.0.17",
     "@ai-sdk/xai": "^2.0.10",
     "@hookform/resolvers": "^5.1.1",

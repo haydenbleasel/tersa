@@ -29,7 +29,7 @@ import { useProject } from '@/providers/project';
 import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport, type FileUIPart } from 'ai';
 import {
   ClockIcon,
   CopyIcon,
@@ -152,20 +152,28 @@ export const TextTransform = ({
       fileCount: files.length,
     });
 
+    const attachments: FileUIPart[] = [];
+
+    for (const image of images) {
+      attachments.push({
+        mediaType: image.type,
+        url: image.url,
+        type: 'file',
+      });
+    }
+
+    for (const file of files) {
+      attachments.push({
+        mediaType: file.type,
+        url: file.url,
+        type: 'file',
+      });
+    }
+
     setMessages([]);
-    sendMessage({
+    await sendMessage({
       text: content.join('\n'),
-      files: [
-        ...images.map((image) => ({
-          url: image.url,
-          mediaType: image.type,
-        })),
-        ...files.map((file) => ({
-          url: file.url,
-          mediaType: file.type,
-          name: file.name,
-        })),
-      ],
+      files: attachments,
     });
   }, [
     sendMessage,
