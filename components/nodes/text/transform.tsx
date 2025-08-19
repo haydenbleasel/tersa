@@ -29,6 +29,7 @@ import { useProject } from '@/providers/project';
 import { ReasoningTunnel } from '@/tunnels/reasoning';
 import { useChat } from '@ai-sdk/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
+import { DefaultChatTransport } from 'ai';
 import {
   ClockIcon,
   CopyIcon,
@@ -77,17 +78,20 @@ export const TextTransform = ({
   const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
   const [reasoning, setReasoning] = useReasoning();
-  const { append, messages, setMessages, status, stop } = useChat({
-    body: {
-      modelId,
-    },
+  const { sendMessage, messages, setMessages, status, stop } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+      body: {
+        modelId,
+      },
+    }),
     onError: (error) => handleError('Error generating text', error),
-    onFinish: (message) => {
+    onFinish: ({ message }) => {
       updateNodeData(id, {
         generated: {
-          text: message.content,
+          text: message.parts.find((part) => part.type === 'text')?.text ?? '',
           sources:
-            message.parts?.filter((part) => part.type === 'source') ?? [],
+            message.parts?.filter((part) => part.type === 'source-url') ?? [],
         },
         updatedAt: new Date().toISOString(),
       });
@@ -149,23 +153,22 @@ export const TextTransform = ({
     });
 
     setMessages([]);
-    append({
-      role: 'user',
-      content: content.join('\n'),
-      experimental_attachments: [
+    sendMessage({
+      text: content.join('\n'),
+      files: [
         ...images.map((image) => ({
           url: image.url,
-          contentType: image.type,
+          mediaType: image.type,
         })),
         ...files.map((file) => ({
           url: file.url,
-          contentType: file.type,
+          mediaType: file.type,
           name: file.name,
         })),
       ],
     });
   }, [
-    append,
+    sendMessage,
     data.instructions,
     getEdges,
     getNodes,
@@ -218,7 +221,10 @@ export const TextTransform = ({
       const text = messages.length
         ? messages
             .filter((message) => message.role === 'assistant')
-            .map((message) => message.content)
+            .map(
+              (message) =>
+                message.parts.find((part) => part.type === 'text')?.text ?? ''
+            )
             .join('\n')
         : data.generated?.text;
 
@@ -341,30 +347,34 @@ export const TextTransform = ({
               className="p-0 [&>div]:max-w-none"
             >
               <div>
-                {message.parts.filter((part) => part.type === 'source')
+                {message.parts.filter((part) => part.type === 'source-url')
                   ?.length && (
                   <AISources>
                     <AISourcesTrigger
                       count={
-                        message.parts.filter((part) => part.type === 'source')
-                          .length
+                        message.parts.filter(
+                          (part) => part.type === 'source-url'
+                        ).length
                       }
                     />
                     <AISourcesContent>
                       {message.parts
-                        .filter((part) => part.type === 'source')
-                        .map(({ source }) => (
+                        .filter((part) => part.type === 'source-url')
+                        .map(({ url, title }) => (
                           <AISource
-                            key={source.url}
-                            href={source.url}
-                            title={source.title ?? new URL(source.url).hostname}
+                            key={url ?? ''}
+                            href={url}
+                            title={title ?? new URL(url).hostname}
                           />
                         ))}
                     </AISourcesContent>
                   </AISources>
                 )}
                 <AIMessageContent className="bg-transparent p-0">
-                  <AIResponse>{message.content}</AIResponse>
+                  <AIResponse>
+                    {message.parts.find((part) => part.type === 'text')?.text ??
+                      ''}
+                  </AIResponse>
                 </AIMessageContent>
               </div>
             </AIMessage>
@@ -380,11 +390,7 @@ export const TextTransform = ({
         {messages.flatMap((message) =>
           message.parts
             .filter((part) => part.type === 'reasoning')
-            .flatMap((part) =>
-              part.details
-                .filter((detail) => detail.type === 'text')
-                .map((detail) => detail.text)
-            )
+            .flatMap((part) => part.text ?? '')
         )}
       </ReasoningTunnel.In>
     </NodeLayout>

@@ -15,6 +15,7 @@ import { useProject } from '@/providers/project';
 import { useChat } from '@ai-sdk/react';
 import Editor from '@monaco-editor/react';
 import { getIncomers, useReactFlow } from '@xyflow/react';
+import { DefaultChatTransport } from 'ai';
 import { ClockIcon, PlayIcon, RotateCcwIcon, SquareIcon } from 'lucide-react';
 import {
   type ChangeEventHandler,
@@ -56,17 +57,19 @@ export const CodeTransform = ({
   const modelId = data.model ?? getDefaultModel(textModels);
   const language = data.generated?.language ?? 'javascript';
   const analytics = useAnalytics();
-  const { append, messages, setMessages, status, stop } = useChat({
-    api: '/api/code',
-    body: {
-      modelId,
-      language,
-    },
+  const { messages, sendMessage, setMessages, status, stop } = useChat({
+    transport: new DefaultChatTransport({
+      api: '/api/code',
+      body: {
+        modelId,
+        language,
+      },
+    }),
     onError: (error) => handleError('Error generating text', error),
-    onFinish: (message) => {
+    onFinish: ({ message }) => {
       updateNodeData(id, {
         generated: {
-          text: message.content,
+          text: message.parts.find((part) => part.type === 'text')?.text ?? '',
         },
         updatedAt: new Date().toISOString(),
       });
@@ -122,16 +125,13 @@ export const CodeTransform = ({
     });
 
     setMessages([]);
-    append({
-      role: 'user',
-      content: content.join('\n'),
-    });
+    sendMessage({ text: content.join('\n') });
   }, [
     data.instructions,
     id,
     getNodes,
     getEdges,
-    append,
+    sendMessage,
     setMessages,
     analytics,
     modelId,
@@ -264,7 +264,8 @@ export const CodeTransform = ({
         language={language}
         value={
           nonUserMessages.length
-            ? nonUserMessages[0].content
+            ? (nonUserMessages[0].parts.find((part) => part.type === 'text')
+                ?.text ?? '')
             : data.generated?.text
         }
         onChange={handleCodeChange}
