@@ -9,6 +9,8 @@ import type { GatewayLanguageModelEntry } from '@ai-sdk/gateway';
 import type { ReactNode } from 'react';
 import { createContext, useContext } from 'react';
 
+export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
+
 type TersaTextModel = TersaModel & {
   providers: (TersaProvider & {
     model: string;

@@ -1,3 +1,4 @@
+import type { PriceBracket } from '@/providers/gateway/client';
 import {
   AlibabaCloudIcon,
   AmazonBedrockIcon,
@@ -35,7 +36,6 @@ import {
   XaiIcon,
   ZaiIcon,
 } from './icons';
-import type { PriceBracket } from './models/text';
 
 export type TersaProvider = {
   id: string;

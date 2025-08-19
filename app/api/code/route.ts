@@ -1,8 +1,8 @@
 import { getSubscribedUser } from '@/lib/auth';
 import { parseError } from '@/lib/error/parse';
-import { textModels } from '@/lib/models/text';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { trackCreditUsage } from '@/lib/stripe';
+import { gateway } from '@ai-sdk/gateway';
 import { streamText } from 'ai';
 
 // Allow streaming responses up to 30 seconds
@@ -46,16 +46,16 @@ export const POST = async (req: Request) => {
     return new Response('Model must be a string', { status: 400 });
   }
 
-  const model = textModels[modelId];
+  const { models } = await gateway.getAvailableModels();
+
+  const model = models.find((model) => model.id === modelId);
 
   if (!model) {
     return new Response('Invalid model', { status: 400 });
   }
 
-  const provider = model.providers[0];
-
   const result = streamText({
-    model: provider.model,
+    model: model.id,
     system: [
       `Output the code in the language specified: ${language ?? 'javascript'}`,
       'If the user specifies an output language in the context below, ignore it.',
@@ -67,12 +67,18 @@ export const POST = async (req: Request) => {
       console.error(error);
     },
     onFinish: async ({ usage }) => {
+      const inputCost = model.pricing?.input
+        ? Number.parseFloat(model.pricing.input)
+        : 0;
+      const outputCost = model.pricing?.output
+        ? Number.parseFloat(model.pricing.output)
+        : 0;
+      const inputTokens = usage.inputTokens ?? 0;
+      const outputTokens = usage.outputTokens ?? 0;
+
       await trackCreditUsage({
         action: 'code',
-        cost: provider.getCost({
-          input: usage.inputTokens,
-          output: usage.outputTokens,
-        }),
+        cost: inputCost * inputTokens + outputCost * outputTokens,
       });
     },
   });

@@ -5,13 +5,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { PriceBracket } from '@/lib/models/text';
 import {
   type TersaModel,
   type TersaProvider,
   providers,
 } from '@/lib/providers';
 import { cn } from '@/lib/utils';
+import type { PriceBracket } from '@/providers/gateway/client';
 import {
   type SubscriptionContextType,
   useSubscription,
