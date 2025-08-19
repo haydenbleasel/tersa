@@ -66,7 +66,7 @@ const generateGptImage1Image = async ({
   const image: Experimental_GenerateImageResult['image'] = {
     base64: json,
     uint8Array: Buffer.from(json, 'base64'),
-    mimeType: 'image/png',
+    mediaType: 'image/png',
   };
 
   return {
@@ -158,7 +158,7 @@ export const generateImageAction = async ({
       image = generatedImageResponse.image;
     }
 
-    let extension = image.mimeType.split('/').pop();
+    let extension = image.mediaType.split('/').pop();
 
     if (extension === 'jpeg') {
       extension = 'jpg';
@@ -167,7 +167,7 @@ export const generateImageAction = async ({
     const name = `${nanoid()}.${extension}`;
 
     const file: File = new File([image.uint8Array], name, {
-      type: image.mimeType,
+      type: image.mediaType,
     });
 
     const blob = await client.storage
@@ -187,7 +187,7 @@ export const generateImageAction = async ({
     const url =
       process.env.NODE_ENV === 'production'
         ? downloadUrl.publicUrl
-        : `data:${image.mimeType};base64,${Buffer.from(image.uint8Array).toString('base64')}`;
+        : `data:${image.mediaType};base64,${Buffer.from(image.uint8Array).toString('base64')}`;
 
     const project = await database.query.projects.findFirst({
       where: eq(projects.id, projectId),
@@ -245,7 +245,7 @@ export const generateImageAction = async ({
       updatedAt: new Date().toISOString(),
       generated: {
         url: downloadUrl.publicUrl,
-        type: image.mimeType,
+        type: image.mediaType,
       },
       description,
     };

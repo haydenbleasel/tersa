@@ -64,7 +64,7 @@ export const generateSpeechAction = async ({
     const blob = await client.storage
       .from('files')
       .upload(`${user.id}/${nanoid()}.mp3`, new Blob([audio.uint8Array]), {
-        contentType: audio.mimeType,
+        contentType: audio.mediaType,
       });
 
     if (blob.error) {
@@ -100,7 +100,7 @@ export const generateSpeechAction = async ({
       updatedAt: new Date().toISOString(),
       generated: {
         url: downloadUrl.publicUrl,
-        type: audio.mimeType,
+        type: audio.mediaType,
       },
     };
 
