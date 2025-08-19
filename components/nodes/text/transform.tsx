@@ -355,8 +355,10 @@ export const TextTransform = ({
               className="p-0 [&>div]:max-w-none"
             >
               <div>
-                {message.parts.filter((part) => part.type === 'source-url')
-                  ?.length && (
+                {Boolean(
+                  message.parts.filter((part) => part.type === 'source-url')
+                    ?.length
+                ) && (
                   <AISources>
                     <AISourcesTrigger
                       count={

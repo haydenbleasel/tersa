@@ -94,7 +94,7 @@ export const NodeLayout = ({
 
   return (
     <>
-      {type !== 'drop' && toolbar?.length && (
+      {type !== 'drop' && Boolean(toolbar?.length) && (
         <NodeToolbar id={id} items={toolbar} />
       )}
       {type !== 'file' && type !== 'tweet' && (
