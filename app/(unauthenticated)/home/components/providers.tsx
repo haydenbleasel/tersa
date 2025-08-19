@@ -34,6 +34,11 @@ export const Providers = () => {
     icons.add(model.icon ?? model.chef.icon);
   }
 
+  const iconsArray = Array.from(icons);
+  const half = Math.ceil(iconsArray.length / 2);
+  const row1 = iconsArray.slice(0, half);
+  const row2 = iconsArray.slice(half);
+
   return (
     <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
       {/* Gradient overlays */}
@@ -84,7 +89,14 @@ export const Providers = () => {
             <MarqueeFade side="left" />
             <MarqueeFade side="right" />
             <MarqueeContent pauseOnHover={false}>
-              {Array.from(icons).map((Icon, index) => (
+              {row1.map((Icon, index) => (
+                <MarqueeItem key={index} className="h-32 w-32 p-8">
+                  <Icon className="size-full" />
+                </MarqueeItem>
+              ))}
+            </MarqueeContent>
+            <MarqueeContent pauseOnHover={false} direction="right">
+              {row2.map((Icon, index) => (
                 <MarqueeItem key={index} className="h-32 w-32 p-8">
                   <Icon className="size-full" />
                 </MarqueeItem>
