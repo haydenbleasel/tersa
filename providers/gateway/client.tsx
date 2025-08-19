@@ -99,7 +99,7 @@ export const GatewayProviderClient = ({
   });
 
   for (const model of models) {
-    const [chef, modelId] = model.id.split('/');
+    const [chef] = model.id.split('/');
     const inputPrice = model.pricing?.input
       ? Number.parseFloat(model.pricing.input)
       : 0;
@@ -121,7 +121,7 @@ export const GatewayProviderClient = ({
 
     const totalCost = inputPrice + outputPrice;
 
-    textModels[modelId] = {
+    textModels[model.id] = {
       label: model.name,
       chef: realChef,
       providers: [
