@@ -23,7 +23,7 @@
     "@ai-sdk/provider": "^2.0.0",
     "@ai-sdk/react": "^2.0.17",
     "@ai-sdk/xai": "^2.0.10",
-    "@hookform/resolvers": "^5.1.1",
+    "@hookform/resolvers": "^5.2.1",
     "@icons-pack/react-simple-icons": "^13.1.0",
     "@marsidev/react-turnstile": "^1.1.0",
     "@monaco-editor/react": "4.7.0",
