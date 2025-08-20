@@ -3,7 +3,12 @@ import { parseError } from '@/lib/error/parse';
 import { gateway } from '@/lib/gateway';
 import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
 import { trackCreditUsage } from '@/lib/stripe';
-import { convertToModelMessages, streamText } from 'ai';
+import {
+  convertToModelMessages,
+  extractReasoningMiddleware,
+  streamText,
+  wrapLanguageModel,
+} from 'ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -54,8 +59,13 @@ export const POST = async (req: Request) => {
     return new Response('Invalid model', { status: 400 });
   }
 
+  const enhancedModel = wrapLanguageModel({
+    model: gateway(model.id),
+    middleware: extractReasoningMiddleware({ tagName: 'think' }),
+  });
+
   const result = streamText({
-    model: model.id,
+    model: enhancedModel,
     system: [
       `Output the code in the language specified: ${language ?? 'javascript'}`,
       'If the user specifies an output language in the context below, ignore it.',
