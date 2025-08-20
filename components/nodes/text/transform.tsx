@@ -81,9 +81,6 @@ export const TextTransform = ({
   const { sendMessage, messages, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
-      body: {
-        modelId,
-      },
     }),
     onError: (error) => handleError('Error generating text', error),
     onFinish: ({ message }) => {
@@ -171,10 +168,17 @@ export const TextTransform = ({
     }
 
     setMessages([]);
-    await sendMessage({
-      text: content.join('\n'),
-      files: attachments,
-    });
+    await sendMessage(
+      {
+        text: content.join('\n'),
+        files: attachments,
+      },
+      {
+        body: {
+          modelId,
+        },
+      }
+    );
   }, [
     sendMessage,
     data.instructions,

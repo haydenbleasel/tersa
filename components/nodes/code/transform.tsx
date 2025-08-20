@@ -60,10 +60,6 @@ export const CodeTransform = ({
   const { messages, sendMessage, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/code',
-      body: {
-        modelId,
-        language,
-      },
     }),
     onError: (error) => handleError('Error generating text', error),
     onFinish: ({ message }) => {
@@ -125,7 +121,15 @@ export const CodeTransform = ({
     });
 
     setMessages([]);
-    sendMessage({ text: content.join('\n') });
+    sendMessage(
+      { text: content.join('\n') },
+      {
+        body: {
+          modelId,
+          language,
+        },
+      }
+    );
   }, [
     data.instructions,
     id,
