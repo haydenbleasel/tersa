@@ -125,7 +125,7 @@
     "replicate": "^1.0.1",
     "resend": "^4.6.0",
     "shadcn-prose": "^1.0.8",
-    "shiki": "^3.6.0",
+    "shiki": "^3.12.1",
     "sonner": "^2.0.5",
     "standardwebhooks": "^1.0.0",
     "stripe": "^18.2.1",
