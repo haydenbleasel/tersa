@@ -48,21 +48,7 @@ export async function POST(req: Request) {
           throw new Error('Customer is deleted');
         }
 
-        // If the customer has changed plan, we need to cancel the old subscription
-        const subscriptions = await stripe.subscriptions.list({
-          customer: customerId,
-        });
-
-        for (const oldSubscription of subscriptions.data) {
-          if (oldSubscription.id !== subscription.id) {
-            await stripe.subscriptions.cancel(oldSubscription.id, {
-              cancellation_details: {
-                comment: 'Customer has changed plan',
-              },
-            });
-          }
-        }
-
+        // Update the profile with the subscription details
         await database
           .update(profile)
           .set({

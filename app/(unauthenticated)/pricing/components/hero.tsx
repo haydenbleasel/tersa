@@ -150,14 +150,17 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
 
     if (currentPlan === 'hobby') {
       free.ctaText = 'Manage';
+      free.ctaLink = '/api/portal';
       pro.ctaText = 'Upgrade';
       pro.variant = 'default';
     } else if (currentPlan === 'pro') {
       pro.ctaText = 'Manage';
+      pro.ctaLink = '/api/portal';
       free.ctaText = 'Downgrade';
       enterprise.variant = 'default';
     } else if (currentPlan === 'enterprise') {
       enterprise.ctaText = 'Manage';
+      enterprise.ctaLink = '/api/portal';
       free.ctaText = 'Downgrade';
       pro.ctaText = 'Downgrade';
     }
