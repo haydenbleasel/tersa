@@ -1,15 +1,15 @@
-import { database } from '@/lib/database';
-import { env } from '@/lib/env';
-import { parseError } from '@/lib/error/parse';
-import { stripe } from '@/lib/stripe';
-import { profile } from '@/schema';
-import { eq } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
-import type Stripe from 'stripe';
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import type Stripe from "stripe";
+import { database } from "@/lib/database";
+import { env } from "@/lib/env";
+import { parseError } from "@/lib/error/parse";
+import { stripe } from "@/lib/stripe";
+import { profile } from "@/schema";
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = req.headers.get('stripe-signature') as string;
+  const signature = req.headers.get("stripe-signature") as string;
 
   let event: Stripe.Event;
 
@@ -29,23 +29,23 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated': {
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId =
-          typeof subscription.customer === 'string'
+          typeof subscription.customer === "string"
             ? subscription.customer
             : subscription.customer.id;
 
         if (!subscription.metadata.userId) {
-          throw new Error('User ID not found');
+          throw new Error("User ID not found");
         }
 
         // Get customer to find the user ID
         const customer = await stripe.customers.retrieve(customerId);
 
         if (customer.deleted) {
-          throw new Error('Customer is deleted');
+          throw new Error("Customer is deleted");
         }
 
         // Update the profile with the subscription details
@@ -60,11 +60,11 @@ export async function POST(req: Request) {
 
         break;
       }
-      case 'customer.subscription.deleted': {
+      case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
 
         if (!subscription.metadata.userId) {
-          throw new Error('User ID not found');
+          throw new Error("User ID not found");
         }
 
         const userProfile = await database.query.profile.findFirst({
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
         });
 
         if (!userProfile) {
-          throw new Error('Profile not found');
+          throw new Error("Profile not found");
         }
 
         if (userProfile.subscriptionId === subscription.id) {

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useUser } from '@/hooks/use-user';
-import { env } from '@/lib/env';
-import { usePathname, useSearchParams } from 'next/navigation';
-import posthog from 'posthog-js';
-import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react';
-import { type ReactNode, Suspense, useEffect } from 'react';
+import { usePathname, useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
+import { PostHogProvider as PHProvider, usePostHog } from "posthog-js/react";
+import { type ReactNode, Suspense, useEffect } from "react";
+import { useUser } from "@/hooks/use-user";
+import { env } from "@/lib/env";
 
 type PostHogProviderProps = {
   children: ReactNode;
@@ -13,13 +13,13 @@ type PostHogProviderProps = {
 
 export const PostHogProvider = ({ children }: PostHogProviderProps) => {
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       return;
     }
 
     posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
-      api_host: '/ingest',
-      ui_host: 'https://us.posthog.com',
+      api_host: "/ingest",
+      ui_host: "https://us.posthog.com",
       capture_pageview: false, // We capture pageviews manually
       capture_pageleave: true, // Enable pageleave capture
     });
@@ -45,20 +45,18 @@ const PostHogPageView = () => {
       if (search) {
         url += `?${search}`;
       }
-      posthog.capture('$pageview', { $current_url: url });
+      posthog.capture("$pageview", { $current_url: url });
     }
   }, [pathname, searchParams, posthog]);
 
   return null;
 };
 
-const SuspendedPostHogPageView = () => {
-  return (
-    <Suspense fallback={null}>
-      <PostHogPageView />
-    </Suspense>
-  );
-};
+const SuspendedPostHogPageView = () => (
+  <Suspense fallback={null}>
+    <PostHogPageView />
+  </Suspense>
+);
 
 export const PostHogIdentifyProvider = ({ children }: PostHogProviderProps) => {
   const posthog = usePostHog();

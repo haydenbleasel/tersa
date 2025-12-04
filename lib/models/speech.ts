@@ -1,10 +1,10 @@
-import { hume } from '@ai-sdk/hume';
-import { lmnt } from '@ai-sdk/lmnt';
-import { openai } from '@ai-sdk/openai';
-import type { SpeechModel } from 'ai';
-import { type TersaModel, type TersaProvider, providers } from '../providers';
+import { hume } from "@ai-sdk/hume";
+import { lmnt } from "@ai-sdk/lmnt";
+import { openai } from "@ai-sdk/openai";
+import type { SpeechModel } from "ai";
+import { providers, type TersaModel, type TersaProvider } from "../providers";
 
-const million = 1000000;
+const million = 1_000_000;
 const thousand = 1000;
 
 type TersaSpeechModel = TersaModel & {
@@ -16,123 +16,123 @@ type TersaSpeechModel = TersaModel & {
 };
 
 export const speechModels: Record<string, TersaSpeechModel> = {
-  'tts-1': {
-    label: 'TTS-1',
+  "tts-1": {
+    label: "TTS-1",
     chef: providers.openai,
     providers: [
       {
         ...providers.openai,
-        model: openai.speech('tts-1'),
+        model: openai.speech("tts-1"),
         getCost: (characters: number) => (characters / million) * 15,
       },
     ],
     voices: [
-      'alloy',
-      'ash',
-      'ballad',
-      'coral',
-      'echo',
-      'fable',
-      'nova',
-      'onyx',
-      'sage',
-      'shimmer',
+      "alloy",
+      "ash",
+      "ballad",
+      "coral",
+      "echo",
+      "fable",
+      "nova",
+      "onyx",
+      "sage",
+      "shimmer",
     ],
   },
-  'tts-1-hd': {
-    label: 'TTS-1-HD',
+  "tts-1-hd": {
+    label: "TTS-1-HD",
     chef: providers.openai,
     providers: [
       {
         ...providers.openai,
-        model: openai.speech('tts-1-hd'),
+        model: openai.speech("tts-1-hd"),
         getCost: (characters: number) => (characters / million) * 30,
       },
     ],
     default: true,
     voices: [
-      'alloy',
-      'ash',
-      'ballad',
-      'coral',
-      'echo',
-      'fable',
-      'nova',
-      'onyx',
-      'sage',
-      'shimmer',
+      "alloy",
+      "ash",
+      "ballad",
+      "coral",
+      "echo",
+      "fable",
+      "nova",
+      "onyx",
+      "sage",
+      "shimmer",
     ],
   },
   aurora: {
-    label: 'Aurora',
+    label: "Aurora",
     chef: providers.lmnt,
     providers: [
       {
         ...providers.lmnt,
-        model: lmnt.speech('aurora'),
+        model: lmnt.speech("aurora"),
         getCost: (characters: number) => (characters / thousand) * 0.05,
       },
     ],
     voices: [
-      'amy',
-      'ava',
-      'caleb',
-      'chloe',
-      'dalton',
-      'daniel',
-      'james',
-      'lauren',
-      'lily',
-      'magnus',
-      'miles',
-      'morgan',
-      'nathan',
-      'noah',
-      'oliver',
-      'paige',
-      'sophie',
-      'terrence',
-      'zain',
-      'zeke',
-      'zoe',
+      "amy",
+      "ava",
+      "caleb",
+      "chloe",
+      "dalton",
+      "daniel",
+      "james",
+      "lauren",
+      "lily",
+      "magnus",
+      "miles",
+      "morgan",
+      "nathan",
+      "noah",
+      "oliver",
+      "paige",
+      "sophie",
+      "terrence",
+      "zain",
+      "zeke",
+      "zoe",
     ],
   },
   blizzard: {
-    label: 'Blizzard',
+    label: "Blizzard",
     chef: providers.lmnt,
     providers: [
       {
         ...providers.lmnt,
-        model: lmnt.speech('blizzard'),
+        model: lmnt.speech("blizzard"),
         getCost: (characters: number) => (characters / thousand) * 0.05,
       },
     ],
     voices: [
-      'amy',
-      'ava',
-      'caleb',
-      'chloe',
-      'dalton',
-      'daniel',
-      'james',
-      'lauren',
-      'lily',
-      'magnus',
-      'miles',
-      'morgan',
-      'nathan',
-      'noah',
-      'oliver',
-      'paige',
-      'sophie',
-      'terrence',
-      'zain',
-      'zeke',
-      'zoe',
+      "amy",
+      "ava",
+      "caleb",
+      "chloe",
+      "dalton",
+      "daniel",
+      "james",
+      "lauren",
+      "lily",
+      "magnus",
+      "miles",
+      "morgan",
+      "nathan",
+      "noah",
+      "oliver",
+      "paige",
+      "sophie",
+      "terrence",
+      "zain",
+      "zeke",
+      "zoe",
     ],
   },
   hume: {
-    label: 'Hume',
+    label: "Hume",
     chef: providers.hume,
     providers: [
       {

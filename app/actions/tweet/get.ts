@@ -1,6 +1,6 @@
-'use server';
+"use server";
 
-import { getTweet } from 'react-tweet/api';
+import { getTweet } from "react-tweet/api";
 
 export const getTweetData = async (
   tweetId: string
@@ -18,7 +18,7 @@ export const getTweetData = async (
     const tweet = await getTweet(tweetId);
 
     if (!tweet) {
-      throw new Error('Tweet not found');
+      throw new Error("Tweet not found");
     }
 
     return {
@@ -28,7 +28,7 @@ export const getTweetData = async (
     };
   } catch (error) {
     return {
-      error: 'Error fetching tweet',
+      error: "Error fetching tweet",
     };
   }
 };

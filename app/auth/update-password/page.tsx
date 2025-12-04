@@ -4,11 +4,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { UpdatePasswordForm } from './components/update-password-form';
+} from "@/components/ui/card";
+import { UpdatePasswordForm } from "./components/update-password-form";
 
-const title = 'Update Password';
-const description = 'Please enter your new password below.';
+const title = "Update Password";
+const description = "Please enter your new password below.";
 
 export const metadata = {
   title,

@@ -1,9 +1,9 @@
-import { getCredits } from '@/app/actions/credits/get';
-import { profile } from '@/schema';
-import { eq } from 'drizzle-orm';
-import { database } from './database';
-import { env } from './env';
-import { createClient } from './supabase/server';
+import { eq } from "drizzle-orm";
+import { getCredits } from "@/app/actions/credits/get";
+import { profile } from "@/schema";
+import { database } from "./database";
+import { env } from "./env";
+import { createClient } from "./supabase/server";
 
 export const currentUser = async () => {
   const client = await createClient();
@@ -18,7 +18,7 @@ export const currentUserProfile = async () => {
   const user = await currentUser();
 
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
   const userProfiles = await database
@@ -34,7 +34,7 @@ export const currentUserProfile = async () => {
       .returning();
 
     if (!response.length) {
-      throw new Error('Failed to create user profile');
+      throw new Error("Failed to create user profile");
     }
 
     userProfile = response[0];
@@ -47,22 +47,22 @@ export const getSubscribedUser = async () => {
   const user = await currentUser();
 
   if (!user) {
-    throw new Error('Create an account to use AI features.');
+    throw new Error("Create an account to use AI features.");
   }
 
   const profile = await currentUserProfile();
 
   if (!profile) {
-    throw new Error('User profile not found');
+    throw new Error("User profile not found");
   }
 
   if (!profile.subscriptionId) {
-    throw new Error('Claim your free AI credits to use this feature.');
+    throw new Error("Claim your free AI credits to use this feature.");
   }
 
   const credits = await getCredits();
 
-  if ('error' in credits) {
+  if ("error" in credits) {
     throw new Error(credits.error);
   }
 
@@ -71,7 +71,7 @@ export const getSubscribedUser = async () => {
     credits.credits <= 0
   ) {
     throw new Error(
-      'Sorry, you have no credits remaining! Please upgrade for more credits.'
+      "Sorry, you have no credits remaining! Please upgrade for more credits."
     );
   }
 

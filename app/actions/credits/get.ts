@@ -1,9 +1,9 @@
-'use server';
+"use server";
 
-import { currentUserProfile } from '@/lib/auth';
-import { env } from '@/lib/env';
-import { parseError } from '@/lib/error/parse';
-import { stripe } from '@/lib/stripe';
+import { currentUserProfile } from "@/lib/auth";
+import { env } from "@/lib/env";
+import { parseError } from "@/lib/error/parse";
+import { stripe } from "@/lib/stripe";
 
 const HOBBY_CREDITS = 200;
 
@@ -19,15 +19,15 @@ export const getCredits = async (): Promise<
     const profile = await currentUserProfile();
 
     if (!profile) {
-      throw new Error('User profile not found');
+      throw new Error("User profile not found");
     }
 
     if (!profile.customerId) {
-      throw new Error('Customer ID not found');
+      throw new Error("Customer ID not found");
     }
 
     if (!profile.subscriptionId) {
-      throw new Error('Customer ID not found');
+      throw new Error("Customer ID not found");
     }
 
     const upcomingInvoice = await stripe.invoices.createPreview({
@@ -40,11 +40,11 @@ export const getCredits = async (): Promise<
     );
 
     if (!usageProductLineItem) {
-      throw new Error('Usage product line item not found');
+      throw new Error("Usage product line item not found");
     }
 
     if (!usageProductLineItem.pricing?.price_details?.price) {
-      throw new Error('Usage product line item price not found');
+      throw new Error("Usage product line item price not found");
     }
 
     // Hobby plan fallback
@@ -53,15 +53,15 @@ export const getCredits = async (): Promise<
     if (profile.productId !== env.STRIPE_HOBBY_PRODUCT_ID) {
       const usagePrice = await stripe.prices.retrieve(
         usageProductLineItem.pricing.price_details.price,
-        { expand: ['tiers'] }
+        { expand: ["tiers"] }
       );
 
       if (!usagePrice.tiers?.length) {
-        throw new Error('Usage price tiers not found');
+        throw new Error("Usage price tiers not found");
       }
 
       if (!usagePrice.tiers[0].up_to) {
-        throw new Error('Usage price tier limit not found');
+        throw new Error("Usage price tier limit not found");
       }
 
       credits = usagePrice.tiers[0].up_to;

@@ -1,20 +1,20 @@
-'use server';
+"use server";
 
-import { getSubscribedUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { imageModels } from '@/lib/models/image';
-import { trackCreditUsage } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/server';
-import { projects } from '@/schema';
-import type { Edge, Node, Viewport } from '@xyflow/react';
+import type { Edge, Node, Viewport } from "@xyflow/react";
 import {
   type Experimental_GenerateImageResult,
   experimental_generateImage as generateImage,
-} from 'ai';
-import { eq } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
-import OpenAI, { toFile } from 'openai';
+} from "ai";
+import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import OpenAI, { toFile } from "openai";
+import { getSubscribedUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { imageModels } from "@/lib/models/image";
+import { trackCreditUsage } from "@/lib/stripe";
+import { createClient } from "@/lib/supabase/server";
+import { projects } from "@/schema";
 
 type EditImageActionProps = {
   images: {
@@ -53,23 +53,23 @@ const generateGptImage1Image = async ({
   );
 
   const response = await openai.images.edit({
-    model: 'gpt-image-1',
+    model: "gpt-image-1",
     image: promptImages,
     prompt,
     size: size as never | undefined,
-    quality: 'high',
+    quality: "high",
   });
 
   const json = response.data?.at(0)?.b64_json;
 
   if (!json) {
-    throw new Error('No response JSON found');
+    throw new Error("No response JSON found");
   }
 
-  const image: Experimental_GenerateImageResult['image'] = {
+  const image: Experimental_GenerateImageResult["image"] = {
     base64: json,
-    uint8Array: Buffer.from(json, 'base64'),
-    mediaType: 'image/png',
+    uint8Array: Buffer.from(json, "base64"),
+    mediaType: "image/png",
   };
 
   return {
@@ -104,26 +104,26 @@ export const editImageAction = async ({
     const model = imageModels[modelId];
 
     if (!model) {
-      throw new Error('Model not found');
+      throw new Error("Model not found");
     }
 
     if (!model.supportsEdit) {
-      throw new Error('Model does not support editing');
+      throw new Error("Model does not support editing");
     }
 
     const provider = model.providers[0];
 
-    let image: Experimental_GenerateImageResult['image'] | undefined;
+    let image: Experimental_GenerateImageResult["image"] | undefined;
 
     const defaultPrompt =
       images.length > 1
-        ? 'Create a variant of the image.'
-        : 'Create a single variant of the images.';
+        ? "Create a variant of the image."
+        : "Create a single variant of the images.";
 
     const prompt =
-      !instructions || instructions === '' ? defaultPrompt : instructions;
+      !instructions || instructions === "" ? defaultPrompt : instructions;
 
-    if (provider.model.modelId === 'gpt-image-1') {
+    if (provider.model.modelId === "gpt-image-1") {
       const generatedImageResponse = await generateGptImage1Image({
         prompt,
         images,
@@ -131,7 +131,7 @@ export const editImageAction = async ({
       });
 
       await trackCreditUsage({
-        action: 'generate_image',
+        action: "generate_image",
         cost: provider.getCost({
           ...generatedImageResponse.usage,
           size,
@@ -142,7 +142,7 @@ export const editImageAction = async ({
     } else {
       const base64Image = await fetch(images[0].url)
         .then((res) => res.arrayBuffer())
-        .then((buffer) => Buffer.from(buffer).toString('base64'));
+        .then((buffer) => Buffer.from(buffer).toString("base64"));
 
       const generatedImageResponse = await generateImage({
         model: provider.model,
@@ -156,7 +156,7 @@ export const editImageAction = async ({
       });
 
       await trackCreditUsage({
-        action: 'generate_image',
+        action: "generate_image",
         cost: provider.getCost({
           size,
         }),
@@ -165,11 +165,11 @@ export const editImageAction = async ({
       image = generatedImageResponse.image;
     }
 
-    const bytes = Buffer.from(image.base64, 'base64');
-    const contentType = 'image/png';
+    const bytes = Buffer.from(image.base64, "base64");
+    const contentType = "image/png";
 
     const blob = await client.storage
-      .from('files')
+      .from("files")
       .upload(`${user.id}/${nanoid()}`, bytes, {
         contentType,
       });
@@ -179,7 +179,7 @@ export const editImageAction = async ({
     }
 
     const { data: downloadUrl } = client.storage
-      .from('files')
+      .from("files")
       .getPublicUrl(blob.data.path);
 
     const project = await database.query.projects.findFirst({
@@ -187,7 +187,7 @@ export const editImageAction = async ({
     });
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     const content = project.content as {
@@ -199,7 +199,7 @@ export const editImageAction = async ({
     const existingNode = content.nodes.find((n) => n.id === nodeId);
 
     if (!existingNode) {
-      throw new Error('Node not found');
+      throw new Error("Node not found");
     }
 
     const newData = {

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import type { projects } from '@/schema';
-import { type ReactNode, createContext, useContext } from 'react';
+import { createContext, type ReactNode, useContext } from "react";
+import type { projects } from "@/schema";
 
 type ProjectContextType = {
   project: typeof projects.$inferSelect | null;
@@ -15,7 +15,7 @@ export const useProject = () => {
   const context = useContext(ProjectContext);
 
   if (!context) {
-    throw new Error('useProject must be used within a ProjectProvider');
+    throw new Error("useProject must be used within a ProjectProvider");
   }
 
   return context.project;

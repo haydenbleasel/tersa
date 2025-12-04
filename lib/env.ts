@@ -1,6 +1,6 @@
-import { vercel } from '@t3-oss/env-core/presets-zod';
-import { createEnv } from '@t3-oss/env-nextjs';
-import { z } from 'zod';
+import { vercel } from "@t3-oss/env-core/presets-zod";
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   extends: [vercel()],
@@ -8,26 +8,26 @@ export const env = createEnv({
     UPSTASH_REDIS_REST_URL: z.string().url().min(1),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
 
-    RESEND_TOKEN: z.string().min(1).startsWith('re_'),
+    RESEND_TOKEN: z.string().min(1).startsWith("re_"),
     RESEND_EMAIL: z.string().email().min(1),
 
-    STRIPE_SECRET_KEY: z.string().min(1).startsWith('sk_'),
-    STRIPE_HOBBY_PRODUCT_ID: z.string().min(1).startsWith('prod_'),
-    STRIPE_PRO_PRODUCT_ID: z.string().min(1).startsWith('prod_'),
-    STRIPE_USAGE_PRODUCT_ID: z.string().min(1).startsWith('prod_'),
-    STRIPE_CREDITS_METER_ID: z.string().min(1).startsWith('mtr_'),
+    STRIPE_SECRET_KEY: z.string().min(1).startsWith("sk_"),
+    STRIPE_HOBBY_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
+    STRIPE_PRO_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
+    STRIPE_USAGE_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
+    STRIPE_CREDITS_METER_ID: z.string().min(1).startsWith("mtr_"),
     STRIPE_CREDITS_METER_NAME: z.string().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1).startsWith('whsec_'),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1).startsWith("whsec_"),
 
-    SUPABASE_AUTH_HOOK_SECRET: z.string().min(1).startsWith('v1,whsec_'),
+    SUPABASE_AUTH_HOOK_SECRET: z.string().min(1).startsWith("v1,whsec_"),
 
     // Supabase Integration
     POSTGRES_URL: z.string().url().min(1),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
     // AI SDK
-    OPENAI_API_KEY: z.string().min(1).startsWith('sk-'),
-    XAI_API_KEY: z.string().min(1).startsWith('xai-'),
+    OPENAI_API_KEY: z.string().min(1).startsWith("sk-"),
+    XAI_API_KEY: z.string().min(1).startsWith("xai-"),
     AWS_ACCESS_KEY_ID: z.string().min(1),
     AWS_SECRET_ACCESS_KEY: z.string().min(1),
     AWS_REGION: z.string().min(1),
@@ -37,8 +37,8 @@ export const env = createEnv({
     // Other Models
     MINIMAX_GROUP_ID: z.string().min(1),
     MINIMAX_API_KEY: z.string().min(1),
-    RUNWAYML_API_SECRET: z.string().min(1).startsWith('key_'),
-    LUMA_API_KEY: z.string().min(1).startsWith('luma-'),
+    RUNWAYML_API_SECRET: z.string().min(1).startsWith("key_"),
+    LUMA_API_KEY: z.string().min(1).startsWith("luma-"),
     BF_API_KEY: z.string().min(1),
 
     // Vercel AI Gateway

@@ -1,14 +1,14 @@
-import { getTweetData } from '@/app/actions/tweet/get';
-import { NodeLayout } from '@/components/nodes/layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { handleError } from '@/lib/error/handle';
-import { cn } from '@/lib/utils';
-import { useReactFlow } from '@xyflow/react';
-import { Loader2Icon } from 'lucide-react';
-import { type FormEventHandler, useState } from 'react';
-import { Tweet } from 'react-tweet';
-import type { TweetNodeProps } from '.';
+import { useReactFlow } from "@xyflow/react";
+import { Loader2Icon } from "lucide-react";
+import { type FormEventHandler, useState } from "react";
+import { Tweet } from "react-tweet";
+import { getTweetData } from "@/app/actions/tweet/get";
+import { NodeLayout } from "@/components/nodes/layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { handleError } from "@/lib/error/handle";
+import { cn } from "@/lib/utils";
+import type { TweetNodeProps } from ".";
 
 type TweetPrimitiveProps = TweetNodeProps & {
   title: string;
@@ -20,7 +20,7 @@ export const TweetPrimitive = ({
   type,
   title,
 }: TweetPrimitiveProps) => {
-  const [tweetId, setTweetId] = useState('');
+  const [tweetId, setTweetId] = useState("");
   const { updateNodeData } = useReactFlow();
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +35,7 @@ export const TweetPrimitive = ({
 
     try {
       const response = await getTweetData(tweetId);
-      if ('error' in response) {
+      if ("error" in response) {
         throw new Error(response.error);
       }
 
@@ -48,34 +48,34 @@ export const TweetPrimitive = ({
         },
       });
     } catch (error) {
-      handleError('Error fetching tweet', error);
+      handleError("Error fetching tweet", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <NodeLayout id={id} data={data} type={type} title={title}>
+    <NodeLayout data={data} id={id} title={title} type={type}>
       {data.content?.id ? (
         <div
           className={cn(
-            '[&_.react-tweet-theme]:m-0!',
-            '[&_.react-tweet-theme]:rounded-3xl!'
+            "[&_.react-tweet-theme]:m-0!",
+            "[&_.react-tweet-theme]:rounded-3xl!"
           )}
         >
           <Tweet id={data.content.id} />
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-1">
+        <form className="flex items-center gap-2 p-1" onSubmit={handleSubmit}>
           <Input
-            type="text"
-            placeholder="Tweet ID"
-            value={tweetId}
-            onChange={({ target }) => setTweetId(target.value)}
             className="rounded-full"
+            onChange={({ target }) => setTweetId(target.value)}
+            placeholder="Tweet ID"
+            type="text"
+            value={tweetId}
           />
-          <Button type="submit" className="rounded-full" disabled={loading}>
-            {loading ? <Loader2Icon className="animate-spin" /> : 'Submit'}
+          <Button className="rounded-full" disabled={loading} type="submit">
+            {loading ? <Loader2Icon className="animate-spin" /> : "Submit"}
           </Button>
         </form>
       )}

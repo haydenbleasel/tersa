@@ -1,29 +1,29 @@
 import {
+  ChevronDownIcon,
+  ChevronsDownIcon,
+  ChevronsUpIcon,
+  ChevronUpIcon,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
+  providers,
   type TersaModel,
   type TersaProvider,
-  providers,
-} from '@/lib/providers';
-import { cn } from '@/lib/utils';
-import type { PriceBracket } from '@/providers/gateway/client';
+} from "@/lib/providers";
+import { cn } from "@/lib/utils";
+import type { PriceBracket } from "@/providers/gateway/client";
 import {
   type SubscriptionContextType,
   useSubscription,
-} from '@/providers/subscription';
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  ChevronsDownIcon,
-  ChevronsUpIcon,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
+} from "@/providers/subscription";
+import { Button } from "../ui/button";
 import {
   Command,
   CommandEmpty,
@@ -31,8 +31,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/command';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+} from "../ui/command";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ModelSelectorProps = {
   id?: string;
@@ -46,32 +46,32 @@ type ModelSelectorProps = {
 
 const getCostBracketIcon = (bracket: PriceBracket, className?: string) => {
   switch (bracket) {
-    case 'lowest':
+    case "lowest":
       return (
         <ChevronsDownIcon
+          className={cn("text-green-500 dark:text-green-400", className)}
           size={16}
-          className={cn('text-green-500 dark:text-green-400', className)}
         />
       );
-    case 'low':
+    case "low":
       return (
         <ChevronDownIcon
+          className={cn("text-blue-500 dark:text-blue-400", className)}
           size={16}
-          className={cn('text-blue-500 dark:text-blue-400', className)}
         />
       );
-    case 'high':
+    case "high":
       return (
         <ChevronUpIcon
+          className={cn("text-orange-500 dark:text-orange-400", className)}
           size={16}
-          className={cn('text-orange-500 dark:text-orange-400', className)}
         />
       );
-    case 'highest':
+    case "highest":
       return (
         <ChevronsUpIcon
+          className={cn("text-red-500 dark:text-red-400", className)}
           size={16}
-          className={cn('text-red-500 dark:text-red-400', className)}
         />
       );
     default:
@@ -81,30 +81,30 @@ const getCostBracketIcon = (bracket: PriceBracket, className?: string) => {
 
 const getCostBracketLabel = (bracket: PriceBracket) => {
   switch (bracket) {
-    case 'lowest':
-      return 'This model uses a lot less credits.';
-    case 'low':
-      return 'This model uses less credits.';
-    case 'high':
-      return 'This model uses more credits.';
-    case 'highest':
-      return 'This model uses a lot of credits.';
+    case "lowest":
+      return "This model uses a lot less credits.";
+    case "low":
+      return "This model uses less credits.";
+    case "high":
+      return "This model uses more credits.";
+    case "highest":
+      return "This model uses a lot of credits.";
     default:
-      return '';
+      return "";
   }
 };
 
 const getModelDisabled = (
   model: TersaModel,
-  plan: SubscriptionContextType['plan']
+  plan: SubscriptionContextType["plan"]
 ) => {
   if (model.disabled) {
     return true;
   }
 
   if (
-    (!plan || plan === 'hobby') &&
-    (model.priceIndicator === 'highest' || model.priceIndicator === 'high')
+    (!plan || plan === "hobby") &&
+    (model.priceIndicator === "highest" || model.priceIndicator === "high")
   ) {
     return true;
   }
@@ -129,10 +129,10 @@ const ModelIcon = ({
   className?: string;
 }) => {
   if (data.icon) {
-    return <data.icon className={cn('size-4 shrink-0', className)} />;
+    return <data.icon className={cn("size-4 shrink-0", className)} />;
   }
 
-  return <chef.icon className={cn('size-4 shrink-0', className)} />;
+  return <chef.icon className={cn("size-4 shrink-0", className)} />;
 };
 
 export const ModelSelector = ({
@@ -176,22 +176,22 @@ export const ModelSelector = ({
       .find((provider) => provider.id === b)
       ?.name.toLowerCase();
 
-    return aName?.localeCompare(bName ?? '') ?? 0;
+    return aName?.localeCompare(bName ?? "") ?? 0;
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
+        asChild
         className={className}
+        disabled={disabled}
         id={id}
         style={{ width }}
-        disabled={disabled}
-        asChild
       >
-        <Button variant="outline" className="w-full">
+        <Button className="w-full" variant="outline">
           {activeModel && (
             <div className="flex w-full items-center gap-2 overflow-hidden">
-              <ModelIcon data={activeModel} chef={activeModel.chef} />
+              <ModelIcon chef={activeModel.chef} data={activeModel} />
               <span className="block truncate">{activeModel.label}</span>
             </div>
           )}
@@ -209,7 +209,6 @@ export const ModelSelector = ({
             <CommandEmpty />
             {sortedChefs.map((chef) => (
               <CommandGroup
-                key={chef}
                 heading={
                   <CommandGroupHeading
                     data={
@@ -219,52 +218,53 @@ export const ModelSelector = ({
                     }
                   />
                 }
+                key={chef}
               >
                 {Object.entries(groupedOptions[chef]).map(([id, model]) => (
                   <CommandItem
+                    className={cn(
+                      value === id &&
+                        "bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground"
+                    )}
+                    disabled={getModelDisabled(model, plan)}
                     key={id}
-                    value={id}
                     onSelect={() => {
                       onChange?.(id);
                       setOpen(false);
                     }}
-                    disabled={getModelDisabled(model, plan)}
-                    className={cn(
-                      value === id &&
-                        'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
-                    )}
+                    value={id}
                   >
                     <div className="flex flex-1 items-center gap-2 overflow-hidden">
                       <ModelIcon
-                        data={model}
                         chef={
                           chef in providers
                             ? providers[chef as keyof typeof providers]
                             : providers.unknown
                         }
                         className={
-                          value === id ? 'text-primary-foreground' : ''
+                          value === id ? "text-primary-foreground" : ""
                         }
+                        data={model}
                       />
                       <span className="block truncate">{model.label}</span>
                     </div>
                     {model.providers.map((provider, index) => (
                       <div
+                        className={cn(index && "opacity-50")}
                         key={provider.id}
-                        className={cn(index && 'opacity-50')}
                       >
                         <div
                           className={cn(
-                            'flex size-4 items-center justify-center rounded-full bg-secondary',
-                            value === id && 'bg-primary-foreground/10'
+                            "flex size-4 items-center justify-center rounded-full bg-secondary",
+                            value === id && "bg-primary-foreground/10"
                           )}
                         >
                           <provider.icon
                             className={cn(
-                              'size-3 shrink-0',
+                              "size-3 shrink-0",
                               value === id
-                                ? 'text-primary-foreground'
-                                : 'text-muted-foreground'
+                                ? "text-primary-foreground"
+                                : "text-muted-foreground"
                             )}
                           />
                         </div>
@@ -276,7 +276,7 @@ export const ModelSelector = ({
                           <div>
                             {getCostBracketIcon(
                               model.priceIndicator,
-                              value === id ? 'text-primary-foreground' : ''
+                              value === id ? "text-primary-foreground" : ""
                             )}
                           </div>
                         </TooltipTrigger>

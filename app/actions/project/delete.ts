@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { currentUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { projects } from '@/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq } from "drizzle-orm";
+import { currentUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { projects } from "@/schema";
 
 export const deleteProjectAction = async (
   projectId: string
@@ -20,7 +20,7 @@ export const deleteProjectAction = async (
     const user = await currentUser();
 
     if (!user) {
-      throw new Error('You need to be logged in to delete a project!');
+      throw new Error("You need to be logged in to delete a project!");
     }
 
     const project = await database
@@ -28,7 +28,7 @@ export const deleteProjectAction = async (
       .where(and(eq(projects.id, projectId), eq(projects.userId, user.id)));
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     return { success: true };

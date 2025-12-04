@@ -1,18 +1,18 @@
-import { type Node, getNodesBounds, getViewportForBounds } from '@xyflow/react';
-import { domToJpeg } from 'modern-screenshot';
+import { getNodesBounds, getViewportForBounds, type Node } from "@xyflow/react";
+import { domToJpeg } from "modern-screenshot";
 
 export const getScreenshot = async (nodes: Node[]) => {
   const nodesBounds = getNodesBounds(nodes);
   const viewport = getViewportForBounds(nodesBounds, 1200, 630, 0.5, 2, 16);
 
   const image = await domToJpeg(
-    document.querySelector('.react-flow__viewport') as HTMLElement,
+    document.querySelector(".react-flow__viewport") as HTMLElement,
     {
       width: 1200,
       height: 630,
       style: {
-        width: '1200px',
-        height: '630px',
+        width: "1200px",
+        height: "630px",
         transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
       },
     }

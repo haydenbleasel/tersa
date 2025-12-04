@@ -1,9 +1,9 @@
-import { CableIcon, GrabIcon, MoveIcon, PlayIcon } from 'lucide-react';
-import { CodeDemo } from './code-demo';
-import { ImageDemo } from './image-demo';
-import { SpeechDemo } from './speech-demo';
-import { TextDemo } from './text-demo';
-import { VideoDemo } from './video-demo';
+import { CableIcon, GrabIcon, MoveIcon, PlayIcon } from "lucide-react";
+import { CodeDemo } from "./code-demo";
+import { ImageDemo } from "./image-demo";
+import { SpeechDemo } from "./speech-demo";
+import { TextDemo } from "./text-demo";
+import { VideoDemo } from "./video-demo";
 
 export const Features = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -40,13 +40,13 @@ export const Features = () => (
       {/* Main content */}
       <div className="grid items-center justify-center px-5 py-8">
         <h2 className="mt-6 mb-5 text-center font-medium text-3xl tracking-[-0.12rem] sm:text-4xl md:text-5xl">
-          <MoveIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
-          Drag,{' '}
-          <GrabIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
+          <MoveIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{" "}
+          Drag,{" "}
+          <GrabIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{" "}
           drop,
-          <CableIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
-          connect and{' '}
-          <PlayIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{' '}
+          <CableIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{" "}
+          connect and{" "}
+          <PlayIcon className="ml-1 inline-block size-5 align-baseline sm:ml-2 sm:size-7 md:ml-3 md:size-8" />{" "}
           run
         </h2>
 

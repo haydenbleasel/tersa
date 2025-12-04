@@ -1,16 +1,13 @@
-'use client';
+"use client";
 
-import { updateProjectAction } from '@/app/actions/project/update';
-import { useAnalytics } from '@/hooks/use-analytics';
-import { useSaveProject } from '@/hooks/use-save-project';
-import { handleError } from '@/lib/error/handle';
-import { isValidSourceTarget } from '@/lib/xyflow';
-import { NodeDropzoneProvider } from '@/providers/node-dropzone';
-import { NodeOperationsProvider } from '@/providers/node-operations';
-import { useProject } from '@/providers/project';
 import {
+  applyEdgeChanges,
+  applyNodeChanges,
   Background,
+  type Edge,
+  getOutgoers,
   type IsValidConnection,
+  type Node,
   type OnConnect,
   type OnConnectEnd,
   type OnConnectStart,
@@ -18,30 +15,31 @@ import {
   type OnNodesChange,
   ReactFlow,
   type ReactFlowProps,
-  getOutgoers,
   useReactFlow,
-} from '@xyflow/react';
-import {
-  type Edge,
-  type Node,
-  applyEdgeChanges,
-  applyNodeChanges,
-} from '@xyflow/react';
-import { BoxSelectIcon, PlusIcon } from 'lucide-react';
-import { nanoid } from 'nanoid';
-import type { MouseEvent, MouseEventHandler } from 'react';
-import { useCallback, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { useDebouncedCallback } from 'use-debounce';
-import { ConnectionLine } from './connection-line';
-import { edgeTypes } from './edges';
-import { nodeTypes } from './nodes';
+} from "@xyflow/react";
+import { BoxSelectIcon, PlusIcon } from "lucide-react";
+import { nanoid } from "nanoid";
+import type { MouseEvent, MouseEventHandler } from "react";
+import { useCallback, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useDebouncedCallback } from "use-debounce";
+import { updateProjectAction } from "@/app/actions/project/update";
+import { useAnalytics } from "@/hooks/use-analytics";
+import { useSaveProject } from "@/hooks/use-save-project";
+import { handleError } from "@/lib/error/handle";
+import { isValidSourceTarget } from "@/lib/xyflow";
+import { NodeDropzoneProvider } from "@/providers/node-dropzone";
+import { NodeOperationsProvider } from "@/providers/node-operations";
+import { useProject } from "@/providers/project";
+import { ConnectionLine } from "./connection-line";
+import { edgeTypes } from "./edges";
+import { nodeTypes } from "./nodes";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from './ui/context-menu';
+} from "./ui/context-menu";
 
 export const Canvas = ({ children, ...props }: ReactFlowProps) => {
   const project = useProject();
@@ -86,13 +84,13 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         content: toObject(),
       });
 
-      if ('error' in response) {
+      if ("error" in response) {
         throw new Error(response.error);
       }
 
       setSaveState((prev) => ({ ...prev, lastSaved: new Date() }));
     } catch (error) {
-      handleError('Error saving project', error);
+      handleError("Error saving project", error);
     } finally {
       setSaveState((prev) => ({ ...prev, isSaving: false }));
     }
@@ -126,7 +124,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     (connection) => {
       const newEdge: Edge = {
         id: nanoid(),
-        type: 'animated',
+        type: "animated",
         ...connection,
       };
       setEdges((eds: Edge[]) => eds.concat(newEdge));
@@ -153,7 +151,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       setNodes((nds: Node[]) => nds.concat(newNode));
       save();
 
-      analytics.track('toolbar', 'node', 'added', {
+      analytics.track("toolbar", "node", "added", {
         type,
       });
 
@@ -166,7 +164,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     (id: string) => {
       const node = getNode(id);
 
-      if (!node || !node.type) {
+      if (!(node && node.type)) {
         return;
       }
 
@@ -196,16 +194,16 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       if (!connectionState.isValid) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const { clientX, clientY } =
-          'changedTouches' in event ? event.changedTouches[0] : event;
+          "changedTouches" in event ? event.changedTouches[0] : event;
 
         const sourceId = connectionState.fromNode?.id;
-        const isSourceHandle = connectionState.fromHandle?.type === 'source';
+        const isSourceHandle = connectionState.fromHandle?.type === "source";
 
         if (!sourceId) {
           return;
         }
 
-        const newNodeId = addNode('drop', {
+        const newNodeId = addNode("drop", {
           position: screenToFlowPosition({ x: clientX, y: clientY }),
           data: {
             isSource: !isSourceHandle,
@@ -217,7 +215,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
             id: nanoid(),
             source: isSourceHandle ? sourceId : newNodeId,
             target: isSourceHandle ? newNodeId : sourceId,
-            type: 'temporary',
+            type: "temporary",
           })
         );
       }
@@ -237,7 +235,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       if (connection.source) {
         const source = nodes.find((node) => node.id === connection.source);
 
-        if (!source || !target) {
+        if (!(source && target)) {
           return false;
         }
 
@@ -274,8 +272,8 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
   const handleConnectStart = useCallback<OnConnectStart>(() => {
     // Delete any drop nodes when starting to drag a node
-    setNodes((nds: Node[]) => nds.filter((n: Node) => n.type !== 'drop'));
-    setEdges((eds: Edge[]) => eds.filter((e: Edge) => e.type !== 'temporary'));
+    setNodes((nds: Node[]) => nds.filter((n: Node) => n.type !== "drop"));
+    setEdges((eds: Edge[]) => eds.filter((e: Edge) => e.type !== "temporary"));
     save();
   }, [save]);
 
@@ -290,7 +288,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         y: event.clientY,
       });
 
-      addNode('drop', {
+      addNode("drop", {
         position: { x, y },
       });
     },
@@ -347,29 +345,31 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
   const handleContextMenu = useCallback((event: MouseEvent) => {
     if (
-      !(event.target instanceof HTMLElement) ||
-      !event.target.classList.contains('react-flow__pane')
+      !(
+        event.target instanceof HTMLElement &&
+        event.target.classList.contains("react-flow__pane")
+      )
     ) {
       event.preventDefault();
     }
   }, []);
 
-  useHotkeys('meta+a', handleSelectAll, {
+  useHotkeys("meta+a", handleSelectAll, {
     enableOnContentEditable: false,
     preventDefault: true,
   });
 
-  useHotkeys('meta+d', handleDuplicateAll, {
+  useHotkeys("meta+d", handleDuplicateAll, {
     enableOnContentEditable: false,
     preventDefault: true,
   });
 
-  useHotkeys('meta+c', handleCopy, {
+  useHotkeys("meta+c", handleCopy, {
     enableOnContentEditable: false,
     preventDefault: true,
   });
 
-  useHotkeys('meta+v', handlePaste, {
+  useHotkeys("meta+v", handlePaste, {
     enableOnContentEditable: false,
     preventDefault: true,
   });
@@ -380,24 +380,24 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         <ContextMenu>
           <ContextMenuTrigger onContextMenu={handleContextMenu}>
             <ReactFlow
-              deleteKeyCode={['Backspace', 'Delete']}
-              nodes={nodes}
-              onNodesChange={handleNodesChange}
+              connectionLineComponent={ConnectionLine}
+              deleteKeyCode={["Backspace", "Delete"]}
               edges={edges}
-              onEdgesChange={handleEdgesChange}
-              onConnectStart={handleConnectStart}
+              edgeTypes={edgeTypes}
+              fitView
+              isValidConnection={isValidConnection}
+              nodes={nodes}
+              nodeTypes={nodeTypes}
               onConnect={handleConnect}
               onConnectEnd={handleConnectEnd}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              isValidConnection={isValidConnection}
-              connectionLineComponent={ConnectionLine}
-              panOnScroll
-              fitView
-              zoomOnDoubleClick={false}
-              panOnDrag={false}
-              selectionOnDrag={true}
+              onConnectStart={handleConnectStart}
               onDoubleClick={addDropNode}
+              onEdgesChange={handleEdgesChange}
+              onNodesChange={handleNodesChange}
+              panOnDrag={false}
+              panOnScroll
+              selectionOnDrag={true}
+              zoomOnDoubleClick={false}
               {...rest}
             >
               <Background />

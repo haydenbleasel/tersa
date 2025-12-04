@@ -1,45 +1,50 @@
-import { SiX } from '@icons-pack/react-simple-icons';
-import { AudioWaveformIcon, FileIcon, VideoIcon } from 'lucide-react';
-
-import { CodeIcon, ImageIcon, TextIcon } from 'lucide-react';
+import { SiX } from "@icons-pack/react-simple-icons";
+import {
+  AudioWaveformIcon,
+  CodeIcon,
+  FileIcon,
+  ImageIcon,
+  TextIcon,
+  VideoIcon,
+} from "lucide-react";
 
 export const nodeButtons = [
   {
-    id: 'text',
-    label: 'Text',
+    id: "text",
+    label: "Text",
     icon: TextIcon,
   },
   {
-    id: 'image',
-    label: 'Image',
+    id: "image",
+    label: "Image",
     icon: ImageIcon,
   },
   {
-    id: 'audio',
-    label: 'Audio',
+    id: "audio",
+    label: "Audio",
     icon: AudioWaveformIcon,
   },
   {
-    id: 'video',
-    label: 'Video',
+    id: "video",
+    label: "Video",
     icon: VideoIcon,
   },
   {
-    id: 'code',
-    label: 'Code',
+    id: "code",
+    label: "Code",
     icon: CodeIcon,
     data: {
-      content: { language: 'javascript' },
+      content: { language: "javascript" },
     },
   },
   {
-    id: 'file',
-    label: 'File',
+    id: "file",
+    label: "File",
     icon: FileIcon,
   },
   {
-    id: 'tweet',
-    label: 'Tweet',
+    id: "tweet",
+    label: "Tweet",
     icon: SiX,
   },
 ];

@@ -1,26 +1,26 @@
+import type { UserAttributes } from "@supabase/supabase-js";
+import { Loader2Icon } from "lucide-react";
+import Image from "next/image";
+import { type FormEventHandler, useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { handleError } from '@/lib/error/handle';
-import { createClient } from '@/lib/supabase/client';
-import { uploadFile } from '@/lib/upload';
-import type { UserAttributes } from '@supabase/supabase-js';
-import { Loader2Icon } from 'lucide-react';
-import Image from 'next/image';
-import { type FormEventHandler, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+} from "@/components/ui/dialog";
+import { handleError } from "@/lib/error/handle";
+import { createClient } from "@/lib/supabase/client";
+import { uploadFile } from "@/lib/upload";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from './ui/kibo-ui/dropzone';
-import { Label } from './ui/label';
+} from "./ui/kibo-ui/dropzone";
+import { Label } from "./ui/label";
 
 type ProfileProps = {
   open: boolean;
@@ -28,11 +28,11 @@ type ProfileProps = {
 };
 
 export const Profile = ({ open, setOpen }: ProfileProps) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [image, setImage] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [image, setImage] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -62,7 +62,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
   const handleUpdateUser: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
-    if (!name.trim() || !email.trim() || isUpdating) {
+    if (!(name.trim() && email.trim()) || isUpdating) {
       return;
     }
 
@@ -96,10 +96,10 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
         throw new Error(response.error.message);
       }
 
-      toast.success('Profile updated successfully');
+      toast.success("Profile updated successfully");
       setOpen(false);
     } catch (error) {
-      handleError('Error updating profile', error);
+      handleError("Error updating profile", error);
     } finally {
       setIsUpdating(false);
     }
@@ -112,12 +112,12 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
 
     try {
       if (!files.length) {
-        throw new Error('No file selected');
+        throw new Error("No file selected");
       }
 
       setIsUpdating(true);
 
-      const { url } = await uploadFile(files[0], 'avatars');
+      const { url } = await uploadFile(files[0], "avatars");
       const client = createClient();
 
       const response = await client.auth.updateUser({
@@ -130,17 +130,17 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
         throw new Error(response.error.message);
       }
 
-      toast.success('Avatar updated successfully');
+      toast.success("Avatar updated successfully");
       setImage(url);
     } catch (error) {
-      handleError('Error updating avatar', error);
+      handleError("Error updating avatar", error);
     } finally {
       setIsUpdating(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal={false}>
+    <Dialog modal={false} onOpenChange={setOpen} open={open}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Profile</DialogTitle>
@@ -151,76 +151,76 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
         <div className="grid gap-2">
           <Label htmlFor="avatar">Avatar</Label>
           <Dropzone
+            accept={{ "image/*": [] }}
+            className="relative aspect-square h-36 w-auto"
+            maxFiles={1}
             maxSize={1024 * 1024 * 10}
             minSize={1024}
-            maxFiles={1}
             multiple={false}
-            accept={{ 'image/*': [] }}
             onDrop={handleDrop}
-            src={[new File([], image)]}
             onError={console.error}
-            className="relative aspect-square h-36 w-auto"
+            src={[new File([], image)]}
           >
             <DropzoneEmptyState />
             <DropzoneContent>
               {image && (
                 <Image
-                  src={image}
                   alt="Image preview"
                   className="absolute top-0 left-0 h-full w-full object-cover"
+                  height={100}
+                  src={image}
                   unoptimized
                   width={100}
-                  height={100}
                 />
               )}
               {isUpdating && (
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
-                  <Loader2Icon size={24} className="animate-spin" />
+                  <Loader2Icon className="animate-spin" size={24} />
                 </div>
               )}
             </DropzoneContent>
           </Dropzone>
         </div>
         <form
-          onSubmit={handleUpdateUser}
-          className="mt-2 grid gap-4"
           aria-disabled={isUpdating}
+          className="mt-2 grid gap-4"
+          onSubmit={handleUpdateUser}
         >
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
             <Input
+              className="text-foreground"
               id="name"
+              onChange={({ target }) => setName(target.value)}
               placeholder="Jane Doe"
               value={name}
-              onChange={({ target }) => setName(target.value)}
-              className="text-foreground"
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
-              id="email"
-              placeholder="jane@doe.com"
-              value={email}
-              type="email"
-              onChange={({ target }) => setEmail(target.value)}
               className="text-foreground"
+              id="email"
+              onChange={({ target }) => setEmail(target.value)}
+              placeholder="jane@doe.com"
+              type="email"
+              value={email}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
             <Input
-              id="password"
-              placeholder="••••••••"
-              value={password}
-              type="password"
-              onChange={({ target }) => setPassword(target.value)}
               className="text-foreground"
+              id="password"
+              onChange={({ target }) => setPassword(target.value)}
+              placeholder="••••••••"
+              type="password"
+              value={password}
             />
           </div>
           <Button
-            type="submit"
             disabled={isUpdating || !name.trim() || !email.trim()}
+            type="submit"
           >
             Update
           </Button>

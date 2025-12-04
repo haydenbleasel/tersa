@@ -1,4 +1,4 @@
-import { BaseEdge, type EdgeProps, getSimpleBezierPath } from '@xyflow/react';
+import { BaseEdge, type EdgeProps, getSimpleBezierPath } from "@xyflow/react";
 
 export const TemporaryEdge = ({
   id,
@@ -21,11 +21,11 @@ export const TemporaryEdge = ({
   return (
     <>
       <BaseEdge
+        className="stroke-1 stroke-ring"
         id={id}
         path={edgePath}
-        className="stroke-1 stroke-ring"
         style={{
-          strokeDasharray: '5, 5',
+          strokeDasharray: "5, 5",
         }}
       />
     </>

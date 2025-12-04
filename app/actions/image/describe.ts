@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { getSubscribedUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { visionModels } from '@/lib/models/vision';
-import { projects } from '@/schema';
-import { eq } from 'drizzle-orm';
-import OpenAI from 'openai';
+import { eq } from "drizzle-orm";
+import OpenAI from "openai";
+import { getSubscribedUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { visionModels } from "@/lib/models/vision";
+import { projects } from "@/schema";
 
 export const describeAction = async (
   url: string,
@@ -29,33 +29,33 @@ export const describeAction = async (
     });
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     const model = visionModels[project.visionModel];
 
     if (!model) {
-      throw new Error('Model not found');
+      throw new Error("Model not found");
     }
 
     let parsedUrl = url;
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       const response = await fetch(url);
       const blob = await response.blob();
 
-      parsedUrl = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString('base64')}`;
+      parsedUrl = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString("base64")}`;
     }
 
     const response = await openai.chat.completions.create({
       model: model.providers[0].model.modelId,
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: [
-            { type: 'text', text: 'Describe this image.' },
+            { type: "text", text: "Describe this image." },
             {
-              type: 'image_url',
+              type: "image_url",
               image_url: {
                 url: parsedUrl,
               },
@@ -68,7 +68,7 @@ export const describeAction = async (
     const description = response.choices.at(0)?.message.content;
 
     if (!description) {
-      throw new Error('No description found');
+      throw new Error("No description found");
     }
 
     return {

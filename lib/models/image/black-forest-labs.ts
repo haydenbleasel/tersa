@@ -1,26 +1,26 @@
-import { env } from '@/lib/env';
-import type { paths } from '@/openapi/bfl';
-import type { ImageModel } from 'ai';
-import createFetchClient, { type Client } from 'openapi-fetch';
+import type { ImageModel } from "ai";
+import createFetchClient, { type Client } from "openapi-fetch";
+import { env } from "@/lib/env";
+import type { paths } from "@/openapi/bfl";
 
 const createClient = () =>
   createFetchClient<paths>({
-    baseUrl: 'https://api.us1.bfl.ai',
+    baseUrl: "https://api.us1.bfl.ai",
     headers: {
-      'Content-Type': 'application/json',
-      'X-Key': env.BF_API_KEY,
+      "Content-Type": "application/json",
+      "X-Key": env.BF_API_KEY,
     },
-    fetch: fetch,
+    fetch,
   });
 
 const models = [
-  'flux-pro-1.1',
-  'flux-pro',
-  'flux-dev',
-  'flux-pro-1.0-canny',
-  'flux-pro-1.0-depth',
-  'flux-kontext-pro',
-  'flux-kontext-max',
+  "flux-pro-1.1",
+  "flux-pro",
+  "flux-dev",
+  "flux-pro-1.0-canny",
+  "flux-pro-1.0-depth",
+  "flux-kontext-pro",
+  "flux-kontext-max",
 ] as const;
 
 type CreateJobParams = {
@@ -44,7 +44,7 @@ const createJob = async ({
   headers,
   imagePrompt,
 }: CreateJobParams) => {
-  const [width, height] = size?.split('x').map(Number) ?? [1024, 1024];
+  const [width, height] = size?.split("x").map(Number) ?? [1024, 1024];
 
   // Convert to smallest possible aspect ratio
   const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
@@ -55,12 +55,12 @@ const createJob = async ({
   const ratio = width / height;
 
   if (ratio > 21 / 9 || ratio < 9 / 21) {
-    throw new Error('Aspect ratio must be between 21:9 and 9:21');
+    throw new Error("Aspect ratio must be between 21:9 and 9:21");
   }
 
   switch (modelId) {
-    case 'flux-dev':
-      return await client.POST('/v1/flux-dev', {
+    case "flux-dev":
+      return await client.POST("/v1/flux-dev", {
         body: {
           prompt,
           width,
@@ -70,14 +70,14 @@ const createJob = async ({
           prompt_upsampling: true,
           guidance: 3,
           safety_tolerance: 2,
-          output_format: 'png',
+          output_format: "png",
           image_prompt: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-pro-1.1':
-      return await client.POST('/v1/flux-pro-1.1', {
+    case "flux-pro-1.1":
+      return await client.POST("/v1/flux-pro-1.1", {
         body: {
           prompt,
           width,
@@ -85,14 +85,14 @@ const createJob = async ({
           seed,
           prompt_upsampling: true,
           safety_tolerance: 2,
-          output_format: 'png',
+          output_format: "png",
           image_prompt: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-pro':
-      return await client.POST('/v1/flux-pro', {
+    case "flux-pro":
+      return await client.POST("/v1/flux-pro", {
         body: {
           prompt,
           width,
@@ -102,15 +102,15 @@ const createJob = async ({
           prompt_upsampling: true,
           guidance: 2.5,
           safety_tolerance: 2,
-          output_format: 'png',
+          output_format: "png",
           image_prompt: imagePrompt,
           interval: 2,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-pro-1.0-canny':
-      return await client.POST('/v1/flux-pro-1.0-canny', {
+    case "flux-pro-1.0-canny":
+      return await client.POST("/v1/flux-pro-1.0-canny", {
         body: {
           prompt,
           canny_low_threshold: 50,
@@ -120,14 +120,14 @@ const createJob = async ({
           steps: 50,
           guidance: 30,
           safety_tolerance: 2,
-          output_format: 'png',
+          output_format: "png",
           preprocessed_image: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-pro-1.0-depth':
-      return await client.POST('/v1/flux-pro-1.0-depth', {
+    case "flux-pro-1.0-depth":
+      return await client.POST("/v1/flux-pro-1.0-depth", {
         body: {
           prompt,
           prompt_upsampling: true,
@@ -135,34 +135,34 @@ const createJob = async ({
           steps: 50,
           guidance: 15,
           safety_tolerance: 2,
-          output_format: 'png',
+          output_format: "png",
           preprocessed_image: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-kontext-pro':
-      return await client.POST('/v1/flux-kontext-pro', {
+    case "flux-kontext-pro":
+      return await client.POST("/v1/flux-kontext-pro", {
         body: {
           prompt,
           prompt_upsampling: true,
           seed,
           aspect_ratio: `${simplifiedW}:${simplifiedH}`,
-          output_format: 'png',
+          output_format: "png",
           safety_tolerance: 2,
           input_image: imagePrompt,
         },
         signal: abortSignal,
         headers,
       });
-    case 'flux-kontext-max':
-      return await client.POST('/v1/flux-kontext-max', {
+    case "flux-kontext-max":
+      return await client.POST("/v1/flux-kontext-max", {
         body: {
           prompt,
           prompt_upsampling: true,
           seed,
           aspect_ratio: `${simplifiedW}:${simplifiedH}`,
-          output_format: 'png',
+          output_format: "png",
           safety_tolerance: 2,
           input_image: imagePrompt,
         },
@@ -177,8 +177,8 @@ const createJob = async ({
 export const blackForestLabs = {
   image: (modelId: (typeof models)[number]): ImageModel => ({
     modelId,
-    provider: 'black-forest-labs',
-    specificationVersion: 'v2',
+    provider: "black-forest-labs",
+    specificationVersion: "v2",
     maxImagesPerCall: 1,
     doGenerate: async ({
       prompt,
@@ -192,7 +192,7 @@ export const blackForestLabs = {
 
       let imagePrompt: string | undefined;
 
-      if (typeof providerOptions?.bfl?.image === 'string') {
+      if (typeof providerOptions?.bfl?.image === "string") {
         imagePrompt = providerOptions.bfl.image;
       }
 
@@ -209,12 +209,12 @@ export const blackForestLabs = {
 
       if (jobResponse.error) {
         throw new Error(
-          jobResponse.error.detail?.at(0)?.msg ?? 'Unknown error'
+          jobResponse.error.detail?.at(0)?.msg ?? "Unknown error"
         );
       }
 
       if (!jobResponse.data?.id) {
-        throw new Error('Failed to get job ID');
+        throw new Error("Failed to get job ID");
       }
 
       // Poll for job completion (max 2 minutes)
@@ -225,7 +225,7 @@ export const blackForestLabs = {
       while (!isCompleted && Date.now() - startTime < maxPollTime) {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        const queryJobResponse = await client.GET('/v1/get_result', {
+        const queryJobResponse = await client.GET("/v1/get_result", {
           params: {
             query: {
               id: jobResponse.data.id,
@@ -235,27 +235,27 @@ export const blackForestLabs = {
 
         if (queryJobResponse.error) {
           throw new Error(
-            queryJobResponse.error.detail?.at(0)?.msg ?? 'Unknown error'
+            queryJobResponse.error.detail?.at(0)?.msg ?? "Unknown error"
           );
         }
 
-        if (queryJobResponse.data?.status === 'Error') {
+        if (queryJobResponse.data?.status === "Error") {
           throw new Error(`Job ${jobResponse.data.id} failed`);
         }
 
-        if (queryJobResponse.data?.status === 'Content Moderated') {
-          throw new Error('Content moderated');
+        if (queryJobResponse.data?.status === "Content Moderated") {
+          throw new Error("Content moderated");
         }
 
-        if (queryJobResponse.data?.status === 'Task not found') {
+        if (queryJobResponse.data?.status === "Task not found") {
           throw new Error(`${jobResponse.data.id} not found`);
         }
 
-        if (queryJobResponse.data?.status === 'Request Moderated') {
-          throw new Error('Request moderated');
+        if (queryJobResponse.data?.status === "Request Moderated") {
+          throw new Error("Request moderated");
         }
 
-        if (queryJobResponse.data?.status === 'Ready') {
+        if (queryJobResponse.data?.status === "Ready") {
           isCompleted = true;
 
           const result = queryJobResponse.data.result as {
@@ -277,7 +277,7 @@ export const blackForestLabs = {
         }
       }
 
-      throw new Error('Image generation timed out after 5 minutes');
+      throw new Error("Image generation timed out after 5 minutes");
     },
   }),
 };

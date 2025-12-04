@@ -1,12 +1,12 @@
-import { currentUserProfile } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { projects } from '@/schema';
-import { eq } from 'drizzle-orm';
-import Link from 'next/link';
-import { Suspense } from 'react';
-import { CreditCounter } from './credits-counter';
-import { Menu } from './menu';
-import { Button } from './ui/button';
+import { eq } from "drizzle-orm";
+import Link from "next/link";
+import { Suspense } from "react";
+import { currentUserProfile } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { projects } from "@/schema";
+import { CreditCounter } from "./credits-counter";
+import { Menu } from "./menu";
+import { Button } from "./ui/button";
 
 type TopRightProps = {
   id: string;
@@ -18,7 +18,7 @@ export const TopRight = async ({ id }: TopRightProps) => {
     where: eq(projects.id, id),
   });
 
-  if (!profile || !project) {
+  if (!(profile && project)) {
     return null;
   }
 
@@ -36,7 +36,7 @@ export const TopRight = async ({ id }: TopRightProps) => {
         </div>
       ) : (
         <div className="flex items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
-          <Button className="rounded-full" size="lg" asChild>
+          <Button asChild className="rounded-full" size="lg">
             <Link href="/pricing">Claim your free AI credits</Link>
           </Button>
         </div>

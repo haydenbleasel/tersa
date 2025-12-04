@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { Footer } from './components/footer';
-import { Header } from './components/header';
-import { SubFooter } from './components/sub-footer';
+import type { ReactNode } from "react";
+import { Footer } from "./components/footer";
+import { Header } from "./components/header";
+import { SubFooter } from "./components/sub-footer";
 
 type UnauthenticatedLayoutProps = {
   children: ReactNode;

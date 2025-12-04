@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import Link from "next/link";
 
-const title = 'Privacy Policy';
+const title = "Privacy Policy";
 const description =
   "Your privacy is important to us. It is Tersa's policy to respect your privacy and comply with any applicable law and regulation regarding any personal information we may collect about you, including across our website and other sites we own and operate.";
 
@@ -678,7 +678,7 @@ const Privacy = () => (
         </p>
         <h2>Contact Us</h2>
         <p>
-          For any questions or concerns regarding your privacy, you may{' '}
+          For any questions or concerns regarding your privacy, you may{" "}
           <Link href="https://x.com/haydenbleasel">contact us</Link> at any
           time.
         </p>

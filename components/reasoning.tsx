@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useReasoning } from '@/hooks/use-reasoning';
-import { ReasoningTunnel } from '@/tunnels/reasoning';
-import { CheckIcon, Loader2Icon, XIcon } from 'lucide-react';
-import { motion } from 'motion/react';
-import { Button } from './ui/button';
+import { CheckIcon, Loader2Icon, XIcon } from "lucide-react";
+import { motion } from "motion/react";
+import { useReasoning } from "@/hooks/use-reasoning";
+import { ReasoningTunnel } from "@/tunnels/reasoning";
+import { Button } from "./ui/button";
 
 export const Reasoning = () => {
   const [reasoning, setReasoning] = useReasoning();
@@ -15,9 +15,9 @@ export const Reasoning = () => {
 
   return (
     <motion.div
+      animate={{ width: reasoning.isReasoning ? "24rem" : "0" }}
       className="w-sm overflow-auto border-l bg-background"
-      initial={{ width: '0' }}
-      animate={{ width: reasoning.isReasoning ? '24rem' : '0' }}
+      initial={{ width: "0" }}
     >
       <div className="flex size-full flex-col divide-y">
         <div className="sticky top-0 flex items-center justify-between gap-4 bg-background px-4 py-2">
@@ -29,7 +29,7 @@ export const Reasoning = () => {
             )}
             <p className="font-semibold text-sm">Reasoning</p>
           </div>
-          <Button variant="ghost" size="icon" onClick={handleClose}>
+          <Button onClick={handleClose} size="icon" variant="ghost">
             <XIcon className="size-3 text-muted-foreground" />
           </Button>
         </div>

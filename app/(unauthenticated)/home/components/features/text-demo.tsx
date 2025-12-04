@@ -1,22 +1,22 @@
-import { Canvas } from '@/components/canvas';
-import { type Edge, type Node, ReactFlowProvider } from '@xyflow/react';
+import { type Edge, type Node, ReactFlowProvider } from "@xyflow/react";
+import { Canvas } from "@/components/canvas";
 
 const nodes: Node[] = [
   {
-    id: 'primitive-1',
-    type: 'text',
+    id: "primitive-1",
+    type: "text",
     position: { x: 0, y: 0 },
     data: {
-      text: 'Say hello',
+      text: "Say hello",
       content: {
-        type: 'doc',
+        type: "doc",
         content: [
           {
-            type: 'paragraph',
+            type: "paragraph",
             content: [
               {
-                type: 'text',
-                text: 'Say hello',
+                type: "text",
+                text: "Say hello",
               },
             ],
           },
@@ -25,20 +25,20 @@ const nodes: Node[] = [
     },
   },
   {
-    id: 'primitive-2',
-    type: 'text',
+    id: "primitive-2",
+    type: "text",
     position: { x: 0, y: 200 },
     data: {
-      text: 'In French',
+      text: "In French",
       content: {
-        type: 'doc',
+        type: "doc",
         content: [
           {
-            type: 'paragraph',
+            type: "paragraph",
             content: [
               {
-                type: 'text',
-                text: 'In French',
+                type: "text",
+                text: "In French",
               },
             ],
           },
@@ -47,13 +47,13 @@ const nodes: Node[] = [
     },
   },
   {
-    id: 'transform-1',
-    type: 'text',
+    id: "transform-1",
+    type: "text",
     position: { x: 600, y: 100 },
     data: {
-      instructions: 'Add some flair to the text',
+      instructions: "Add some flair to the text",
       generated: {
-        text: 'Bonjour!',
+        text: "Bonjour!",
       },
     },
   },
@@ -61,30 +61,30 @@ const nodes: Node[] = [
 
 const edges: Edge[] = [
   {
-    id: 'edge-1',
-    source: 'primitive-1',
-    target: 'transform-1',
-    type: 'animated',
+    id: "edge-1",
+    source: "primitive-1",
+    target: "transform-1",
+    type: "animated",
   },
   {
-    id: 'edge-2',
-    source: 'primitive-2',
-    target: 'transform-1',
-    type: 'animated',
+    id: "edge-2",
+    source: "primitive-2",
+    target: "transform-1",
+    type: "animated",
   },
 ];
 
 export const TextDemo = () => (
   <ReactFlowProvider>
     <Canvas
-      nodes={nodes}
       edges={edges}
-      panOnScroll={false}
-      zoomOnScroll={false}
-      preventScrolling={false}
       fitViewOptions={{
         minZoom: 0,
       }}
+      nodes={nodes}
+      panOnScroll={false}
+      preventScrolling={false}
+      zoomOnScroll={false}
     />
   </ReactFlowProvider>
 );

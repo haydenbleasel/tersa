@@ -1,5 +1,9 @@
-'use client';
+"use client";
 
+import { ArrowUpRight, ArrowUpRightIcon, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type MouseEventHandler, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,17 +11,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useUser } from '@/hooks/use-user';
-import { createClient } from '@/lib/supabase/client';
-import { useSubscription } from '@/providers/subscription';
-import { ArrowUpRight, ArrowUpRightIcon, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { type MouseEventHandler, useState } from 'react';
-import { Profile } from './profile';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
+} from "@/components/ui/dropdown-menu";
+import { useUser } from "@/hooks/use-user";
+import { createClient } from "@/lib/supabase/client";
+import { useSubscription } from "@/providers/subscription";
+import { Profile } from "./profile";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
 
 export const Menu = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -29,7 +29,7 @@ export const Menu = () => {
   const logout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   const handleOpenProfile: MouseEventHandler<HTMLDivElement> = (event) => {
@@ -44,7 +44,7 @@ export const Menu = () => {
 
   if (!user) {
     return (
-      <Button variant="ghost" size="icon" className="rounded-full" disabled>
+      <Button className="rounded-full" disabled size="icon" variant="ghost">
         <Loader2 className="animate-spin" size={16} />
       </Button>
     );
@@ -52,35 +52,35 @@ export const Menu = () => {
 
   return (
     <>
-      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+      <DropdownMenu onOpenChange={setDropdownOpen} open={dropdownOpen}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button className="rounded-full" size="icon" variant="ghost">
             <Avatar>
               <AvatarImage src={user.user_metadata.avatar} />
               <AvatarFallback className="bg-primary text-primary-foreground uppercase">
                 {(user.user_metadata.name ?? user.email ?? user.id)
-                  ?.split(' ')
+                  ?.split(" ")
                   .map((name: string) => name.at(0))
-                  .join('')}
+                  .join("")}
               </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          side="bottom"
           align="end"
-          collisionPadding={8}
-          sideOffset={16}
           className="w-52"
+          collisionPadding={8}
+          side="bottom"
+          sideOffset={16}
         >
           <DropdownMenuLabel>
             <Avatar>
               <AvatarImage src={user.user_metadata.avatar} />
               <AvatarFallback className="bg-primary text-primary-foreground uppercase">
                 {(user.user_metadata.name ?? user.email ?? user.id)
-                  ?.split(' ')
+                  ?.split(" ")
                   .map((name: string) => name.at(0))
-                  .join('')}
+                  .join("")}
               </AvatarFallback>
             </Avatar>
             <p className="mt-2 truncate">
@@ -98,28 +98,28 @@ export const Menu = () => {
           </DropdownMenuItem>
           {isSubscribed && (
             <DropdownMenuItem asChild className="justify-between">
-              <a href="/api/portal" target="_blank" rel="noopener noreferrer">
-                Billing{' '}
-                <ArrowUpRightIcon size={16} className="text-muted-foreground" />
+              <a href="/api/portal" rel="noopener noreferrer" target="_blank">
+                Billing{" "}
+                <ArrowUpRightIcon className="text-muted-foreground" size={16} />
               </a>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem asChild>
-            <Link href="/pricing" className="flex items-center justify-between">
+            <Link className="flex items-center justify-between" href="/pricing">
               <span>Upgrade</span>
-              <ArrowUpRight size={16} className="text-muted-foreground" />
+              <ArrowUpRight className="text-muted-foreground" size={16} />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <a
-              href="https://github.com/haydenbleasel/tersa"
-              target="_blank"
-              rel="noopener noreferrer"
               className="flex items-center justify-between"
+              href="https://github.com/haydenbleasel/tersa"
+              rel="noopener noreferrer"
+              target="_blank"
             >
               <span>Send feedback</span>
-              <ArrowUpRight size={16} className="text-muted-foreground" />
+              <ArrowUpRight className="text-muted-foreground" size={16} />
             </a>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>

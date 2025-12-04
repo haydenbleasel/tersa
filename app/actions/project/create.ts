@@ -1,11 +1,11 @@
-'use server';
+"use server";
 
-import { currentUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { transcriptionModels } from '@/lib/models/transcription';
-import { visionModels } from '@/lib/models/vision';
-import { projects } from '@/schema';
+import { currentUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { transcriptionModels } from "@/lib/models/transcription";
+import { visionModels } from "@/lib/models/vision";
+import { projects } from "@/schema";
 
 const defaultTranscriptionModel = Object.entries(transcriptionModels).find(
   ([_, model]) => model.default
@@ -16,11 +16,11 @@ const defaultVisionModel = Object.entries(visionModels).find(
 );
 
 if (!defaultTranscriptionModel) {
-  throw new Error('No default transcription model found');
+  throw new Error("No default transcription model found");
 }
 
 if (!defaultVisionModel) {
-  throw new Error('No default vision model found');
+  throw new Error("No default vision model found");
 }
 
 export const createProjectAction = async (
@@ -38,7 +38,7 @@ export const createProjectAction = async (
     const user = await currentUser();
 
     if (!user) {
-      throw new Error('You need to be logged in to create a project!');
+      throw new Error("You need to be logged in to create a project!");
     }
 
     const project = await database
@@ -53,7 +53,7 @@ export const createProjectAction = async (
       .returning({ id: projects.id });
 
     if (!project?.length) {
-      throw new Error('Failed to create project');
+      throw new Error("Failed to create project");
     }
 
     return { id: project[0].id };

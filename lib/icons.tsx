@@ -1,4 +1,4 @@
-import type { SVGProps } from 'react';
+import type { SVGProps } from "react";
 
 export const OpenAiIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg strokeLinejoin="round" viewBox="0 0 16 16" {...props}>
@@ -11,7 +11,7 @@ export const OpenAiIcon = (props: SVGProps<SVGSVGElement>) => (
 );
 
 export const XaiIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" {...props}>
+  <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" {...props}>
     <title>x.ai</title>
     <g>
       <polygon
@@ -50,13 +50,13 @@ export const GroqIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg strokeLinejoin="round" viewBox="0 0 160 59" {...props}>
     <title>Groq</title>
     <mask
+      height="59"
       id="mask0_4345_1846"
       maskUnits="userSpaceOnUse"
+      style={{ maskType: "luminance" }}
+      width="160"
       x="0"
       y="0"
-      width="160"
-      height="59"
-      style={{ maskType: 'luminance' }}
     >
       <path
         d="M0.273438 0.219727H159.216V58.1817H0.273438V0.219727Z"
@@ -73,7 +73,7 @@ export const GroqIcon = (props: SVGProps<SVGSVGElement>) => (
 );
 
 export const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
     <title>Google</title>
     <path
       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -97,184 +97,184 @@ export const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const MistralIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 176 162"
     fill="none"
+    viewBox="0 0 176 162"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Mistral</title>
     <rect
+      fill="#FFCD00"
+      height="32"
+      stroke="#636363"
+      strokeOpacity="0.2"
+      strokeWidth="0.5"
+      width="32"
       x="15"
       y="1"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FFCD00"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="143"
       y="1"
-      width="32"
+    />
+    <rect
+      fill="#FFA400"
       height="32"
-      fill="#FFCD00"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="15"
       y="33"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FFA400"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="47"
       y="33"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FFA400"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="111"
       y="33"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FFA400"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="143"
       y="33"
-      width="32"
+    />
+    <rect
+      fill="#FF7100"
       height="32"
-      fill="#FFA400"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="15"
       y="65"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF7100"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="47"
       y="65"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF7100"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="79"
       y="65"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF7100"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="111"
       y="65"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF7100"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="143"
       y="65"
-      width="32"
+    />
+    <rect
+      fill="#FF4902"
       height="32"
-      fill="#FF7100"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="15"
       y="97"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF4902"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="79"
       y="97"
-      width="32"
-      height="32"
+    />
+    <rect
       fill="#FF4902"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="143"
       y="97"
-      width="32"
+    />
+    <rect
+      fill="#FF0006"
       height="32"
-      fill="#FF4902"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
-    />
-    <rect
+      width="32"
       x="15"
       y="129"
-      width="32"
-      height="32"
-      fill="#FF0006"
-      stroke="#636363"
-      strokeOpacity="0.2"
-      strokeWidth="0.5"
     />
     <rect
-      x="143"
-      y="129"
-      width="32"
-      height="32"
       fill="#FF0006"
+      height="32"
       stroke="#636363"
       strokeOpacity="0.2"
       strokeWidth="0.5"
+      width="32"
+      x="143"
+      y="129"
     />
-    <rect y="1" width="16" height="160" fill="black" />
-    <rect x="63" y="97" width="16" height="32" fill="black" />
-    <rect x="95" y="33" width="16" height="32" fill="black" />
-    <rect x="127" y="1" width="16" height="32" fill="black" />
-    <rect x="127" y="97" width="16" height="64" fill="black" />
+    <rect fill="black" height="160" width="16" y="1" />
+    <rect fill="black" height="32" width="16" x="63" y="97" />
+    <rect fill="black" height="32" width="16" x="95" y="33" />
+    <rect fill="black" height="32" width="16" x="127" y="1" />
+    <rect fill="black" height="64" width="16" x="127" y="97" />
   </svg>
 );
 
 export const DeepSeekIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 57 42"
     fill="none"
+    viewBox="0 0 57 42"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -288,8 +288,8 @@ export const DeepSeekIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const CerebrasIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 260 260"
     fill="none"
+    viewBox="0 0 260 260"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -299,24 +299,24 @@ export const CerebrasIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="#F1592A"
     />
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M129.937 57.4319C110.824 57.4319 92.493 65.0247 78.9777 78.5399C65.4625 92.0551 57.8697 110.386 57.8697 129.499C57.8697 148.613 65.4625 166.943 78.9777 180.458C92.493 193.974 110.824 201.566 129.937 201.566V212.424C84.1345 212.424 47.012 175.294 47.012 129.491C47.012 83.6889 84.1267 46.5664 129.929 46.5664V57.4242L129.937 57.4319ZM166.765 85.9287C161.039 81.068 154.409 77.3872 147.255 75.0979C140.102 72.8087 132.567 71.9561 125.083 72.5892C117.599 73.2223 110.314 75.3286 103.646 78.787C96.9793 82.2454 91.0616 86.9877 86.2336 92.7411C81.4056 98.4946 77.7626 105.146 75.5141 112.312C73.2655 119.478 72.4558 127.018 73.1315 134.499C73.8072 141.979 75.9549 149.252 79.4512 155.899C82.9475 162.547 87.7234 168.437 93.5042 173.232L86.5215 181.556C79.6947 175.83 74.0629 168.814 69.9476 160.911C65.8322 153.008 63.314 144.372 62.5368 135.495C61.7595 126.619 62.7385 117.676 65.4177 109.178C68.0968 100.68 72.4238 92.7931 78.1515 85.9674C83.8785 79.1404 90.8942 73.5084 98.798 69.393C106.702 65.2776 115.339 62.7593 124.216 61.9821C133.093 61.2048 142.036 62.1838 150.535 64.8631C159.034 67.5424 166.921 71.8695 173.748 77.5974L166.765 85.9287ZM149.289 92.4697C139.472 87.3993 128.05 86.4111 117.508 89.7203C106.967 93.0294 98.1583 100.368 93.0005 110.139C87.8426 119.91 86.7526 131.323 89.9675 141.894C93.1824 152.465 100.442 161.338 110.167 166.583L105.083 176.193C92.936 169.532 83.895 158.363 79.9106 145.096C75.9263 131.828 77.318 117.526 83.7855 105.276C90.2531 93.0251 101.278 83.8086 114.481 79.6149C127.684 75.4212 142.006 76.5866 154.357 82.8597L149.289 92.4697ZM129.929 102.676C122.815 102.676 115.993 105.502 110.963 110.533C105.932 115.563 103.106 122.385 103.106 129.499C103.106 136.613 105.932 143.435 110.963 148.466C115.993 153.496 122.815 156.322 129.929 156.322V167.187C119.934 167.187 110.348 163.217 103.28 156.149C96.2117 149.081 92.241 139.495 92.241 129.499C92.241 119.504 96.2117 109.917 103.28 102.85C110.348 95.7816 119.934 91.8109 129.929 91.8109V102.676Z"
       fill="white"
+      fillRule="evenodd"
     />
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M139.903 120.477C138.748 119.233 137.416 118.165 135.951 117.308C134.674 116.549 133.22 116.143 131.735 116.13C129.759 116.13 127.992 116.494 126.434 117.215C124.928 117.893 123.575 118.869 122.457 120.083C121.338 121.298 120.476 122.726 119.924 124.283C119.35 125.856 119.071 127.507 119.071 129.173C119.071 130.862 119.35 132.505 119.924 134.063C120.481 135.618 121.344 137.045 122.462 138.26C123.581 139.476 124.931 140.454 126.434 141.139C127.984 141.86 129.766 142.224 131.735 142.224C133.409 142.224 134.967 141.867 136.4 141.178C137.857 140.48 139.113 139.434 140.082 138.14L147.274 145.936C146.189 147.021 144.949 147.959 143.538 148.749C140.93 150.204 138.091 151.2 135.145 151.694C133.827 151.896 132.688 152.004 131.735 152.004C128.608 152.024 125.503 151.472 122.574 150.377C119.805 149.353 117.272 147.779 115.127 145.75C112.994 143.712 111.296 141.263 110.136 138.55C108.875 135.587 108.247 132.393 108.291 129.173C108.291 125.732 108.911 122.609 110.136 119.795C111.298 117.083 112.988 114.634 115.119 112.596C117.273 110.573 119.808 109 122.574 107.977C125.503 106.881 128.608 106.33 131.735 106.349C134.486 106.349 137.253 106.876 140.043 107.93C142.841 109 145.352 110.72 147.359 112.96L139.903 120.477Z"
       fill="white"
+      fillRule="evenodd"
     />
   </svg>
 );
 
 export const AmazonIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 181 108"
     fill="none"
+    viewBox="0 0 181 108"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -327,25 +327,25 @@ export const AmazonIcon = (props: SVGProps<SVGSVGElement>) => (
         fill="currentColor"
       />
       <path
-        fillRule="evenodd"
         clipRule="evenodd"
         d="M162.004 85.0856C142.524 99.4738 114.221 107.112 89.8855 107.112C55.7803 107.112 25.05 94.5001 1.83948 73.5396C0.00394917 71.8817 1.66184 69.6317 3.85263 70.9343C28.9579 85.5001 59.925 94.3225 91.9579 94.3225C113.57 94.3225 137.313 89.8225 159.162 80.5856C162.418 79.1054 165.201 82.7172 162.004 85.0856Z"
         fill="#FF9900"
+        fillRule="evenodd"
       />
       <path
-        fillRule="evenodd"
         clipRule="evenodd"
         d="M170.115 75.8487C167.628 72.6513 153.654 74.3092 147.319 75.079C145.424 75.3158 145.128 73.6579 146.845 72.4145C157.976 64.5987 176.272 66.8487 178.404 69.454C180.536 72.1184 177.812 90.4145 167.391 99.1776C165.792 100.539 164.253 99.8289 164.963 98.0526C167.332 92.1908 172.601 78.9868 170.115 75.8487Z"
         fill="#FF9900"
+        fillRule="evenodd"
       />
     </g>
     <defs>
       <clipPath id="clip0_1480_1723">
         <rect
-          width="180"
-          height="107.763"
           fill="white"
+          height="107.763"
           transform="translate(0.0625)"
+          width="180"
         />
       </clipPath>
     </defs>
@@ -354,25 +354,25 @@ export const AmazonIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const FalIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 170 171"
     fill="none"
+    viewBox="0 0 170 171"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Fal</title>
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M109.571 0.690002C112.515 0.690002 114.874 3.08348 115.155 6.01352C117.665 32.149 138.466 52.948 164.603 55.458C167.534 55.7394 169.927 58.0985 169.927 61.042V110.255C169.927 113.198 167.534 115.557 164.603 115.839C138.466 118.349 117.665 139.148 115.155 165.283C114.874 168.213 112.515 170.607 109.571 170.607H60.3553C57.4116 170.607 55.0524 168.213 54.7709 165.283C52.2608 139.148 31.4601 118.349 5.32289 115.839C2.39266 115.557 -0.000976562 113.198 -0.000976562 110.255V61.042C-0.000976562 58.0985 2.39267 55.7394 5.3229 55.458C31.4601 52.948 52.2608 32.149 54.7709 6.01351C55.0524 3.08348 57.4116 0.690002 60.3553 0.690002H109.571ZM34.1182 85.5045C34.1182 113.776 57.0124 136.694 85.2539 136.694C113.495 136.694 136.39 113.776 136.39 85.5045C136.39 57.2332 113.495 34.3147 85.2539 34.3147C57.0124 34.3147 34.1182 57.2332 34.1182 85.5045Z"
       fill="currentColor"
+      fillRule="evenodd"
     />
   </svg>
 );
 
 export const DeepinfraIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 28 30"
     fill="none"
+    viewBox="0 0 28 30"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -471,7 +471,7 @@ export const DeepinfraIcon = (props: SVGProps<SVGSVGElement>) => (
 export const TogetherIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
     <title>Together</title>
-    <circle cx="12" cy="12" r="10" fill="#0f6fff" />
+    <circle cx="12" cy="12" fill="#0f6fff" r="10" />
   </svg>
 );
 
@@ -489,8 +489,8 @@ export const FireworksIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const LumaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 121 141"
     fill="none"
+    viewBox="0 0 121 141"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -530,11 +530,11 @@ export const LumaIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const ReplicateIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
+    fill="currentColor"
     version="1.1"
+    viewBox="0 0 1000 1000"
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
-    viewBox="0 0 1000 1000"
-    fill="currentColor"
     xmlSpace="preserve"
     {...props}
   >
@@ -549,8 +549,8 @@ export const ReplicateIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const HumeIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 32 31"
     fill="none"
+    viewBox="0 0 32 31"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1286,43 +1286,43 @@ export const MinimaxIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const RunwayIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    clipRule="evenodd"
+    fillRule="evenodd"
+    imageRendering="optimizeQuality"
     shapeRendering="geometricPrecision"
     textRendering="geometricPrecision"
-    imageRendering="optimizeQuality"
-    fillRule="evenodd"
-    clipRule="evenodd"
     viewBox="0 0 512 512.004"
+    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Runway</title>
     <path
-      fill="currentColor"
       d="M392.51 511.69c-62.032 5.67-113.901-67.019-153.657-103.887C218.749 552.665-.15 538.933 0 391.985c.072-61.724 0-212.549 0-272.331C0 98.16 5.899 76.515 16.965 58.16c21-35.599 61.58-58.584 102.906-58.14 62.254.079 212.177-.071 272.639 0 147.084 0 161.053 218.821 15.696 238.523l68.977 68.884c75.785 71.27 18.906 207.396-84.673 204.263zm-33.407-86.199c42.745 44.035 110.984-24.182 66.963-66.869L306.489 239.217h-66.891v66.862l103.365 103.222 16.14 16.19zM72.417 392.056c-.974 61.201 95.66 61.423 94.693 0V119.654c.817-30.525-31.464-54.778-60.613-45.375-1.268.373-2.465.746-3.59 1.197-18.306 6.787-31.013 25.522-30.49 45.074v271.506zM392.51 166.893c61.429.975 61.358-95.524 0-94.556H230.109c12.335 25.974 9.196 66.425 9.418 94.556H392.51z"
+      fill="currentColor"
     />
   </svg>
 );
 
 export const CohereIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 75 75"
     fill="none"
+    viewBox="0 0 75 75"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Cohere</title>
     <g clipPath="url(#clip0_876_32)">
       <path
-        fillRule="evenodd"
         clipRule="evenodd"
         d="M24.3 44.7C26.3 44.7 30.3 44.6 35.9 42.3C42.4 39.6 55.2 34.8 64.5 29.8C71 26.3 73.8 21.7 73.8 15.5C73.8 7 66.9 0 58.3 0H22.3C10 0 0 10 0 22.3C0 34.6 9.4 44.7 24.3 44.7Z"
         fill="#39594D"
+        fillRule="evenodd"
       />
       <path
-        fillRule="evenodd"
         clipRule="evenodd"
         d="M30.3999 60.0001C30.3999 54.0001 33.9999 48.5001 39.5999 46.2001L50.8999 41.5001C62.3999 36.8001 74.9999 45.2001 74.9999 57.6001C74.9999 67.2001 67.1999 75.0001 57.5999 75.0001H45.2999C37.0999 75.0001 30.3999 68.3001 30.3999 60.0001Z"
         fill="#D18EE2"
+        fillRule="evenodd"
       />
       <path
         d="M12.9 47.6001C5.8 47.6001 0 53.4001 0 60.5001V62.2001C0 69.2001 5.8 75.0001 12.9 75.0001C20 75.0001 25.8 69.2001 25.8 62.1001V60.4001C25.7 53.4001 20 47.6001 12.9 47.6001Z"
@@ -1331,7 +1331,7 @@ export const CohereIcon = (props: SVGProps<SVGSVGElement>) => (
     </g>
     <defs>
       <clipPath id="clip0_876_32">
-        <rect width="75" height="75" fill="white" />
+        <rect fill="white" height="75" width="75" />
       </clipPath>
     </defs>
   </svg>
@@ -1339,10 +1339,10 @@ export const CohereIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const BlackForestLabsIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
     fill="currentColor"
     fillRule="evenodd"
     viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Black Forest Labs</title>
@@ -1353,8 +1353,8 @@ export const BlackForestLabsIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const VercelIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 76 65"
     fill="none"
+    viewBox="0 0 76 65"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1365,25 +1365,25 @@ export const VercelIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const GrokIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 12 12"
     fill="none"
+    viewBox="0 0 12 12"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Grok</title>
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M4.635 7.645L8.624 4.6965C8.8195 4.5515 9.099 4.608 9.1925 4.8325C9.6825 6.017 9.4635 7.44 8.4875 8.417C7.512 9.394 6.154 9.608 4.913 9.12L3.5575 9.7485C5.502 11.079 7.863 10.75 9.3385 9.272C10.509 8.1 10.8715 6.5025 10.5325 5.062L10.5355 5.0655C10.044 2.9495 10.6565 2.1035 11.9105 0.374C11.9405 0.333 11.9705 0.292 12 0.25L10.3495 1.9025V1.8975L4.6335 7.646M3.8115 8.3615C2.4155 7.0265 2.6565 4.961 3.847 3.7695C4.7275 2.888 6.1705 2.528 7.43 3.057L8.7825 2.432C8.50138 2.22521 8.19381 2.05704 7.868 1.932C7.04889 1.59675 6.14894 1.5112 5.28134 1.68611C4.41374 1.86101 3.61723 2.28857 2.992 2.915C1.7255 4.183 1.327 6.133 2.011 7.797C2.522 9.0405 1.6845 9.92 0.841 10.808C0.5415 11.123 0.2415 11.4375 0 11.7705L3.81 8.363"
       fill="currentColor"
+      fillRule="evenodd"
     />
   </svg>
 );
 
 export const ClaudeIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 149 149"
     fill="none"
+    viewBox="0 0 149 149"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1397,9 +1397,9 @@ export const ClaudeIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const GeminiIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 16 16"
+    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Gemini</title>
@@ -1409,12 +1409,12 @@ export const GeminiIcon = (props: SVGProps<SVGSVGElement>) => (
     />
     <defs>
       <radialGradient
-        id="prefix__paint0_radial_980_20147"
         cx="0"
         cy="0"
-        r="1"
-        gradientUnits="userSpaceOnUse"
         gradientTransform="matrix(16.1326 5.4553 -43.70045 129.2322 1.588 6.503)"
+        gradientUnits="userSpaceOnUse"
+        id="prefix__paint0_radial_980_20147"
+        r="1"
       >
         <stop offset=".067" stopColor="#9168C0" />
         <stop offset=".343" stopColor="#5684D1" />
@@ -1426,26 +1426,26 @@ export const GeminiIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const GemmaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 172 172"
     fill="none"
+    viewBox="0 0 172 172"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Gemma</title>
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M88.4351 42.6667C87.6611 40.0367 87.0716 37.3472 86.6666 34.5982V26.6704C102.075 26.84 116.074 32.8832 126.53 42.6667H88.4351ZM83.4864 42.6667C84.2991 39.9915 84.9147 37.2549 85.3333 34.4566V26.6704C69.9246 26.84 55.9257 32.8833 45.4699 42.6667H83.4864ZM44.5521 44H83.0633C82.5042 45.6894 81.8654 47.3538 81.1467 48.9934C78.0651 56.25 73.8596 62.5783 68.5302 67.9781L44.5521 44ZM42.6666 42.6667H21.3333V44H42.2227C31.905 54.7515 25.5096 69.2961 25.3369 85.3333H0V86.6667H25.3369C25.5096 102.704 31.905 117.248 42.2227 128H21.3333V129.333H42.6666V150.667H44V129.777C54.7515 140.095 69.2961 146.49 85.3333 146.663V172H86.6666V146.663C102.704 146.49 117.248 140.095 128 129.777V150.667H129.333V129.333H150.667V128H129.777C140.095 117.248 146.49 102.704 146.663 86.6667H172V85.3333H146.663C146.49 69.2961 140.095 54.7515 129.777 44H150.667V42.6667H129.333V21.3333H128V42.2227C117.248 31.905 102.704 25.5096 86.6666 25.337V0H85.3333V25.337C69.2961 25.5096 54.7515 31.905 44 42.2227V21.3333H42.6666V42.6667ZM86.6666 145.33C102.075 145.16 116.074 139.117 126.53 129.333H88.4351C87.6611 131.963 87.0716 134.653 86.6666 137.402V145.33ZM85.3333 137.543C84.9147 134.745 84.2991 132.008 83.4864 129.333H45.4699C55.9256 139.117 69.9246 145.16 85.3333 145.33V137.543ZM26.6704 85.3333H34.5989C37.3476 84.9284 40.0369 84.3389 42.6666 83.5649V45.47C32.8832 55.9257 26.84 69.9246 26.6704 85.3333ZM34.4559 86.6667H26.6704C26.84 102.075 32.8832 116.074 42.6666 126.53V88.5137C39.9913 87.7009 37.2544 87.0852 34.4559 86.6667ZM145.33 85.3333C145.16 69.9246 139.117 55.9256 129.333 45.4699V83.5649C131.963 84.3389 134.652 84.9284 137.401 85.3333H145.33ZM137.544 86.6667C134.746 87.0852 132.009 87.7009 129.333 88.5137V126.53C139.117 116.074 145.16 102.075 145.33 86.6667H137.544ZM128 127.448V88.9368C126.311 89.4958 124.646 90.1347 123.007 90.8534C115.75 93.935 109.422 98.1405 104.022 103.47L128 127.448ZM128 83.1551V44.0901L127.91 44H88.845C89.3866 45.6894 90.0055 47.3538 90.7017 48.9934C93.9372 56.3745 98.285 62.795 103.745 68.255C109.205 73.715 115.626 78.0628 123.007 81.2984C124.646 81.9946 126.311 82.6135 128 83.1551ZM44 127.91V88.9368C45.6894 89.4958 47.3538 90.1347 48.9934 90.8534C56.3745 93.9878 62.795 98.285 68.255 103.745C73.715 109.205 78.0122 115.626 81.1467 123.007C81.8654 124.646 82.5042 126.311 83.0633 128H44.09L44 127.91ZM44 83.1551V45.3335L67.5831 68.9166C62.2704 74.0673 56.0738 78.1946 48.9934 81.2984C47.3538 81.9946 45.6894 82.6135 44 83.1551ZM88.845 128H126.667L103.083 104.417C97.9327 109.73 93.8055 115.926 90.7017 123.007C90.0055 124.646 89.3866 126.311 88.845 128ZM72.0263 72.0263C66.1382 77.9143 59.2411 82.5949 51.3817 86.0741C59.2419 89.4547 66.1393 94.0869 72.0262 99.9738C77.9132 105.861 82.5453 112.758 85.9259 120.618C89.4051 112.759 94.0857 105.862 99.9738 99.9738C105.861 94.0869 112.758 89.4547 120.618 86.0741C112.759 82.5949 105.862 77.9143 99.9738 72.0263C94.0857 66.1382 89.4051 59.2411 85.9259 51.3817C82.5453 59.242 77.9132 66.1394 72.0263 72.0263Z"
       fill="url(#paint0_linear_1_15)"
+      fillRule="evenodd"
     />
     <defs>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint0_linear_1_15"
         x1="42"
-        y1="130"
         x2="129.333"
+        y1="130"
         y2="43.3333"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="#446EFF" />
         <stop offset="0.366609" stopColor="#2E96FF" />
@@ -1457,8 +1457,8 @@ export const GemmaIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const AlibabaCloudIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 121 75"
     fill="none"
+    viewBox="0 0 121 75"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1477,8 +1477,8 @@ export const AlibabaCloudIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const MetaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 288 191"
     fill="none"
+    viewBox="0 0 288 191"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1497,12 +1497,12 @@ export const MetaIcon = (props: SVGProps<SVGSVGElement>) => (
     />
     <defs>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint0_linear_1_41"
         x1="61"
-        y1="117"
         x2="259"
+        y1="117"
         y2="127"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="#0064E1" />
         <stop offset="0.4" stopColor="#0064E1" />
@@ -1510,12 +1510,12 @@ export const MetaIcon = (props: SVGProps<SVGSVGElement>) => (
         <stop offset="1" stopColor="#0082FB" />
       </linearGradient>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint1_linear_1_41"
         x1="45"
-        y1="139"
         x2="45"
+        y1="139"
         y2="66"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="#0082FB" />
         <stop offset="1" stopColor="#0064E0" />
@@ -1526,25 +1526,25 @@ export const MetaIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const KlingIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 221 225"
     fill="none"
+    viewBox="0 0 221 225"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Kling</title>
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M188.567 32.808L189.33 33.564L189.352 33.543C204.04 48.288 199.828 77.916 178.53 111.504L220.42 153.408L218.62 156.915C211.577 170.648 202.043 182.953 190.504 193.203C175.304 206.775 156.955 216.338 137.123 221.024L136.403 221.196L135.373 221.441L134.632 221.607L132.997 221.967L131.644 222.233L130.629 222.428C129.549 222.644 128.418 222.845 127.317 223.032L126.395 223.169L125.697 223.256C124.703 223.39 123.714 223.515 122.73 223.63C106.219 225.487 89.502 223.632 73.8 218.199C58.097 212.767 43.808 203.894 31.974 192.231L31.283 191.561C16.566 176.816 20.735 147.166 42.061 113.556L0.171875 71.652L1.97188 68.146C8.99548 54.403 18.541 42.103 30.109 31.887C41.931 21.376 55.657 13.228 70.545 7.88211C74.001 6.63651 77.615 5.5493 81.165 4.6277C84.09 3.8437 87.047 3.1831 90.028 2.6477C91.036 2.4461 92.173 2.23731 93.275 2.05011C110.457 -0.628194 128.028 0.759202 144.578 6.1009C161.127 11.4427 176.193 20.59 188.567 32.808ZM174.405 34.608H174.361L174.405 34.63C160.17 30.224 137.584 37.344 113.709 53.076C131.874 48.015 149.442 50.636 160.797 61.997C171.553 72.776 174.498 89.134 170.423 106.32C170.231 107.237 169.991 108.166 169.703 109.107C189.193 79.623 195.429 52.04 183.088 39.72C182.885 39.498 182.669 39.289 182.44 39.094L182.346 39.008L182.209 38.885L181.799 38.568C181.621 38.424 181.437 38.285 181.245 38.151L180.942 37.935C178.969 36.461 176.758 35.336 174.405 34.608ZM164.634 100.884C162.121 115.875 153.834 131.024 141.27 143.573C128.742 156.13 113.565 164.424 98.553 166.959C84.505 169.335 72.388 166.239 64.446 158.319C56.526 150.392 53.43 138.317 55.806 124.198C58.319 109.222 66.585 94.066 79.091 81.531C79.091 81.531 79.113 81.531 79.163 81.459L79.206 81.387C91.756 68.916 106.876 60.644 121.852 58.138C135.899 55.762 147.988 58.844 155.958 66.778C163.878 74.698 166.974 86.794 164.598 100.892L164.634 100.884ZM37.338 39.972C27.774 48.431 19.722 58.457 13.528 69.622L13.456 69.644L49.801 105.903C52.763 101.732 55.931 97.608 59.305 93.533C60.486 92.122 61.701 90.687 62.949 89.228L63.424 88.688L65.152 86.758C65.202 86.715 65.253 86.621 65.253 86.621L65.569 86.261L65.735 86.067L65.987 85.793L66.635 85.073C67.086 84.555 67.554 84.044 68.039 83.54C68.039 83.489 68.111 83.417 68.111 83.417L68.889 82.568L69.443 81.992C69.467 81.953 69.486 81.948 69.486 81.948C69.529 81.91 69.537 81.876 69.537 81.876L69.637 81.747L69.738 81.624C69.826 81.557 69.906 81.48 69.976 81.394L70.113 81.25C70.408 80.955 70.761 80.609 71.077 80.264C71.245 80.057 71.437 79.851 71.653 79.644L71.949 79.342C71.999 79.27 72.136 79.133 72.136 79.133L72.69 78.586L73.77 77.52L74.13 77.139L74.533 76.714C82.316 68.905 90.633 61.646 99.424 54.992L100.576 54.149H100.583V54.142L100.597 54.135L101.749 53.285C103.036 52.32 104.332 51.377 105.637 50.456C107.029 49.505 108.421 48.569 109.813 47.648C128.692 35.062 147.181 27.509 162.273 26.012C142.083 13.83 118.252 9.1407 94.953 12.764C93.945 12.922 92.98 13.088 91.943 13.296C91.288 13.412 90.719 13.527 90.143 13.642L89.797 13.714C84.505 14.804 79.297 16.264 74.209 18.084C60.63 22.946 48.107 30.377 37.338 39.972ZM39.347 186.91C41.363 188.446 43.66 189.612 46.237 190.409H46.18C60.508 194.787 83.008 187.644 106.797 171.956C88.653 176.996 71.121 174.375 59.766 163.013C49.06 152.285 46.115 135.876 50.169 118.69C50.37 117.773 50.608 116.844 50.881 115.904C31.398 145.395 25.177 172.971 37.504 185.297C37.782 185.571 38.08 185.847 38.397 186.125C38.694 186.394 39.016 186.656 39.347 186.91ZM207.042 155.446V155.46C200.839 166.609 192.793 176.626 183.246 185.088C168.958 197.776 151.688 206.634 133.048 210.836L132.817 210.893L132.198 211.037C131.498 211.226 130.79 211.38 130.074 211.498C129.609 211.599 129.133 211.688 128.649 211.764C127.645 211.959 126.637 212.127 125.625 212.268L124.782 212.412L123.825 212.535C123.057 212.64 122.269 212.736 121.463 212.823C99.48 215.298 77.294 210.457 58.341 199.049C72.87 197.616 90.561 190.524 108.705 178.796L109.741 178.119L110.778 177.435L112.189 176.484H112.197L114.925 174.627C116.245 173.705 117.541 172.762 118.813 171.797C119.61 171.226 120.393 170.657 121.161 170.091C129.94 163.417 138.258 156.157 146.058 148.361C146.245 148.169 146.421 147.982 146.584 147.8L146.8 147.555C147.184 147.195 147.544 146.842 147.88 146.496L148.427 145.949C148.427 145.949 148.571 145.805 148.593 145.733C148.665 145.671 148.734 145.604 148.801 145.532L148.888 145.438L149.514 144.819L149.997 144.315C150.16 144.161 150.321 143.998 150.479 143.825L150.609 143.681C150.679 143.598 150.759 143.523 150.846 143.458L150.954 143.328L151.055 143.206C151.055 143.206 151.127 143.134 151.17 143.112L151.365 142.904L151.559 142.695L151.746 142.515C151.545 142.726 151.353 142.947 151.17 143.177L151.617 142.709L151.624 142.695C151.936 142.359 152.245 142.037 152.553 141.73C152.553 141.73 152.553 141.658 152.625 141.658C153.047 141.207 153.457 140.751 153.856 140.29L154.669 139.383C154.777 139.313 154.864 139.216 154.921 139.102L155.382 138.548L155.497 138.411C156.059 137.811 156.609 137.204 157.146 136.589L157.708 135.941C158.61 134.89 159.508 133.832 160.401 132.766L161.481 131.477L161.819 131.06C162.251 130.517 162.678 129.989 163.101 129.476C163.461 129.044 163.813 128.602 164.159 128.151C164.375 127.863 164.598 127.582 164.829 127.308C166.917 124.616 168.925 121.966 170.862 119.244L207.042 155.446ZM207.042 155.446C207.042 155.422 207.057 155.403 207.085 155.388V155.504L207.042 155.46H207.057L207.042 155.446Z"
       fill="currentColor"
+      fillRule="evenodd"
     />
   </svg>
 );
 
 export const AmazonBedrockIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 189 190"
     fill="none"
+    viewBox="0 0 189 190"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1555,12 +1555,12 @@ export const AmazonBedrockIcon = (props: SVGProps<SVGSVGElement>) => (
     />
     <defs>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint0_linear_10_9"
         x1="43.59"
-        y1="179.19"
         x2="136.43"
+        y1="179.19"
         y2="18.37"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="#A5E1FE" />
         <stop offset="1" stopColor="#745AFE" />
@@ -1571,8 +1571,8 @@ export const AmazonBedrockIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const PerplexityIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 36 36"
     fill="none"
+    viewBox="0 0 36 36"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1586,20 +1586,20 @@ export const PerplexityIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const UnknownIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 36 36"
     fill="none"
+    viewBox="0 0 36 36"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Unknown</title>
-    <circle cx="18" cy="18" r="18" fill="#000" />
+    <circle cx="18" cy="18" fill="#000" r="18" />
   </svg>
 );
 
 export const BasetenIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 23 28"
     fill="none"
+    viewBox="0 0 23 28"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1613,8 +1613,8 @@ export const BasetenIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const AzureIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 138 130"
     fill="none"
+    viewBox="0 0 138 130"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1637,23 +1637,23 @@ export const AzureIcon = (props: SVGProps<SVGSVGElement>) => (
     />
     <defs>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint0_linear_5_10"
         x1="60.9187"
-        y1="9.82495"
         x2="18.6672"
+        y1="9.82495"
         y2="134.647"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="#114A8B" />
         <stop offset="1" stop-color="#0669BC" />
       </linearGradient>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint1_linear_5_10"
         x1="74.1172"
-        y1="67.9953"
         x2="64.3437"
+        y1="67.9953"
         y2="71.3"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stop-opacity="0.3" />
         <stop offset="0.071" stop-opacity="0.2" />
@@ -1662,12 +1662,12 @@ export const AzureIcon = (props: SVGProps<SVGSVGElement>) => (
         <stop offset="1" stop-opacity="0" />
       </linearGradient>
       <linearGradient
+        gradientUnits="userSpaceOnUse"
         id="paint2_linear_5_10"
         x1="68.7422"
-        y1="6.18435"
         x2="115.122"
+        y1="6.18435"
         y2="129.748"
-        gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="#3CCBF4" />
         <stop offset="1" stop-color="#2892DF" />
@@ -1678,26 +1678,26 @@ export const AzureIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const MoonshotAiIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 464 465"
     fill="none"
+    viewBox="0 0 464 465"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Moonshot AI</title>
     <path
-      fillRule="evenodd"
       clipRule="evenodd"
       d="M418.766 93.7779C388.626 53.1679 345.086 22.0679 292.446 7.96793C239.806 -6.13207 186.536 -0.972071 140.136 19.1279L418.766 93.7779ZM40.7758 100.848C61.3758 70.8379 88.5858 46.4279 119.776 29.1479L325.036 84.1479C311.566 91.9179 297.136 105.308 285.966 120.028L454.736 165.248C459.526 181.078 462.646 197.488 463.956 214.238L40.7758 100.848ZM456.686 292.448C454.306 301.348 451.436 309.988 448.116 318.338L2.44584 198.928C3.74584 190.028 5.58584 181.118 7.96584 172.218C13.5658 151.308 21.8458 131.838 32.3458 114.078L250.436 172.518C241.706 184.998 233.756 198.558 226.756 213.068L460.516 275.708C459.446 281.298 458.166 286.878 456.676 292.468L456.686 292.448ZM13.4858 310.228C2.67584 279.958 -1.93416 247.218 0.745845 213.948L206.426 269.058C204.946 273.738 203.556 278.478 202.266 283.288C199.646 293.078 197.506 302.848 195.846 312.548L417.946 372.058C407.606 385.788 395.826 398.228 382.896 409.208L13.4858 310.228ZM172.206 456.688C102.096 437.898 48.1158 388.978 20.4758 327.588L187.846 372.438C187.576 388.048 188.546 403.258 190.676 417.848L312.286 450.428C268.876 466.388 220.286 469.568 172.206 456.688Z"
       fill="currentColor"
+      fillRule="evenodd"
     />
   </svg>
 );
 
 export const MorphIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 48 48"
     fill="none"
+    viewBox="0 0 48 48"
+    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <title>Morph</title>
@@ -1710,8 +1710,8 @@ export const MorphIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const InceptionIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 995 1000"
     fill="none"
+    viewBox="0 0 995 1000"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1729,8 +1729,8 @@ export const InceptionIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const ZaiIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 28 28"
     fill="none"
+    viewBox="0 0 28 28"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -1739,8 +1739,8 @@ export const ZaiIcon = (props: SVGProps<SVGSVGElement>) => (
       d="M23.51 27.51H4.48999C2.27999 27.51 0.48999 25.72 0.48999 23.51V4.48999C0.48999 2.27999 2.27999 0.48999 4.48999 0.48999H23.52C25.73 0.48999 27.52 2.27999 27.52 4.48999V23.52C27.51 25.72 25.72 27.51 23.51 27.51Z"
       fill="#2D2D2D"
       stroke="white"
-      stroke-width="0.6317"
       stroke-miterlimit="10"
+      stroke-width="0.6317"
     />
     <path
       d="M14.4699 6.10009L13.1699 7.95009C12.9699 8.24009 12.6299 8.42009 12.2699 8.42009H5.16993V6.09009C5.15993 6.10009 14.4699 6.10009 14.4699 6.10009Z"
@@ -1759,8 +1759,8 @@ export const ZaiIcon = (props: SVGProps<SVGSVGElement>) => (
 
 export const NovitaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 24 15"
     fill="none"
+    viewBox="0 0 24 15"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

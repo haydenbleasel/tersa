@@ -1,12 +1,12 @@
-import { cn } from '@/lib/utils';
-import type { SVGProps } from 'react';
+import type { SVGProps } from "react";
+import { cn } from "@/lib/utils";
 
 export const Logo = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
   <svg
-    viewBox="0 0 106 118"
+    className={cn("h-auto w-full text-primary", className)}
     fill="none"
+    viewBox="0 0 106 118"
     xmlns="http://www.w3.org/2000/svg"
-    className={cn('h-auto w-full text-primary', className)}
     {...props}
   >
     <title>Logo</title>

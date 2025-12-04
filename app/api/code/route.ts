@@ -1,22 +1,22 @@
-import { getSubscribedUser } from '@/lib/auth';
-import { parseError } from '@/lib/error/parse';
-import { gateway } from '@/lib/gateway';
-import { createRateLimiter, slidingWindow } from '@/lib/rate-limit';
-import { trackCreditUsage } from '@/lib/stripe';
 import {
   convertToModelMessages,
   extractReasoningMiddleware,
   streamText,
   wrapLanguageModel,
-} from 'ai';
+} from "ai";
+import { getSubscribedUser } from "@/lib/auth";
+import { parseError } from "@/lib/error/parse";
+import { gateway } from "@/lib/gateway";
+import { createRateLimiter, slidingWindow } from "@/lib/rate-limit";
+import { trackCreditUsage } from "@/lib/stripe";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 // Create a rate limiter for the chat API
 const rateLimiter = createRateLimiter({
-  limiter: slidingWindow(10, '1 m'),
-  prefix: 'api-code',
+  limiter: slidingWindow(10, "1 m"),
+  prefix: "api-code",
 });
 
 export const POST = async (req: Request) => {
@@ -29,17 +29,17 @@ export const POST = async (req: Request) => {
   }
 
   // Apply rate limiting
-  if (process.env.NODE_ENV === 'production') {
-    const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+  if (process.env.NODE_ENV === "production") {
+    const ip = req.headers.get("x-forwarded-for") || "anonymous";
     const { success, limit, reset, remaining } = await rateLimiter.limit(ip);
 
     if (!success) {
-      return new Response('Too many requests', {
+      return new Response("Too many requests", {
         status: 429,
         headers: {
-          'X-RateLimit-Limit': limit.toString(),
-          'X-RateLimit-Remaining': remaining.toString(),
-          'X-RateLimit-Reset': reset.toString(),
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
         },
       });
     }
@@ -47,8 +47,8 @@ export const POST = async (req: Request) => {
 
   const { messages, modelId, language } = await req.json();
 
-  if (typeof modelId !== 'string') {
-    return new Response('Model must be a string', { status: 400 });
+  if (typeof modelId !== "string") {
+    return new Response("Model must be a string", { status: 400 });
   }
 
   const { models } = await gateway.getAvailableModels();
@@ -56,22 +56,22 @@ export const POST = async (req: Request) => {
   const model = models.find((model) => model.id === modelId);
 
   if (!model) {
-    return new Response('Invalid model', { status: 400 });
+    return new Response("Invalid model", { status: 400 });
   }
 
   const enhancedModel = wrapLanguageModel({
     model: gateway(model.id),
-    middleware: extractReasoningMiddleware({ tagName: 'think' }),
+    middleware: extractReasoningMiddleware({ tagName: "think" }),
   });
 
   const result = streamText({
     model: enhancedModel,
     system: [
-      `Output the code in the language specified: ${language ?? 'javascript'}`,
-      'If the user specifies an output language in the context below, ignore it.',
-      'Respond with the code only, no other text.',
-      'Do not format the code as Markdown, just return the code as is.',
-    ].join('\n'),
+      `Output the code in the language specified: ${language ?? "javascript"}`,
+      "If the user specifies an output language in the context below, ignore it.",
+      "Respond with the code only, no other text.",
+      "Do not format the code as Markdown, just return the code as is.",
+    ].join("\n"),
     messages: convertToModelMessages(messages),
     onError: (error) => {
       console.error(error);
@@ -87,7 +87,7 @@ export const POST = async (req: Request) => {
       const outputTokens = usage.outputTokens ?? 0;
 
       await trackCreditUsage({
-        action: 'code',
+        action: "code",
         cost: inputCost * inputTokens + outputCost * outputTokens,
       });
     },

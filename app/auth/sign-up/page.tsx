@@ -1,5 +1,6 @@
-import { OrDivider } from '@/components/or-divider';
-import { SocialAuth } from '@/components/social-auth';
+import Link from "next/link";
+import { OrDivider } from "@/components/or-divider";
+import { SocialAuth } from "@/components/social-auth";
 import {
   Card,
   CardContent,
@@ -7,12 +8,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import Link from 'next/link';
-import { SignUpForm } from './components/sign-up-form';
+} from "@/components/ui/card";
+import { SignUpForm } from "./components/sign-up-form";
 
-const title = 'Sign up';
-const description = 'Sign up to your account';
+const title = "Sign up";
+const description = "Sign up to your account";
 
 export const metadata = {
   title,
@@ -33,8 +33,8 @@ const LoginPage = () => (
     <CardFooter className="flex items-center justify-center gap-1 p-4 text-xs">
       <p>Already have an account?</p>
       <Link
-        href="/auth/login"
         className="text-primary underline underline-offset-4"
+        href="/auth/login"
       >
         Login
       </Link>

@@ -1,4 +1,4 @@
-import { TweetPrimitive } from './primitive';
+import { TweetPrimitive } from "./primitive";
 
 export type TweetNodeProps = {
   type: string;

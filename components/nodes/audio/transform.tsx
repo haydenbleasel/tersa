@@ -1,31 +1,31 @@
-import { generateSpeechAction } from '@/app/actions/speech/create';
-import { NodeLayout } from '@/components/nodes/layout';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
-import { useAnalytics } from '@/hooks/use-analytics';
-import { download } from '@/lib/download';
-import { handleError } from '@/lib/error/handle';
-import { speechModels } from '@/lib/models/speech';
-import {
-  getDescriptionsFromImageNodes,
-  getTextFromTextNodes,
-} from '@/lib/xyflow';
-import { useProject } from '@/providers/project';
-import { getIncomers, useReactFlow } from '@xyflow/react';
+import { getIncomers, useReactFlow } from "@xyflow/react";
 import {
   ClockIcon,
   DownloadIcon,
   Loader2Icon,
   PlayIcon,
   RotateCcwIcon,
-} from 'lucide-react';
-import { type ChangeEventHandler, type ComponentProps, useState } from 'react';
-import { toast } from 'sonner';
-import { mutate } from 'swr';
-import type { AudioNodeProps } from '.';
-import { ModelSelector } from '../model-selector';
-import { VoiceSelector } from './voice-selector';
+} from "lucide-react";
+import { type ChangeEventHandler, type ComponentProps, useState } from "react";
+import { toast } from "sonner";
+import { mutate } from "swr";
+import { generateSpeechAction } from "@/app/actions/speech/create";
+import { NodeLayout } from "@/components/nodes/layout";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { useAnalytics } from "@/hooks/use-analytics";
+import { download } from "@/lib/download";
+import { handleError } from "@/lib/error/handle";
+import { speechModels } from "@/lib/models/speech";
+import {
+  getDescriptionsFromImageNodes,
+  getTextFromTextNodes,
+} from "@/lib/xyflow";
+import { useProject } from "@/providers/project";
+import { ModelSelector } from "../model-selector";
+import type { AudioNodeProps } from ".";
+import { VoiceSelector } from "./voice-selector";
 
 type AudioTransformProps = AudioNodeProps & {
   title: string;
@@ -37,7 +37,7 @@ const getDefaultModel = (models: typeof speechModels) => {
   );
 
   if (!defaultModel) {
-    throw new Error('No default model found');
+    throw new Error("No default model found");
   }
 
   return defaultModel[0];
@@ -66,13 +66,13 @@ export const AudioTransform = ({
       const textPrompts = getTextFromTextNodes(incomers);
       const imagePrompts = getDescriptionsFromImageNodes(incomers);
 
-      if (!textPrompts.length && !imagePrompts.length && !data.instructions) {
-        throw new Error('No prompts found');
+      if (!(textPrompts.length || imagePrompts.length || data.instructions)) {
+        throw new Error("No prompts found");
       }
 
       setLoading(true);
 
-      let text = [...textPrompts, ...imagePrompts].join('\n');
+      let text = [...textPrompts, ...imagePrompts].join("\n");
       let instructions = data.instructions;
 
       if (data.instructions && !text.length) {
@@ -80,7 +80,7 @@ export const AudioTransform = ({
         instructions = undefined;
       }
 
-      analytics.track('canvas', 'node', 'generate', {
+      analytics.track("canvas", "node", "generate", {
         type,
         promptLength: text.length,
         model: modelId,
@@ -97,31 +97,31 @@ export const AudioTransform = ({
         instructions,
       });
 
-      if ('error' in response) {
+      if ("error" in response) {
         throw new Error(response.error);
       }
 
       updateNodeData(id, response.nodeData);
 
-      toast.success('Audio generated successfully');
+      toast.success("Audio generated successfully");
 
-      setTimeout(() => mutate('credits'), 5000);
+      setTimeout(() => mutate("credits"), 5000);
     } catch (error) {
-      handleError('Error generating audio', error);
+      handleError("Error generating audio", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
+  const toolbar: ComponentProps<typeof NodeLayout>["toolbar"] = [
     {
       children: (
         <ModelSelector
-          value={modelId}
-          options={speechModels}
-          key={id}
           className="w-[200px] rounded-full"
+          key={id}
           onChange={(value) => updateNodeData(id, { model: value })}
+          options={speechModels}
+          value={modelId}
         />
       ),
     },
@@ -131,11 +131,11 @@ export const AudioTransform = ({
     toolbar.push({
       children: (
         <VoiceSelector
-          value={data.voice ?? model.voices[0]}
-          options={model.voices}
-          key={id}
           className="w-[200px] rounded-full"
+          key={id}
           onChange={(value) => updateNodeData(id, { voice: value })}
+          options={model.voices}
+          value={data.voice ?? model.voices[0]}
         />
       ),
     });
@@ -144,21 +144,21 @@ export const AudioTransform = ({
   toolbar.push(
     loading
       ? {
-          tooltip: 'Generating...',
+          tooltip: "Generating...",
           children: (
-            <Button size="icon" className="rounded-full" disabled>
+            <Button className="rounded-full" disabled size="icon">
               <Loader2Icon className="animate-spin" size={12} />
             </Button>
           ),
         }
       : {
-          tooltip: data.generated?.url ? 'Regenerate' : 'Generate',
+          tooltip: data.generated?.url ? "Regenerate" : "Generate",
           children: (
             <Button
-              size="icon"
               className="rounded-full"
-              onClick={handleGenerate}
               disabled={loading || !project?.id}
+              onClick={handleGenerate}
+              size="icon"
             >
               {data.generated?.url ? (
                 <RotateCcwIcon size={12} />
@@ -172,13 +172,13 @@ export const AudioTransform = ({
 
   if (data.generated) {
     toolbar.push({
-      tooltip: 'Download',
+      tooltip: "Download",
       children: (
         <Button
-          variant="ghost"
-          size="icon"
           className="rounded-full"
-          onClick={() => download(data.generated, id, 'mp3')}
+          onClick={() => download(data.generated, id, "mp3")}
+          size="icon"
+          variant="ghost"
         >
           <DownloadIcon size={12} />
         </Button>
@@ -188,12 +188,12 @@ export const AudioTransform = ({
 
   if (data.updatedAt) {
     toolbar.push({
-      tooltip: `Last updated: ${new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'short',
-        timeStyle: 'short',
+      tooltip: `Last updated: ${new Intl.DateTimeFormat("en-US", {
+        dateStyle: "short",
+        timeStyle: "short",
       }).format(new Date(data.updatedAt))}`,
       children: (
-        <Button size="icon" variant="ghost" className="rounded-full">
+        <Button className="rounded-full" size="icon" variant="ghost">
           <ClockIcon size={12} />
         </Button>
       ),
@@ -205,19 +205,19 @@ export const AudioTransform = ({
   ) => updateNodeData(id, { instructions: event.target.value });
 
   return (
-    <NodeLayout id={id} data={data} type={type} title={title} toolbar={toolbar}>
+    <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
       {loading && (
         <Skeleton className="flex h-[50px] w-full animate-pulse items-center justify-center">
           <Loader2Icon
-            size={16}
             className="size-4 animate-spin text-muted-foreground"
+            size={16}
           />
         </Skeleton>
       )}
-      {!loading && !data.generated?.url && (
+      {!(loading || data.generated?.url) && (
         <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press <PlayIcon size={12} className="-translate-y-px inline" /> to
+            Press <PlayIcon className="-translate-y-px inline" size={12} /> to
             generate audio
           </p>
         </div>
@@ -225,16 +225,16 @@ export const AudioTransform = ({
       {!loading && data.generated?.url && (
         // biome-ignore lint/a11y/useMediaCaption: <explanation>
         <audio
-          src={data.generated.url}
-          controls
           className="w-full rounded-none"
+          controls
+          src={data.generated.url}
         />
       )}
       <Textarea
-        value={data.instructions ?? ''}
+        className="shrink-0 resize-none rounded-none border-none bg-transparent! shadow-none focus-visible:ring-0"
         onChange={handleInstructionsChange}
         placeholder="Enter instructions"
-        className="shrink-0 resize-none rounded-none border-none bg-transparent! shadow-none focus-visible:ring-0"
+        value={data.instructions ?? ""}
       />
     </NodeLayout>
   );

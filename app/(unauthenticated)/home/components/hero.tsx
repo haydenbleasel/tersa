@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRightIcon } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowRightIcon } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 type HeroProps = {
   announcement?: {
@@ -49,14 +49,14 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
       <div className="flex flex-col items-center justify-center px-5 py-8">
         {announcement && (
           <Link
-            href={announcement.link}
             className="relative inline-flex items-center justify-between gap-2 rounded-full border px-4 py-1.5 text-sm tracking-[-0.01rem] transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary/5 hover:text-primary"
-            target={announcement.link.startsWith('http') ? '_blank' : '_self'}
+            href={announcement.link}
             rel={
-              announcement.link.startsWith('http')
-                ? 'noopener noreferrer'
+              announcement.link.startsWith("http")
+                ? "noopener noreferrer"
                 : undefined
             }
+            target={announcement.link.startsWith("http") ? "_blank" : "_self"}
           >
             {announcement.title}
             <ArrowRightIcon size={16} />
@@ -67,7 +67,7 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
           A
           <span className="mx-1 font-semibold font-serif text-5xl italic md:text-7xl">
             visual
-          </span>{' '}
+          </span>{" "}
           AI playground
         </h1>
 
@@ -95,11 +95,11 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
       <div className="flex flex-col items-center justify-center gap-4 py-10 md:flex-row">
         {buttons.map((button, index) => (
           <Button
-            key={button.title}
-            variant={index === 0 ? 'default' : 'outline'}
             asChild
-            size="lg"
             className="w-full sm:w-auto"
+            key={button.title}
+            size="lg"
+            variant={index === 0 ? "default" : "outline"}
           >
             <Link href={button.link}>{button.title}</Link>
           </Button>

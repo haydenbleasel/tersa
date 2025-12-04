@@ -1,5 +1,5 @@
-import { SiGithub, SiX } from '@icons-pack/react-simple-icons';
-import type { Provider } from '@supabase/supabase-js';
+import { SiGithub, SiX } from "@icons-pack/react-simple-icons";
+import type { Provider } from "@supabase/supabase-js";
 
 export const socialProviders: {
   name: string;
@@ -7,13 +7,13 @@ export const socialProviders: {
   id: Provider;
 }[] = [
   {
-    name: 'Github',
+    name: "Github",
     icon: SiGithub,
-    id: 'github',
+    id: "github",
   },
   {
-    name: 'Twitter',
+    name: "Twitter",
     icon: SiX,
-    id: 'twitter',
+    id: "twitter",
   },
 ];

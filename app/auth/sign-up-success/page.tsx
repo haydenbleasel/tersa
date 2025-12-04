@@ -4,10 +4,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-const title = 'Thank you for signing up!';
-const description = 'Check your email to confirm';
+const title = "Thank you for signing up!";
+const description = "Check your email to confirm";
 
 export const metadata = {
   title,

@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
 import {
   Marquee,
   MarqueeContent,
   MarqueeFade,
   MarqueeItem,
-} from '@/components/ui/kibo-ui/marquee';
-import type { OpenAiIcon } from '@/lib/icons';
+} from "@/components/ui/kibo-ui/marquee";
+import type { OpenAiIcon } from "@/lib/icons";
 
-import { imageModels } from '@/lib/models/image';
-import { speechModels } from '@/lib/models/speech';
-import { transcriptionModels } from '@/lib/models/transcription';
-import { videoModels } from '@/lib/models/video';
-import { visionModels } from '@/lib/models/vision';
-import { providers } from '@/lib/providers';
-import { useGateway } from '@/providers/gateway/client';
+import { imageModels } from "@/lib/models/image";
+import { speechModels } from "@/lib/models/speech";
+import { transcriptionModels } from "@/lib/models/transcription";
+import { videoModels } from "@/lib/models/video";
+import { visionModels } from "@/lib/models/vision";
+import { providers } from "@/lib/providers";
+import { useGateway } from "@/providers/gateway/client";
 
 export const Providers = () => {
   const { models: textModels } = useGateway();
@@ -79,7 +79,7 @@ export const Providers = () => {
             </h2>
 
             <p className="mx-auto max-w-lg text-center text-muted-foreground tracking-[-0.01rem] sm:text-lg">
-              Connect your workflows to {allModels.length} models from{' '}
+              Connect your workflows to {allModels.length} models from{" "}
               {Object.keys(providers).length} of the world's top AI providers,
               including OpenAI, Anthropic, and more.
             </p>
@@ -90,14 +90,14 @@ export const Providers = () => {
             <MarqueeFade side="right" />
             <MarqueeContent pauseOnHover={false}>
               {row1.map((Icon, index) => (
-                <MarqueeItem key={index} className="h-32 w-32 p-8">
+                <MarqueeItem className="h-32 w-32 p-8" key={index}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}
             </MarqueeContent>
-            <MarqueeContent pauseOnHover={false} direction="right">
+            <MarqueeContent direction="right" pauseOnHover={false}>
               {row2.map((Icon, index) => (
-                <MarqueeItem key={index} className="h-32 w-32 p-8">
+                <MarqueeItem className="h-32 w-32 p-8" key={index}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}

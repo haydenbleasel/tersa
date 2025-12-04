@@ -1,6 +1,6 @@
-import { Logo } from '@/components/logo';
-import Link from 'next/link';
-import type { ReactNode } from 'react';
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { Logo } from "@/components/logo";
 
 type AuthLayoutProps = {
   readonly children: ReactNode;
@@ -9,7 +9,7 @@ type AuthLayoutProps = {
 const AuthLayout = ({ children }: AuthLayoutProps) => (
   <div className="relative flex h-screen min-h-[50rem] w-full items-center justify-center bg-secondary/50 p-8 dark:bg-background">
     <div className="grid w-full max-w-sm gap-8">
-      <Link href="/" className="mx-auto h-10 w-auto">
+      <Link className="mx-auto h-10 w-auto" href="/">
         <Logo className="h-full text-border" />
       </Link>
       {children}

@@ -1,5 +1,5 @@
-import { Head, Hr, Html, Link, Preview, Text } from '@react-email/components';
-import { EmailLayout } from './layout';
+import { Head, Hr, Html, Link, Preview, Text } from "@react-email/components";
+import { EmailLayout } from "./layout";
 
 type SignupEmailTemplateProps = {
   magicLink: string;
@@ -58,8 +58,8 @@ export const SignupEmailTemplate = ({
 );
 
 SignupEmailTemplate.PreviewProps = {
-  magicLink: 'https://www.tersa.ai/sign-up',
-  email: 'test@test.com',
+  magicLink: "https://www.tersa.ai/sign-up",
+  email: "test@test.com",
 } as SignupEmailTemplateProps;
 
 export default SignupEmailTemplate;

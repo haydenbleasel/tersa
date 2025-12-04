@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import '@xyflow/react/dist/style.css';
+@import "@xyflow/react/dist/style.css";
 @import "shadcn-prose";
 
 @custom-variant dark (&:is(.dark *));
@@ -71,7 +71,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.60 0.13 163);
+  --primary: oklch(0.6 0.13 163);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -105,7 +105,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.60 0.13 163);
+  --primary: oklch(0.6 0.13 163);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -207,7 +207,7 @@
   }
   .react-flow__handle {
     @apply !size-4 !border-2 !border-border !bg-background;
-  }  
+  }
   .react-flow__handle-left {
     @apply !-left-4;
   }

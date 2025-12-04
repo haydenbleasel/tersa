@@ -1,16 +1,16 @@
-'use server';
+"use server";
 
-import { getSubscribedUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { speechModels } from '@/lib/models/speech';
-import { trackCreditUsage } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/server';
-import { projects } from '@/schema';
-import type { Edge, Node, Viewport } from '@xyflow/react';
-import { experimental_generateSpeech as generateSpeech } from 'ai';
-import { eq } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
+import type { Edge, Node, Viewport } from "@xyflow/react";
+import { experimental_generateSpeech as generateSpeech } from "ai";
+import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import { getSubscribedUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { speechModels } from "@/lib/models/speech";
+import { trackCreditUsage } from "@/lib/stripe";
+import { createClient } from "@/lib/supabase/server";
+import { projects } from "@/schema";
 
 type GenerateSpeechActionProps = {
   text: string;
@@ -43,7 +43,7 @@ export const generateSpeechAction = async ({
     const model = speechModels[modelId];
 
     if (!model) {
-      throw new Error('Model not found');
+      throw new Error("Model not found");
     }
 
     const provider = model.providers[0];
@@ -51,18 +51,18 @@ export const generateSpeechAction = async ({
     const { audio } = await generateSpeech({
       model: provider.model,
       text,
-      outputFormat: 'mp3',
+      outputFormat: "mp3",
       instructions,
       voice,
     });
 
     await trackCreditUsage({
-      action: 'generate_speech',
+      action: "generate_speech",
       cost: provider.getCost(text.length),
     });
 
     const blob = await client.storage
-      .from('files')
+      .from("files")
       .upload(`${user.id}/${nanoid()}.mp3`, new Blob([audio.uint8Array]), {
         contentType: audio.mediaType,
       });
@@ -72,7 +72,7 @@ export const generateSpeechAction = async ({
     }
 
     const { data: downloadUrl } = client.storage
-      .from('files')
+      .from("files")
       .getPublicUrl(blob.data.path);
 
     const project = await database.query.projects.findFirst({
@@ -80,7 +80,7 @@ export const generateSpeechAction = async ({
     });
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     const content = project.content as {
@@ -92,7 +92,7 @@ export const generateSpeechAction = async ({
     const existingNode = content.nodes.find((n) => n.id === nodeId);
 
     if (!existingNode) {
-      throw new Error('Node not found');
+      throw new Error("Node not found");
     }
 
     const newData = {

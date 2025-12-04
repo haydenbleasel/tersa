@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
-const title = 'Acceptable Use Policy';
+const title = "Acceptable Use Policy";
 const description =
-  'This acceptable use policy covers the products, services, and technologies (collectively referred to as the “Products”) provided by Tersa under any ongoing agreement.';
+  "This acceptable use policy covers the products, services, and technologies (collectively referred to as the “Products”) provided by Tersa under any ongoing agreement.";
 
 export const metadata: Metadata = {
   title,

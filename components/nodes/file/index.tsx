@@ -1,4 +1,4 @@
-import { FilePrimitive } from './primitive';
+import { FilePrimitive } from "./primitive";
 
 export type FileNodeProps = {
   type: string;

@@ -1,5 +1,7 @@
-'use client';
-import { Button } from '@/components/ui/button';
+"use client";
+import Link from "next/link";
+import { type FormEventHandler, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,16 +9,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { handleError } from '@/lib/error/handle';
-import { createClient } from '@/lib/supabase/client';
-import Link from 'next/link';
-import { type FormEventHandler, useState } from 'react';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error/handle";
+import { createClient } from "@/lib/supabase/client";
 
 export const ForgotPasswordForm = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,7 +38,7 @@ export const ForgotPasswordForm = () => {
 
       setSuccess(true);
     } catch (error: unknown) {
-      handleError('Error sending reset password email', error);
+      handleError("Error sending reset password email", error);
     } finally {
       setIsLoading(false);
     }
@@ -76,25 +76,25 @@ export const ForgotPasswordForm = () => {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                type="email"
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="jane@example.com"
                 required
+                type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send reset email'}
+            <Button className="w-full" disabled={isLoading} type="submit">
+              {isLoading ? "Sending..." : "Send reset email"}
             </Button>
           </div>
         </form>
       </CardContent>
       <CardFooter className="grid divide-y p-0">
         <div className="p-4 text-center text-xs">
-          Remember your password?{' '}
+          Remember your password?{" "}
           <Link
-            href="/auth/login"
             className="text-primary underline underline-offset-4"
+            href="/auth/login"
           >
             Login
           </Link>

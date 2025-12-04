@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Combobox,
   ComboboxContent,
@@ -7,10 +8,9 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from '@/components/ui/kibo-ui/combobox';
-import { capitalize, cn } from '@/lib/utils';
-import { useSubscription } from '@/providers/subscription';
-import { useState } from 'react';
+} from "@/components/ui/kibo-ui/combobox";
+import { capitalize, cn } from "@/lib/utils";
+import { useSubscription } from "@/providers/subscription";
 
 type ModelSelectorProps = {
   options: string[];
@@ -35,20 +35,20 @@ export const VoiceSelector = ({
 
   return (
     <Combobox
-      open={open}
-      onOpenChange={setOpen}
-      value={value}
-      onValueChange={onChange}
       data={options.map((voice) => ({
         label: voice,
         value: capitalize(voice),
       }))}
+      onOpenChange={setOpen}
+      onValueChange={onChange}
+      open={open}
       type="model"
+      value={value}
     >
       <ComboboxTrigger
         className={className}
-        style={{ width }}
         disabled={disabled}
+        style={{ width }}
       >
         {activeVoice && (
           <div className="flex w-full items-center gap-2 overflow-hidden">
@@ -67,16 +67,16 @@ export const VoiceSelector = ({
           <ComboboxGroup>
             {options.map((voice) => (
               <ComboboxItem
+                className={cn(
+                  value === voice &&
+                    "bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground"
+                )}
                 key={voice}
-                value={voice}
                 onSelect={() => {
                   onChange?.(voice);
                   setOpen(false);
                 }}
-                className={cn(
-                  value === voice &&
-                    'bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground'
-                )}
+                value={voice}
               >
                 <div className="flex items-center gap-2 overflow-hidden">
                   <span className="block truncate capitalize">{voice}</span>

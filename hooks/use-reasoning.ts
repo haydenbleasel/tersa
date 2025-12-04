@@ -1,4 +1,4 @@
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom } from "jotai";
 
 export const reasoningAtom = atom({
   isReasoning: false,

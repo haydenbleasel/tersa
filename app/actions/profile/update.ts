@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { currentUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { profile } from '@/schema';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import { currentUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { profile } from "@/schema";
 
 export const updateProfileAction = async (
   userId: string,
@@ -21,7 +21,7 @@ export const updateProfileAction = async (
     const user = await currentUser();
 
     if (!user) {
-      throw new Error('You need to be logged in to update your profile!');
+      throw new Error("You need to be logged in to update your profile!");
     }
 
     await database.update(profile).set(data).where(eq(profile.id, userId));

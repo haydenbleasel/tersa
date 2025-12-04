@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { handleError } from '@/lib/error/handle';
-import { socialProviders } from '@/lib/social';
-import { createClient } from '@/lib/supabase/client';
-import type { Provider } from '@supabase/supabase-js';
-import { useState } from 'react';
+import type { Provider } from "@supabase/supabase-js";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { handleError } from "@/lib/error/handle";
+import { socialProviders } from "@/lib/social";
+import { createClient } from "@/lib/supabase/client";
 
 export const SocialAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,9 +14,9 @@ export const SocialAuth = () => {
     const supabase = createClient();
     setIsLoading(true);
 
-    const redirectUrl = new URL('/auth/oauth', window.location.origin);
+    const redirectUrl = new URL("/auth/oauth", window.location.origin);
 
-    redirectUrl.searchParams.set('next', '/');
+    redirectUrl.searchParams.set("next", "/");
 
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -30,7 +30,7 @@ export const SocialAuth = () => {
         throw error;
       }
     } catch (error: unknown) {
-      handleError('Error logging in with social provider', error);
+      handleError("Error logging in with social provider", error);
 
       setIsLoading(false);
     }
@@ -45,12 +45,12 @@ export const SocialAuth = () => {
     >
       {socialProviders.map((provider) => (
         <Button
-          key={provider.id}
-          variant="outline"
           className="border"
-          size="lg"
           disabled={isLoading}
+          key={provider.id}
           onClick={() => handleSocialLogin(provider.id)}
+          size="lg"
+          variant="outline"
         >
           <provider.icon size={16} />
           <span className="sr-only">Continue with {provider.name}</span>

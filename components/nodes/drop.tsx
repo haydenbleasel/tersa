@@ -1,3 +1,6 @@
+import { useReactFlow, type XYPosition } from "@xyflow/react";
+import { nanoid } from "nanoid";
+import { useEffect, useRef } from "react";
 import {
   Command,
   CommandEmpty,
@@ -5,12 +8,9 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { nodeButtons } from '@/lib/node-buttons';
-import { type XYPosition, useReactFlow } from '@xyflow/react';
-import { nanoid } from 'nanoid';
-import { useEffect, useRef } from 'react';
-import { NodeLayout } from './layout';
+} from "@/components/ui/command";
+import { nodeButtons } from "@/lib/node-buttons";
+import { NodeLayout } from "./layout";
 
 type DropNodeProps = {
   data: {
@@ -58,14 +58,14 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
         id: nanoid(),
         source: data.isSource ? newNodeId : sourceNode.source,
         target: data.isSource ? sourceNode.source : newNodeId,
-        type: 'animated',
+        type: "animated",
       });
     }
   };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         // Delete the drop node when Escape is pressed
         deleteElements({
           nodes: [{ id }],
@@ -85,21 +85,21 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
 
     setTimeout(() => {
-      window.addEventListener('click', handleClick);
+      window.addEventListener("click", handleClick);
     }, 50);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('click', handleClick);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleClick);
     };
   }, [deleteElements, id]);
 
   return (
     <div ref={ref}>
-      <NodeLayout id={id} data={data} type="drop" title="Add a new node">
+      <NodeLayout data={data} id={id} title="Add a new node" type="drop">
         <Command className="rounded-lg">
           <CommandInput placeholder="Type a command or search..." />
           <CommandList>
@@ -107,7 +107,7 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
             <CommandGroup heading="Add node">
               {nodeButtons
                 .filter(
-                  (button) => button.id !== 'file' && button.id !== 'tweet'
+                  (button) => button.id !== "file" && button.id !== "tweet"
                 )
                 .map((button) => (
                   <CommandItem

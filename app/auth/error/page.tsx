@@ -1,13 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = {
-  title: 'Sorry, something went wrong.',
-  description: 'Please try again.',
+  title: "Sorry, something went wrong.",
+  description: "Please try again.",
 };
 
 export default async function Page({
   searchParams,
-}: { searchParams: Promise<{ error: string }> }) {
+}: {
+  searchParams: Promise<{ error: string }>;
+}) {
   const params = await searchParams;
 
   return (

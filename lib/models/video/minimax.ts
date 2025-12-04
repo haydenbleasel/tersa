@@ -1,14 +1,14 @@
-import { env } from '@/lib/env';
-import type { VideoModel } from '@/lib/models/video';
+import { env } from "@/lib/env";
+import type { VideoModel } from "@/lib/models/video";
 
 type CreateJobProps = {
   model:
-    | 'T2V-01-Director'
-    | 'I2V-01-Director'
-    | 'S2V-01'
-    | 'I2V-01'
-    | 'I2V-01-live'
-    | 'T2V-01';
+    | "T2V-01-Director"
+    | "I2V-01-Director"
+    | "S2V-01"
+    | "I2V-01"
+    | "I2V-01-live"
+    | "T2V-01";
   prompt: string;
   prompt_optimizer?: boolean;
   first_frame_image?: string;
@@ -26,7 +26,7 @@ type CreateJobResponse = {
 
 type QueryJobResponse = {
   task_id: string;
-  status: 'Queueing' | 'Preparing' | 'Processing' | 'Success' | 'Fail';
+  status: "Queueing" | "Preparing" | "Processing" | "Success" | "Fail";
   file_id?: string;
   base_resp: {
     status_code: number;
@@ -50,9 +50,9 @@ type RetrieveUrlResponse = {
   };
 };
 
-const baseUrl = 'https://api.minimaxi.chat/';
+const baseUrl = "https://api.minimaxi.chat/";
 
-export const minimax = (modelId: CreateJobProps['model']): VideoModel => ({
+export const minimax = (modelId: CreateJobProps["model"]): VideoModel => ({
   modelId,
   generate: async ({ prompt, imagePrompt }) => {
     const props: CreateJobProps = {
@@ -63,11 +63,11 @@ export const minimax = (modelId: CreateJobProps['model']): VideoModel => ({
 
     // Create job
     const createJobResponse = await fetch(
-      new URL('/v1/video_generation', baseUrl),
+      new URL("/v1/video_generation", baseUrl),
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${env.MINIMAX_API_KEY}`,
         },
         body: JSON.stringify(props),
@@ -105,20 +105,20 @@ export const minimax = (modelId: CreateJobProps['model']): VideoModel => ({
         throw new Error(`API error: ${queryJobData.base_resp.status_msg}`);
       }
 
-      if (queryJobData.status === 'Success') {
+      if (queryJobData.status === "Success") {
         isCompleted = true;
         fileId = queryJobData.file_id as string;
-      } else if (queryJobData.status === 'Fail') {
-        throw new Error('Video generation failed');
+      } else if (queryJobData.status === "Fail") {
+        throw new Error("Video generation failed");
       }
     }
 
     if (!isCompleted) {
-      throw new Error('Video generation timed out after 2 minutes');
+      throw new Error("Video generation timed out after 2 minutes");
     }
 
     if (!fileId) {
-      throw new Error('Failed to get file_id');
+      throw new Error("Failed to get file_id");
     }
 
     // Retrieve download URL
@@ -129,7 +129,7 @@ export const minimax = (modelId: CreateJobProps['model']): VideoModel => ({
       ),
       {
         headers: {
-          authority: 'api.minimaxi.chat',
+          authority: "api.minimaxi.chat",
           authorization: `Bearer ${env.MINIMAX_API_KEY}`,
         },
       }

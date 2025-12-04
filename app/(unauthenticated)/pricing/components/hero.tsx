@@ -1,17 +1,6 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import NumberFlow from '@number-flow/react';
+import NumberFlow from "@number-flow/react";
 import {
   BrainIcon,
   CoinsIcon,
@@ -24,12 +13,23 @@ import {
   UserIcon,
   UsersIcon,
   XIcon,
-} from 'lucide-react';
-import Link from 'next/link';
-import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
+} from "lucide-react";
+import Link from "next/link";
+import { type ComponentProps, type ReactNode, useMemo, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
 type HeroProps = {
-  currentPlan?: 'hobby' | 'pro' | undefined;
+  currentPlan?: "hobby" | "pro" | undefined;
   authenticated: boolean;
 };
 
@@ -45,7 +45,7 @@ type Plan = {
   }[];
   ctaLink: string;
   ctaText: string;
-  variant: ComponentProps<typeof Button>['variant'];
+  variant: ComponentProps<typeof Button>["variant"];
 };
 
 export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
@@ -54,50 +54,50 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
   const plans = useMemo(() => {
     const free: Plan = {
       icon: LeafIcon,
-      name: 'Hobby',
-      description: 'For personal use and testing.',
+      name: "Hobby",
+      description: "For personal use and testing.",
       monthlyPrice: 0,
       yearlyPrice: 0,
       features: [
         {
-          label: '200 credits / month',
+          label: "200 credits / month",
           icon: CoinsIcon,
         },
         {
-          label: 'Basic AI models',
+          label: "Basic AI models",
           icon: BrainIcon,
         },
         {
-          label: 'General support',
+          label: "General support",
           icon: LifeBuoyIcon,
         },
         {
-          label: 'Single user',
+          label: "Single user",
           icon: UserIcon,
         },
       ],
-      ctaLink: '/auth/sign-up',
-      ctaText: 'Get Started',
-      variant: 'outline',
+      ctaLink: "/auth/sign-up",
+      ctaText: "Get Started",
+      variant: "outline",
     };
 
     const pro: Plan = {
       icon: FlowerIcon,
-      name: 'Pro',
-      description: 'For professional use or small teams.',
+      name: "Pro",
+      description: "For professional use or small teams.",
       monthlyPrice: 10,
       yearlyPrice: 8,
       features: [
         {
-          label: '1600 credits / month',
+          label: "1600 credits / month",
           icon: CoinsIcon,
         },
         {
-          label: 'All AI models',
+          label: "All AI models",
           icon: BrainIcon,
         },
         {
-          label: 'Priority support',
+          label: "Priority support",
           icon: LifeBuoyIcon,
         },
         {
@@ -109,60 +109,60 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
           icon: UsersIcon,
         },
       ],
-      variant: 'outline',
-      ctaLink: '/auth/sign-up',
-      ctaText: 'Get Started',
+      variant: "outline",
+      ctaLink: "/auth/sign-up",
+      ctaText: "Get Started",
     };
 
     const enterprise: Plan = {
       icon: Flower2Icon,
-      name: 'Enterprise',
-      description: 'For large teams or enterprise use.',
+      name: "Enterprise",
+      description: "For large teams or enterprise use.",
       monthlyPrice: -1,
       yearlyPrice: -1,
       features: [
         {
-          label: 'Unlimited credits',
+          label: "Unlimited credits",
           icon: CoinsIcon,
         },
         {
-          label: 'Custom AI models',
+          label: "Custom AI models",
           icon: BrainIcon,
         },
         {
-          label: 'Dedicated support',
+          label: "Dedicated support",
           icon: LifeBuoyIcon,
         },
         {
-          label: 'Custom authentication',
+          label: "Custom authentication",
           icon: LockIcon,
         },
       ],
-      ctaLink: 'https://x.com/haydenbleasel',
-      ctaText: 'Get in Touch',
-      variant: 'outline',
+      ctaLink: "https://x.com/haydenbleasel",
+      ctaText: "Get in Touch",
+      variant: "outline",
     };
 
     if (authenticated) {
-      free.ctaLink = `/api/checkout?product=hobby&frequency=${yearly ? 'year' : 'month'}`;
-      pro.ctaLink = `/api/checkout?product=pro&frequency=${yearly ? 'year' : 'month'}`;
+      free.ctaLink = `/api/checkout?product=hobby&frequency=${yearly ? "year" : "month"}`;
+      pro.ctaLink = `/api/checkout?product=pro&frequency=${yearly ? "year" : "month"}`;
     }
 
-    if (currentPlan === 'hobby') {
-      free.ctaText = 'Manage';
-      free.ctaLink = '/api/portal';
-      pro.ctaText = 'Upgrade';
-      pro.variant = 'default';
-    } else if (currentPlan === 'pro') {
-      pro.ctaText = 'Manage';
-      pro.ctaLink = '/api/portal';
-      free.ctaText = 'Downgrade';
-      enterprise.variant = 'default';
-    } else if (currentPlan === 'enterprise') {
-      enterprise.ctaText = 'Manage';
-      enterprise.ctaLink = '/api/portal';
-      free.ctaText = 'Downgrade';
-      pro.ctaText = 'Downgrade';
+    if (currentPlan === "hobby") {
+      free.ctaText = "Manage";
+      free.ctaLink = "/api/portal";
+      pro.ctaText = "Upgrade";
+      pro.variant = "default";
+    } else if (currentPlan === "pro") {
+      pro.ctaText = "Manage";
+      pro.ctaLink = "/api/portal";
+      free.ctaText = "Downgrade";
+      enterprise.variant = "default";
+    } else if (currentPlan === "enterprise") {
+      enterprise.ctaText = "Manage";
+      enterprise.ctaLink = "/api/portal";
+      free.ctaText = "Downgrade";
+      pro.ctaText = "Downgrade";
     }
 
     return [free, pro, enterprise];
@@ -201,10 +201,10 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
         {/* Main content */}
         <div className="flex flex-col items-center justify-center px-5 py-16">
           <h1 className="mb-5 text-center font-medium text-4xl tracking-[-0.12rem] md:text-6xl">
-            Simple,{' '}
+            Simple,{" "}
             <span className="mr-1 font-semibold font-serif text-5xl italic md:text-7xl">
               transparent
-            </span>{' '}
+            </span>{" "}
             pricing
           </h1>
 
@@ -218,19 +218,19 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
           <div className="mt-16 flex flex-col items-center">
             <div className="flex items-center space-x-2">
               <span
-                className={`text-sm ${yearly ? 'text-muted-foreground' : 'font-medium text-primary'}`}
+                className={`text-sm ${yearly ? "text-muted-foreground" : "font-medium text-primary"}`}
               >
                 Monthly
               </span>
               <Switch
                 checked={yearly}
-                onCheckedChange={setYearly}
                 className="data-[state=checked]:bg-primary"
+                onCheckedChange={setYearly}
               />
               <span
-                className={`text-sm ${yearly ? 'font-medium text-primary' : 'text-muted-foreground'}`}
+                className={`text-sm ${yearly ? "font-medium text-primary" : "text-muted-foreground"}`}
               >
-                Yearly{' '}
+                Yearly{" "}
                 <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-primary text-xs">
                   Save 20%
                 </span>
@@ -254,14 +254,14 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
         {/* Pricing Cards */}
         <div className="grid w-full grid-cols-1 divide-x divide-dotted xl:grid-cols-3">
           {plans.map((plan, planIndex) => (
-            <div key={plan.name} className="p-12">
+            <div className="p-12" key={plan.name}>
               <Card
-                key={plan.name}
                 className="h-full rounded-none border-none bg-transparent p-0 shadow-none"
+                key={plan.name}
               >
                 <CardHeader className="p-0">
                   <div className="inline-flex w-fit items-center justify-center rounded bg-primary/10 p-3">
-                    <plan.icon size={16} className="text-primary" />
+                    <plan.icon className="text-primary" size={16} />
                   </div>
                   <CardTitle className="mt-4 font-medium text-xl">
                     {plan.name}
@@ -289,16 +289,16 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
                     <div className="mb-4">
                       <span className="font-medium text-3xl tracking-tight">
                         <NumberFlow
-                          value={yearly ? plan.yearlyPrice : plan.monthlyPrice}
                           format={{
-                            currency: 'USD',
-                            style: 'currency',
+                            currency: "USD",
+                            style: "currency",
                             maximumFractionDigits: 0,
                           }}
+                          value={yearly ? plan.yearlyPrice : plan.monthlyPrice}
                         />
                       </span>
                       <span className="text-muted-foreground">
-                        /mo, billed {yearly ? 'annually' : 'monthly'}
+                        /mo, billed {yearly ? "annually" : "monthly"}
                       </span>
                     </div>
                   )}
@@ -311,11 +311,11 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
 
                   <ul className="space-y-2">
                     {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2">
+                      <li className="flex items-center gap-2" key={index}>
                         {feature.icon ? (
-                          <feature.icon size={16} className="text-primary" />
+                          <feature.icon className="text-primary" size={16} />
                         ) : (
-                          <XIcon size={16} className="text-muted-foreground" />
+                          <XIcon className="text-muted-foreground" size={16} />
                         )}
                         <span className="text-sm">{feature.label}</span>
                       </li>
@@ -323,7 +323,7 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
                   </ul>
                 </CardContent>
                 <CardFooter className="mt-auto p-0">
-                  <Button className="w-full" variant={plan.variant} asChild>
+                  <Button asChild className="w-full" variant={plan.variant}>
                     <Link href={plan.ctaLink}>{plan.ctaText}</Link>
                   </Button>
                 </CardFooter>

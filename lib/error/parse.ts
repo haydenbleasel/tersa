@@ -1,5 +1,5 @@
 export const parseError = (error: unknown) => {
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
@@ -7,5 +7,5 @@ export const parseError = (error: unknown) => {
     return error.message;
   }
 
-  return 'An error occurred';
+  return "An error occurred";
 };

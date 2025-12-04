@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
+import type { GatewayLanguageModelEntry } from "@ai-sdk/gateway";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 import {
+  providers,
   type TersaModel,
   type TersaProvider,
-  providers,
-} from '@/lib/providers';
-import type { GatewayLanguageModelEntry } from '@ai-sdk/gateway';
-import type { ReactNode } from 'react';
-import { createContext, useContext } from 'react';
+} from "@/lib/providers";
 
-export type PriceBracket = 'lowest' | 'low' | 'high' | 'highest';
+export type PriceBracket = "lowest" | "low" | "high" | "highest";
 
 type TersaTextModel = TersaModel & {
   providers: (TersaProvider & {
@@ -33,7 +33,7 @@ export const useGateway = () => {
   const context = useContext(GatewayContext);
 
   if (!context) {
-    throw new Error('useGateway must be used within a GatewayProviderClient');
+    throw new Error("useGateway must be used within a GatewayProviderClient");
   }
 
   return context;
@@ -48,9 +48,9 @@ export const useGateway = () => {
 const getPriceIndicator = (
   totalCost: number,
   allCosts: number[]
-): 'lowest' | 'low' | 'high' | 'highest' | undefined => {
+): "lowest" | "low" | "high" | "highest" | undefined => {
   if (allCosts.length < 2) {
-    return undefined;
+    return;
   }
 
   // Sort costs to calculate percentiles
@@ -65,20 +65,20 @@ const getPriceIndicator = (
 
   // Determine price bracket based on percentiles
   if (totalCost <= p20) {
-    return 'lowest';
+    return "lowest";
   }
   if (totalCost <= p40) {
-    return 'low';
+    return "low";
   }
   if (totalCost >= p80) {
-    return 'highest';
+    return "highest";
   }
   if (totalCost >= p60) {
-    return 'high';
+    return "high";
   }
 
   // If between p40 and p60 (middle 20%), it's relatively on par
-  return undefined;
+  return;
 };
 
 export const GatewayProviderClient = ({
@@ -99,7 +99,7 @@ export const GatewayProviderClient = ({
   });
 
   for (const model of models) {
-    const [chef] = model.id.split('/');
+    const [chef] = model.id.split("/");
     const inputPrice = model.pricing?.input
       ? Number.parseFloat(model.pricing.input)
       : 0;
@@ -128,9 +128,8 @@ export const GatewayProviderClient = ({
         {
           ...realProvider,
           model: model.id,
-          getCost: ({ input, output }: { input: number; output: number }) => {
-            return inputPrice * input + outputPrice * output;
-          },
+          getCost: ({ input, output }: { input: number; output: number }) =>
+            inputPrice * input + outputPrice * output,
         },
       ],
       priceIndicator: getPriceIndicator(totalCost, allCosts),

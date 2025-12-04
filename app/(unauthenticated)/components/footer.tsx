@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { LocalTime } from './local-time';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { LocalTime } from "./local-time";
 
 export const Footer = () => (
   <div className="relative grid w-full grid-cols-[0.2fr_3fr_0.2fr] md:grid-cols-[0.5fr_3fr_0.5fr]">
@@ -45,14 +45,14 @@ export const Footer = () => (
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-4 md:flex-row">
-          <Button asChild size="lg" className="w-full sm:w-auto">
+          <Button asChild className="w-full sm:w-auto" size="lg">
             <Link href="/auth/sign-up">Get started for free</Link>
           </Button>
           <Button
             asChild
-            variant="outline"
-            size="lg"
             className="w-full sm:w-auto"
+            size="lg"
+            variant="outline"
           >
             <Link href="/auth/login">Login</Link>
           </Button>

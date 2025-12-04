@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Logo } from '@/components/logo';
-import { ThemeSwitcher } from '@/components/ui/kibo-ui/theme-switcher';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { Logo } from "@/components/logo";
+import { ThemeSwitcher } from "@/components/ui/kibo-ui/theme-switcher";
 
 export const SubFooter = () => {
   const { theme, setTheme } = useTheme();
@@ -20,23 +20,23 @@ export const SubFooter = () => {
         <Link href="/acceptable-use">Acceptable Use</Link>
         <a
           href="https://github.com/haydenbleasel/tersa"
-          target="_blank"
           rel="noopener noreferrer"
+          target="_blank"
         >
           Source Code
         </a>
         <a
           href="https://x.com/haydenbleasel"
-          target="_blank"
           rel="noopener noreferrer"
+          target="_blank"
         >
           Contact
         </a>
       </div>
       <div className="flex items-center justify-end">
         <ThemeSwitcher
-          value={theme as 'light' | 'dark' | 'system'}
           onChange={setTheme}
+          value={theme as "light" | "dark" | "system"}
         />
       </div>
     </div>

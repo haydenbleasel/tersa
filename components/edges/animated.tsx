@@ -1,19 +1,19 @@
 import {
   BaseEdge,
   type EdgeProps,
+  getBezierPath,
   type InternalNode,
   type Node,
-  getBezierPath,
+  Position,
   useInternalNode,
-} from '@xyflow/react';
-import { Position } from '@xyflow/react';
+} from "@xyflow/react";
 
 const getHandleCoordsByPosition = (
   node: InternalNode<Node>,
   handlePosition: Position
 ) => {
   // Choose the handle type based on position - Left is for target, Right is for source
-  const handleType = handlePosition === Position.Left ? 'target' : 'source';
+  const handleType = handlePosition === Position.Left ? "target" : "source";
 
   const handle = node.internals.handleBounds?.[handleType]?.find(
     (h) => h.position === handlePosition
@@ -81,7 +81,7 @@ export const AnimatedEdge = ({
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
-  if (!sourceNode || !targetNode) {
+  if (!(sourceNode && targetNode)) {
     return null;
   }
 
@@ -101,9 +101,9 @@ export const AnimatedEdge = ({
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} markerEnd={markerEnd} style={style} />
-      <circle r="4" fill="var(--primary)">
-        <animateMotion dur="2s" repeatCount="indefinite" path={edgePath} />
+      <BaseEdge id={id} markerEnd={markerEnd} path={edgePath} style={style} />
+      <circle fill="var(--primary)" r="4">
+        <animateMotion dur="2s" path={edgePath} repeatCount="indefinite" />
       </circle>
     </>
   );

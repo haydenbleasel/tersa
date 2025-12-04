@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { type ReactNode, createContext, useContext } from 'react';
+import { createContext, type ReactNode, useContext } from "react";
 
 export type SubscriptionContextType = {
   isSubscribed: boolean;
-  plan: 'hobby' | 'pro' | 'enterprise' | undefined;
+  plan: "hobby" | "pro" | "enterprise" | undefined;
 };
 
 export const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -17,7 +17,7 @@ export const useSubscription = () => {
 
   if (!context) {
     throw new Error(
-      'useSubscription must be used within a SubscriptionProvider'
+      "useSubscription must be used within a SubscriptionProvider"
     );
   }
 
@@ -31,7 +31,7 @@ export const SubscriptionProvider = ({
 }: {
   children: ReactNode;
   isSubscribed: boolean;
-  plan: 'hobby' | 'pro' | 'enterprise' | undefined;
+  plan: "hobby" | "pro" | "enterprise" | undefined;
 }) => (
   <SubscriptionContext.Provider value={{ isSubscribed, plan }}>
     {children}

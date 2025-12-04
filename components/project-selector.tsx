@@ -1,13 +1,23 @@
-'use client';
+"use client";
 
-import { createProjectAction } from '@/app/actions/project/create';
+import Fuse from "fuse.js";
+import { CheckIcon, PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  type FormEventHandler,
+  Fragment,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { createProjectAction } from "@/app/actions/project/create";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Combobox,
   ComboboxContent,
@@ -18,23 +28,13 @@ import {
   ComboboxList,
   ComboboxSeparator,
   ComboboxTrigger,
-} from '@/components/ui/kibo-ui/combobox';
-import { useUser } from '@/hooks/use-user';
-import { handleError } from '@/lib/error/handle';
-import { cn } from '@/lib/utils';
-import type { projects } from '@/schema';
-import Fuse from 'fuse.js';
-import { CheckIcon, PlusIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import {
-  type FormEventHandler,
-  Fragment,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+} from "@/components/ui/kibo-ui/combobox";
+import { useUser } from "@/hooks/use-user";
+import { handleError } from "@/lib/error/handle";
+import { cn } from "@/lib/utils";
+import type { projects } from "@/schema";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 type ProjectSelectorProps = {
   projects: (typeof projects.$inferSelect)[];
@@ -47,7 +47,7 @@ export const ProjectSelector = ({
 }: ProjectSelectorProps) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(currentProject);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const router = useRouter();
@@ -56,7 +56,7 @@ export const ProjectSelector = ({
   const fuse = useMemo(
     () =>
       new Fuse(projects, {
-        keys: ['name'],
+        keys: ["name"],
         minMatchCharLength: 1,
         threshold: 0.3,
       }),
@@ -76,15 +76,15 @@ export const ProjectSelector = ({
       try {
         const response = await createProjectAction(name.trim());
 
-        if ('error' in response) {
+        if ("error" in response) {
           throw new Error(response.error);
         }
 
         setOpen(false);
-        setName('');
+        setName("");
         router.push(`/projects/${response.id}`);
       } catch (error) {
-        handleError('Error creating project', error);
+        handleError("Error creating project", error);
       } finally {
         setIsCreating(false);
       }
@@ -94,7 +94,7 @@ export const ProjectSelector = ({
 
   const handleSelect = useCallback(
     (projectId: string) => {
-      if (projectId === 'new') {
+      if (projectId === "new") {
         setCreateOpen(true);
         return;
       }
@@ -113,44 +113,41 @@ export const ProjectSelector = ({
 
     return [
       {
-        label: 'My Projects',
+        label: "My Projects",
         data: projects.filter((project) => project.userId === user.id),
       },
       {
-        label: 'Other Projects',
+        label: "Other Projects",
         data: projects.filter((project) => project.userId !== user.id),
       },
     ];
   }, [projects, user]);
 
   const filterByFuse = useCallback(
-    (currentValue: string, search: string) => {
-      return fuse
-        .search(search)
-        .find((result) => result.item.id === currentValue)
+    (currentValue: string, search: string) =>
+      fuse.search(search).find((result) => result.item.id === currentValue)
         ? 1
-        : 0;
-    },
+        : 0,
     [fuse]
   );
 
   return (
     <>
       <Combobox
-        open={open}
-        onOpenChange={setOpen}
         data={projects.map((project) => ({
           label: project.name,
           value: project.id,
         }))}
+        onOpenChange={setOpen}
+        onValueChange={handleSelect}
+        open={open}
         type="project"
         value={value}
-        onValueChange={handleSelect}
       >
         <ComboboxTrigger className="w-[200px] rounded-full border-none bg-transparent shadow-none" />
         <ComboboxContent
-          filter={filterByFuse}
           className="p-0"
+          filter={filterByFuse}
           popoverOptions={{
             sideOffset: 8,
           }}
@@ -168,8 +165,8 @@ export const ProjectSelector = ({
                         {project.name}
                         <CheckIcon
                           className={cn(
-                            'ml-auto',
-                            value === project.id ? 'opacity-100' : 'opacity-0'
+                            "ml-auto",
+                            value === project.id ? "opacity-100" : "opacity-0"
                           )}
                         />
                       </ComboboxItem>
@@ -187,7 +184,7 @@ export const ProjectSelector = ({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      <Dialog open={createOpen} onOpenChange={setCreateOpen} modal={false}>
+      <Dialog modal={false} onOpenChange={setCreateOpen} open={createOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create new project</DialogTitle>
@@ -195,16 +192,16 @@ export const ProjectSelector = ({
               What would you like to call your new project?
             </DialogDescription>
             <form
-              onSubmit={handleCreateProject}
-              className="mt-2 flex items-center gap-2"
               aria-disabled={isCreating}
+              className="mt-2 flex items-center gap-2"
+              onSubmit={handleCreateProject}
             >
               <Input
+                onChange={({ target }) => setName(target.value)}
                 placeholder="My new project"
                 value={name}
-                onChange={({ target }) => setName(target.value)}
               />
-              <Button type="submit" disabled={isCreating || !name.trim()}>
+              <Button disabled={isCreating || !name.trim()} type="submit">
                 Create
               </Button>
             </form>

@@ -1,7 +1,7 @@
-import * as schema from '@/schema';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import { env } from './env';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "@/schema";
+import { env } from "./env";
 
 declare global {
   var postgresSqlClient: ReturnType<typeof postgres> | undefined;
@@ -9,7 +9,7 @@ declare global {
 
 let client: ReturnType<typeof postgres> | undefined;
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   if (!global.postgresSqlClient) {
     // Disable prefetch as it is not supported for "Transaction" pool mode
     global.postgresSqlClient = postgres(env.POSTGRES_URL, { prepare: false });

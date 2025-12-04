@@ -1,21 +1,21 @@
-'use server';
+"use server";
 
-import { getSubscribedUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { imageModels } from '@/lib/models/image';
-import { visionModels } from '@/lib/models/vision';
-import { trackCreditUsage } from '@/lib/stripe';
-import { createClient } from '@/lib/supabase/server';
-import { projects } from '@/schema';
-import type { Edge, Node, Viewport } from '@xyflow/react';
+import type { Edge, Node, Viewport } from "@xyflow/react";
 import {
   type Experimental_GenerateImageResult,
   experimental_generateImage as generateImage,
-} from 'ai';
-import { eq } from 'drizzle-orm';
-import { nanoid } from 'nanoid';
-import OpenAI from 'openai';
+} from "ai";
+import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import OpenAI from "openai";
+import { getSubscribedUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { imageModels } from "@/lib/models/image";
+import { visionModels } from "@/lib/models/vision";
+import { trackCreditUsage } from "@/lib/stripe";
+import { createClient } from "@/lib/supabase/server";
+import { projects } from "@/schema";
 
 type GenerateImageActionProps = {
   prompt: string;
@@ -37,36 +37,36 @@ const generateGptImage1Image = async ({
 }) => {
   const openai = new OpenAI();
   const response = await openai.images.generate({
-    model: 'gpt-image-1',
+    model: "gpt-image-1",
     prompt: [
-      'Generate an image based on the following instructions and context.',
-      '---',
-      'Instructions:',
-      instructions ?? 'None.',
-      '---',
-      'Context:',
+      "Generate an image based on the following instructions and context.",
+      "---",
+      "Instructions:",
+      instructions ?? "None.",
+      "---",
+      "Context:",
       prompt,
-    ].join('\n'),
+    ].join("\n"),
     size: size as never | undefined,
-    moderation: 'low',
-    quality: 'high',
-    output_format: 'png',
+    moderation: "low",
+    quality: "high",
+    output_format: "png",
   });
 
   const json = response.data?.at(0)?.b64_json;
 
   if (!json) {
-    throw new Error('No response JSON found');
+    throw new Error("No response JSON found");
   }
 
   if (!response.usage) {
-    throw new Error('No usage found');
+    throw new Error("No usage found");
   }
 
-  const image: Experimental_GenerateImageResult['image'] = {
+  const image: Experimental_GenerateImageResult["image"] = {
     base64: json,
-    uint8Array: Buffer.from(json, 'base64'),
-    mediaType: 'image/png',
+    uint8Array: Buffer.from(json, "base64"),
+    mediaType: "image/png",
   };
 
   return {
@@ -102,14 +102,14 @@ export const generateImageAction = async ({
     const model = imageModels[modelId];
 
     if (!model) {
-      throw new Error('Model not found');
+      throw new Error("Model not found");
     }
 
-    let image: Experimental_GenerateImageResult['image'] | undefined;
+    let image: Experimental_GenerateImageResult["image"] | undefined;
 
     const provider = model.providers[0];
 
-    if (provider.model.modelId === 'gpt-image-1') {
+    if (provider.model.modelId === "gpt-image-1") {
       const generatedImageResponse = await generateGptImage1Image({
         instructions,
         prompt,
@@ -117,7 +117,7 @@ export const generateImageAction = async ({
       });
 
       await trackCreditUsage({
-        action: 'generate_image',
+        action: "generate_image",
         cost: provider.getCost({
           ...generatedImageResponse.usage,
           size,
@@ -128,7 +128,7 @@ export const generateImageAction = async ({
     } else {
       let aspectRatio: `${number}:${number}` | undefined;
       if (size) {
-        const [width, height] = size.split('x').map(Number);
+        const [width, height] = size.split("x").map(Number);
         const divisor = gcd(width, height);
         aspectRatio = `${width / divisor}:${height / divisor}`;
       }
@@ -136,20 +136,20 @@ export const generateImageAction = async ({
       const generatedImageResponse = await generateImage({
         model: provider.model,
         prompt: [
-          'Generate an image based on the following instructions and context.',
-          '---',
-          'Instructions:',
-          instructions ?? 'None.',
-          '---',
-          'Context:',
+          "Generate an image based on the following instructions and context.",
+          "---",
+          "Instructions:",
+          instructions ?? "None.",
+          "---",
+          "Context:",
           prompt,
-        ].join('\n'),
+        ].join("\n"),
         size: size as never,
         aspectRatio,
       });
 
       await trackCreditUsage({
-        action: 'generate_image',
+        action: "generate_image",
         cost: provider.getCost({
           size,
         }),
@@ -158,10 +158,10 @@ export const generateImageAction = async ({
       image = generatedImageResponse.image;
     }
 
-    let extension = image.mediaType.split('/').pop();
+    let extension = image.mediaType.split("/").pop();
 
-    if (extension === 'jpeg') {
-      extension = 'jpg';
+    if (extension === "jpeg") {
+      extension = "jpg";
     }
 
     const name = `${nanoid()}.${extension}`;
@@ -171,7 +171,7 @@ export const generateImageAction = async ({
     });
 
     const blob = await client.storage
-      .from('files')
+      .from("files")
       .upload(`${user.id}/${name}`, file, {
         contentType: file.type,
       });
@@ -181,26 +181,26 @@ export const generateImageAction = async ({
     }
 
     const { data: downloadUrl } = client.storage
-      .from('files')
+      .from("files")
       .getPublicUrl(blob.data.path);
 
     const url =
-      process.env.NODE_ENV === 'production'
+      process.env.NODE_ENV === "production"
         ? downloadUrl.publicUrl
-        : `data:${image.mediaType};base64,${Buffer.from(image.uint8Array).toString('base64')}`;
+        : `data:${image.mediaType};base64,${Buffer.from(image.uint8Array).toString("base64")}`;
 
     const project = await database.query.projects.findFirst({
       where: eq(projects.id, projectId),
     });
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     const visionModel = visionModels[project.visionModel];
 
     if (!visionModel) {
-      throw new Error('Vision model not found');
+      throw new Error("Vision model not found");
     }
 
     const openai = new OpenAI();
@@ -208,11 +208,11 @@ export const generateImageAction = async ({
       model: visionModel.providers[0].model.modelId,
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: [
-            { type: 'text', text: 'Describe this image.' },
+            { type: "text", text: "Describe this image." },
             {
-              type: 'image_url',
+              type: "image_url",
               image_url: {
                 url,
               },
@@ -225,7 +225,7 @@ export const generateImageAction = async ({
     const description = response.choices.at(0)?.message.content;
 
     if (!description) {
-      throw new Error('No description found');
+      throw new Error("No description found");
     }
 
     const content = project.content as {
@@ -237,7 +237,7 @@ export const generateImageAction = async ({
     const existingNode = content.nodes.find((n) => n.id === nodeId);
 
     if (!existingNode) {
-      throw new Error('Node not found');
+      throw new Error("Node not found");
     }
 
     const newData = {

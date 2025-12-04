@@ -1,4 +1,11 @@
 import {
+  CheckIcon,
+  RectangleHorizontalIcon,
+  RectangleVerticalIcon,
+  SquareIcon,
+} from "lucide-react";
+import { useState } from "react";
+import {
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
@@ -7,15 +14,8 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from '@/components/ui/kibo-ui/combobox';
-import { cn } from '@/lib/utils';
-import {
-  CheckIcon,
-  RectangleHorizontalIcon,
-  RectangleVerticalIcon,
-  SquareIcon,
-} from 'lucide-react';
-import { useState } from 'react';
+} from "@/components/ui/kibo-ui/combobox";
+import { cn } from "@/lib/utils";
 
 type ImageSizeSelectorProps = {
   id?: string;
@@ -27,23 +27,23 @@ type ImageSizeSelectorProps = {
 };
 
 const getIcon = (option: string) => {
-  const [width, height] = option.split('x').map(Number);
+  const [width, height] = option.split("x").map(Number);
 
   if (width === height) {
-    return <SquareIcon size={16} className="text-muted-foreground" />;
+    return <SquareIcon className="text-muted-foreground" size={16} />;
   }
 
   if (width > height) {
     return (
-      <RectangleHorizontalIcon size={16} className="text-muted-foreground" />
+      <RectangleHorizontalIcon className="text-muted-foreground" size={16} />
     );
   }
 
-  return <RectangleVerticalIcon size={16} className="text-muted-foreground" />;
+  return <RectangleVerticalIcon className="text-muted-foreground" size={16} />;
 };
 
 const getLabel = (option: string) => {
-  const [width, height] = option.split('x').map(Number);
+  const [width, height] = option.split("x").map(Number);
 
   return (
     <div className="flex items-center gap-1 truncate">
@@ -66,23 +66,23 @@ export const ImageSizeSelector = ({
 
   return (
     <Combobox
-      open={open}
-      onOpenChange={setOpen}
       data={options.map((option) => ({
         label: option,
         value: option,
       }))}
+      onOpenChange={setOpen}
+      onValueChange={onChange}
+      open={open}
       type="size"
       value={value}
-      onValueChange={onChange}
     >
-      <ComboboxTrigger id={id} className="rounded-full" style={{ width }}>
+      <ComboboxTrigger className="rounded-full" id={id} style={{ width }}>
         <div className="flex w-full items-center gap-2">
           {getIcon(value)}
           {getLabel(value)}
         </div>
       </ComboboxTrigger>
-      <ComboboxContent className={cn('p-0', className)}>
+      <ComboboxContent className={cn("p-0", className)}>
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
@@ -90,18 +90,18 @@ export const ImageSizeSelector = ({
             {options.map((option) => (
               <ComboboxItem
                 key={option}
-                value={option}
                 onSelect={() => {
                   onChange?.(option);
                   setOpen(false);
                 }}
+                value={option}
               >
                 {getIcon(option)}
                 {getLabel(option)}
                 <CheckIcon
                   className={cn(
-                    'ml-auto size-4',
-                    value === option ? 'opacity-100' : 'opacity-0'
+                    "ml-auto size-4",
+                    value === option ? "opacity-100" : "opacity-0"
                   )}
                 />
               </ComboboxItem>

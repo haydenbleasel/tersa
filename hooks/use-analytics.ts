@@ -1,5 +1,5 @@
-import { track as vercelTrack } from '@vercel/analytics/react';
-import { usePostHog } from 'posthog-js/react';
+import { track as vercelTrack } from "@vercel/analytics/react";
+import { usePostHog } from "posthog-js/react";
 
 export const useAnalytics = () => {
   const posthog = usePostHog();

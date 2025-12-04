@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { handleError } from '@/lib/error/handle';
-import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
-import { type FormEventHandler, useState } from 'react';
+import { useRouter } from "next/navigation";
+import { type FormEventHandler, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { handleError } from "@/lib/error/handle";
+import { createClient } from "@/lib/supabase/client";
 
 export const UpdatePasswordForm = () => {
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -29,9 +29,9 @@ export const UpdatePasswordForm = () => {
         throw error;
       }
 
-      router.push('/');
+      router.push("/");
     } catch (error: unknown) {
-      handleError('Error updating password', error);
+      handleError("Error updating password", error);
     } finally {
       setIsLoading(false);
     }
@@ -44,16 +44,16 @@ export const UpdatePasswordForm = () => {
           <Label htmlFor="password">New password</Label>
           <Input
             id="password"
-            type="password"
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="New password"
             required
+            type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'Save new password'}
+        <Button className="w-full" disabled={isLoading} type="submit">
+          {isLoading ? "Saving..." : "Save new password"}
         </Button>
       </div>
     </form>

@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { getSubscribedUser } from '@/lib/auth';
-import { database } from '@/lib/database';
-import { parseError } from '@/lib/error/parse';
-import { transcriptionModels } from '@/lib/models/transcription';
-import { projects } from '@/schema';
-import { experimental_transcribe as transcribe } from 'ai';
-import { eq } from 'drizzle-orm';
+import { experimental_transcribe as transcribe } from "ai";
+import { eq } from "drizzle-orm";
+import { getSubscribedUser } from "@/lib/auth";
+import { database } from "@/lib/database";
+import { parseError } from "@/lib/error/parse";
+import { transcriptionModels } from "@/lib/models/transcription";
+import { projects } from "@/schema";
 
 export const transcribeAction = async (
   url: string,
@@ -27,13 +27,13 @@ export const transcribeAction = async (
     });
 
     if (!project) {
-      throw new Error('Project not found');
+      throw new Error("Project not found");
     }
 
     const model = transcriptionModels[project.transcriptionModel];
 
     if (!model) {
-      throw new Error('Model not found');
+      throw new Error("Model not found");
     }
 
     const provider = model.providers[0];

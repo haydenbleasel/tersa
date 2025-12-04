@@ -1,9 +1,9 @@
-import Editor from '@monaco-editor/react';
-import { useReactFlow } from '@xyflow/react';
-import type { ComponentProps } from 'react';
-import type { CodeNodeProps } from '.';
-import { NodeLayout } from '../layout';
-import { LanguageSelector } from './language-selector';
+import Editor from "@monaco-editor/react";
+import { useReactFlow } from "@xyflow/react";
+import type { ComponentProps } from "react";
+import { NodeLayout } from "../layout";
+import type { CodeNodeProps } from ".";
+import { LanguageSelector } from "./language-selector";
 
 type CodePrimitiveProps = CodeNodeProps & {
   title: string;
@@ -29,31 +29,31 @@ export const CodePrimitive = ({
     });
   };
 
-  const toolbar: ComponentProps<typeof NodeLayout>['toolbar'] = [
+  const toolbar: ComponentProps<typeof NodeLayout>["toolbar"] = [
     {
       children: (
         <LanguageSelector
-          value={data.content?.language ?? 'javascript'}
-          onChange={handleLanguageChange}
           className="w-[200px] rounded-full"
+          onChange={handleLanguageChange}
+          value={data.content?.language ?? "javascript"}
         />
       ),
     },
   ];
 
   return (
-    <NodeLayout id={id} data={data} title={title} type={type} toolbar={toolbar}>
+    <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
       <Editor
         className="aspect-square w-full"
         language={data.content?.language}
-        value={data.content?.text}
         onChange={handleCodeChange}
-        theme="vs-dark"
         options={{
           minimap: {
             enabled: false,
           },
         }}
+        theme="vs-dark"
+        value={data.content?.text}
       />
     </NodeLayout>
   );

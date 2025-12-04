@@ -1,3 +1,5 @@
+import { CheckIcon } from "lucide-react";
+import { useState } from "react";
 import {
   Combobox,
   ComboboxContent,
@@ -7,11 +9,9 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from '@/components/ui/kibo-ui/combobox';
-import { cn } from '@/lib/utils';
-import { CheckIcon } from 'lucide-react';
-import { useState } from 'react';
-import { languages } from './languages';
+} from "@/components/ui/kibo-ui/combobox";
+import { cn } from "@/lib/utils";
+import { languages } from "./languages";
 
 type LanguageSelectorProps = {
   id?: string;
@@ -32,18 +32,18 @@ export const LanguageSelector = ({
 
   return (
     <Combobox
-      open={open}
-      onOpenChange={setOpen}
       data={languages.map((language) => ({
         label: language.label,
         value: language.id,
       }))}
+      onOpenChange={setOpen}
+      onValueChange={onChange}
+      open={open}
       type="language"
       value={value}
-      onValueChange={onChange}
     >
-      <ComboboxTrigger id={id} className="rounded-full" style={{ width }} />
-      <ComboboxContent className={cn('p-0', className)}>
+      <ComboboxTrigger className="rounded-full" id={id} style={{ width }} />
+      <ComboboxContent className={cn("p-0", className)}>
         <ComboboxInput />
         <ComboboxList>
           <ComboboxEmpty />
@@ -51,17 +51,17 @@ export const LanguageSelector = ({
             {languages.map((language) => (
               <ComboboxItem
                 key={language.id}
-                value={language.id}
                 onSelect={() => {
                   onChange?.(language.id);
                   setOpen(false);
                 }}
+                value={language.id}
               >
                 {language.label}
                 <CheckIcon
                   className={cn(
-                    'ml-auto size-4',
-                    value === language.id ? 'opacity-100' : 'opacity-0'
+                    "ml-auto size-4",
+                    value === language.id ? "opacity-100" : "opacity-0"
                   )}
                 />
               </ComboboxItem>

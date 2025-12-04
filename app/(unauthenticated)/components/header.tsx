@@ -1,28 +1,28 @@
-import { Logo } from '@/components/logo';
-import { Button } from '@/components/ui/button';
-import { currentUser } from '@/lib/auth';
-import Link from 'next/link';
+import Link from "next/link";
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { currentUser } from "@/lib/auth";
 
 export const Header = async () => {
   const user = await currentUser();
 
   return (
     <header className="flex items-center justify-between px-8">
-      <Link href="/" className="flex items-center gap-2">
+      <Link className="flex items-center gap-2" href="/">
         <Logo className="h-6 w-auto" />
         <span className="font-medium text-xl tracking-tight">Tersa</span>
       </Link>
       <div className="flex items-center gap-2">
-        <Button variant="link" asChild className="text-muted-foreground">
+        <Button asChild className="text-muted-foreground" variant="link">
           <Link href="/pricing">Pricing</Link>
         </Button>
         {user ? (
-          <Button variant="outline" asChild>
+          <Button asChild variant="outline">
             <Link href="/">Go to app</Link>
           </Button>
         ) : (
           <>
-            <Button variant="outline" asChild>
+            <Button asChild variant="outline">
               <Link href="/auth/login">Login</Link>
             </Button>
             <Button asChild>

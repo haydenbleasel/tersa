@@ -1,17 +1,17 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { env } from '@/lib/env';
-import { handleError } from '@/lib/error/handle';
-import { createClient } from '@/lib/supabase/client';
-import { Turnstile } from '@marsidev/react-turnstile';
-import { useRouter } from 'next/navigation';
-import { type FormEventHandler, useState } from 'react';
+"use client";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useRouter } from "next/navigation";
+import { type FormEventHandler, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { env } from "@/lib/env";
+import { handleError } from "@/lib/error/handle";
+import { createClient } from "@/lib/supabase/client";
 
 export const SignUpForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [captchaToken, setCaptchaToken] = useState<string | undefined>(
@@ -32,7 +32,7 @@ export const SignUpForm = () => {
         password,
         options: {
           emailRedirectTo: new URL(
-            '/auth/confirm',
+            "/auth/confirm",
             window.location.origin
           ).toString(),
           captchaToken,
@@ -43,9 +43,9 @@ export const SignUpForm = () => {
         throw error;
       }
 
-      router.push('/auth/sign-up-success');
+      router.push("/auth/sign-up-success");
     } catch (error: unknown) {
-      handleError('Error signing up with email', error);
+      handleError("Error signing up with email", error);
       setIsLoading(false);
     }
   };
@@ -58,11 +58,11 @@ export const SignUpForm = () => {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              type="email"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="jane@example.com"
               required
+              type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="grid gap-2">
@@ -71,22 +71,22 @@ export const SignUpForm = () => {
             </div>
             <Input
               id="password"
-              type="password"
-              required
-              value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
+              required
+              type="password"
+              value={password}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={disabled}>
-            {isLoading ? 'Creating an account...' : 'Sign up'}
+          <Button className="w-full" disabled={disabled} type="submit">
+            {isLoading ? "Creating an account..." : "Sign up"}
           </Button>
         </div>
       </form>
       <div className="mt-4">
         <Turnstile
-          siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
           onSuccess={setCaptchaToken}
+          siteKey={env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
         />
       </div>
     </>

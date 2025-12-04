@@ -1,6 +1,6 @@
-import { createServerClient } from '@supabase/ssr';
-import { type NextRequest, NextResponse } from 'next/server';
-import { env } from '../env';
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
+import { env } from "../env";
 
 export const updateSession = async (request: NextRequest) => {
   let supabaseResponse = NextResponse.next({
@@ -41,22 +41,24 @@ export const updateSession = async (request: NextRequest) => {
   } = await supabase.auth.getUser();
 
   const publicPaths = [
-    '/',
-    '/pricing',
-    '/home',
-    '/privacy',
-    '/terms',
-    '/acceptable-use',
+    "/",
+    "/pricing",
+    "/home",
+    "/privacy",
+    "/terms",
+    "/acceptable-use",
   ];
 
   if (
-    !user &&
-    !publicPaths.includes(request.nextUrl.pathname) &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !(
+      user ||
+      publicPaths.includes(request.nextUrl.pathname) ||
+      request.nextUrl.pathname.startsWith("/auth")
+    )
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
-    url.pathname = '/auth/login';
+    url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
 

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { atom, useAtom } from 'jotai';
+import { atom, useAtom } from "jotai";
 
 export const saveProjectAtom = atom({
   isSaving: false,

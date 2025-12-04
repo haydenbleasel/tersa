@@ -1,6 +1,6 @@
-import { Canvas } from '@/components/canvas';
-import { sampleEdges, sampleNodes } from '@/lib/demo';
-import { ReactFlowProvider } from '@xyflow/react';
+import { ReactFlowProvider } from "@xyflow/react";
+import { Canvas } from "@/components/canvas";
+import { sampleEdges, sampleNodes } from "@/lib/demo";
 
 export const Demo = () => (
   <section className="container mx-auto px-4 sm:px-8">
@@ -8,14 +8,14 @@ export const Demo = () => (
       <div className="aspect-video overflow-hidden rounded-[9px]">
         <ReactFlowProvider>
           <Canvas
-            nodes={sampleNodes}
             edges={sampleEdges}
-            panOnScroll={false}
-            zoomOnScroll={false}
-            preventScrolling={false}
             fitViewOptions={{
               minZoom: 0,
             }}
+            nodes={sampleNodes}
+            panOnScroll={false}
+            preventScrolling={false}
+            zoomOnScroll={false}
           />
         </ReactFlowProvider>
       </div>

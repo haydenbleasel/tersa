@@ -1,16 +1,16 @@
-import { env } from '@/lib/env';
-import type { VideoModel } from '@/lib/models/video';
-import { LumaAI } from 'lumaai';
+import { LumaAI } from "lumaai";
+import { env } from "@/lib/env";
+import type { VideoModel } from "@/lib/models/video";
 
 export const luma = (
-  modelId: 'ray-1-6' | 'ray-2' | 'ray-flash-2'
+  modelId: "ray-1-6" | "ray-2" | "ray-flash-2"
 ): VideoModel => ({
   modelId,
   generate: async ({ prompt, imagePrompt, duration }) => {
     const luma = new LumaAI({ authToken: env.LUMA_API_KEY });
 
-    if (process.env.NODE_ENV !== 'production' && imagePrompt) {
-      throw new Error('Luma does not support base64 image input.');
+    if (process.env.NODE_ENV !== "production" && imagePrompt) {
+      throw new Error("Luma does not support base64 image input.");
     }
 
     const response = await luma.generations.video.create({
@@ -20,12 +20,12 @@ export const luma = (
       keyframes: imagePrompt
         ? {
             frame0: {
-              type: 'image',
+              type: "image",
               url: imagePrompt,
             },
           }
         : undefined,
-      resolution: modelId === 'ray-1-6' ? '720p' : '1080p',
+      resolution: modelId === "ray-1-6" ? "720p" : "1080p",
     });
 
     const jobId = response.id;
@@ -40,13 +40,13 @@ export const luma = (
     while (Date.now() - startTime < maxPollTime) {
       const generation = await luma.generations.get(jobId);
 
-      if (generation.state === 'failed') {
+      if (generation.state === "failed") {
         throw new Error(
-          `Luma video generation failed: ${generation.failure_reason ?? 'unknown reason'}`
+          `Luma video generation failed: ${generation.failure_reason ?? "unknown reason"}`
         );
       }
 
-      if (generation.state === 'completed') {
+      if (generation.state === "completed") {
         if (!generation.assets?.video) {
           throw new Error("Luma video generation didn't return a video asset");
         }
@@ -57,6 +57,6 @@ export const luma = (
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
 
-    throw new Error('Luma video generation timed out');
+    throw new Error("Luma video generation timed out");
   },
 });

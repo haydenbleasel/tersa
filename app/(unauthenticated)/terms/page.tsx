@@ -1,8 +1,8 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
-const title = 'Terms of Service';
+const title = "Terms of Service";
 const description =
-  'These Terms of Service govern your use of the website and any related services provided by Tersa. By accessing any of the sites mentioned above, you agree to abide by these Terms of Service and to comply with all applicable laws and regulations.';
+  "These Terms of Service govern your use of the website and any related services provided by Tersa. By accessing any of the sites mentioned above, you agree to abide by these Terms of Service and to comply with all applicable laws and regulations.";
 
 export const metadata: Metadata = {
   title,
@@ -217,7 +217,7 @@ const Privacy = () => (
         </p>
         <h2>Pricing</h2>
         <p>
-          The latest pricing can be found on our <a href="/pricing">Pricing</a>{' '}
+          The latest pricing can be found on our <a href="/pricing">Pricing</a>{" "}
           page. Our pricing is subject to change at any time. We reserve the
           right to modify our pricing for any reason, including but not limited
           to changes in market conditions, cost of goods or services, or changes

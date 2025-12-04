@@ -1,4 +1,4 @@
-import { handleError } from './error/handle';
+import { handleError } from "./error/handle";
 
 type Downloadable = {
   url: string;
@@ -11,12 +11,12 @@ export const download = (
   defaultExtension: string
 ) => {
   if (!data) {
-    handleError('Error downloading file', 'No data to download.');
+    handleError("Error downloading file", "No data to download.");
     return;
   }
 
-  const link = document.createElement('a');
-  const extension = data.type.split('/').at(-1) ?? defaultExtension;
+  const link = document.createElement("a");
+  const extension = data.type.split("/").at(-1) ?? defaultExtension;
   const filename = `tersa-${id}.${extension}`;
 
   // Create a blob URL from the data URL
@@ -32,6 +32,6 @@ export const download = (
       URL.revokeObjectURL(blobUrl);
     })
     .catch((error) => {
-      handleError('Error downloading file', error.message);
+      handleError("Error downloading file", error.message);
     });
 };
