@@ -1,6 +1,6 @@
-import { gateway } from '@/lib/gateway';
-import type { ReactNode } from 'react';
-import { GatewayProviderClient } from './client';
+import type { ReactNode } from "react";
+import { gateway } from "@/lib/gateway";
+import { GatewayProviderClient } from "./client";
 
 type GatewayProviderProps = {
   children: ReactNode;
@@ -8,9 +8,7 @@ type GatewayProviderProps = {
 
 export const GatewayProvider = async ({ children }: GatewayProviderProps) => {
   const { models } = await gateway.getAvailableModels();
-  const textModels = models.filter(
-    (model) => !model.name.toLocaleLowerCase().includes('embed')
-  );
+  const textModels = models.filter((model) => model.modelType === "language");
 
   return (
     <GatewayProviderClient models={textModels}>
