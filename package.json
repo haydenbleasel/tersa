@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "concurrently -n \"Next.js,Supabase,Email,Stripe\" \"next dev --turbopack\" \"npx supabase start\" \"email dev --port 3001\" \"stripe listen --forward-to localhost:3000/api/webhooks/stripe\"",
-    "bump-deps": "npx npm-check-updates -u && pnpm install",
-    "bump-ui": "npx shadcn@latest add --all --overwrite",
+    "bump-deps": "npx npm-check-updates -u -x \"recharts\" && pnpm install",
+    "bump-ui": "npx shadcn@latest add --all --overwrite && npx shadcn@latest migrate radix",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
