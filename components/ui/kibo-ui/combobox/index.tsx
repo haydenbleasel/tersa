@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useControllableState } from '@radix-ui/react-use-controllable-state';
+import { useControllableState } from 'radix-ui';
 import { ChevronsUpDownIcon } from 'lucide-react';
 import {
   type ComponentProps,
