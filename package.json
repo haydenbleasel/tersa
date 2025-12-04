@@ -8,7 +8,8 @@
     "bump-ui": "npx shadcn@latest add --all --overwrite && npx shadcn@latest migrate radix",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
     "export": "email export",
     "migrate": "npx drizzle-kit push",
     "generate": "npx -y openapi-typescript@latest https://api.us1.bfl.ai/openapi.json -o ./openapi/bfl.d.ts"
