@@ -1,3 +1,20 @@
+# v1.3.10 (Thu Dec 04 2025)
+
+#### ⚠️ Pushed to `main`
+
+- Run Ultracite ([@haydenbleasel](https://github.com/haydenbleasel))
+- Update package.json ([@haydenbleasel](https://github.com/haydenbleasel))
+- Update index.tsx ([@haydenbleasel](https://github.com/haydenbleasel))
+- Update Biome config ([@haydenbleasel](https://github.com/haydenbleasel))
+- Bump deps ([@haydenbleasel](https://github.com/haydenbleasel))
+- Update shadcn/ui, migrate to radix monopackage ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v1.3.9 (Sat Nov 29 2025)
 
 #### ⚠️ Pushed to `main`
