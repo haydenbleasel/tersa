@@ -60,11 +60,11 @@ export const Hero = ({ currentPlan, authenticated }: HeroProps) => {
       yearlyPrice: 0,
       features: [
         {
-          label: "200 credits / month",
-          icon: CoinsIcon,
+          label: "No AI features",
+          icon: XIcon,
         },
         {
-          label: "Basic AI models",
+          label: "Unlimited canvas access",
           icon: BrainIcon,
         },
         {
