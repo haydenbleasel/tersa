@@ -10,6 +10,7 @@ import {
   type Node,
   type OnConnect,
   type OnConnectEnd,
+  type OnConnectStart,
   type OnEdgesChange,
   type OnNodesChange,
   ReactFlow,
