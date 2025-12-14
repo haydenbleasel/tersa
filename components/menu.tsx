@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowUpRight, ArrowUpRightIcon, Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type MouseEventHandler, useState } from "react";
 import {
@@ -74,16 +73,7 @@ export const Menu = () => {
           sideOffset={16}
         >
           <DropdownMenuLabel>
-            <Avatar>
-              <AvatarImage src={user.user_metadata.avatar} />
-              <AvatarFallback className="bg-primary text-primary-foreground uppercase">
-                {(user.user_metadata.name ?? user.email ?? user.id)
-                  ?.split(" ")
-                  .map((name: string) => name.at(0))
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <p className="mt-2 truncate">
+            <p className="truncate">
               {user.user_metadata.name ?? user.email ?? user.id}
             </p>
             {user.user_metadata.name && user.email && (
@@ -104,13 +94,6 @@ export const Menu = () => {
               </a>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem asChild>
-            <Link className="flex items-center justify-between" href="/pricing">
-              <span>Upgrade</span>
-              <ArrowUpRight className="text-muted-foreground" size={16} />
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <a
               className="flex items-center justify-between"
