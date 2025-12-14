@@ -20,9 +20,7 @@ const getFrequencyPrice = async (
     throw new Error("Product prices not found");
   }
 
-  const price = prices.data.find(
-    (price) => price.recurring?.interval === frequency
-  );
+  const price = prices.data.find((p) => p.recurring?.interval === frequency);
 
   if (!price) {
     throw new Error("Price not found");
@@ -31,6 +29,7 @@ const getFrequencyPrice = async (
   return price.id;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Checkout flow requires handling multiple edge cases
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const productName = searchParams.get("product");

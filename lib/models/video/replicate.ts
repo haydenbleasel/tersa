@@ -8,13 +8,16 @@ type KlingModel =
   | "kwaivgi/kling-v1.6-pro"
   | "kwaivgi/kling-v2.0";
 
-export const replicate: Record<string, (modelId: KlingModel) => VideoModel> = {
+export const replicateModels: Record<
+  string,
+  (modelId: KlingModel) => VideoModel
+> = {
   kling: (modelId: KlingModel) => ({
     modelId,
     generate: async ({ prompt, imagePrompt, duration, aspectRatio }) => {
-      const replicate = new Replicate();
+      const replicateClient = new Replicate();
 
-      const output = await replicate.run(modelId, {
+      const output = await replicateClient.run(modelId, {
         input: {
           prompt,
           duration,

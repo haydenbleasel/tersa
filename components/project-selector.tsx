@@ -32,12 +32,12 @@ import {
 import { useUser } from "@/hooks/use-user";
 import { handleError } from "@/lib/error/handle";
 import { cn } from "@/lib/utils";
-import type { projects } from "@/schema";
+import type { projects as projectsTable } from "@/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 type ProjectSelectorProps = {
-  projects: (typeof projects.$inferSelect)[];
+  projects: (typeof projectsTable.$inferSelect)[];
   currentProject: string;
 };
 

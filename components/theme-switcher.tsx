@@ -47,18 +47,18 @@ export const ThemeSwitcher = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="min-w-32">
-          {themes.map((theme) => (
+          {themes.map((themeOption) => (
             <DropdownMenuItem
-              key={theme.value}
-              onClick={() => setTheme(theme.value)}
+              key={themeOption.value}
+              onClick={() => setTheme(themeOption.value)}
             >
-              <theme.icon
+              <themeOption.icon
                 aria-hidden="true"
                 className="opacity-60"
                 size={16}
                 strokeWidth={2}
               />
-              <span>{theme.label}</span>
+              <span>{themeOption.label}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

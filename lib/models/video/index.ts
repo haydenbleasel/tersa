@@ -6,7 +6,7 @@ import {
 } from "@/lib/providers";
 import { luma } from "./luma";
 import { minimax } from "./minimax";
-import { replicate } from "./replicate";
+import { replicateModels } from "./replicate";
 import { runway } from "./runway";
 
 const million = 1_000_000;
@@ -212,7 +212,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
     providers: [
       {
         ...providers.replicate,
-        model: replicate.kling("kwaivgi/kling-v1.5-standard"),
+        model: replicateModels.kling("kwaivgi/kling-v1.5-standard"),
         icon: ReplicateIcon,
 
         // https://replicate.com/kwaivgi/kling-v1.5-standard
@@ -231,7 +231,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
       {
         ...providers.replicate,
         icon: ReplicateIcon,
-        model: replicate.kling("kwaivgi/kling-v1.5-pro"),
+        model: replicateModels.kling("kwaivgi/kling-v1.5-pro"),
 
         // https://replicate.com/kwaivgi/kling-v1.5-pro
         getCost: ({ duration }) => {
@@ -249,7 +249,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
       {
         ...providers.replicate,
         icon: ReplicateIcon,
-        model: replicate.kling("kwaivgi/kling-v1.6-standard"),
+        model: replicateModels.kling("kwaivgi/kling-v1.6-standard"),
 
         // https://replicate.com/kwaivgi/kling-v1.6-standard
         getCost: ({ duration }) => {
@@ -267,7 +267,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
       {
         ...providers.replicate,
         icon: ReplicateIcon,
-        model: replicate.kling("kwaivgi/kling-v1.6-pro"),
+        model: replicateModels.kling("kwaivgi/kling-v1.6-pro"),
 
         // https://replicate.com/kwaivgi/kling-v1.6-pro
         getCost: ({ duration }) => {
@@ -285,7 +285,7 @@ export const videoModels: Record<string, TersaVideoModel> = {
       {
         ...providers.replicate,
         icon: ReplicateIcon,
-        model: replicate.kling("kwaivgi/kling-v2.0"),
+        model: replicateModels.kling("kwaivgi/kling-v2.0"),
 
         // https://replicate.com/kwaivgi/kling-v2.0
         getCost: ({ duration }) => {

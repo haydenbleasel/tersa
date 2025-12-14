@@ -21,14 +21,14 @@ const pluralize = (count: number) => (count === 1 ? "credit" : "credits");
 export const CreditCounter = () => {
   const subscription = useSubscription();
 
+  const { data, error } = useSWR("credits", creditsFetcher, {
+    revalidateOnMount: true,
+  });
+
   // Only show credit counter for pro users
   if (subscription.plan !== "pro") {
     return null;
   }
-
-  const { data, error } = useSWR("credits", creditsFetcher, {
-    revalidateOnMount: true,
-  });
 
   if (error) {
     return null;

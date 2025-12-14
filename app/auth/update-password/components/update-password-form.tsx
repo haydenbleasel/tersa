@@ -23,15 +23,17 @@ export const UpdatePasswordForm = () => {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error: updateError } = await supabase.auth.updateUser({
+        password,
+      });
 
-      if (error) {
-        throw error;
+      if (updateError) {
+        throw updateError;
       }
 
       router.push("/");
-    } catch (error: unknown) {
-      handleError("Error updating password", error);
+    } catch (err: unknown) {
+      handleError("Error updating password", err);
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +53,7 @@ export const UpdatePasswordForm = () => {
             value={password}
           />
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error ? <p className="text-red-500 text-sm">{error}</p> : null}
         <Button className="w-full" disabled={isLoading} type="submit">
           {isLoading ? "Saving..." : "Save new password"}
         </Button>

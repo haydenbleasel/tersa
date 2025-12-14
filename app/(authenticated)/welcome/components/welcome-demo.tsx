@@ -41,8 +41,8 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
   const user = useUser();
   const router = useRouter();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Run only on mount
   useEffect(() => {
-    // Run on mount to set initial state
     handleNodesChange();
   }, []);
 
@@ -189,63 +189,39 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       const newNodes = getNodes();
 
       const textNodes = newNodes.filter((node) => node.type === "text");
-
-      if (!textNodes.length) {
-        setHasTextNode(false);
-        return;
-      }
-
-      setHasTextNode(true);
-
       const textNode = textNodes.at(0);
+
+      setHasTextNode(textNodes.length > 0);
 
       if (!textNode) {
         return;
       }
 
       const text = (textNode as unknown as TextNodeProps).data.text;
-
-      if (text && text.length > 10) {
-        setHasFilledTextNode(true);
-      } else {
-        setHasFilledTextNode(false);
-      }
+      setHasFilledTextNode(Boolean(text && text.length > 10));
 
       const imageNodes = newNodes.filter((node) => node.type === "image");
       const imageNode = imageNodes.at(0);
 
+      setHasImageNode(Boolean(imageNode));
+
       if (!imageNode) {
-        setHasImageNode(false);
         return;
       }
-
-      setHasImageNode(true);
 
       const sources = getIncomers(imageNode, newNodes, newEdges);
-      const textSource = sources.find((source) => source.id === textNode.id);
+      const isConnected = sources.some((source) => source.id === textNode.id);
+      setHasConnectedImageNode(isConnected);
 
-      if (!textSource) {
-        setHasConnectedImageNode(false);
+      if (!isConnected) {
         return;
       }
-
-      setHasConnectedImageNode(true);
 
       const image = imageNode as unknown as ImageNodeProps;
-      const instructions = image.data.instructions;
-
-      if (instructions && instructions.length > 5) {
-        setHasImageInstructions(true);
-      } else {
-        setHasImageInstructions(false);
-      }
-
-      if (!image.data.generated?.url) {
-        setHasGeneratedImage(false);
-        return;
-      }
-
-      setHasGeneratedImage(true);
+      setHasImageInstructions(
+        Boolean(image.data.instructions && image.data.instructions.length > 5)
+      );
+      setHasGeneratedImage(Boolean(image.data.generated?.url));
     }, 50);
   }, [getNodes, getEdges]);
 
@@ -257,8 +233,15 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       >
         <div className="prose flex flex-col items-start gap-4">
           <h1 className="font-semibold! text-3xl!">{title}</h1>
-          {previousSteps.map((step, index) => (
-            <p className="lead opacity-50" key={index}>
+          {previousSteps.map((step) => (
+            <p
+              className="lead opacity-50"
+              key={
+                typeof step.instructions === "string"
+                  ? step.instructions
+                  : step.instructions.props.children.toString().slice(0, 50)
+              }
+            >
               {step.instructions}
             </p>
           ))}
@@ -270,7 +253,7 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       <div className="row-span-3 p-8 lg:col-span-2 lg:row-span-1">
         <div className="relative size-full overflow-hidden rounded-3xl border">
           <Canvas onNodesChange={handleNodesChange}>
-            {steps[0].complete && <Toolbar />}
+            {steps[0].complete ? <Toolbar /> : null}
           </Canvas>
         </div>
       </div>

@@ -187,6 +187,7 @@ export const blackForestLabs = {
       size,
       abortSignal,
       headers,
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex image generation flow with multiple providers
     }) => {
       const client = createClient();
 

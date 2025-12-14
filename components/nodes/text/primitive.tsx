@@ -21,9 +21,9 @@ export const TextPrimitive = ({
   const editor = useRef<Editor | null>(null);
   const project = useProject();
 
-  const handleUpdate = ({ editor }: { editor: Editor }) => {
-    const json = editor.getJSON();
-    const text = editor.getText();
+  const handleUpdate = ({ editor: editorInstance }: { editor: Editor }) => {
+    const json = editorInstance.getJSON();
+    const text = editorInstance.getText();
 
     updateNodeData(id, { content: json, text });
   };

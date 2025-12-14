@@ -6,14 +6,15 @@ export const luma = (
   modelId: "ray-1-6" | "ray-2" | "ray-flash-2"
 ): VideoModel => ({
   modelId,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation with polling
   generate: async ({ prompt, imagePrompt, duration }) => {
-    const luma = new LumaAI({ authToken: env.LUMA_API_KEY });
+    const lumaClient = new LumaAI({ authToken: env.LUMA_API_KEY });
 
     if (process.env.NODE_ENV !== "production" && imagePrompt) {
       throw new Error("Luma does not support base64 image input.");
     }
 
-    const response = await luma.generations.video.create({
+    const response = await lumaClient.generations.video.create({
       prompt,
       model: modelId,
       duration: `${duration}s`,
@@ -38,7 +39,7 @@ export const luma = (
     const maxPollTime = 5 * 60 * 1000; // 5 minutes in milliseconds
 
     while (Date.now() - startTime < maxPollTime) {
-      const generation = await luma.generations.get(jobId);
+      const generation = await lumaClient.generations.get(jobId);
 
       if (generation.state === "failed") {
         throw new Error(

@@ -4,6 +4,7 @@ import type { VideoModel } from "@/lib/models/video";
 
 export const runway = (modelId: "gen4_turbo" | "gen3a_turbo"): VideoModel => ({
   modelId,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation with polling
   generate: async ({ prompt, imagePrompt, duration }) => {
     if (!imagePrompt) {
       throw new Error("Runway requires at least one image");

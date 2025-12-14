@@ -142,6 +142,7 @@ export const CodeTransform = ({
     analytics,
     modelId,
     type,
+    language,
   ]);
 
   const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (

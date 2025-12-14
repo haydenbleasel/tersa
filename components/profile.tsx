@@ -163,7 +163,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
           >
             <DropzoneEmptyState />
             <DropzoneContent>
-              {image && (
+              {image ? (
                 <Image
                   alt="Image preview"
                   className="absolute top-0 left-0 h-full w-full object-cover"
@@ -172,12 +172,12 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
                   unoptimized
                   width={100}
                 />
-              )}
-              {isUpdating && (
+              ) : null}
+              {isUpdating ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <Loader2Icon className="animate-spin" size={24} />
                 </div>
-              )}
+              ) : null}
             </DropzoneContent>
           </Dropzone>
         </div>

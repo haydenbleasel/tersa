@@ -104,6 +104,7 @@ export const TextTransform = ({
     },
   });
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex text generation flow
   const handleGenerate = useCallback(async () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
@@ -335,11 +336,11 @@ export const TextTransform = ({
             <Skeleton className="h-4 w-50 animate-pulse rounded-lg" />
           </div>
         )}
-        {data.generated?.text &&
-          !nonUserMessages.length &&
-          status !== "submitted" && (
-            <ReactMarkdown>{data.generated.text}</ReactMarkdown>
-          )}
+        {typeof data.generated?.text === "string" &&
+        nonUserMessages.length === 0 &&
+        status !== "submitted" ? (
+          <ReactMarkdown>{data.generated.text}</ReactMarkdown>
+        ) : null}
         {!(data.generated?.text || nonUserMessages.length) &&
           status !== "submitted" && (
             <div className="flex aspect-video w-full items-center justify-center bg-secondary">
@@ -373,11 +374,11 @@ export const TextTransform = ({
                     <AISourcesContent>
                       {message.parts
                         .filter((part) => part.type === "source-url")
-                        .map(({ url, title }) => (
+                        .map(({ url, title: sourceTitle }) => (
                           <AISource
                             href={url}
                             key={url ?? ""}
-                            title={title ?? new URL(url).hostname}
+                            title={sourceTitle ?? new URL(url).hostname}
                           />
                         ))}
                     </AISourcesContent>

@@ -76,24 +76,25 @@ export const Menu = () => {
             <p className="truncate">
               {user.user_metadata.name ?? user.email ?? user.id}
             </p>
-            {user.user_metadata.name && user.email && (
+            {user.user_metadata.name !== undefined &&
+            user.email !== undefined ? (
               <p className="truncate font-normal text-muted-foreground text-xs">
                 {user.email}
               </p>
-            )}
+            ) : null}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleOpenProfile}>
             Profile
           </DropdownMenuItem>
-          {isSubscribed && (
+          {isSubscribed ? (
             <DropdownMenuItem asChild className="justify-between">
               <a href="/api/portal" rel="noopener noreferrer" target="_blank">
                 Billing{" "}
                 <ArrowUpRightIcon className="text-muted-foreground" size={16} />
               </a>
             </DropdownMenuItem>
-          )}
+          ) : null}
           <DropdownMenuItem asChild>
             <a
               className="flex items-center justify-between"

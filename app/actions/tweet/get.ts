@@ -1,6 +1,7 @@
 "use server";
 
 import { getTweet } from "react-tweet/api";
+import { parseError } from "@/lib/error/parse";
 
 export const getTweetData = async (
   tweetId: string
@@ -27,8 +28,10 @@ export const getTweetData = async (
       date: tweet.created_at,
     };
   } catch (error) {
+    const message = parseError(error);
+
     return {
-      error: "Error fetching tweet",
+      error: message,
     };
   }
 };

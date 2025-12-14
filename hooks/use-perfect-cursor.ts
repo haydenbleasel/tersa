@@ -2,21 +2,21 @@ import { PerfectCursor } from "perfect-cursors";
 import { useCallback, useLayoutEffect, useState } from "react";
 
 export const usePerfectCursor = (
-  cb: (point: number[]) => void,
-  point?: number[]
+  cb: (pt: number[]) => void,
+  initialPoint?: number[]
 ) => {
   const [pc] = useState(() => new PerfectCursor(cb));
 
   useLayoutEffect(() => {
-    if (point) {
-      pc.addPoint(point);
+    if (initialPoint) {
+      pc.addPoint(initialPoint);
     }
 
     return () => pc.dispose();
-  }, [pc, point]);
+  }, [pc, initialPoint]);
 
   const onPointChange = useCallback(
-    (point: number[]) => pc.addPoint(point),
+    (newPoint: number[]) => pc.addPoint(newPoint),
     [pc]
   );
 

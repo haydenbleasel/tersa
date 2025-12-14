@@ -373,6 +373,7 @@ const Slash = Node.create<SlashOptions>({
     ];
   },
 
+  // biome-ignore lint/nursery/noShadow: TipTap convention uses HTMLAttributes parameter
   renderHTML({ node, HTMLAttributes }) {
     const mergedOptions = { ...this.options };
 
@@ -768,18 +769,19 @@ export const EditorBubbleMenu = ({
       editor={editor ?? undefined}
       {...props}
     >
-      {children && Array.isArray(children)
-        ? children.reduce((acc: ReactNode[], child, index) => {
-            if (index === 0) {
-              return [child];
-            }
-
-            // biome-ignore lint/suspicious/noArrayIndexKey: "only iterator we have"
-            acc.push(<Separator key={index} orientation="vertical" />);
-            acc.push(child);
-            return acc;
-          }, [])
-        : children}
+      {(() => {
+        if (!children) return null;
+        if (!Array.isArray(children)) return children;
+        return children.reduce((acc: ReactNode[], child, index) => {
+          if (index === 0) {
+            return [child];
+          }
+          // biome-ignore lint/suspicious/noArrayIndexKey: "only iterator we have"
+          acc.push(<Separator key={index} orientation="vertical" />);
+          acc.push(child);
+          return acc;
+        }, []);
+      })()}
     </BubbleMenu>
   );
 };
@@ -855,11 +857,12 @@ export const EditorNodeText = ({
       // I feel like there has to be a more efficient way to do this – feel free to PR if you know how!
       icon={TextIcon}
       isActive={() =>
-        (editor &&
-          !editor.isActive("paragraph") &&
-          !editor.isActive("bulletList") &&
-          !editor.isActive("orderedList")) ??
-        false
+        Boolean(
+          editor &&
+            !editor.isActive("paragraph") &&
+            !editor.isActive("bulletList") &&
+            !editor.isActive("orderedList")
+        )
       }
       name="Text"
     />

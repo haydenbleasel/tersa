@@ -49,13 +49,13 @@ export const getSubscribedUser = async () => {
     throw new Error("Create an account to use AI features.");
   }
 
-  const profile = await currentUserProfile();
+  const userProfile = await currentUserProfile();
 
-  if (!profile) {
+  if (!userProfile) {
     throw new Error("User profile not found");
   }
 
-  if (!profile.subscriptionId) {
+  if (!userProfile.subscriptionId) {
     throw new Error("Please upgrade to a paid plan to use AI features.");
   }
 

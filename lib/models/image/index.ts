@@ -188,7 +188,7 @@ export const imageModels: Record<string, TersaImageModel> = {
     chef: providers.amazon,
     providers: [
       {
-        ...providers["bedrock"],
+        ...providers.bedrock,
         icon: AmazonBedrockIcon,
         model: bedrock.image("amazon.nova-canvas-v1:0"),
 
