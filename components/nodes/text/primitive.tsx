@@ -1,7 +1,7 @@
 import type { Editor, EditorEvents } from "@tiptap/core";
 import { useReactFlow } from "@xyflow/react";
 import { useRef } from "react";
-import { EditorProvider } from "@/components/ui/kibo-ui/editor";
+import { EditorProvider } from "@/components/kibo-ui/editor";
 import { cn } from "@/lib/utils";
 import { useProject } from "@/providers/project";
 import { NodeLayout } from "../layout";
