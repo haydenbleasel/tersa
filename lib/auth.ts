@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { getCredits } from "@/app/actions/credits/get";
 import { profile } from "@/schema";
 import { database } from "./database";
-import { env } from "./env";
 import { createClient } from "./supabase/server";
 
 export const currentUser = async () => {
@@ -57,22 +56,13 @@ export const getSubscribedUser = async () => {
   }
 
   if (!profile.subscriptionId) {
-    throw new Error("Claim your free AI credits to use this feature.");
+    throw new Error("Please upgrade to a paid plan to use AI features.");
   }
 
   const credits = await getCredits();
 
   if ("error" in credits) {
     throw new Error(credits.error);
-  }
-
-  if (
-    profile.productId === env.STRIPE_HOBBY_PRODUCT_ID &&
-    credits.credits <= 0
-  ) {
-    throw new Error(
-      "Sorry, you have no credits remaining! Please upgrade for more credits."
-    );
   }
 
   return user;
