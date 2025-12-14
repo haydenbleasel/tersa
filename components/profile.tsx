@@ -13,13 +13,13 @@ import {
 import { handleError } from "@/lib/error/handle";
 import { createClient } from "@/lib/supabase/client";
 import { uploadFile } from "@/lib/upload";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "./ui/kibo-ui/dropzone";
+} from "./kibo-ui/dropzone";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 type ProfileProps = {

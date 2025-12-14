@@ -3,12 +3,12 @@ import { Loader2Icon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { describeAction } from "@/app/actions/image/describe";
-import { NodeLayout } from "@/components/nodes/layout";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
+import { NodeLayout } from "@/components/nodes/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";

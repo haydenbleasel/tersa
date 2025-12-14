@@ -8,7 +8,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from "@/components/ui/kibo-ui/combobox";
+} from "@/components/kibo-ui/combobox";
 import { capitalize, cn } from "@/lib/utils";
 
 type ModelSelectorProps = {

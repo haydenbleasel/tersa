@@ -2,12 +2,12 @@ import { useReactFlow } from "@xyflow/react";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { transcribeAction } from "@/app/actions/speech/transcribe";
-import { NodeLayout } from "@/components/nodes/layout";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
+import { NodeLayout } from "@/components/nodes/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";

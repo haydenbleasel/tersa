@@ -5,7 +5,7 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
   type DropzoneProps,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
 

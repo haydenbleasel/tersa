@@ -5,7 +5,7 @@ import {
   MarqueeContent,
   MarqueeFade,
   MarqueeItem,
-} from "@/components/ui/kibo-ui/marquee";
+} from "@/components/kibo-ui/marquee";
 import type { OpenAiIcon } from "@/lib/icons";
 
 import { imageModels } from "@/lib/models/image";

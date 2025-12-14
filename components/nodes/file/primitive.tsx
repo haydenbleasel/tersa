@@ -1,12 +1,12 @@
 import { useReactFlow } from "@xyflow/react";
 import { FileIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
-import { NodeLayout } from "@/components/nodes/layout";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
+import { NodeLayout } from "@/components/nodes/layout";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
 import type { FileNodeProps } from ".";

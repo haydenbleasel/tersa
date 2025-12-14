@@ -12,13 +12,6 @@ import {
 } from "react";
 import { createProjectAction } from "@/app/actions/project/create";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
@@ -28,7 +21,14 @@ import {
   ComboboxList,
   ComboboxSeparator,
   ComboboxTrigger,
-} from "@/components/ui/kibo-ui/combobox";
+} from "@/components/kibo-ui/combobox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useUser } from "@/hooks/use-user";
 import { handleError } from "@/lib/error/handle";
 import { cn } from "@/lib/utils";

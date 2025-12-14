@@ -17,7 +17,7 @@ import {
   CodeBlockSelectItem,
   CodeBlockSelectTrigger,
   CodeBlockSelectValue,
-} from '@/components/ui/kibo-ui/code-block';
+} from '@/components/kibo-ui/code-block';
 import { memo } from 'react';
 import type { HTMLAttributes } from 'react';
 import ReactMarkdown, { type Options } from 'react-markdown';
