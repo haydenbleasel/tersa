@@ -15,7 +15,6 @@ import { useUser } from "@/hooks/use-user";
 import { handleError } from "@/lib/error/handle";
 import { nodeButtons } from "@/lib/node-buttons";
 import { useProject } from "@/providers/project";
-import { useSubscription } from "@/providers/subscription";
 
 const TextNode = nodeButtons.find((button) => button.id === "text");
 
@@ -32,7 +31,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
   const project = useProject();
   const { getNodes, getEdges } = useReactFlow();
   const [started, setStarted] = useState(false);
-  const { isSubscribed } = useSubscription();
   const stepsContainerRef = useRef<HTMLDivElement>(null);
   const [hasTextNode, setHasTextNode] = useState(false);
   const [hasFilledTextNode, setHasFilledTextNode] = useState(false);
@@ -80,23 +78,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
         </div>
       ),
       complete: started,
-    },
-    {
-      instructions: (
-        <>
-          Before we start, we need to subscribe to the Hobby plan to claim your
-          free AI credits. Click the button below to claim your credits. It
-          takes a few seconds and doesn't require a credit card.
-        </>
-      ),
-      action: (
-        <div className="not-prose">
-          <Button asChild>
-            <Link href="/pricing">Claim credits</Link>
-          </Button>
-        </div>
-      ),
-      complete: isSubscribed,
     },
     {
       instructions: (
@@ -155,8 +136,9 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
     {
       instructions: (
         <>
-          That's all the information we need to generate an awesome image! Click
-          the Image node to select it, then press the{" "}
+          That's all the information we need to generate an awesome image! Once
+          you upgrade to a paid plan, click the Image node to select it, then
+          press the{" "}
           <PlayIcon className="-translate-y-0.5 inline-block size-4 text-primary" />{" "}
           button to generate content.
         </>
