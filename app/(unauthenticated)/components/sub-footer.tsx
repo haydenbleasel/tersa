@@ -14,7 +14,6 @@ export const SubFooter = () => {
         <Link href="/">
           <Logo className="h-4 w-auto" />
         </Link>
-        <Link href="/pricing">Pricing</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
         <Link href="/acceptable-use">Acceptable Use</Link>

@@ -13,9 +13,6 @@ export const Header = async () => {
         <span className="font-medium text-xl tracking-tight">Tersa</span>
       </Link>
       <div className="flex items-center gap-2">
-        <Button asChild className="text-muted-foreground" variant="link">
-          <Link href="/pricing">Pricing</Link>
-        </Button>
         {user ? (
           <Button asChild variant="outline">
             <Link href="/">Go to app</Link>
