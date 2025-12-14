@@ -80,7 +80,7 @@ import {
   SiVuedotjs,
   SiWebassembly,
 } from '@icons-pack/react-simple-icons';
-import { useControllableState } from 'radix-ui';
+import { useControllableState } from '@radix-ui/react-use-controllable-state';
 import {
   transformerNotationDiff,
   transformerNotationErrorLevel,
