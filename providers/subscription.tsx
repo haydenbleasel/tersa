@@ -4,7 +4,7 @@ import { createContext, type ReactNode, useContext } from "react";
 
 export type SubscriptionContextType = {
   isSubscribed: boolean;
-  plan: "hobby" | "pro" | "enterprise" | undefined;
+  plan: "pro" | undefined;
 };
 
 export const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -31,7 +31,7 @@ export const SubscriptionProvider = ({
 }: {
   children: ReactNode;
   isSubscribed: boolean;
-  plan: "hobby" | "pro" | "enterprise" | undefined;
+  plan: "pro" | undefined;
 }) => (
   <SubscriptionContext.Provider value={{ isSubscribed, plan }}>
     {children}

@@ -10,17 +10,13 @@ export const metadata: Metadata = {
 
 const PricingPage = async () => {
   const user = await currentUser();
-  let currentPlan: "hobby" | "pro" | undefined;
+  let currentPlan: "pro" | undefined;
 
   if (user) {
     const profile = await currentUserProfile();
 
-    if (profile) {
-      if (profile.productId === env.STRIPE_HOBBY_PRODUCT_ID) {
-        currentPlan = "hobby";
-      } else if (profile.productId === env.STRIPE_PRO_PRODUCT_ID) {
-        currentPlan = "pro";
-      }
+    if (profile?.productId === env.STRIPE_PRO_PRODUCT_ID) {
+      currentPlan = "pro";
     }
   }
 

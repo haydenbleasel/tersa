@@ -5,8 +5,6 @@ import { env } from "@/lib/env";
 import { parseError } from "@/lib/error/parse";
 import { stripe } from "@/lib/stripe";
 
-const HOBBY_CREDITS = 200;
-
 export const getCredits = async (): Promise<
   | {
       credits: number;
@@ -27,7 +25,7 @@ export const getCredits = async (): Promise<
     }
 
     if (!profile.subscriptionId) {
-      throw new Error("Customer ID not found");
+      throw new Error("Subscription not found");
     }
 
     const upcomingInvoice = await stripe.invoices.createPreview({
@@ -47,26 +45,20 @@ export const getCredits = async (): Promise<
       throw new Error("Usage product line item price not found");
     }
 
-    // Hobby plan fallback
-    let credits = HOBBY_CREDITS;
+    const usagePrice = await stripe.prices.retrieve(
+      usageProductLineItem.pricing.price_details.price,
+      { expand: ["tiers"] }
+    );
 
-    if (profile.productId !== env.STRIPE_HOBBY_PRODUCT_ID) {
-      const usagePrice = await stripe.prices.retrieve(
-        usageProductLineItem.pricing.price_details.price,
-        { expand: ["tiers"] }
-      );
-
-      if (!usagePrice.tiers?.length) {
-        throw new Error("Usage price tiers not found");
-      }
-
-      if (!usagePrice.tiers[0].up_to) {
-        throw new Error("Usage price tier limit not found");
-      }
-
-      credits = usagePrice.tiers[0].up_to;
+    if (!usagePrice.tiers?.length) {
+      throw new Error("Usage price tiers not found");
     }
 
+    if (!usagePrice.tiers[0].up_to) {
+      throw new Error("Usage price tier limit not found");
+    }
+
+    const credits = usagePrice.tiers[0].up_to;
     const usage = usageProductLineItem?.quantity ?? 0;
 
     return {

@@ -103,7 +103,7 @@ const getModelDisabled = (
   }
 
   if (
-    (!plan || plan === "hobby") &&
+    !plan &&
     (model.priceIndicator === "highest" || model.priceIndicator === "high")
   ) {
     return true;

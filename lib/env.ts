@@ -12,7 +12,6 @@ export const env = createEnv({
     RESEND_EMAIL: z.string().email().min(1),
 
     STRIPE_SECRET_KEY: z.string().min(1).startsWith("sk_"),
-    STRIPE_HOBBY_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
     STRIPE_PRO_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
     STRIPE_USAGE_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
     STRIPE_CREDITS_METER_ID: z.string().min(1).startsWith("mtr_"),
@@ -70,7 +69,6 @@ export const env = createEnv({
     RESEND_TOKEN: process.env.RESEND_TOKEN,
     RESEND_EMAIL: process.env.RESEND_EMAIL,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    STRIPE_HOBBY_PRODUCT_ID: process.env.STRIPE_HOBBY_PRODUCT_ID,
     STRIPE_PRO_PRODUCT_ID: process.env.STRIPE_PRO_PRODUCT_ID,
     STRIPE_USAGE_PRODUCT_ID: process.env.STRIPE_USAGE_PRODUCT_ID,
     STRIPE_CREDITS_METER_ID: process.env.STRIPE_CREDITS_METER_ID,
