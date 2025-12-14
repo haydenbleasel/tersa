@@ -18,19 +18,19 @@ import {
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 import { mutate } from "swr";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@/components/ai-elements/sources";
 import { NodeLayout } from "@/components/nodes/layout";
 import { Button } from "@/components/ui/button";
-import {
-  AIMessage,
-  AIMessageContent,
-} from "@/components/ui/kibo-ui/ai/message";
-import { AIResponse } from "@/components/ui/kibo-ui/ai/response";
-import {
-  AISource,
-  AISources,
-  AISourcesContent,
-  AISourcesTrigger,
-} from "@/components/ui/kibo-ui/ai/source";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -353,7 +353,7 @@ export const TextTransform = ({
         {Boolean(nonUserMessages.length) &&
           status !== "submitted" &&
           nonUserMessages.map((message) => (
-            <AIMessage
+            <Message
               className="p-0 [&>div]:max-w-none"
               from={message.role === "assistant" ? "assistant" : "user"}
               key={message.id}
@@ -363,35 +363,35 @@ export const TextTransform = ({
                   message.parts.filter((part) => part.type === "source-url")
                     ?.length
                 ) && (
-                  <AISources>
-                    <AISourcesTrigger
+                  <Sources>
+                    <SourcesTrigger
                       count={
                         message.parts.filter(
                           (part) => part.type === "source-url"
                         ).length
                       }
                     />
-                    <AISourcesContent>
+                    <SourcesContent>
                       {message.parts
                         .filter((part) => part.type === "source-url")
                         .map(({ url, title: sourceTitle }) => (
-                          <AISource
+                          <Source
                             href={url}
                             key={url ?? ""}
                             title={sourceTitle ?? new URL(url).hostname}
                           />
                         ))}
-                    </AISourcesContent>
-                  </AISources>
+                    </SourcesContent>
+                  </Sources>
                 )}
-                <AIMessageContent className="bg-transparent p-0">
-                  <AIResponse>
+                <MessageContent className="bg-transparent p-0">
+                  <MessageResponse>
                     {message.parts.find((part) => part.type === "text")?.text ??
                       ""}
-                  </AIResponse>
-                </AIMessageContent>
+                  </MessageResponse>
+                </MessageContent>
               </div>
-            </AIMessage>
+            </Message>
           ))}
       </div>
       <Textarea
