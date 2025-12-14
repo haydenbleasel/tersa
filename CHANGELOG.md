@@ -1,3 +1,15 @@
+# v1.3.11 (Sun Dec 14 2025)
+
+#### 🐛 Bug Fix
+
+- Update pricing [#140](https://github.com/haydenbleasel/tersa/pull/140) ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v1.3.10 (Thu Dec 04 2025)
 
 #### ⚠️ Pushed to `main`
