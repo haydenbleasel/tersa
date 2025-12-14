@@ -37,7 +37,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
   const [hasImageNode, setHasImageNode] = useState(false);
   const [hasConnectedImageNode, setHasConnectedImageNode] = useState(false);
   const [hasImageInstructions, setHasImageInstructions] = useState(false);
-  const [hasGeneratedImage, setHasGeneratedImage] = useState(false);
   const user = useUser();
   const router = useRouter();
 
@@ -143,22 +142,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
           button to generate content.
         </>
       ),
-      complete:
-        hasTextNode &&
-        hasFilledTextNode &&
-        hasImageNode &&
-        hasConnectedImageNode &&
-        hasImageInstructions &&
-        hasGeneratedImage,
-    },
-    {
-      instructions: (
-        <>
-          That's it! You've created your first AI-powered workflow. You can
-          continue to add more nodes to a canvas to create more complex flows
-          and discover the power of Tersa.
-        </>
-      ),
       action: (
         <div className="not-prose">
           <Button asChild onClick={handleFinishWelcome}>
@@ -166,7 +149,12 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
           </Button>
         </div>
       ),
-      complete: false,
+      complete:
+        hasTextNode &&
+        hasFilledTextNode &&
+        hasImageNode &&
+        hasConnectedImageNode &&
+        hasImageInstructions,
     },
   ];
 
@@ -221,7 +209,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       setHasImageInstructions(
         Boolean(image.data.instructions && image.data.instructions.length > 5)
       );
-      setHasGeneratedImage(Boolean(image.data.generated?.url));
     }, 50);
   }, [getNodes, getEdges]);
 
