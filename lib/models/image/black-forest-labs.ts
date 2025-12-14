@@ -1,4 +1,4 @@
-import type { ImageModel } from "ai";
+import type { ImageModelV2 } from "@ai-sdk/provider";
 import createFetchClient, { type Client } from "openapi-fetch";
 import { env } from "@/lib/env";
 import type { paths } from "@/openapi/bfl";
@@ -175,7 +175,7 @@ const createJob = async ({
 };
 
 export const blackForestLabs = {
-  image: (modelId: (typeof models)[number]): ImageModel => ({
+  image: (modelId: (typeof models)[number]): ImageModelV2 => ({
     modelId,
     provider: "black-forest-labs",
     specificationVersion: "v2",
