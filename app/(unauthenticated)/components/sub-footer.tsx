@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { ThemeSwitcher } from "@/components/kibo-ui/theme-switcher";
 import { Logo } from "@/components/logo";
-import { ThemeSwitcher } from "@/components/ui/kibo-ui/theme-switcher";
 
 export const SubFooter = () => {
   const { theme, setTheme } = useTheme();
