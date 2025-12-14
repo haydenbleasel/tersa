@@ -137,9 +137,12 @@ export const GET = async (request: NextRequest) => {
       },
     ];
 
+    const customer = profile.customerId ? profile.customerId : undefined;
+    const customerEmail = profile.customerId ? undefined : user.email;
+
     const checkoutLink = await stripe.checkout.sessions.create({
-      customer: profile.customerId ?? undefined,
-      customer_email: profile.customerId ? undefined : user.email,
+      customer,
+      customer_email: customerEmail,
       line_items: lineItems,
       success_url: successUrl,
       allow_promotion_codes: true,
