@@ -36,18 +36,18 @@ export const PostHogProvider = ({ children }: PostHogProviderProps) => {
 const PostHogPageView = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const posthog = usePostHog();
+  const posthogClient = usePostHog();
 
   useEffect(() => {
-    if (pathname && posthog) {
+    if (pathname && posthogClient) {
       let url = window.origin + pathname;
       const search = searchParams.toString();
       if (search) {
         url += `?${search}`;
       }
-      posthog.capture("$pageview", { $current_url: url });
+      posthogClient.capture("$pageview", { $current_url: url });
     }
-  }, [pathname, searchParams, posthog]);
+  }, [pathname, searchParams, posthogClient]);
 
   return null;
 };
@@ -59,17 +59,17 @@ const SuspendedPostHogPageView = () => (
 );
 
 export const PostHogIdentifyProvider = ({ children }: PostHogProviderProps) => {
-  const posthog = usePostHog();
+  const posthogClient = usePostHog();
   const user = useUser();
 
   useEffect(() => {
-    if (posthog && user) {
-      posthog.identify(user.id, {
+    if (posthogClient && user) {
+      posthogClient.identify(user.id, {
         email: user.email,
         name: user.user_metadata.name,
       });
     }
-  }, [posthog, user]);
+  }, [posthogClient, user]);
 
   return children;
 };

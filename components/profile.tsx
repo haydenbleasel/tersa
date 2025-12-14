@@ -13,13 +13,13 @@ import {
 import { handleError } from "@/lib/error/handle";
 import { createClient } from "@/lib/supabase/client";
 import { uploadFile } from "@/lib/upload";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "./ui/kibo-ui/dropzone";
+} from "./kibo-ui/dropzone";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 type ProfileProps = {
@@ -163,7 +163,7 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
           >
             <DropzoneEmptyState />
             <DropzoneContent>
-              {image && (
+              {image ? (
                 <Image
                   alt="Image preview"
                   className="absolute top-0 left-0 h-full w-full object-cover"
@@ -172,12 +172,12 @@ export const Profile = ({ open, setOpen }: ProfileProps) => {
                   unoptimized
                   width={100}
                 />
-              )}
-              {isUpdating && (
+              ) : null}
+              {isUpdating ? (
                 <div className="absolute inset-0 z-10 flex items-center justify-center">
                   <Loader2Icon className="animate-spin" size={24} />
                 </div>
-              )}
+              ) : null}
             </DropzoneContent>
           </Dropzone>
         </div>

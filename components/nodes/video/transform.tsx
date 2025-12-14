@@ -44,7 +44,8 @@ export const VideoTransform = ({
   id,
   type,
   title,
-}: VideoTransformProps) => {
+}: // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation component
+VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const project = useProject();
@@ -175,14 +176,14 @@ export const VideoTransform = ({
 
   return (
     <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
-      {loading && (
+      {loading ? (
         <Skeleton className="flex aspect-video w-full animate-pulse items-center justify-center rounded-b-xl">
           <Loader2Icon
             className="size-4 animate-spin text-muted-foreground"
             size={16}
           />
         </Skeleton>
-      )}
+      ) : null}
       {!(loading || data.generated?.url) && (
         <div className="flex aspect-video w-full items-center justify-center rounded-b-xl bg-secondary">
           <p className="text-muted-foreground text-sm">
@@ -191,7 +192,7 @@ export const VideoTransform = ({
           </p>
         </div>
       )}
-      {data.generated?.url && !loading && (
+      {typeof data.generated?.url === "string" && !loading ? (
         <video
           autoPlay
           className="w-full rounded-b-xl object-cover"
@@ -202,7 +203,7 @@ export const VideoTransform = ({
           src={data.generated.url}
           width={data.width ?? 800}
         />
-      )}
+      ) : null}
       <Textarea
         className="shrink-0 resize-none rounded-none border-none bg-transparent! shadow-none focus-visible:ring-0"
         onChange={handleInstructionsChange}

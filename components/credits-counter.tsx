@@ -2,10 +2,8 @@
 
 import NumberFlow from "@number-flow/react";
 import { CoinsIcon, Loader2Icon } from "lucide-react";
-import Link from "next/link";
 import useSWR from "swr";
 import { getCredits } from "@/app/actions/credits/get";
-import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/providers/subscription";
 
 const creditsFetcher = async () => {
@@ -22,9 +20,15 @@ const pluralize = (count: number) => (count === 1 ? "credit" : "credits");
 
 export const CreditCounter = () => {
   const subscription = useSubscription();
+
   const { data, error } = useSWR("credits", creditsFetcher, {
     revalidateOnMount: true,
   });
+
+  // Only show credit counter for pro users
+  if (subscription.plan !== "pro") {
+    return null;
+  }
 
   if (error) {
     return null;
@@ -46,11 +50,6 @@ export const CreditCounter = () => {
         }
         value={Math.abs(data.credits)}
       />
-      {data.credits <= 0 && subscription.plan === "hobby" && (
-        <Button asChild className="-my-2 -mr-3 ml-1 rounded-full" size="sm">
-          <Link href="/pricing">Upgrade</Link>
-        </Button>
-      )}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
   type DropzoneProps,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
 
@@ -26,15 +26,15 @@ export const Uploader = ({
 }: UploaderProps) => {
   const [files, setFiles] = useState<File[] | undefined>();
 
-  const handleDrop = async (files: File[]) => {
+  const handleDrop = async (droppedFiles: File[]) => {
     try {
-      if (!files.length) {
+      if (!droppedFiles.length) {
         throw new Error("No file selected");
       }
 
-      setFiles(files);
+      setFiles(droppedFiles);
 
-      const { url, type } = await uploadFile(files[0], bucket);
+      const { url, type } = await uploadFile(droppedFiles[0], bucket);
 
       onUploadCompleted(url, type);
     } catch (error) {
@@ -58,7 +58,7 @@ export const Uploader = ({
         <>
           <DropzoneEmptyState />
           <DropzoneContent>
-            {files && files.length > 0 && (
+            {files?.length ? (
               <div className="h-[102px] w-full">
                 <Image
                   alt="Image preview"
@@ -69,7 +69,7 @@ export const Uploader = ({
                   width={100}
                 />
               </div>
-            )}
+            ) : null}
           </DropzoneContent>
         </>
       )}

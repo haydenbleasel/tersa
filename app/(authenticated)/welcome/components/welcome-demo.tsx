@@ -15,7 +15,6 @@ import { useUser } from "@/hooks/use-user";
 import { handleError } from "@/lib/error/handle";
 import { nodeButtons } from "@/lib/node-buttons";
 import { useProject } from "@/providers/project";
-import { useSubscription } from "@/providers/subscription";
 
 const TextNode = nodeButtons.find((button) => button.id === "text");
 
@@ -32,19 +31,17 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
   const project = useProject();
   const { getNodes, getEdges } = useReactFlow();
   const [started, setStarted] = useState(false);
-  const { isSubscribed } = useSubscription();
   const stepsContainerRef = useRef<HTMLDivElement>(null);
   const [hasTextNode, setHasTextNode] = useState(false);
   const [hasFilledTextNode, setHasFilledTextNode] = useState(false);
   const [hasImageNode, setHasImageNode] = useState(false);
   const [hasConnectedImageNode, setHasConnectedImageNode] = useState(false);
   const [hasImageInstructions, setHasImageInstructions] = useState(false);
-  const [hasGeneratedImage, setHasGeneratedImage] = useState(false);
   const user = useUser();
   const router = useRouter();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Run only on mount
   useEffect(() => {
-    // Run on mount to set initial state
     handleNodesChange();
   }, []);
 
@@ -80,23 +77,6 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
         </div>
       ),
       complete: started,
-    },
-    {
-      instructions: (
-        <>
-          Before we start, we need to subscribe to the Hobby plan to claim your
-          free AI credits. Click the button below to claim your credits. It
-          takes a few seconds and doesn't require a credit card.
-        </>
-      ),
-      action: (
-        <div className="not-prose">
-          <Button asChild>
-            <Link href="/pricing">Claim credits</Link>
-          </Button>
-        </div>
-      ),
-      complete: isSubscribed,
     },
     {
       instructions: (
@@ -155,26 +135,11 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
     {
       instructions: (
         <>
-          That's all the information we need to generate an awesome image! Click
-          the Image node to select it, then press the{" "}
+          That's all the information we need to generate an awesome image! Once
+          you upgrade to a paid plan, click the Image node to select it, then
+          press the{" "}
           <PlayIcon className="-translate-y-0.5 inline-block size-4 text-primary" />{" "}
           button to generate content.
-        </>
-      ),
-      complete:
-        hasTextNode &&
-        hasFilledTextNode &&
-        hasImageNode &&
-        hasConnectedImageNode &&
-        hasImageInstructions &&
-        hasGeneratedImage,
-    },
-    {
-      instructions: (
-        <>
-          That's it! You've created your first AI-powered workflow. You can
-          continue to add more nodes to a canvas to create more complex flows
-          and discover the power of Tersa.
         </>
       ),
       action: (
@@ -184,7 +149,12 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
           </Button>
         </div>
       ),
-      complete: false,
+      complete:
+        hasTextNode &&
+        hasFilledTextNode &&
+        hasImageNode &&
+        hasConnectedImageNode &&
+        hasImageInstructions,
     },
   ];
 
@@ -207,63 +177,38 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       const newNodes = getNodes();
 
       const textNodes = newNodes.filter((node) => node.type === "text");
-
-      if (!textNodes.length) {
-        setHasTextNode(false);
-        return;
-      }
-
-      setHasTextNode(true);
-
       const textNode = textNodes.at(0);
+
+      setHasTextNode(textNodes.length > 0);
 
       if (!textNode) {
         return;
       }
 
       const text = (textNode as unknown as TextNodeProps).data.text;
-
-      if (text && text.length > 10) {
-        setHasFilledTextNode(true);
-      } else {
-        setHasFilledTextNode(false);
-      }
+      setHasFilledTextNode(Boolean(text && text.length > 10));
 
       const imageNodes = newNodes.filter((node) => node.type === "image");
       const imageNode = imageNodes.at(0);
 
+      setHasImageNode(Boolean(imageNode));
+
       if (!imageNode) {
-        setHasImageNode(false);
         return;
       }
-
-      setHasImageNode(true);
 
       const sources = getIncomers(imageNode, newNodes, newEdges);
-      const textSource = sources.find((source) => source.id === textNode.id);
+      const isConnected = sources.some((source) => source.id === textNode.id);
+      setHasConnectedImageNode(isConnected);
 
-      if (!textSource) {
-        setHasConnectedImageNode(false);
+      if (!isConnected) {
         return;
       }
-
-      setHasConnectedImageNode(true);
 
       const image = imageNode as unknown as ImageNodeProps;
-      const instructions = image.data.instructions;
-
-      if (instructions && instructions.length > 5) {
-        setHasImageInstructions(true);
-      } else {
-        setHasImageInstructions(false);
-      }
-
-      if (!image.data.generated?.url) {
-        setHasGeneratedImage(false);
-        return;
-      }
-
-      setHasGeneratedImage(true);
+      setHasImageInstructions(
+        Boolean(image.data.instructions && image.data.instructions.length > 5)
+      );
     }, 50);
   }, [getNodes, getEdges]);
 
@@ -275,8 +220,15 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       >
         <div className="prose flex flex-col items-start gap-4">
           <h1 className="font-semibold! text-3xl!">{title}</h1>
-          {previousSteps.map((step, index) => (
-            <p className="lead opacity-50" key={index}>
+          {previousSteps.map((step) => (
+            <p
+              className="lead opacity-50"
+              key={
+                typeof step.instructions === "string"
+                  ? step.instructions
+                  : step.instructions.props.children.toString().slice(0, 50)
+              }
+            >
               {step.instructions}
             </p>
           ))}
@@ -288,7 +240,7 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       <div className="row-span-3 p-8 lg:col-span-2 lg:row-span-1">
         <div className="relative size-full overflow-hidden rounded-3xl border">
           <Canvas onNodesChange={handleNodesChange}>
-            {steps[0].complete && <Toolbar />}
+            {steps[0].complete ? <Toolbar /> : null}
           </Canvas>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import type { Editor, EditorEvents } from "@tiptap/core";
 import { useReactFlow } from "@xyflow/react";
 import { useRef } from "react";
-import { EditorProvider } from "@/components/ui/kibo-ui/editor";
+import { EditorProvider } from "@/components/kibo-ui/editor";
 import { cn } from "@/lib/utils";
 import { useProject } from "@/providers/project";
 import { NodeLayout } from "../layout";
@@ -21,9 +21,9 @@ export const TextPrimitive = ({
   const editor = useRef<Editor | null>(null);
   const project = useProject();
 
-  const handleUpdate = ({ editor }: { editor: Editor }) => {
-    const json = editor.getJSON();
-    const text = editor.getText();
+  const handleUpdate = ({ editor: editorInstance }: { editor: Editor }) => {
+    const json = editorInstance.getJSON();
+    const text = editorInstance.getText();
 
     updateNodeData(id, { content: json, text });
   };

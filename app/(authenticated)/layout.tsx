@@ -27,13 +27,8 @@ const AuthenticatedLayout = async ({ children }: AuthenticatedLayoutProps) => {
     return null;
   }
 
-  let plan: SubscriptionContextType["plan"];
-
-  if (profile.productId === env.STRIPE_HOBBY_PRODUCT_ID) {
-    plan = "hobby";
-  } else if (profile.productId === env.STRIPE_PRO_PRODUCT_ID) {
-    plan = "pro";
-  }
+  const plan: SubscriptionContextType["plan"] =
+    profile.productId === env.STRIPE_PRO_PRODUCT_ID ? "pro" : undefined;
 
   return (
     <SubscriptionProvider

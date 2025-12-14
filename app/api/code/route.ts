@@ -53,7 +53,7 @@ export const POST = async (req: Request) => {
 
   const { models } = await gateway.getAvailableModels();
 
-  const model = models.find((model) => model.id === modelId);
+  const model = models.find((m) => m.id === modelId);
 
   if (!model) {
     return new Response("Invalid model", { status: 400 });

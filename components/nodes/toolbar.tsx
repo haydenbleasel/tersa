@@ -33,6 +33,7 @@ export const NodeToolbar = ({ id, items }: NodeToolbarProps) => {
             <TooltipContent>{button.tooltip}</TooltipContent>
           </Tooltip>
         ) : (
+          // biome-ignore lint/suspicious/noArrayIndexKey: No unique identifier available for buttons without tooltip
           <Fragment key={index}>{button.children}</Fragment>
         )
       )}

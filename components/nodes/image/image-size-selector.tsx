@@ -14,7 +14,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxTrigger,
-} from "@/components/ui/kibo-ui/combobox";
+} from "@/components/kibo-ui/combobox";
 import { cn } from "@/lib/utils";
 
 type ImageSizeSelectorProps = {

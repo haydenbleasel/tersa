@@ -103,7 +103,7 @@ const getModelDisabled = (
   }
 
   if (
-    (!plan || plan === "hobby") &&
+    !plan &&
     (model.priceIndicator === "highest" || model.priceIndicator === "high")
   ) {
     return true;
@@ -155,14 +155,14 @@ export const ModelSelector = ({
   }, [value, options, onChange]);
 
   const groupedOptions = Object.entries(options).reduce(
-    (acc, [id, model]) => {
+    (acc, [modelId, model]) => {
       const chef = model.chef.id;
 
       if (!acc[chef]) {
         acc[chef] = {};
       }
 
-      acc[chef][id] = model;
+      acc[chef][modelId] = model;
       return acc;
     },
     {} as Record<string, Record<string, TersaModel>>
@@ -189,12 +189,12 @@ export const ModelSelector = ({
         style={{ width }}
       >
         <Button className="w-full" variant="outline">
-          {activeModel && (
+          {activeModel ? (
             <div className="flex w-full items-center gap-2 overflow-hidden">
               <ModelIcon chef={activeModel.chef} data={activeModel} />
               <span className="block truncate">{activeModel.label}</span>
             </div>
-          )}
+          ) : null}
         </Button>
       </DialogTrigger>
       <DialogContent className="p-0">
@@ -220,75 +220,79 @@ export const ModelSelector = ({
                 }
                 key={chef}
               >
-                {Object.entries(groupedOptions[chef]).map(([id, model]) => (
-                  <CommandItem
-                    className={cn(
-                      value === id &&
-                        "bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground"
-                    )}
-                    disabled={getModelDisabled(model, plan)}
-                    key={id}
-                    onSelect={() => {
-                      onChange?.(id);
-                      setOpen(false);
-                    }}
-                    value={id}
-                  >
-                    <div className="flex flex-1 items-center gap-2 overflow-hidden">
-                      <ModelIcon
-                        chef={
-                          chef in providers
-                            ? providers[chef as keyof typeof providers]
-                            : providers.unknown
-                        }
-                        className={
-                          value === id ? "text-primary-foreground" : ""
-                        }
-                        data={model}
-                      />
-                      <span className="block truncate">{model.label}</span>
-                    </div>
-                    {model.providers.map((provider, index) => (
-                      <div
-                        className={cn(index && "opacity-50")}
-                        key={provider.id}
-                      >
-                        <div
-                          className={cn(
-                            "flex size-4 items-center justify-center rounded-full bg-secondary",
-                            value === id && "bg-primary-foreground/10"
-                          )}
-                        >
-                          <provider.icon
-                            className={cn(
-                              "size-3 shrink-0",
-                              value === id
-                                ? "text-primary-foreground"
-                                : "text-muted-foreground"
-                            )}
-                          />
-                        </div>
+                {Object.entries(groupedOptions[chef]).map(
+                  ([modelKey, model]) => (
+                    <CommandItem
+                      className={cn(
+                        value === modelKey &&
+                          "bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground"
+                      )}
+                      disabled={getModelDisabled(model, plan)}
+                      key={modelKey}
+                      onSelect={() => {
+                        onChange?.(modelKey);
+                        setOpen(false);
+                      }}
+                      value={modelKey}
+                    >
+                      <div className="flex flex-1 items-center gap-2 overflow-hidden">
+                        <ModelIcon
+                          chef={
+                            chef in providers
+                              ? providers[chef as keyof typeof providers]
+                              : providers.unknown
+                          }
+                          className={
+                            value === modelKey ? "text-primary-foreground" : ""
+                          }
+                          data={model}
+                        />
+                        <span className="block truncate">{model.label}</span>
                       </div>
-                    ))}
-                    {model.priceIndicator ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div>
-                            {getCostBracketIcon(
-                              model.priceIndicator,
-                              value === id ? "text-primary-foreground" : ""
+                      {model.providers.map((provider, index) => (
+                        <div
+                          className={cn(index > 0 && "opacity-50")}
+                          key={provider.id}
+                        >
+                          <div
+                            className={cn(
+                              "flex size-4 items-center justify-center rounded-full bg-secondary",
+                              value === modelKey && "bg-primary-foreground/10"
                             )}
+                          >
+                            <provider.icon
+                              className={cn(
+                                "size-3 shrink-0",
+                                value === modelKey
+                                  ? "text-primary-foreground"
+                                  : "text-muted-foreground"
+                              )}
+                            />
                           </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <p>{getCostBracketLabel(model.priceIndicator)}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <div className="size-4" />
-                    )}
-                  </CommandItem>
-                ))}
+                        </div>
+                      ))}
+                      {model.priceIndicator ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div>
+                              {getCostBracketIcon(
+                                model.priceIndicator,
+                                value === modelKey
+                                  ? "text-primary-foreground"
+                                  : ""
+                              )}
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            <p>{getCostBracketLabel(model.priceIndicator)}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : (
+                        <div className="size-4" />
+                      )}
+                    </CommandItem>
+                  )
+                )}
               </CommandGroup>
             ))}
           </CommandList>

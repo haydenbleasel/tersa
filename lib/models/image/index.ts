@@ -1,8 +1,8 @@
 import { bedrock } from "@ai-sdk/amazon-bedrock";
 import { luma } from "@ai-sdk/luma";
 import { openai } from "@ai-sdk/openai";
+import type { ImageModelV2 } from "@ai-sdk/provider";
 import { xai } from "@ai-sdk/xai";
-import type { ImageModel } from "ai";
 import {
   providers,
   type TersaModel,
@@ -17,7 +17,7 @@ export type ImageSize = `${number}x${number}`;
 
 type TersaImageModel = TersaModel & {
   providers: (TersaProvider & {
-    model: ImageModel;
+    model: ImageModelV2;
     getCost: (props?: {
       textInput?: number;
       imageInput?: number;
@@ -188,7 +188,7 @@ export const imageModels: Record<string, TersaImageModel> = {
     chef: providers.amazon,
     providers: [
       {
-        ...providers["bedrock"],
+        ...providers.bedrock,
         icon: AmazonBedrockIcon,
         model: bedrock.image("amazon.nova-canvas-v1:0"),
 

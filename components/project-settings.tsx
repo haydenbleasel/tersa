@@ -38,7 +38,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
   );
   const [visionModel, setVisionModel] = useState(data.visionModel);
   const router = useRouter();
-  const { isSubscribed, plan } = useSubscription();
+  const { isSubscribed } = useSubscription();
 
   const handleUpdateProject: FormEventHandler<HTMLFormElement> = async (
     event
@@ -116,7 +116,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
           <div className="grid gap-2">
             <Label htmlFor="transcriptionModel">Transcription model</Label>
             <ModelSelector
-              disabled={!isSubscribed || plan === "hobby"}
+              disabled={!isSubscribed}
               id="transcriptionModel"
               onChange={setTranscriptionModel}
               options={transcriptionModels}
@@ -127,7 +127,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
           <div className="grid gap-2">
             <Label htmlFor="visionModel">Vision model</Label>
             <ModelSelector
-              disabled={!isSubscribed || plan === "hobby"}
+              disabled={!isSubscribed}
               id="visionModel"
               onChange={setVisionModel}
               options={visionModels}

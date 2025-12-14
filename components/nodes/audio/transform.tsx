@@ -48,7 +48,8 @@ export const AudioTransform = ({
   id,
   type,
   title,
-}: AudioTransformProps) => {
+}: // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex audio generation component
+AudioTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const project = useProject();
@@ -56,6 +57,7 @@ export const AudioTransform = ({
   const model = speechModels[modelId];
   const analytics = useAnalytics();
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex audio generation flow
   const handleGenerate = async () => {
     if (loading || !project?.id) {
       return;
@@ -206,14 +208,14 @@ export const AudioTransform = ({
 
   return (
     <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
-      {loading && (
+      {loading ? (
         <Skeleton className="flex h-[50px] w-full animate-pulse items-center justify-center">
           <Loader2Icon
             className="size-4 animate-spin text-muted-foreground"
             size={16}
           />
         </Skeleton>
-      )}
+      ) : null}
       {!(loading || data.generated?.url) && (
         <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">
           <p className="text-muted-foreground text-sm">
@@ -223,7 +225,7 @@ export const AudioTransform = ({
         </div>
       )}
       {!loading && data.generated?.url && (
-        // biome-ignore lint/a11y/useMediaCaption: <explanation>
+        // biome-ignore lint/a11y/useMediaCaption: Generated audio does not have captions
         <audio
           className="w-full rounded-none"
           controls

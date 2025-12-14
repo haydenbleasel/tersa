@@ -139,6 +139,7 @@ export const ImageTransform = ({
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex toolbar configuration
   const toolbar = useMemo<ComponentProps<typeof NodeLayout>["toolbar"]>(() => {
     const availableModels = Object.fromEntries(
       Object.entries(imageModels).map(([key, model]) => [
@@ -265,7 +266,7 @@ export const ImageTransform = ({
 
   return (
     <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
-      {loading && (
+      {loading ? (
         <Skeleton
           className="flex w-full animate-pulse items-center justify-center rounded-b-xl"
           style={{ aspectRatio }}
@@ -275,7 +276,7 @@ export const ImageTransform = ({
             size={16}
           />
         </Skeleton>
-      )}
+      ) : null}
       {!(loading || data.generated?.url) && (
         <div
           className="flex w-full items-center justify-center rounded-b-xl bg-secondary p-4"

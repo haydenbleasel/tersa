@@ -54,6 +54,7 @@ const baseUrl = "https://api.minimaxi.chat/";
 
 export const minimax = (modelId: CreateJobProps["model"]): VideoModel => ({
   modelId,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation with polling
   generate: async ({ prompt, imagePrompt }) => {
     const props: CreateJobProps = {
       model: modelId,

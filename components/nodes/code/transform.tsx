@@ -25,6 +25,7 @@ import {
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
 import { useProject } from "@/providers/project";
+import { useSubscription } from "@/providers/subscription";
 import { ModelSelector } from "../model-selector";
 import type { CodeNodeProps } from ".";
 import { LanguageSelector } from "./language-selector";
@@ -57,12 +58,22 @@ export const CodeTransform = ({
   const modelId = data.model ?? getDefaultModel(textModels);
   const language = data.generated?.language ?? "javascript";
   const analytics = useAnalytics();
+  const subscription = useSubscription();
   const { messages, sendMessage, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/code",
     }),
     onError: (error) => handleError("Error generating text", error),
-    onFinish: ({ message }) => {
+    onFinish: ({ message, isError }) => {
+      if (isError) {
+        if (!subscription.isSubscribed) {
+          return;
+        }
+
+        handleError("Error generating text", "Please try again later.");
+        return;
+      }
+
       updateNodeData(id, {
         generated: {
           text: message.parts.find((part) => part.type === "text")?.text ?? "",
@@ -142,6 +153,7 @@ export const CodeTransform = ({
     analytics,
     modelId,
     type,
+    language,
   ]);
 
   const handleInstructionsChange: ChangeEventHandler<HTMLTextAreaElement> = (

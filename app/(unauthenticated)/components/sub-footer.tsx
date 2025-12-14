@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { ThemeSwitcher } from "@/components/kibo-ui/theme-switcher";
 import { Logo } from "@/components/logo";
-import { ThemeSwitcher } from "@/components/ui/kibo-ui/theme-switcher";
 
 export const SubFooter = () => {
   const { theme, setTheme } = useTheme();
@@ -14,7 +14,6 @@ export const SubFooter = () => {
         <Link href="/">
           <Logo className="h-4 w-auto" />
         </Link>
-        <Link href="/pricing">Pricing</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
         <Link href="/acceptable-use">Acceptable Use</Link>

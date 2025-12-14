@@ -37,7 +37,9 @@ export const TopRight = async ({ id }: TopRightProps) => {
       ) : (
         <div className="flex items-center rounded-full border bg-card/90 p-0.5 drop-shadow-xs backdrop-blur-sm">
           <Button asChild className="rounded-full" size="lg">
-            <Link href="/pricing">Claim your free AI credits</Link>
+            <Link href="/api/checkout?product=pro&frequency=month">
+              Upgrade
+            </Link>
           </Button>
         </div>
       )}

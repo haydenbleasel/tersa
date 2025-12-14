@@ -45,13 +45,11 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
   const project = useProject();
   const {
     onConnect,
-    onConnectStart,
-    onConnectEnd,
     onEdgesChange,
     onNodesChange,
     nodes: initialNodes,
     edges: initialEdges,
-    ...rest
+    ...restProps
   } = props ?? {};
   const content = project?.content as { nodes: Node[]; edges: Edge[] };
   const [nodes, setNodes] = useState<Node[]>(
@@ -136,7 +134,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
   const addNode = useCallback(
     (type: string, options?: Record<string, unknown>) => {
-      const { data: nodeData, ...rest } = options ?? {};
+      const { data: nodeData, ...nodeOptions } = options ?? {};
       const newNode: Node = {
         id: nanoid(),
         type,
@@ -145,7 +143,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         },
         position: { x: 0, y: 0 },
         origin: [0, 0.5],
-        ...rest,
+        ...nodeOptions,
       };
 
       setNodes((nds: Node[]) => nds.concat(newNode));
@@ -164,14 +162,14 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     (id: string) => {
       const node = getNode(id);
 
-      if (!(node && node.type)) {
+      if (!node?.type) {
         return;
       }
 
-      const { id: oldId, ...rest } = node;
+      const { id: _oldId, ...nodeProps } = node;
 
       const newId = addNode(node.type, {
-        ...rest,
+        ...nodeProps,
         position: {
           x: node.position.x + 200,
           y: node.position.y + 200,
@@ -227,13 +225,15 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     (connection) => {
       // we are using getNodes and getEdges helpers here
       // to make sure we create isValidConnection function only once
-      const nodes = getNodes();
-      const edges = getEdges();
-      const target = nodes.find((node) => node.id === connection.target);
+      const currentNodes = getNodes();
+      const currentEdges = getEdges();
+      const target = currentNodes.find((node) => node.id === connection.target);
 
       // Prevent connecting audio nodes to anything except transcribe nodes
       if (connection.source) {
-        const source = nodes.find((node) => node.id === connection.source);
+        const source = currentNodes.find(
+          (node) => node.id === connection.source
+        );
 
         if (!(source && target)) {
           return false;
@@ -254,7 +254,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
         visited.add(node.id);
 
-        for (const outgoer of getOutgoers(node, nodes, edges)) {
+        for (const outgoer of getOutgoers(node, currentNodes, currentEdges)) {
           if (outgoer.id === connection.source || hasCycle(outgoer, visited)) {
             return true;
           }
@@ -296,8 +296,8 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
   );
 
   const handleSelectAll = useCallback(() => {
-    setNodes((nodes: Node[]) =>
-      nodes.map((node: Node) => ({ ...node, selected: true }))
+    setNodes((nds: Node[]) =>
+      nds.map((node: Node) => ({ ...node, selected: true }))
     );
   }, []);
 
@@ -324,15 +324,15 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     }));
 
     // Unselect all existing nodes
-    setNodes((nodes: Node[]) =>
-      nodes.map((node: Node) => ({
+    setNodes((nds: Node[]) =>
+      nds.map((node: Node) => ({
         ...node,
         selected: false,
       }))
     );
 
     // Add new nodes
-    setNodes((nodes: Node[]) => [...nodes, ...newNodes]);
+    setNodes((nds: Node[]) => [...nds, ...newNodes]);
   }, [copiedNodes]);
 
   const handleDuplicateAll = useCallback(() => {
@@ -398,7 +398,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
               panOnScroll
               selectionOnDrag={true}
               zoomOnDoubleClick={false}
-              {...rest}
+              {...restProps}
             >
               <Background />
               {children}

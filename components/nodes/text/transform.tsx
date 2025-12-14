@@ -18,19 +18,19 @@ import {
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
 import { mutate } from "swr";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  Source,
+  Sources,
+  SourcesContent,
+  SourcesTrigger,
+} from "@/components/ai-elements/sources";
 import { NodeLayout } from "@/components/nodes/layout";
 import { Button } from "@/components/ui/button";
-import {
-  AIMessage,
-  AIMessageContent,
-} from "@/components/ui/kibo-ui/ai/message";
-import { AIResponse } from "@/components/ui/kibo-ui/ai/response";
-import {
-  AISource,
-  AISources,
-  AISourcesContent,
-  AISourcesTrigger,
-} from "@/components/ui/kibo-ui/ai/source";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -46,6 +46,7 @@ import {
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
 import { useProject } from "@/providers/project";
+import { useSubscription } from "@/providers/subscription";
 import { ReasoningTunnel } from "@/tunnels/reasoning";
 import { ModelSelector } from "../model-selector";
 import type { TextNodeProps } from ".";
@@ -77,13 +78,23 @@ export const TextTransform = ({
   const { models } = useGateway();
   const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
+  const subscription = useSubscription();
   const [reasoning, setReasoning] = useReasoning();
   const { sendMessage, messages, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
     onError: (error) => handleError("Error generating text", error),
-    onFinish: ({ message }) => {
+    onFinish: ({ message, isError }) => {
+      if (isError) {
+        if (!subscription.isSubscribed) {
+          return;
+        }
+
+        handleError("Error generating text", "Please try again later.");
+        return;
+      }
+
       updateNodeData(id, {
         generated: {
           text: message.parts.find((part) => part.type === "text")?.text ?? "",
@@ -104,6 +115,7 @@ export const TextTransform = ({
     },
   });
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex text generation flow
   const handleGenerate = useCallback(async () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
@@ -335,11 +347,11 @@ export const TextTransform = ({
             <Skeleton className="h-4 w-50 animate-pulse rounded-lg" />
           </div>
         )}
-        {data.generated?.text &&
-          !nonUserMessages.length &&
-          status !== "submitted" && (
-            <ReactMarkdown>{data.generated.text}</ReactMarkdown>
-          )}
+        {typeof data.generated?.text === "string" &&
+        nonUserMessages.length === 0 &&
+        status !== "submitted" ? (
+          <ReactMarkdown>{data.generated.text}</ReactMarkdown>
+        ) : null}
         {!(data.generated?.text || nonUserMessages.length) &&
           status !== "submitted" && (
             <div className="flex aspect-video w-full items-center justify-center bg-secondary">
@@ -352,7 +364,7 @@ export const TextTransform = ({
         {Boolean(nonUserMessages.length) &&
           status !== "submitted" &&
           nonUserMessages.map((message) => (
-            <AIMessage
+            <Message
               className="p-0 [&>div]:max-w-none"
               from={message.role === "assistant" ? "assistant" : "user"}
               key={message.id}
@@ -362,35 +374,35 @@ export const TextTransform = ({
                   message.parts.filter((part) => part.type === "source-url")
                     ?.length
                 ) && (
-                  <AISources>
-                    <AISourcesTrigger
+                  <Sources>
+                    <SourcesTrigger
                       count={
                         message.parts.filter(
                           (part) => part.type === "source-url"
                         ).length
                       }
                     />
-                    <AISourcesContent>
+                    <SourcesContent>
                       {message.parts
                         .filter((part) => part.type === "source-url")
-                        .map(({ url, title }) => (
-                          <AISource
+                        .map(({ url, title: sourceTitle }) => (
+                          <Source
                             href={url}
                             key={url ?? ""}
-                            title={title ?? new URL(url).hostname}
+                            title={sourceTitle ?? new URL(url).hostname}
                           />
                         ))}
-                    </AISourcesContent>
-                  </AISources>
+                    </SourcesContent>
+                  </Sources>
                 )}
-                <AIMessageContent className="bg-transparent p-0">
-                  <AIResponse>
+                <MessageContent className="bg-transparent p-0">
+                  <MessageResponse>
                     {message.parts.find((part) => part.type === "text")?.text ??
                       ""}
-                  </AIResponse>
-                </AIMessageContent>
+                  </MessageResponse>
+                </MessageContent>
               </div>
-            </AIMessage>
+            </Message>
           ))}
       </div>
       <Textarea

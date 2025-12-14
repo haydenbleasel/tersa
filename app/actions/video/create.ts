@@ -116,15 +116,15 @@ export const generateVideoAction = async ({
       },
     };
 
-    const updatedNodes = content.nodes.map((existingNode) => {
-      if (existingNode.id === nodeId) {
+    const updatedNodes = content.nodes.map((node) => {
+      if (node.id === nodeId) {
         return {
-          ...existingNode,
+          ...node,
           data: newData,
         };
       }
 
-      return existingNode;
+      return node;
     });
 
     await database

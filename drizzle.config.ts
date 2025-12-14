@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noNamespaceImport: Required for drizzle-kit
 import * as dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
 

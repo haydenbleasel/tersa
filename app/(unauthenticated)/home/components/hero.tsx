@@ -47,21 +47,19 @@ export const Hero = ({ announcement, buttons }: HeroProps) => (
 
       {/* Main content */}
       <div className="flex flex-col items-center justify-center px-5 py-8">
-        {announcement && (
+        {announcement ? (
           <Link
             className="relative inline-flex items-center justify-between gap-2 rounded-full border px-4 py-1.5 text-sm tracking-[-0.01rem] transition-all duration-300 ease-in-out hover:border-primary hover:bg-primary/5 hover:text-primary"
             href={announcement.link}
             rel={
-              announcement.link.startsWith("http")
-                ? "noopener noreferrer"
-                : undefined
+              announcement.link.startsWith("http") ? "noopener noreferrer" : ""
             }
             target={announcement.link.startsWith("http") ? "_blank" : "_self"}
           >
             {announcement.title}
             <ArrowRightIcon size={16} />
           </Link>
-        )}
+        ) : null}
 
         <h1 className="mt-6 mb-5 text-center font-medium text-4xl tracking-[-0.12rem] md:text-6xl">
           A

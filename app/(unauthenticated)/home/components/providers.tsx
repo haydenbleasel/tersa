@@ -5,7 +5,7 @@ import {
   MarqueeContent,
   MarqueeFade,
   MarqueeItem,
-} from "@/components/ui/kibo-ui/marquee";
+} from "@/components/kibo-ui/marquee";
 import type { OpenAiIcon } from "@/lib/icons";
 
 import { imageModels } from "@/lib/models/image";
@@ -89,15 +89,15 @@ export const Providers = () => {
             <MarqueeFade side="left" />
             <MarqueeFade side="right" />
             <MarqueeContent pauseOnHover={false}>
-              {row1.map((Icon, index) => (
-                <MarqueeItem className="h-32 w-32 p-8" key={index}>
+              {row1.map((Icon) => (
+                <MarqueeItem className="h-32 w-32 p-8" key={Icon.name}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}
             </MarqueeContent>
             <MarqueeContent direction="right" pauseOnHover={false}>
-              {row2.map((Icon, index) => (
-                <MarqueeItem className="h-32 w-32 p-8" key={index}>
+              {row2.map((Icon) => (
+                <MarqueeItem className="h-32 w-32 p-8" key={Icon.name}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}

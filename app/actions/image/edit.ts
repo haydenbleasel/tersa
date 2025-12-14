@@ -42,12 +42,12 @@ const generateGptImage1Image = async ({
 }) => {
   const openai = new OpenAI();
   const promptImages = await Promise.all(
-    images.map(async (image) => {
-      const response = await fetch(image.url);
+    images.map(async (img) => {
+      const response = await fetch(img.url);
       const blob = await response.blob();
 
       return toFile(blob, nanoid(), {
-        type: image.type,
+        type: img.type,
       });
     })
   );
@@ -212,15 +212,15 @@ export const editImageAction = async ({
       description: instructions ?? defaultPrompt,
     };
 
-    const updatedNodes = content.nodes.map((existingNode) => {
-      if (existingNode.id === nodeId) {
+    const updatedNodes = content.nodes.map((node) => {
+      if (node.id === nodeId) {
         return {
-          ...existingNode,
+          ...node,
           data: newData,
         };
       }
 
-      return existingNode;
+      return node;
     });
 
     await database

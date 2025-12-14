@@ -2,12 +2,12 @@ import { useReactFlow } from "@xyflow/react";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { transcribeAction } from "@/app/actions/speech/transcribe";
-import { NodeLayout } from "@/components/nodes/layout";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
+import { NodeLayout } from "@/components/nodes/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
@@ -29,26 +29,26 @@ export const AudioPrimitive = ({
   const project = useProject();
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleDrop = async (files: File[]) => {
+  const handleDrop = async (droppedFiles: File[]) => {
     if (isUploading || !project?.id) {
       return;
     }
 
     try {
-      if (!files.length) {
+      if (!droppedFiles.length) {
         throw new Error("No file selected");
       }
 
       setIsUploading(true);
-      setFiles(files);
-      const [file] = files;
+      setFiles(droppedFiles);
+      const [file] = droppedFiles;
 
-      const { url, type } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file, "files");
 
       updateNodeData(id, {
         content: {
           url,
-          type,
+          type: contentType,
         },
       });
 
@@ -70,16 +70,16 @@ export const AudioPrimitive = ({
 
   return (
     <NodeLayout data={data} id={id} title={title} type={type}>
-      {isUploading && (
+      {isUploading ? (
         <Skeleton className="flex h-[50px] w-full animate-pulse items-center justify-center">
           <Loader2Icon
             className="size-4 animate-spin text-muted-foreground"
             size={16}
           />
         </Skeleton>
-      )}
+      ) : null}
       {!isUploading && data.content && (
-        // biome-ignore lint/a11y/useMediaCaption: <explanation>
+        // biome-ignore lint/a11y/useMediaCaption: Audio transcriptions handled separately
         <audio
           className="w-full rounded-none"
           controls

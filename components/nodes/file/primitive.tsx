@@ -1,12 +1,12 @@
 import { useReactFlow } from "@xyflow/react";
 import { FileIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
-import { NodeLayout } from "@/components/nodes/layout";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
-} from "@/components/ui/kibo-ui/dropzone";
+} from "@/components/kibo-ui/dropzone";
+import { NodeLayout } from "@/components/nodes/layout";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
 import type { FileNodeProps } from ".";
@@ -63,39 +63,39 @@ export const FilePrimitive = ({
   const [files, setFiles] = useState<File[] | undefined>();
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleDrop = async (files: File[]) => {
+  const handleDrop = async (droppedFiles: File[]) => {
     if (isUploading) {
       return;
     }
 
     try {
-      if (!files.length) {
+      if (!droppedFiles.length) {
         throw new Error("No file selected");
       }
 
-      if (files.some((file) => file.type.startsWith("audio"))) {
+      if (droppedFiles.some((f) => f.type.startsWith("audio"))) {
         throw new Error("Please use the audio node to upload audio files.");
       }
 
-      if (files.some((file) => file.type.startsWith("video"))) {
+      if (droppedFiles.some((f) => f.type.startsWith("video"))) {
         throw new Error("Please use the video node to upload video files.");
       }
 
-      if (files.some((file) => file.type.startsWith("image"))) {
+      if (droppedFiles.some((f) => f.type.startsWith("image"))) {
         throw new Error("Please use the image node to upload image files.");
       }
 
       setIsUploading(true);
-      setFiles(files);
-      const [file] = files;
+      setFiles(droppedFiles);
+      const [file] = droppedFiles;
 
-      const { url, type } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file, "files");
 
       updateNodeData(id, {
         content: {
           url,
           name: file.name,
-          type,
+          type: contentType,
         },
       });
     } catch (error) {
@@ -123,7 +123,7 @@ export const FilePrimitive = ({
           >
             <DropzoneEmptyState />
             <DropzoneContent>
-              {files && files.length > 0 && (
+              {files?.length ? (
                 <div className="relative">
                   <FilePreview
                     name={files[0].name}
@@ -134,7 +134,7 @@ export const FilePrimitive = ({
                     <Loader2Icon className="size-12 animate-spin text-white" />
                   </div>
                 </div>
-              )}
+              ) : null}
             </DropzoneContent>
           </Dropzone>
         )}

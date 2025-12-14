@@ -19,15 +19,13 @@ export const TemporaryEdge = ({
   });
 
   return (
-    <>
-      <BaseEdge
-        className="stroke-1 stroke-ring"
-        id={id}
-        path={edgePath}
-        style={{
-          strokeDasharray: "5, 5",
-        }}
-      />
-    </>
+    <BaseEdge
+      className="stroke-1 stroke-ring"
+      id={id}
+      path={edgePath}
+      style={{
+        strokeDasharray: "5, 5",
+      }}
+    />
   );
 };
