@@ -46,6 +46,7 @@ import {
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
 import { useProject } from "@/providers/project";
+import { useSubscription } from "@/providers/subscription";
 import { ReasoningTunnel } from "@/tunnels/reasoning";
 import { ModelSelector } from "../model-selector";
 import type { TextNodeProps } from ".";
@@ -77,13 +78,23 @@ export const TextTransform = ({
   const { models } = useGateway();
   const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
+  const subscription = useSubscription();
   const [reasoning, setReasoning] = useReasoning();
   const { sendMessage, messages, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
     }),
     onError: (error) => handleError("Error generating text", error),
-    onFinish: ({ message }) => {
+    onFinish: ({ message, isError }) => {
+      if (isError) {
+        if (!subscription.isSubscribed) {
+          return;
+        }
+
+        handleError("Error generating text", "Please try again later.");
+        return;
+      }
+
       updateNodeData(id, {
         generated: {
           text: message.parts.find((part) => part.type === "text")?.text ?? "",
