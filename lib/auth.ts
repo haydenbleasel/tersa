@@ -30,13 +30,19 @@ export const currentUserProfile = async () => {
     const response = await database
       .insert(profile)
       .values({ id: user.id })
+      .onConflictDoNothing()
       .returning();
 
-    if (!response.length) {
-      throw new Error("Failed to create user profile");
+    // If insert was skipped due to conflict, fetch the existing profile
+    if (response.length) {
+      userProfile = response[0];
+    } else {
+      const existingProfiles = await database
+        .select()
+        .from(profile)
+        .where(eq(profile.id, user.id));
+      userProfile = existingProfiles.at(0);
     }
-
-    userProfile = response[0];
   }
 
   return userProfile;
