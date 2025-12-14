@@ -90,20 +90,14 @@ export const Providers = () => {
             <MarqueeFade side="right" />
             <MarqueeContent pauseOnHover={false}>
               {row1.map((Icon) => (
-                <MarqueeItem
-                  className="h-32 w-32 p-8"
-                  key={Icon.displayName ?? Icon.name}
-                >
+                <MarqueeItem className="h-32 w-32 p-8" key={Icon.name}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}
             </MarqueeContent>
             <MarqueeContent direction="right" pauseOnHover={false}>
               {row2.map((Icon) => (
-                <MarqueeItem
-                  className="h-32 w-32 p-8"
-                  key={Icon.displayName ?? Icon.name}
-                >
+                <MarqueeItem className="h-32 w-32 p-8" key={Icon.name}>
                   <Icon className="size-full" />
                 </MarqueeItem>
               ))}
