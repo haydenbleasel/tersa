@@ -48,7 +48,7 @@ export const POST = async (req: Request) => {
       "Respond with the code only, no other text.",
       "Do not format the code as Markdown, just return the code as is.",
     ].join("\n"),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     onError: (error) => {
       console.error(error);
     },
