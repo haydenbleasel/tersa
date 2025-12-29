@@ -14,13 +14,10 @@ const createClient = () =>
   });
 
 const models = [
-  "flux-pro-1.1",
   "flux-pro",
   "flux-dev",
   "flux-pro-1.0-canny",
   "flux-pro-1.0-depth",
-  "flux-kontext-pro",
-  "flux-kontext-max",
 ] as const;
 
 type CreateJobParams = {
@@ -76,21 +73,6 @@ const createJob = async ({
         signal: abortSignal,
         headers,
       });
-    case "flux-pro-1.1":
-      return await client.POST("/v1/flux-pro-1.1", {
-        body: {
-          prompt,
-          width,
-          height,
-          seed,
-          prompt_upsampling: true,
-          safety_tolerance: 2,
-          output_format: "png",
-          image_prompt: imagePrompt,
-        },
-        signal: abortSignal,
-        headers,
-      });
     case "flux-pro":
       return await client.POST("/v1/flux-pro", {
         body: {
@@ -137,34 +119,6 @@ const createJob = async ({
           safety_tolerance: 2,
           output_format: "png",
           preprocessed_image: imagePrompt,
-        },
-        signal: abortSignal,
-        headers,
-      });
-    case "flux-kontext-pro":
-      return await client.POST("/v1/flux-kontext-pro", {
-        body: {
-          prompt,
-          prompt_upsampling: true,
-          seed,
-          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
-          output_format: "png",
-          safety_tolerance: 2,
-          input_image: imagePrompt,
-        },
-        signal: abortSignal,
-        headers,
-      });
-    case "flux-kontext-max":
-      return await client.POST("/v1/flux-kontext-max", {
-        body: {
-          prompt,
-          prompt_upsampling: true,
-          seed,
-          aspect_ratio: `${simplifiedW}:${simplifiedH}`,
-          output_format: "png",
-          safety_tolerance: 2,
-          input_image: imagePrompt,
         },
         signal: abortSignal,
         headers,
