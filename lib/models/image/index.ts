@@ -3,6 +3,7 @@ import { luma } from "@ai-sdk/luma";
 import { openai } from "@ai-sdk/openai";
 import type { ImageModelV2, ImageModelV3 } from "@ai-sdk/provider";
 import { xai } from "@ai-sdk/xai";
+import { gateway } from "@/lib/gateway";
 import {
   providers,
   type TersaModel,
@@ -228,7 +229,7 @@ export const imageModels: Record<string, TersaImageModel> = {
     providers: [
       {
         ...providers["black-forest-labs"],
-        model: blackForestLabs.image("flux-pro-1.1"),
+        model: gateway.imageModel("bfl/flux-pro-1.1"),
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
@@ -304,7 +305,7 @@ export const imageModels: Record<string, TersaImageModel> = {
     providers: [
       {
         ...providers["black-forest-labs"],
-        model: blackForestLabs.image("flux-kontext-pro"),
+        model: gateway.imageModel("bfl/flux-kontext-pro"),
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.04,
@@ -319,7 +320,7 @@ export const imageModels: Record<string, TersaImageModel> = {
     providers: [
       {
         ...providers["black-forest-labs"],
-        model: blackForestLabs.image("flux-kontext-max"),
+        model: gateway.imageModel("bfl/flux-kontext-max"),
 
         // https://bfl.ai/pricing/api
         getCost: () => 0.08,
