@@ -7,17 +7,10 @@ import {
 import { getSubscribedUser } from "@/lib/auth";
 import { parseError } from "@/lib/error/parse";
 import { gateway } from "@/lib/gateway";
-import { createRateLimiter, slidingWindow } from "@/lib/rate-limit";
 import { trackCreditUsage } from "@/lib/stripe";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
-
-// Create a rate limiter for the chat API
-const rateLimiter = createRateLimiter({
-  limiter: slidingWindow(10, "1 m"),
-  prefix: "api-chat",
-});
 
 export const POST = async (req: Request) => {
   try {
@@ -26,23 +19,6 @@ export const POST = async (req: Request) => {
     const message = parseError(error);
 
     return new Response(message, { status: 401 });
-  }
-
-  // Apply rate limiting
-  if (process.env.NODE_ENV === "production") {
-    const ip = req.headers.get("x-forwarded-for") || "anonymous";
-    const { success, limit, reset, remaining } = await rateLimiter.limit(ip);
-
-    if (!success) {
-      return new Response("Too many requests", {
-        status: 429,
-        headers: {
-          "X-RateLimit-Limit": limit.toString(),
-          "X-RateLimit-Remaining": remaining.toString(),
-          "X-RateLimit-Reset": reset.toString(),
-        },
-      });
-    }
   }
 
   const { messages, modelId } = await req.json();

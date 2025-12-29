@@ -67,8 +67,6 @@
     "@tiptap/react": "^3.12.1",
     "@tiptap/starter-kit": "^3.12.1",
     "@tiptap/suggestion": "^3.12.1",
-    "@upstash/ratelimit": "^2.0.7",
-    "@upstash/redis": "^1.35.7",
     "@vercel/analytics": "^1.6.1",
     "@xyflow/react": "^12.9.3",
     "ai": "^5.0.106",
