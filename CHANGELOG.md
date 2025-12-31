@@ -1,3 +1,16 @@
+# v1.3.15 (Wed Dec 31 2025)
+
+#### 🐛 Bug Fix
+
+- Auto-generated fix using Ultracite Cloud [#142](https://github.com/haydenbleasel/tersa/pull/142) (ultracite@users.noreply.github.com [@ultracite[bot]](https://github.com/ultracite[bot]))
+
+#### Authors: 2
+
+- [@ultracite[bot]](https://github.com/ultracite[bot])
+- Ultracite (ultracite@users.noreply.github.com)
+
+---
+
 # v1.3.14 (Mon Dec 29 2025)
 
 #### ⚠️ Pushed to `main`
