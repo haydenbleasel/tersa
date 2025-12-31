@@ -83,8 +83,8 @@ export const NodeDropzoneProvider = ({
             : "pointer-events-none opacity-0"
         )}
       >
-        <div className="-space-x-4 relative isolate flex items-center">
-          <div className="-rotate-12 flex aspect-square translate-y-2 items-center justify-center rounded-md bg-background p-3 shadow-xl">
+        <div className="relative isolate flex items-center -space-x-4">
+          <div className="flex aspect-square translate-y-2 -rotate-12 items-center justify-center rounded-md bg-background p-3 shadow-xl">
             <FileIcon className="text-muted-foreground" size={24} />
           </div>
           <div className="z-10 flex aspect-square items-center justify-center rounded-md bg-background p-3 shadow-xl">

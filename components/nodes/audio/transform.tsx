@@ -219,7 +219,7 @@ AudioTransformProps) => {
       {!(loading || data.generated?.url) && (
         <div className="flex h-[50px] w-full items-center justify-center rounded-full bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press <PlayIcon className="-translate-y-px inline" size={12} /> to
+            Press <PlayIcon className="inline -translate-y-px" size={12} /> to
             generate audio
           </p>
         </div>

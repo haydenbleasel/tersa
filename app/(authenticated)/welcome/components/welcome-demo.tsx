@@ -82,7 +82,7 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
       instructions: (
         <>
           First, click the{" "}
-          <TextNode.icon className="-translate-y-0.5 inline-block size-4 text-primary" />{" "}
+          <TextNode.icon className="inline-block size-4 -translate-y-0.5 text-primary" />{" "}
           icon on the bottom toolbar. This will add a Text node to the canvas.
         </>
       ),
@@ -138,7 +138,7 @@ export const WelcomeDemo = ({ title, description }: WelcomeDemoProps) => {
           That's all the information we need to generate an awesome image! Once
           you upgrade to a paid plan, click the Image node to select it, then
           press the{" "}
-          <PlayIcon className="-translate-y-0.5 inline-block size-4 text-primary" />{" "}
+          <PlayIcon className="inline-block size-4 -translate-y-0.5 text-primary" />{" "}
           button to generate content.
         </>
       ),

@@ -283,7 +283,7 @@ export const ImageTransform = ({
           style={{ aspectRatio }}
         >
           <p className="text-muted-foreground text-sm">
-            Press <PlayIcon className="-translate-y-px inline" size={12} /> to
+            Press <PlayIcon className="inline -translate-y-px" size={12} /> to
             create an image
           </p>
         </div>

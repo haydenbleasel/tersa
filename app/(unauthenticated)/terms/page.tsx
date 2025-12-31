@@ -26,16 +26,16 @@ const Privacy = () => (
     <div className="border-b border-dotted" />
     <div className="relative flex items-center justify-center border-x border-b border-dotted">
       {/* Corner decorations */}
-      <div className="-left-[3px] -top-[3px] absolute">
+      <div className="absolute -top-[3px] -left-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
-      <div className="-right-[3px] -top-[3px] absolute">
+      <div className="absolute -top-[3px] -right-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
-      <div className="-bottom-[3px] -left-[3px] absolute">
+      <div className="absolute -bottom-[3px] -left-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
-      <div className="-bottom-[3px] -right-[3px] absolute">
+      <div className="absolute -right-[3px] -bottom-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
 
@@ -55,10 +55,10 @@ const Privacy = () => (
     <div className="border-b border-dotted" />
     <div className="relative flex items-center justify-center border-x border-b border-dotted">
       {/* Corner decorations */}
-      <div className="-bottom-[3px] -left-[3px] absolute">
+      <div className="absolute -bottom-[3px] -left-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
-      <div className="-bottom-[3px] -right-[3px] absolute">
+      <div className="absolute -right-[3px] -bottom-[3px]">
         <div className="relative z-1 h-[5px] w-[5px] transform rounded-full bg-border ring-2 ring-background" />
       </div>
 

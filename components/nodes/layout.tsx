@@ -104,7 +104,7 @@ export const NodeLayout = ({
         <ContextMenuTrigger>
           <div className="relative size-full h-auto w-sm">
             {type !== "drop" && (
-              <div className="-translate-y-full -top-2 absolute right-0 left-0 flex shrink-0 items-center justify-between">
+              <div className="absolute -top-2 right-0 left-0 flex shrink-0 -translate-y-full items-center justify-between">
                 <p className="font-mono text-muted-foreground text-xs tracking-tighter">
                   {title}
                 </p>
