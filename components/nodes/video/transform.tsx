@@ -187,7 +187,7 @@ VideoTransformProps) => {
       {!(loading || data.generated?.url) && (
         <div className="flex aspect-video w-full items-center justify-center rounded-b-xl bg-secondary">
           <p className="text-muted-foreground text-sm">
-            Press <PlayIcon className="-translate-y-px inline" size={12} /> to
+            Press <PlayIcon className="inline -translate-y-px" size={12} /> to
             generate video
           </p>
         </div>
