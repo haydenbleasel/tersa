@@ -36,9 +36,6 @@ export const env = createEnv({
     RUNWAYML_API_SECRET: z.string().min(1).startsWith("key_"),
     LUMA_API_KEY: z.string().min(1).startsWith("luma-"),
     BF_API_KEY: z.string().min(1),
-
-    // Vercel AI Gateway
-    AI_GATEWAY_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
@@ -78,6 +75,5 @@ export const env = createEnv({
     HUME_API_KEY: process.env.HUME_API_KEY,
     LMNT_API_KEY: process.env.LMNT_API_KEY,
     BF_API_KEY: process.env.BF_API_KEY,
-    AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
   },
 });

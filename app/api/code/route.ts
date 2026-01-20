@@ -1,3 +1,4 @@
+import { gateway } from "@ai-sdk/gateway";
 import {
   convertToModelMessages,
   extractReasoningMiddleware,
@@ -6,7 +7,6 @@ import {
 } from "ai";
 import { getSubscribedUser } from "@/lib/auth";
 import { parseError } from "@/lib/error/parse";
-import { gateway } from "@/lib/gateway";
 import { trackCreditUsage } from "@/lib/stripe";
 
 // Allow streaming responses up to 30 seconds

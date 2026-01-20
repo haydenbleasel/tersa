@@ -1,5 +1,5 @@
+import { gateway } from "@ai-sdk/gateway";
 import type { ReactNode } from "react";
-import { gateway } from "@/lib/gateway";
 import { GatewayProviderClient } from "./client";
 
 type GatewayProviderProps = {
