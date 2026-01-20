@@ -1,3 +1,15 @@
+# v1.3.16 (Tue Jan 20 2026)
+
+#### ⚠️ Pushed to `main`
+
+- Use OIDC Gateway Key ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v1.3.15 (Wed Dec 31 2025)
 
 #### 🐛 Bug Fix
