@@ -36,6 +36,7 @@ export const ToolbarInner = () => {
   return (
     <Panel
       className="m-4 flex items-center rounded-full border bg-card/90 p-1 drop-shadow-xs backdrop-blur-sm"
+      onDoubleClick={(e) => e.stopPropagation()}
       position="bottom-center"
     >
       {nodeButtons.map((button) => (
