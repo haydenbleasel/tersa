@@ -52,7 +52,7 @@ export const POST = async (req: Request) => {
       "You will then synthesize the content based on the user's instructions and the context provided.",
       "The output should be a concise summary of the content, no more than 100 words.",
     ].join("\n"),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     onFinish: async ({ usage }) => {
       const inputCost = model.pricing?.input
         ? Number.parseFloat(model.pricing.input)
