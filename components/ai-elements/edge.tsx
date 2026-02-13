@@ -1,12 +1,42 @@
+import type { EdgeProps, InternalNode, Node } from "@xyflow/react";
+
 import {
   BaseEdge,
-  type EdgeProps,
   getBezierPath,
-  type InternalNode,
-  type Node,
+  getSimpleBezierPath,
   Position,
   useInternalNode,
 } from "@xyflow/react";
+
+const Temporary = ({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+}: EdgeProps) => {
+  const [edgePath] = getSimpleBezierPath({
+    sourcePosition,
+    sourceX,
+    sourceY,
+    targetPosition,
+    targetX,
+    targetY,
+  });
+
+  return (
+    <BaseEdge
+      className="stroke-1 stroke-ring"
+      id={id}
+      path={edgePath}
+      style={{
+        strokeDasharray: "5, 5",
+      }}
+    />
+  );
+};
 
 const getHandleCoordsByPosition = (
   node: InternalNode<Node>,
@@ -20,7 +50,7 @@ const getHandleCoordsByPosition = (
   );
 
   if (!handle) {
-    return [0, 0];
+    return [0, 0] as const;
   }
 
   let offsetX = handle.width / 2;
@@ -30,26 +60,31 @@ const getHandleCoordsByPosition = (
   // The handle position that gets calculated has the origin top-left, so depending which side we are using, we add a little offset
   // when the handlePosition is Position.Right for example, we need to add an offset as big as the handle itself in order to get the correct position
   switch (handlePosition) {
-    case Position.Left:
+    case Position.Left: {
       offsetX = 0;
       break;
-    case Position.Right:
+    }
+    case Position.Right: {
       offsetX = handle.width;
       break;
-    case Position.Top:
+    }
+    case Position.Top: {
       offsetY = 0;
       break;
-    case Position.Bottom:
+    }
+    case Position.Bottom: {
       offsetY = handle.height;
       break;
-    default:
+    }
+    default: {
       throw new Error(`Invalid handle position: ${handlePosition}`);
+    }
   }
 
   const x = node.internals.positionAbsolute.x + handle.x + offsetX;
   const y = node.internals.positionAbsolute.y + handle.y + offsetY;
 
-  return [x, y];
+  return [x, y] as const;
 };
 
 const getEdgeParams = (
@@ -62,22 +97,16 @@ const getEdgeParams = (
   const [tx, ty] = getHandleCoordsByPosition(target, targetPos);
 
   return {
+    sourcePos,
     sx,
     sy,
+    targetPos,
     tx,
     ty,
-    sourcePos,
-    targetPos,
   };
 };
 
-export const AnimatedEdge = ({
-  id,
-  source,
-  target,
-  markerEnd,
-  style,
-}: EdgeProps) => {
+const Animated = ({ id, source, target, markerEnd, style }: EdgeProps) => {
   const sourceNode = useInternalNode(source);
   const targetNode = useInternalNode(target);
 
@@ -91,12 +120,12 @@ export const AnimatedEdge = ({
   );
 
   const [edgePath] = getBezierPath({
+    sourcePosition: sourcePos,
     sourceX: sx,
     sourceY: sy,
-    sourcePosition: sourcePos,
+    targetPosition: targetPos,
     targetX: tx,
     targetY: ty,
-    targetPosition: targetPos,
   });
 
   return (
@@ -107,4 +136,9 @@ export const AnimatedEdge = ({
       </circle>
     </>
   );
+};
+
+export const Edge = {
+  Animated,
+  Temporary,
 };

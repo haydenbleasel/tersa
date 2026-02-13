@@ -28,9 +28,11 @@ import { loadCanvas, saveCanvas } from "@/lib/canvas-storage";
 import { isValidSourceTarget } from "@/lib/xyflow";
 import { NodeDropzoneProvider } from "@/providers/node-dropzone";
 import { NodeOperationsProvider } from "@/providers/node-operations";
-import { edgeTypes } from "./edges";
 import { Connection } from "./ai-elements/connection";
+import { Edge as EdgeComponents } from "./ai-elements/edge";
 import { nodeTypes } from "./nodes";
+
+const edgeTypes = { animated: EdgeComponents.Animated, temporary: EdgeComponents.Temporary };
 import {
   ContextMenu,
   ContextMenuContent,
