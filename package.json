@@ -36,6 +36,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@react-email/components": "1.0.7",
+    "@react-email/preview-server": "^5.2.8",
     "@runwayml/sdk": "^3.11.0",
     "@shikijs/transformers": "^3.22.0",
     "@supabase/ssr": "^0.8.0",
