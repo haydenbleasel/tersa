@@ -25,27 +25,34 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { download } from "@/lib/download";
 import { handleError } from "@/lib/error/handle";
-import { imageModels } from "@/lib/models/image";
 import { getImagesFromImageNodes, getTextFromTextNodes } from "@/lib/xyflow";
+import { useGateway } from "@/providers/gateway/client";
 import { useProject } from "@/providers/project";
 import { ModelSelector } from "../model-selector";
 import type { ImageNodeProps } from ".";
-import { ImageSizeSelector } from "./image-size-selector";
 
 type ImageTransformProps = ImageNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof imageModels) => {
+const getDefaultModel = (
+  models: Record<string, { default?: boolean }>
+): string => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
 
-  if (!defaultModel) {
-    throw new Error("No default model found");
+  if (defaultModel) {
+    return defaultModel[0];
   }
 
-  return defaultModel[0];
+  const firstModel = Object.keys(models)[0];
+
+  if (!firstModel) {
+    throw new Error("No image models available");
+  }
+
+  return firstModel;
 };
 
 export const ImageTransform = ({
@@ -57,13 +64,9 @@ export const ImageTransform = ({
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const project = useProject();
-  const hasIncomingImageNodes =
-    getImagesFromImageNodes(getIncomers({ id }, getNodes(), getEdges()))
-      .length > 0;
+  const { imageModels } = useGateway();
   const modelId = data.model ?? getDefaultModel(imageModels);
   const analytics = useAnalytics();
-  const selectedModel = imageModels[modelId];
-  const size = data.size ?? selectedModel?.sizes?.at(0);
 
   const handleGenerate = useCallback(async () => {
     if (loading || !project?.id) {
@@ -96,7 +99,6 @@ export const ImageTransform = ({
             nodeId: id,
             projectId: project.id,
             modelId,
-            size,
           })
         : await generateImageAction({
             prompt: textNodes.join("\n"),
@@ -104,7 +106,6 @@ export const ImageTransform = ({
             instructions: data.instructions,
             projectId: project.id,
             nodeId: id,
-            size,
           });
 
       if ("error" in response) {
@@ -124,7 +125,6 @@ export const ImageTransform = ({
   }, [
     loading,
     project?.id,
-    size,
     id,
     analytics,
     type,
@@ -139,16 +139,13 @@ export const ImageTransform = ({
     event
   ) => updateNodeData(id, { instructions: event.target.value });
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex toolbar configuration
   const toolbar = useMemo<ComponentProps<typeof NodeLayout>["toolbar"]>(() => {
     const availableModels = Object.fromEntries(
       Object.entries(imageModels).map(([key, model]) => [
         key,
         {
           ...model,
-          disabled: hasIncomingImageNodes
-            ? !model.supportsEdit
-            : model.disabled,
+          disabled: model.disabled,
         },
       ])
     );
@@ -166,20 +163,6 @@ export const ImageTransform = ({
         ),
       },
     ];
-
-    if (selectedModel?.sizes?.length) {
-      items.push({
-        children: (
-          <ImageSizeSelector
-            className="w-[200px] rounded-full"
-            id={id}
-            onChange={(value) => updateNodeData(id, { size: value })}
-            options={selectedModel?.sizes ?? []}
-            value={size ?? ""}
-          />
-        ),
-      });
-    }
 
     items.push(
       loading
@@ -243,11 +226,9 @@ export const ImageTransform = ({
     return items;
   }, [
     modelId,
-    hasIncomingImageNodes,
+    imageModels,
     id,
     updateNodeData,
-    selectedModel?.sizes,
-    size,
     loading,
     data.generated,
     data.updatedAt,
@@ -255,21 +236,12 @@ export const ImageTransform = ({
     project?.id,
   ]);
 
-  const aspectRatio = useMemo(() => {
-    if (!data.size) {
-      return "1/1";
-    }
-
-    const [width, height] = data.size.split("x").map(Number);
-    return `${width}/${height}`;
-  }, [data.size]);
-
   return (
     <NodeLayout data={data} id={id} title={title} toolbar={toolbar} type={type}>
       {loading ? (
         <Skeleton
           className="flex w-full animate-pulse items-center justify-center rounded-b-xl"
-          style={{ aspectRatio }}
+          style={{ aspectRatio: "1/1" }}
         >
           <Loader2Icon
             className="size-4 animate-spin text-muted-foreground"
@@ -280,7 +252,7 @@ export const ImageTransform = ({
       {!(loading || data.generated?.url) && (
         <div
           className="flex w-full items-center justify-center rounded-b-xl bg-secondary p-4"
-          style={{ aspectRatio }}
+          style={{ aspectRatio: "1/1" }}
         >
           <p className="text-muted-foreground text-sm">
             Press <PlayIcon className="inline -translate-y-px" size={12} /> to

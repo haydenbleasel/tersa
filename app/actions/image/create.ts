@@ -1,17 +1,14 @@
 "use server";
 
+import { gateway } from "@ai-sdk/gateway";
 import type { Edge, Node, Viewport } from "@xyflow/react";
-import {
-  type Experimental_GenerateImageResult,
-  experimental_generateImage as generateImage,
-} from "ai";
+import { generateImage } from "ai";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import OpenAI from "openai";
 import { getSubscribedUser } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { parseError } from "@/lib/error/parse";
-import { imageModels } from "@/lib/models/image";
 import { visionModels } from "@/lib/models/vision";
 import { trackCreditUsage } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
@@ -23,63 +20,7 @@ type GenerateImageActionProps = {
   projectId: string;
   modelId: string;
   instructions?: string;
-  size?: string;
 };
-
-const generateGptImage1Image = async ({
-  instructions,
-  prompt,
-  size,
-}: {
-  instructions?: string;
-  prompt: string;
-  size?: string;
-}) => {
-  const openai = new OpenAI();
-  const response = await openai.images.generate({
-    model: "gpt-image-1",
-    prompt: [
-      "Generate an image based on the following instructions and context.",
-      "---",
-      "Instructions:",
-      instructions ?? "None.",
-      "---",
-      "Context:",
-      prompt,
-    ].join("\n"),
-    size: size as never | undefined,
-    moderation: "low",
-    quality: "high",
-    output_format: "png",
-  });
-
-  const json = response.data?.at(0)?.b64_json;
-
-  if (!json) {
-    throw new Error("No response JSON found");
-  }
-
-  if (!response.usage) {
-    throw new Error("No usage found");
-  }
-
-  const image: Experimental_GenerateImageResult["image"] = {
-    base64: json,
-    uint8Array: Buffer.from(json, "base64"),
-    mediaType: "image/png",
-  };
-
-  return {
-    image,
-    usage: {
-      textInput: response.usage?.input_tokens_details.text_tokens,
-      imageInput: response.usage?.input_tokens_details.image_tokens,
-      output: response.usage?.output_tokens,
-    },
-  };
-};
-
-const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
 
 export const generateImageAction = async ({
   prompt,
@@ -87,7 +28,6 @@ export const generateImageAction = async ({
   instructions,
   nodeId,
   projectId,
-  size,
 }: GenerateImageActionProps): Promise<
   | {
       nodeData: object;
@@ -99,64 +39,41 @@ export const generateImageAction = async ({
   try {
     const client = await createClient();
     const user = await getSubscribedUser();
-    const model = imageModels[modelId];
 
-    if (!model) {
+    const { models } = await gateway.getAvailableModels();
+    const gatewayModel = models.find((m) => m.id === modelId);
+
+    if (!gatewayModel) {
       throw new Error("Model not found");
     }
 
-    let image: Experimental_GenerateImageResult["image"] | undefined;
+    const inputPrice = gatewayModel.pricing?.input
+      ? Number.parseFloat(gatewayModel.pricing.input)
+      : 0;
+    const outputPrice = gatewayModel.pricing?.output
+      ? Number.parseFloat(gatewayModel.pricing.output)
+      : 0;
+    const flatCost = inputPrice + outputPrice || 0.04;
 
-    const provider = model.providers[0];
-
-    if (provider.model.modelId === "gpt-image-1") {
-      const generatedImageResponse = await generateGptImage1Image({
-        instructions,
+    const result = await generateImage({
+      model: gateway.imageModel(modelId),
+      prompt: [
+        "Generate an image based on the following instructions and context.",
+        "---",
+        "Instructions:",
+        instructions ?? "None.",
+        "---",
+        "Context:",
         prompt,
-        size,
-      });
+      ].join("\n"),
+    });
 
-      await trackCreditUsage({
-        action: "generate_image",
-        cost: provider.getCost({
-          ...generatedImageResponse.usage,
-          size,
-        }),
-      });
+    await trackCreditUsage({
+      action: "generate_image",
+      cost: flatCost,
+    });
 
-      image = generatedImageResponse.image;
-    } else {
-      let aspectRatio: `${number}:${number}` | undefined;
-      if (size) {
-        const [width, height] = size.split("x").map(Number);
-        const divisor = gcd(width, height);
-        aspectRatio = `${width / divisor}:${height / divisor}`;
-      }
-
-      const generatedImageResponse = await generateImage({
-        model: provider.model,
-        prompt: [
-          "Generate an image based on the following instructions and context.",
-          "---",
-          "Instructions:",
-          instructions ?? "None.",
-          "---",
-          "Context:",
-          prompt,
-        ].join("\n"),
-        size: size as never,
-        aspectRatio,
-      });
-
-      await trackCreditUsage({
-        action: "generate_image",
-        cost: provider.getCost({
-          size,
-        }),
-      });
-
-      image = generatedImageResponse.image;
-    }
+    const { image } = result;
 
     let extension = image.mediaType.split("/").pop();
 

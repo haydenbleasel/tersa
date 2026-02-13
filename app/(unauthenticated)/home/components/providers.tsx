@@ -7,8 +7,6 @@ import {
   MarqueeItem,
 } from "@/components/kibo-ui/marquee";
 import type { OpenAiIcon } from "@/lib/icons";
-
-import { imageModels } from "@/lib/models/image";
 import { speechModels } from "@/lib/models/speech";
 import { transcriptionModels } from "@/lib/models/transcription";
 import { videoModels } from "@/lib/models/video";
@@ -17,7 +15,7 @@ import { providers } from "@/lib/providers";
 import { useGateway } from "@/providers/gateway/client";
 
 export const Providers = () => {
-  const { models: textModels } = useGateway();
+  const { models: textModels, imageModels } = useGateway();
 
   const allModels = [
     ...Object.values(imageModels),

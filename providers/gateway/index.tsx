@@ -9,9 +9,10 @@ type GatewayProviderProps = {
 export const GatewayProvider = async ({ children }: GatewayProviderProps) => {
   const { models } = await gateway.getAvailableModels();
   const textModels = models.filter((model) => model.modelType === "language");
+  const imageModels = models.filter((model) => model.modelType === "image");
 
   return (
-    <GatewayProviderClient models={textModels}>
+    <GatewayProviderClient imageModels={imageModels} models={textModels}>
       {children}
     </GatewayProviderClient>
   );
