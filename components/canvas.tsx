@@ -28,8 +28,8 @@ import { loadCanvas, saveCanvas } from "@/lib/canvas-storage";
 import { isValidSourceTarget } from "@/lib/xyflow";
 import { NodeDropzoneProvider } from "@/providers/node-dropzone";
 import { NodeOperationsProvider } from "@/providers/node-operations";
-import { ConnectionLine } from "./connection-line";
 import { edgeTypes } from "./edges";
+import { Connection } from "./ai-elements/connection";
 import { nodeTypes } from "./nodes";
 import {
   ContextMenu,
@@ -355,7 +355,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         <ContextMenu>
           <ContextMenuTrigger onContextMenu={handleContextMenu}>
             <ReactFlow
-              connectionLineComponent={ConnectionLine}
+              connectionLineComponent={Connection}
               deleteKeyCode={["Backspace", "Delete"]}
               edges={edges}
               edgeTypes={edgeTypes}
