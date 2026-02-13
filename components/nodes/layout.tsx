@@ -1,6 +1,12 @@
-import { Handle, Position, useReactFlow } from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { CodeIcon, CopyIcon, EyeIcon, TrashIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import {
+  Node,
+  NodeContent,
+  NodeHeader,
+  NodeTitle,
+} from "@/components/ai-elements/node";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -97,30 +103,31 @@ export const NodeLayout = ({
       {type !== "drop" && Boolean(toolbar?.length) && (
         <NodeToolbar id={id} items={toolbar} />
       )}
-      {type !== "file" && type !== "tweet" && (
-        <Handle position={Position.Left} type="target" />
-      )}
       <ContextMenu onOpenChange={handleSelect}>
         <ContextMenuTrigger>
-          <div className="relative size-full h-auto w-sm">
-            {type !== "drop" && (
-              <div className="absolute -top-2 right-0 left-0 flex shrink-0 -translate-y-full items-center justify-between">
-                <p className="font-mono text-muted-foreground text-xs tracking-tighter">
-                  {title}
-                </p>
-              </div>
+          <Node
+            className={cn(
+              className,
+              "rounded-[28px] border-none bg-transparent shadow-none"
             )}
-            <div
-              className={cn(
-                "node-container flex size-full flex-col divide-y rounded-[28px] bg-card p-2 ring-1 ring-border transition-all",
-                className
-              )}
-            >
+            handles={{
+              target: type !== "file" && type !== "tweet",
+              source: type !== "video",
+            }}
+          >
+            {type !== "drop" && (
+              <NodeHeader className="absolute -top-6 mb-3 border-none bg-transparent p-0!">
+                <NodeTitle className="font-mono font-normal text-muted-foreground text-xs">
+                  {title}
+                </NodeTitle>
+              </NodeHeader>
+            )}
+            <NodeContent className="rounded-[28px] bg-card p-2 ring-1 ring-border">
               <div className="overflow-hidden rounded-3xl bg-card">
                 {children}
               </div>
-            </div>
-          </div>
+            </NodeContent>
+          </Node>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem onClick={() => duplicateNode(id)}>
@@ -147,7 +154,6 @@ export const NodeLayout = ({
           )}
         </ContextMenuContent>
       </ContextMenu>
-      {type !== "video" && <Handle position={Position.Right} type="source" />}
       <Dialog onOpenChange={setShowData} open={showData}>
         <DialogContent>
           <DialogHeader>
