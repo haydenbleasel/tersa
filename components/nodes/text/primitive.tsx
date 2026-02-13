@@ -3,7 +3,6 @@ import { useReactFlow } from "@xyflow/react";
 import { useRef } from "react";
 import { EditorProvider } from "@/components/kibo-ui/editor";
 import { cn } from "@/lib/utils";
-import { useProject } from "@/providers/project";
 import { NodeLayout } from "../layout";
 import type { TextNodeProps } from ".";
 
@@ -19,7 +18,6 @@ export const TextPrimitive = ({
 }: TextPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
   const editor = useRef<Editor | null>(null);
-  const project = useProject();
 
   const handleUpdate = ({ editor: editorInstance }: { editor: Editor }) => {
     const json = editorInstance.getJSON();
@@ -30,10 +28,7 @@ export const TextPrimitive = ({
 
   const handleCreate = (props: EditorEvents["create"]) => {
     editor.current = props.editor;
-
-    if (project) {
-      props.editor.chain().focus().run();
-    }
+    props.editor.chain().focus().run();
   };
 
   return (

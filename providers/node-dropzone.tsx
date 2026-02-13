@@ -7,7 +7,6 @@ import { useDropzone } from "react-dropzone";
 import { uploadFile } from "@/lib/upload";
 import { cn } from "@/lib/utils";
 import { useNodeOperations } from "./node-operations";
-import { useProject } from "./project";
 
 type NodeDropzoneProviderProps = {
   children: ReactNode;
@@ -18,17 +17,15 @@ export const NodeDropzoneProvider = ({
 }: NodeDropzoneProviderProps) => {
   const { getViewport } = useReactFlow();
   const { addNode } = useNodeOperations();
-  const project = useProject();
   const dropzone = useDropzone({
     noClick: true,
     autoFocus: false,
     noKeyboard: true,
-    disabled: !project,
     onDrop: async (acceptedFiles) => {
       const uploads = await Promise.all(
         acceptedFiles.map(async (file) => ({
           name: file.name,
-          data: await uploadFile(file, "files"),
+          data: await uploadFile(file),
         }))
       );
 

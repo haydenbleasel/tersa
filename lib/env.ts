@@ -5,22 +5,6 @@ import { z } from "zod";
 export const env = createEnv({
   extends: [vercel()],
   server: {
-    RESEND_TOKEN: z.string().min(1).startsWith("re_"),
-    RESEND_EMAIL: z.string().email().min(1),
-
-    STRIPE_SECRET_KEY: z.string().min(1).startsWith("sk_"),
-    STRIPE_PRO_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
-    STRIPE_USAGE_PRODUCT_ID: z.string().min(1).startsWith("prod_"),
-    STRIPE_CREDITS_METER_ID: z.string().min(1).startsWith("mtr_"),
-    STRIPE_CREDITS_METER_NAME: z.string().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1).startsWith("whsec_"),
-
-    SUPABASE_AUTH_HOOK_SECRET: z.string().min(1).startsWith("v1,whsec_"),
-
-    // Supabase Integration
-    POSTGRES_URL: z.string().url().min(1),
-    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-
     // AI SDK
     OPENAI_API_KEY: z.string().min(1).startsWith("sk-"),
     HUME_API_KEY: z.string().min(1),
@@ -31,39 +15,19 @@ export const env = createEnv({
     MINIMAX_API_KEY: z.string().min(1),
     RUNWAYML_API_SECRET: z.string().min(1).startsWith("key_"),
     LUMA_API_KEY: z.string().min(1).startsWith("luma-"),
-  },
-  client: {
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
-    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
-    NEXT_PUBLIC_POSTHOG_HOST: z.string().url().min(1),
 
-    // Supabase Integration
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url().min(1),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    // File Storage
+    BLOB_READ_WRITE_TOKEN: z.string().min(1),
   },
+  client: {},
   runtimeEnv: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    POSTGRES_URL: process.env.POSTGRES_URL,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
     MINIMAX_GROUP_ID: process.env.MINIMAX_GROUP_ID,
     MINIMAX_API_KEY: process.env.MINIMAX_API_KEY,
-    RESEND_TOKEN: process.env.RESEND_TOKEN,
-    RESEND_EMAIL: process.env.RESEND_EMAIL,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    STRIPE_PRO_PRODUCT_ID: process.env.STRIPE_PRO_PRODUCT_ID,
-    STRIPE_USAGE_PRODUCT_ID: process.env.STRIPE_USAGE_PRODUCT_ID,
-    STRIPE_CREDITS_METER_ID: process.env.STRIPE_CREDITS_METER_ID,
-    STRIPE_CREDITS_METER_NAME: process.env.STRIPE_CREDITS_METER_NAME,
-    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    SUPABASE_AUTH_HOOK_SECRET: process.env.SUPABASE_AUTH_HOOK_SECRET,
     RUNWAYML_API_SECRET: process.env.RUNWAYML_API_SECRET,
     LUMA_API_KEY: process.env.LUMA_API_KEY,
-    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
-    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     HUME_API_KEY: process.env.HUME_API_KEY,
     LMNT_API_KEY: process.env.LMNT_API_KEY,
+    BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
   },
 });

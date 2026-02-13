@@ -1,27 +1,33 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import { currentUser } from "@/lib/auth";
-import Home from "./(unauthenticated)/home/page";
-import UnauthenticatedLayout from "./(unauthenticated)/layout";
+import { Canvas } from "@/components/canvas";
+import { Controls } from "@/components/controls";
+import { Reasoning } from "@/components/reasoning";
+import { Toolbar } from "@/components/toolbar";
+import { GatewayProvider } from "@/providers/gateway";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "A visual AI playground | Tersa",
+  title: "Tersa",
   description:
-    "Tersa is an open source canvas for building AI workflows. Drag, drop connect and run nodes to build your own workflows powered by various industry-leading AI models.",
+    "A visual AI playground. Drag, drop, connect and run nodes to build AI workflows powered by various industry-leading AI models.",
 };
 
-const Index = async () => {
-  const user = await currentUser();
+export const maxDuration = 800;
 
-  if (!user) {
-    return (
-      <UnauthenticatedLayout>
-        <Home />
-      </UnauthenticatedLayout>
-    );
-  }
-
-  redirect("/projects");
-};
+const Index = () => (
+  <GatewayProvider>
+    <Providers>
+      <div className="flex h-screen w-screen items-stretch overflow-hidden">
+        <div className="relative flex-1">
+          <Canvas>
+            <Controls />
+            <Toolbar />
+          </Canvas>
+        </div>
+        <Reasoning />
+      </div>
+    </Providers>
+  </GatewayProvider>
+);
 
 export default Index;

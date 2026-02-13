@@ -10,7 +10,6 @@ import {
   useMemo,
 } from "react";
 import { toast } from "sonner";
-import { mutate } from "swr";
 import { NodeLayout } from "@/components/nodes/layout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,8 +23,6 @@ import {
   getTranscriptionFromAudioNodes,
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
-import { useProject } from "@/providers/project";
-import { useSubscription } from "@/providers/subscription";
 import { ModelSelector } from "../model-selector";
 import type { CodeNodeProps } from ".";
 import { LanguageSelector } from "./language-selector";
@@ -53,12 +50,10 @@ export const CodeTransform = ({
   title,
 }: CodeTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const project = useProject();
   const { models: textModels } = useGateway();
   const modelId = data.model ?? getDefaultModel(textModels);
   const language = data.generated?.language ?? "javascript";
   const analytics = useAnalytics();
-  const subscription = useSubscription();
   const { messages, sendMessage, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/code",
@@ -66,10 +61,6 @@ export const CodeTransform = ({
     onError: (error) => handleError("Error generating text", error),
     onFinish: ({ message, isError }) => {
       if (isError) {
-        if (!subscription.isSubscribed) {
-          return;
-        }
-
         handleError("Error generating text", "Please try again later.");
         return;
       }
@@ -82,8 +73,6 @@ export const CodeTransform = ({
       });
 
       toast.success("Text generated successfully");
-
-      setTimeout(() => mutate("credits"), 5000);
     },
   });
 
@@ -205,7 +194,6 @@ export const CodeTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={stop}
             size="icon"
           >
@@ -219,7 +207,6 @@ export const CodeTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={handleGenerate}
             size="icon"
           >
@@ -233,7 +220,6 @@ export const CodeTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={handleGenerate}
             size="icon"
           >
@@ -267,7 +253,6 @@ export const CodeTransform = ({
     handleLanguageChange,
     status,
     messages,
-    project?.id,
     modelId,
     language,
     textModels,

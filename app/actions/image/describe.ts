@@ -2,12 +2,10 @@
 
 import { gateway } from "@ai-sdk/gateway";
 import { generateText } from "ai";
-import { getSubscribedUser } from "@/lib/auth";
 import { parseError } from "@/lib/error/parse";
 
 export const describeAction = async (
-  url: string,
-  projectId: string
+  url: string
 ): Promise<
   | {
       description: string;
@@ -17,17 +15,6 @@ export const describeAction = async (
     }
 > => {
   try {
-    await getSubscribedUser();
-
-    let parsedUrl = url;
-
-    if (process.env.NODE_ENV !== "production") {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      parsedUrl = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString("base64")}`;
-    }
-
     const { text } = await generateText({
       model: gateway("openai/gpt-5-nano"),
       messages: [
@@ -37,7 +24,7 @@ export const describeAction = async (
             { type: "text", text: "Describe this image." },
             {
               type: "image",
-              image: parsedUrl,
+              image: url,
             },
           ],
         },

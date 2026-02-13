@@ -17,7 +17,6 @@ import {
 } from "react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { mutate } from "swr";
 import {
   Message,
   MessageContent,
@@ -45,8 +44,6 @@ import {
   getTweetContentFromTweetNodes,
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
-import { useProject } from "@/providers/project";
-import { useSubscription } from "@/providers/subscription";
 import { ReasoningTunnel } from "@/tunnels/reasoning";
 import { ModelSelector } from "../model-selector";
 import type { TextNodeProps } from ".";
@@ -74,11 +71,9 @@ export const TextTransform = ({
   title,
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const project = useProject();
   const { models } = useGateway();
   const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
-  const subscription = useSubscription();
   const [reasoning, setReasoning] = useReasoning();
   const { sendMessage, messages, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
@@ -87,10 +82,6 @@ export const TextTransform = ({
     onError: (error) => handleError("Error generating text", error),
     onFinish: ({ message, isError }) => {
       if (isError) {
-        if (!subscription.isSubscribed) {
-          return;
-        }
-
         handleError("Error generating text", "Please try again later.");
         return;
       }
@@ -110,8 +101,6 @@ export const TextTransform = ({
       }));
 
       toast.success("Text generated successfully");
-
-      setTimeout(() => mutate("credits"), 5000);
     },
   });
 
@@ -233,7 +222,6 @@ export const TextTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={stop}
             size="icon"
           >
@@ -257,7 +245,6 @@ export const TextTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={handleGenerate}
             size="icon"
           >
@@ -285,7 +272,6 @@ export const TextTransform = ({
         children: (
           <Button
             className="rounded-full"
-            disabled={!project?.id}
             onClick={handleGenerate}
             size="icon"
           >
@@ -318,7 +304,6 @@ export const TextTransform = ({
     modelId,
     id,
     messages,
-    project?.id,
     status,
     stop,
     handleCopy,

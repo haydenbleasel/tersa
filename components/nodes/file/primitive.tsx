@@ -89,7 +89,7 @@ export const FilePrimitive = ({
       setFiles(droppedFiles);
       const [file] = droppedFiles;
 
-      const { url, type: contentType } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file);
 
       updateNodeData(id, {
         content: {
@@ -99,7 +99,7 @@ export const FilePrimitive = ({
         },
       });
     } catch (error) {
-      handleError("Error uploading video", error);
+      handleError("Error uploading file", error);
     } finally {
       setIsUploading(false);
     }

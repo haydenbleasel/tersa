@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { type ChangeEventHandler, type ComponentProps, useState } from "react";
 import { toast } from "sonner";
-import { mutate } from "swr";
 import { generateSpeechAction } from "@/app/actions/speech/create";
 import { NodeLayout } from "@/components/nodes/layout";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,6 @@ import {
   getDescriptionsFromImageNodes,
   getTextFromTextNodes,
 } from "@/lib/xyflow";
-import { useProject } from "@/providers/project";
 import { ModelSelector } from "../model-selector";
 import type { AudioNodeProps } from ".";
 import { VoiceSelector } from "./voice-selector";
@@ -52,14 +50,13 @@ export const AudioTransform = ({
 AudioTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const project = useProject();
   const modelId = data.model ?? getDefaultModel(speechModels);
   const model = speechModels[modelId];
   const analytics = useAnalytics();
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex audio generation flow
   const handleGenerate = async () => {
-    if (loading || !project?.id) {
+    if (loading) {
       return;
     }
 
@@ -92,9 +89,7 @@ AudioTransformProps) => {
 
       const response = await generateSpeechAction({
         text,
-        nodeId: id,
         modelId,
-        projectId: project.id,
         voice: data.voice,
         instructions,
       });
@@ -103,11 +98,15 @@ AudioTransformProps) => {
         throw new Error(response.error);
       }
 
-      updateNodeData(id, response.nodeData);
+      updateNodeData(id, {
+        updatedAt: new Date().toISOString(),
+        generated: {
+          url: response.url,
+          type: response.type,
+        },
+      });
 
       toast.success("Audio generated successfully");
-
-      setTimeout(() => mutate("credits"), 5000);
     } catch (error) {
       handleError("Error generating audio", error);
     } finally {
@@ -158,7 +157,7 @@ AudioTransformProps) => {
           children: (
             <Button
               className="rounded-full"
-              disabled={loading || !project?.id}
+              disabled={loading}
               onClick={handleGenerate}
               size="icon"
             >

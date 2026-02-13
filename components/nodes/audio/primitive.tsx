@@ -11,7 +11,6 @@ import { NodeLayout } from "@/components/nodes/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
-import { useProject } from "@/providers/project";
 import type { AudioNodeProps } from ".";
 
 type AudioPrimitiveProps = AudioNodeProps & {
@@ -26,11 +25,10 @@ export const AudioPrimitive = ({
 }: AudioPrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
   const [files, setFiles] = useState<File[] | undefined>();
-  const project = useProject();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleDrop = async (droppedFiles: File[]) => {
-    if (isUploading || !project?.id) {
+    if (isUploading) {
       return;
     }
 
@@ -43,7 +41,7 @@ export const AudioPrimitive = ({
       setFiles(droppedFiles);
       const [file] = droppedFiles;
 
-      const { url, type: contentType } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file);
 
       updateNodeData(id, {
         content: {
@@ -52,7 +50,7 @@ export const AudioPrimitive = ({
         },
       });
 
-      const response = await transcribeAction(url, project?.id);
+      const response = await transcribeAction(url);
 
       if ("error" in response) {
         throw new Error(response.error);
@@ -62,7 +60,7 @@ export const AudioPrimitive = ({
         transcript: response.transcript,
       });
     } catch (error) {
-      handleError("Error uploading video", error);
+      handleError("Error uploading audio", error);
     } finally {
       setIsUploading(false);
     }

@@ -40,7 +40,7 @@ export const VideoPrimitive = ({
       setFiles(droppedFiles);
 
       const [file] = droppedFiles;
-      const { url, type: contentType } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file);
 
       updateNodeData(id, {
         content: {

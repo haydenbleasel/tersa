@@ -1,38 +1,17 @@
+import { upload } from "@vercel/blob/client";
 import { nanoid } from "nanoid";
-import { createClient } from "./supabase/client";
 
-export const uploadFile = async (
-  file: File,
-  bucket: "avatars" | "files" | "screenshots",
-  filename?: string
-) => {
-  const client = createClient();
-  const { data } = await client.auth.getUser();
+export const uploadFile = async (file: File) => {
   const extension = file.name.split(".").pop();
+  const name = `${nanoid()}.${extension}`;
 
-  if (!data?.user) {
-    throw new Error("You need to be logged in to upload a file!");
-  }
-
-  const name = filename ?? `${nanoid()}.${extension}`;
-
-  const blob = await client.storage
-    .from(bucket)
-    .upload(`${data.user.id}/${name}`, file, {
-      contentType: file.type,
-      upsert: bucket === "screenshots",
-    });
-
-  if (blob.error) {
-    throw new Error(blob.error.message);
-  }
-
-  const { data: downloadUrl } = client.storage
-    .from(bucket)
-    .getPublicUrl(blob.data.path);
+  const blob = await upload(name, file, {
+    access: "public",
+    handleUploadUrl: "/api/upload",
+  });
 
   return {
-    url: downloadUrl.publicUrl,
+    url: blob.url,
     type: file.type,
   };
 };

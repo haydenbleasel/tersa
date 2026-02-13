@@ -5,22 +5,11 @@ import {
   streamText,
   wrapLanguageModel,
 } from "ai";
-import { getSubscribedUser } from "@/lib/auth";
-import { parseError } from "@/lib/error/parse";
-import { trackCreditUsage } from "@/lib/stripe";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export const POST = async (req: Request) => {
-  try {
-    await getSubscribedUser();
-  } catch (error) {
-    const message = parseError(error);
-
-    return new Response(message, { status: 401 });
-  }
-
   const { messages, modelId, language } = await req.json();
 
   if (typeof modelId !== "string") {
@@ -51,21 +40,6 @@ export const POST = async (req: Request) => {
     messages: await convertToModelMessages(messages),
     onError: (error) => {
       console.error(error);
-    },
-    onFinish: async ({ usage }) => {
-      const inputCost = model.pricing?.input
-        ? Number.parseFloat(model.pricing.input)
-        : 0;
-      const outputCost = model.pricing?.output
-        ? Number.parseFloat(model.pricing.output)
-        : 0;
-      const inputTokens = usage.inputTokens ?? 0;
-      const outputTokens = usage.outputTokens ?? 0;
-
-      await trackCreditUsage({
-        action: "code",
-        cost: inputCost * inputTokens + outputCost * outputTokens,
-      });
     },
   });
 
