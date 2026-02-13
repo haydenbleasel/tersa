@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 import type { VideoModel } from "@/lib/models/video";
 
 export const luma = (
-  modelId: "ray-1-6" | "ray-2" | "ray-flash-2"
+  modelId: "ray-2" | "ray-flash-2"
 ): VideoModel => ({
   modelId,
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation with polling
@@ -26,7 +26,7 @@ export const luma = (
             },
           }
         : undefined,
-      resolution: modelId === "ray-1-6" ? "720p" : "1080p",
+      resolution: "1080p",
     });
 
     const jobId = response.id;

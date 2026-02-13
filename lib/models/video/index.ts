@@ -134,30 +134,6 @@ export const videoModels: Record<string, TersaVideoModel> = {
       },
     ],
   },
-  "luma-ray-1.6": {
-    label: "Ray 1.6",
-    chef: providers.luma,
-    providers: [
-      {
-        ...providers.luma,
-        model: luma("ray-1-6"),
-
-        // https://lumalabs.ai/api/pricing
-        // Luma pricing isn't well documented, "API Cost" refers to per frame.
-        getCost: ({ duration }) => {
-          const unitCost = 0.0032;
-          const frames = 24;
-          const width = 1920;
-          const height = 1080;
-
-          const pixels = width * height;
-          const frameCost = (pixels / million) * unitCost;
-
-          return frameCost * frames * duration;
-        },
-      },
-    ],
-  },
   "luma-ray-2": {
     label: "Ray 2",
     chef: providers.luma,

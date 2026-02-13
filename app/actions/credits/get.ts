@@ -41,14 +41,17 @@ export const getCredits = async (): Promise<
       throw new Error("Usage product line item not found");
     }
 
-    if (!usageProductLineItem.pricing?.price_details?.price) {
+    const priceRef = usageProductLineItem.pricing?.price_details?.price;
+
+    if (!priceRef) {
       throw new Error("Usage product line item price not found");
     }
 
-    const usagePrice = await stripe.prices.retrieve(
-      usageProductLineItem.pricing.price_details.price,
-      { expand: ["tiers"] }
-    );
+    const priceId = typeof priceRef === "string" ? priceRef : priceRef.id;
+
+    const usagePrice = await stripe.prices.retrieve(priceId, {
+      expand: ["tiers"],
+    });
 
     if (!usagePrice.tiers?.length) {
       throw new Error("Usage price tiers not found");
