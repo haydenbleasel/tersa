@@ -3,7 +3,6 @@
 import {
   applyEdgeChanges,
   applyNodeChanges,
-  Background,
   type Edge,
   getOutgoers,
   type IsValidConnection,
@@ -13,7 +12,6 @@ import {
   type OnConnectStart,
   type OnEdgesChange,
   type OnNodesChange,
-  ReactFlow,
   type ReactFlowProps,
   useReactFlow,
 } from "@xyflow/react";
@@ -28,11 +26,16 @@ import { loadCanvas, saveCanvas } from "@/lib/canvas-storage";
 import { isValidSourceTarget } from "@/lib/xyflow";
 import { NodeDropzoneProvider } from "@/providers/node-dropzone";
 import { NodeOperationsProvider } from "@/providers/node-operations";
+import { Canvas as CanvasComponent } from "./ai-elements/canvas";
 import { Connection } from "./ai-elements/connection";
 import { Edge as EdgeComponents } from "./ai-elements/edge";
 import { nodeTypes } from "./nodes";
 
-const edgeTypes = { animated: EdgeComponents.Animated, temporary: EdgeComponents.Temporary };
+const edgeTypes = {
+  animated: EdgeComponents.Animated,
+  temporary: EdgeComponents.Temporary,
+};
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -356,12 +359,10 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       <NodeDropzoneProvider>
         <ContextMenu>
           <ContextMenuTrigger onContextMenu={handleContextMenu}>
-            <ReactFlow
+            <CanvasComponent
               connectionLineComponent={Connection}
-              deleteKeyCode={["Backspace", "Delete"]}
               edges={edges}
               edgeTypes={edgeTypes}
-              fitView
               isValidConnection={isValidConnection}
               nodes={nodes}
               nodeTypes={nodeTypes}
@@ -371,15 +372,10 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
               onDoubleClick={addDropNode}
               onEdgesChange={handleEdgesChange}
               onNodesChange={handleNodesChange}
-              panOnDrag={false}
-              panOnScroll
-              selectionOnDrag={true}
-              zoomOnDoubleClick={false}
               {...restProps}
             >
-              <Background />
               {children}
-            </ReactFlow>
+            </CanvasComponent>
           </ContextMenuTrigger>
           <ContextMenuContent>
             <ContextMenuItem onClick={addDropNode}>
