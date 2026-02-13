@@ -108,7 +108,7 @@ export const NodeLayout = ({
           <Node
             className={cn(
               className,
-              "rounded-[28px] border-none bg-transparent shadow-none"
+              "rounded-[28px] bg-transparent shadow-none"
             )}
             handles={{
               target: type !== "file" && type !== "tweet",
