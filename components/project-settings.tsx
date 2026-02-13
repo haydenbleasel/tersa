@@ -16,10 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { handleError } from "@/lib/error/handle";
-import { transcriptionModels } from "@/lib/models/transcription";
-import { useSubscription } from "@/providers/subscription";
 import type { projects } from "@/schema";
-import { ModelSelector } from "./nodes/model-selector";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -32,11 +29,7 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
   const [open, setOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [name, setName] = useState(data.name);
-  const [transcriptionModel, setTranscriptionModel] = useState(
-    data.transcriptionModel
-  );
   const router = useRouter();
-  const { isSubscribed } = useSubscription();
 
   const handleUpdateProject: FormEventHandler<HTMLFormElement> = async (
     event
@@ -52,7 +45,6 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
 
       const response = await updateProjectAction(data.id, {
         name,
-        transcriptionModel,
       });
 
       if ("error" in response) {
@@ -108,17 +100,6 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               onChange={({ target }) => setName(target.value)}
               placeholder="My new project"
               value={name}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="transcriptionModel">Transcription model</Label>
-            <ModelSelector
-              disabled={!isSubscribed}
-              id="transcriptionModel"
-              onChange={setTranscriptionModel}
-              options={transcriptionModels}
-              value={transcriptionModel}
-              width={462}
             />
           </div>
           <Button disabled={isUpdating || !name.trim()} type="submit">

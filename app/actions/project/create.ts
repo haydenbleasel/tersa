@@ -3,16 +3,7 @@
 import { currentUser } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { parseError } from "@/lib/error/parse";
-import { transcriptionModels } from "@/lib/models/transcription";
 import { projects } from "@/schema";
-
-const defaultTranscriptionModel = Object.entries(transcriptionModels).find(
-  ([_, model]) => model.default
-);
-
-if (!defaultTranscriptionModel) {
-  throw new Error("No default transcription model found");
-}
 
 export const createProjectAction = async (
   name: string,
@@ -37,7 +28,6 @@ export const createProjectAction = async (
       .values({
         name,
         userId: user.id,
-        transcriptionModel: defaultTranscriptionModel[0],
         welcomeProject,
       })
       .returning({ id: projects.id });

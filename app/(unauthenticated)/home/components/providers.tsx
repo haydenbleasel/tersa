@@ -8,7 +8,6 @@ import {
 } from "@/components/kibo-ui/marquee";
 import type { OpenAiIcon } from "@/lib/icons";
 import { speechModels } from "@/lib/models/speech";
-import { transcriptionModels } from "@/lib/models/transcription";
 import { videoModels } from "@/lib/models/video";
 import { providers } from "@/lib/providers";
 import { useGateway } from "@/providers/gateway/client";
@@ -19,7 +18,6 @@ export const Providers = () => {
   const allModels = [
     ...Object.values(imageModels),
     ...Object.values(speechModels),
-    ...Object.values(transcriptionModels),
     ...Object.values(videoModels),
     ...Object.values(textModels),
   ];

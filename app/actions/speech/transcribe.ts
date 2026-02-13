@@ -1,16 +1,13 @@
 "use server";
 
+import { openai } from "@ai-sdk/openai";
 import { experimental_transcribe as transcribe } from "ai";
-import { eq } from "drizzle-orm";
 import { getSubscribedUser } from "@/lib/auth";
-import { database } from "@/lib/database";
 import { parseError } from "@/lib/error/parse";
-import { transcriptionModels } from "@/lib/models/transcription";
-import { projects } from "@/schema";
 
 export const transcribeAction = async (
   url: string,
-  projectId: string
+  _projectId: string
 ): Promise<
   | {
       transcript: string;
@@ -22,23 +19,8 @@ export const transcribeAction = async (
   try {
     await getSubscribedUser();
 
-    const project = await database.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-    });
-
-    if (!project) {
-      throw new Error("Project not found");
-    }
-
-    const model = transcriptionModels[project.transcriptionModel];
-
-    if (!model) {
-      throw new Error("Model not found");
-    }
-
-    const provider = model.providers[0];
     const transcript = await transcribe({
-      model: provider.model,
+      model: openai.transcription("gpt-4o-mini-transcribe"),
       audio: new URL(url),
     });
 
