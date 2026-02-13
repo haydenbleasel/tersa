@@ -2,14 +2,12 @@
 
 import { gateway } from "@ai-sdk/gateway";
 import type { Edge, Node, Viewport } from "@xyflow/react";
-import { generateImage } from "ai";
+import { generateImage, generateText } from "ai";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import OpenAI from "openai";
 import { getSubscribedUser } from "@/lib/auth";
 import { database } from "@/lib/database";
 import { parseError } from "@/lib/error/parse";
-import { visionModels } from "@/lib/models/vision";
 import { trackCreditUsage } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { projects } from "@/schema";
@@ -106,43 +104,32 @@ export const generateImageAction = async ({
         ? downloadUrl.publicUrl
         : `data:${image.mediaType};base64,${Buffer.from(image.uint8Array).toString("base64")}`;
 
-    const project = await database.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-    });
-
-    if (!project) {
-      throw new Error("Project not found");
-    }
-
-    const visionModel = visionModels[project.visionModel];
-
-    if (!visionModel) {
-      throw new Error("Vision model not found");
-    }
-
-    const openai = new OpenAI();
-    const response = await openai.chat.completions.create({
-      model: visionModel.providers[0].model.modelId,
+    const { text: description } = await generateText({
+      model: gateway("openai/gpt-5-nano"),
       messages: [
         {
           role: "user",
           content: [
             { type: "text", text: "Describe this image." },
             {
-              type: "image_url",
-              image_url: {
-                url,
-              },
+              type: "image",
+              image: url,
             },
           ],
         },
       ],
     });
 
-    const description = response.choices.at(0)?.message.content;
-
     if (!description) {
       throw new Error("No description found");
+    }
+
+    const project = await database.query.projects.findFirst({
+      where: eq(projects.id, projectId),
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
     }
 
     const content = project.content as {

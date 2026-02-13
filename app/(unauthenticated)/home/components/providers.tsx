@@ -10,7 +10,6 @@ import type { OpenAiIcon } from "@/lib/icons";
 import { speechModels } from "@/lib/models/speech";
 import { transcriptionModels } from "@/lib/models/transcription";
 import { videoModels } from "@/lib/models/video";
-import { visionModels } from "@/lib/models/vision";
 import { providers } from "@/lib/providers";
 import { useGateway } from "@/providers/gateway/client";
 
@@ -22,7 +21,6 @@ export const Providers = () => {
     ...Object.values(speechModels),
     ...Object.values(transcriptionModels),
     ...Object.values(videoModels),
-    ...Object.values(visionModels),
     ...Object.values(textModels),
   ];
 

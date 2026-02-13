@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { handleError } from "@/lib/error/handle";
 import { transcriptionModels } from "@/lib/models/transcription";
-import { visionModels } from "@/lib/models/vision";
 import { useSubscription } from "@/providers/subscription";
 import type { projects } from "@/schema";
 import { ModelSelector } from "./nodes/model-selector";
@@ -36,7 +35,6 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
   const [transcriptionModel, setTranscriptionModel] = useState(
     data.transcriptionModel
   );
-  const [visionModel, setVisionModel] = useState(data.visionModel);
   const router = useRouter();
   const { isSubscribed } = useSubscription();
 
@@ -55,7 +53,6 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
       const response = await updateProjectAction(data.id, {
         name,
         transcriptionModel,
-        visionModel,
       });
 
       if ("error" in response) {
@@ -121,17 +118,6 @@ export const ProjectSettings = ({ data }: ProjectSettingsProps) => {
               onChange={setTranscriptionModel}
               options={transcriptionModels}
               value={transcriptionModel}
-              width={462}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="visionModel">Vision model</Label>
-            <ModelSelector
-              disabled={!isSubscribed}
-              id="visionModel"
-              onChange={setVisionModel}
-              options={visionModels}
-              value={visionModel}
               width={462}
             />
           </div>

@@ -14,7 +14,7 @@ export const projects = pgTable("project", {
   id: text("id").primaryKey().default(uuid).notNull(),
   name: varchar("name").notNull(),
   transcriptionModel: varchar("transcription_model").notNull(),
-  visionModel: varchar("vision_model").notNull(),
+  visionModel: varchar("vision_model"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at"),
   content: json("content"),
