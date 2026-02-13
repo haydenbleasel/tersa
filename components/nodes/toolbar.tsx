@@ -18,7 +18,7 @@ export const NodeToolbar = ({ id, items }: NodeToolbarProps) => {
   const node = getNode(id);
 
   return (
-    <Toolbar isVisible={node?.selected}>
+    <Toolbar className="rounded-full" isVisible={node?.selected}>
       {items?.map((button, index) =>
         button.tooltip ? (
           <Tooltip key={button.tooltip}>
