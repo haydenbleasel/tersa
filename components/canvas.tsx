@@ -24,9 +24,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useDebouncedCallback } from "use-debounce";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useSaveProject } from "@/hooks/use-save-project";
 import { loadCanvas, saveCanvas } from "@/lib/canvas-storage";
-import { handleError } from "@/lib/error/handle";
 import { isValidSourceTarget } from "@/lib/xyflow";
 import { NodeDropzoneProvider } from "@/providers/node-dropzone";
 import { NodeOperationsProvider } from "@/providers/node-operations";
@@ -62,7 +60,6 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     updateNode,
   } = useReactFlow();
   const analytics = useAnalytics();
-  const [saveState, setSaveState] = useSaveProject();
 
   useEffect(() => {
     const stored = loadCanvas();
@@ -73,21 +70,9 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     setLoaded(true);
   }, []);
 
-  const save = useDebouncedCallback(async () => {
-    if (saveState.isSaving) {
-      return;
-    }
-
-    try {
-      setSaveState((prev) => ({ ...prev, isSaving: true }));
-      const { nodes: currentNodes, edges: currentEdges } = toObject();
-      saveCanvas({ nodes: currentNodes, edges: currentEdges });
-      setSaveState((prev) => ({ ...prev, lastSaved: new Date() }));
-    } catch (error) {
-      handleError("Error saving canvas", error);
-    } finally {
-      setSaveState((prev) => ({ ...prev, isSaving: false }));
-    }
+  const save = useDebouncedCallback(() => {
+    const { nodes: currentNodes, edges: currentEdges } = toObject();
+    saveCanvas({ nodes: currentNodes, edges: currentEdges });
   }, 1000);
 
   const handleNodesChange = useCallback<OnNodesChange>(
