@@ -4,7 +4,7 @@ import { Controls } from "@/components/controls";
 import { Reasoning } from "@/components/reasoning";
 import { Toolbar } from "@/components/toolbar";
 import { GatewayProvider } from "@/providers/gateway";
-import { Providers } from "./providers";
+import { ReactFlowProvider } from "../providers/react-flow";
 
 export const metadata: Metadata = {
   title: "Tersa",
@@ -16,7 +16,7 @@ export const maxDuration = 800;
 
 const Index = () => (
   <GatewayProvider>
-    <Providers>
+    <ReactFlowProvider>
       <div className="flex h-screen w-screen items-stretch overflow-hidden">
         <div className="relative flex-1">
           <Canvas>
@@ -26,7 +26,7 @@ const Index = () => (
         </div>
         <Reasoning />
       </div>
-    </Providers>
+    </ReactFlowProvider>
   </GatewayProvider>
 );
 
