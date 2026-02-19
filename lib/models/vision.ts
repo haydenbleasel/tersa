@@ -1,10 +1,10 @@
 import { openai } from "@ai-sdk/openai";
-import type { LanguageModelV2 } from "@ai-sdk/provider";
+import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { providers, type TersaModel, type TersaProvider } from "../providers";
 
 type TersaVisionModel = TersaModel & {
   providers: (TersaProvider & {
-    model: LanguageModelV2;
+    model: LanguageModelV3;
   })[];
 };
 

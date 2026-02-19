@@ -1,4 +1,4 @@
-import type { ImageModelV2 } from "@ai-sdk/provider";
+import type { ImageModelV3 } from "@ai-sdk/provider";
 import createFetchClient, { type Client } from "openapi-fetch";
 import { env } from "@/lib/env";
 import type { paths } from "@/openapi/bfl";
@@ -175,10 +175,10 @@ const createJob = async ({
 };
 
 export const blackForestLabs = {
-  image: (modelId: (typeof models)[number]): ImageModelV2 => ({
+  image: (modelId: (typeof models)[number]): ImageModelV3 => ({
     modelId,
     provider: "black-forest-labs",
-    specificationVersion: "v2",
+    specificationVersion: "v3",
     maxImagesPerCall: 1,
     doGenerate: async ({
       prompt,
@@ -193,14 +193,15 @@ export const blackForestLabs = {
 
       let imagePrompt: string | undefined;
 
-      if (typeof providerOptions?.bfl?.image === "string") {
-        imagePrompt = providerOptions.bfl.image;
+      const bflOptions = providerOptions?.bfl as Record<string, unknown> | undefined;
+      if (typeof bflOptions?.image === "string") {
+        imagePrompt = bflOptions.image;
       }
 
       const jobResponse = await createJob({
         client,
         modelId,
-        prompt,
+        prompt: prompt ?? "",
         size,
         seed,
         abortSignal,
