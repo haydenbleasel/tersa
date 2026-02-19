@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^3.0.66",
-    "@ai-sdk/gateway": "^2.0.18",
+    "@ai-sdk/gateway": "^3.0.51",
     "@ai-sdk/hume": "^1.0.19",
     "@ai-sdk/lmnt": "^1.0.19",
     "@ai-sdk/luma": "^1.0.19",
@@ -69,7 +69,7 @@
     "@tiptap/suggestion": "^3.12.1",
     "@vercel/analytics": "^1.6.1",
     "@xyflow/react": "^12.9.3",
-    "ai": "^5.0.106",
+    "ai": "^6.0.93",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
