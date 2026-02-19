@@ -1,3 +1,15 @@
+# v2.0.1 (Thu Feb 19 2026)
+
+#### ⚠️ Pushed to `main`
+
+- Upgrade deps, fix build ([@haydenbleasel](https://github.com/haydenbleasel))
+
+#### Authors: 1
+
+- Hayden Bleasel ([@haydenbleasel](https://github.com/haydenbleasel))
+
+---
+
 # v2.0.0 (Thu Feb 19 2026)
 
 :tada: This release contains work from a new contributor! :tada:
