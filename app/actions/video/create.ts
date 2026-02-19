@@ -9,11 +9,13 @@ import { parseError } from "@/lib/error/parse";
 type GenerateVideoActionProps = {
   modelId: string;
   prompt: string;
+  image?: string;
 };
 
 export const generateVideoAction = async ({
   modelId,
   prompt,
+  image,
 }: GenerateVideoActionProps): Promise<
   | {
       url: string;
@@ -26,7 +28,7 @@ export const generateVideoAction = async ({
   try {
     const result = await generateVideo({
       model: gateway.videoModel(modelId),
-      prompt,
+      prompt: image ? { image, text: prompt } : prompt,
     });
 
     const blob = await put(`${nanoid()}.mp4`, result.video.uint8Array, {

@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { download } from "@/lib/download";
 import { handleError } from "@/lib/error/handle";
-import { getTextFromTextNodes } from "@/lib/xyflow";
+import { getImagesFromImageNodes, getTextFromTextNodes } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
 import { ModelSelector } from "../model-selector";
 import type { VideoNodeProps } from ".";
@@ -25,9 +25,7 @@ type VideoTransformProps = VideoNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (
-  models: Record<string, { default?: boolean }>
-) => {
+const getDefaultModel = (models: Record<string, { default?: boolean }>) => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
@@ -66,8 +64,9 @@ VideoTransformProps) => {
     try {
       const incomers = getIncomers({ id }, getNodes(), getEdges());
       const textPrompts = getTextFromTextNodes(incomers);
+      const images = getImagesFromImageNodes(incomers);
 
-      if (!textPrompts.length) {
+      if (!(textPrompts.length || images.length)) {
         throw new Error("No prompts found");
       }
 
@@ -83,6 +82,7 @@ VideoTransformProps) => {
       const response = await generateVideoAction({
         modelId,
         prompt: [data.instructions ?? "", ...textPrompts].join("\n"),
+        image: images.at(0)?.url,
       });
 
       if ("error" in response) {
