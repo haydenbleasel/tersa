@@ -16,8 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { download } from "@/lib/download";
 import { handleError } from "@/lib/error/handle";
-import { videoModels } from "@/lib/models/video";
-import { getImagesFromImageNodes, getTextFromTextNodes } from "@/lib/xyflow";
+import { getTextFromTextNodes } from "@/lib/xyflow";
+import { useGateway } from "@/providers/gateway/client";
 import { ModelSelector } from "../model-selector";
 import type { VideoNodeProps } from ".";
 
@@ -25,16 +25,24 @@ type VideoTransformProps = VideoNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof videoModels) => {
+const getDefaultModel = (
+  models: Record<string, { default?: boolean }>
+) => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
 
-  if (!defaultModel) {
-    throw new Error("No default model found");
+  if (defaultModel) {
+    return defaultModel[0];
   }
 
-  return defaultModel[0];
+  const firstModel = Object.keys(models)[0];
+
+  if (!firstModel) {
+    throw new Error("No video models available");
+  }
+
+  return firstModel;
 };
 
 export const VideoTransform = ({
@@ -46,6 +54,7 @@ export const VideoTransform = ({
 VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
+  const { videoModels } = useGateway();
   const modelId = data.model ?? getDefaultModel(videoModels);
   const analytics = useAnalytics();
 
@@ -57,9 +66,8 @@ VideoTransformProps) => {
     try {
       const incomers = getIncomers({ id }, getNodes(), getEdges());
       const textPrompts = getTextFromTextNodes(incomers);
-      const images = getImagesFromImageNodes(incomers);
 
-      if (!(textPrompts.length || images.length)) {
+      if (!textPrompts.length) {
         throw new Error("No prompts found");
       }
 
@@ -70,13 +78,11 @@ VideoTransformProps) => {
         promptLength: textPrompts.join("\n").length,
         model: modelId,
         instructionsLength: data.instructions?.length ?? 0,
-        imageCount: images.length,
       });
 
       const response = await generateVideoAction({
         modelId,
         prompt: [data.instructions ?? "", ...textPrompts].join("\n"),
-        images: images.slice(0, 1),
       });
 
       if ("error" in response) {

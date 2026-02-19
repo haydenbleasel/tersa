@@ -174,6 +174,11 @@ export const providers = {
     name: "Kling",
     icon: KlingIcon,
   },
+  klingai: {
+    id: "klingai",
+    name: "Kling",
+    icon: KlingIcon,
+  },
   replicate: {
     id: "replicate",
     name: "Replicate",

@@ -25,15 +25,24 @@ export type TersaImageModel = TersaModel & {
   })[];
 };
 
+export type TersaVideoModel = TersaModel & {
+  providers: (TersaProvider & {
+    model: string;
+    getCost: () => number;
+  })[];
+};
+
 type GatewayProviderClientProps = {
   children: ReactNode;
   models: GatewayLanguageModelEntry[];
   imageModels: GatewayLanguageModelEntry[];
+  videoModels: GatewayLanguageModelEntry[];
 };
 
 type GatewayContextType = {
   models: Record<string, TersaTextModel>;
   imageModels: Record<string, TersaImageModel>;
+  videoModels: Record<string, TersaVideoModel>;
 };
 
 const GatewayContext = createContext<GatewayContextType | undefined>(undefined);
@@ -199,17 +208,78 @@ const buildImageModels = (models: GatewayLanguageModelEntry[]) => {
   return imageModels;
 };
 
+const buildVideoModels = (models: GatewayLanguageModelEntry[]) => {
+  const videoModels: Record<string, TersaVideoModel> = {};
+
+  const allCosts = models.map((model) => {
+    const inputPrice = model.pricing?.input
+      ? Number.parseFloat(model.pricing.input)
+      : 0;
+    const outputPrice = model.pricing?.output
+      ? Number.parseFloat(model.pricing.output)
+      : 0;
+    return inputPrice + outputPrice;
+  });
+
+  for (const model of models) {
+    const [chef] = model.id.split("/");
+
+    const inputPrice = model.pricing?.input
+      ? Number.parseFloat(model.pricing.input)
+      : 0;
+    const outputPrice = model.pricing?.output
+      ? Number.parseFloat(model.pricing.output)
+      : 0;
+
+    let realChef = providers.unknown;
+    let realProvider = providers.unknown;
+
+    if (chef in providers) {
+      realChef = providers[chef as keyof typeof providers];
+    }
+
+    if (model.specification.provider in providers) {
+      realProvider =
+        providers[model.specification.provider as keyof typeof providers];
+    }
+
+    const totalCost = inputPrice + outputPrice;
+    const flatCost = totalCost || 0.5; // fallback estimate per video
+
+    videoModels[model.id] = {
+      label: model.name,
+      chef: realChef,
+      providers: [
+        {
+          ...realProvider,
+          model: model.id,
+          getCost: () => flatCost,
+        },
+      ],
+      priceIndicator: getPriceIndicator(totalCost, allCosts),
+    };
+  }
+
+  return videoModels;
+};
+
 export const GatewayProviderClient = ({
   children,
   models,
   imageModels,
+  videoModels,
 }: GatewayProviderClientProps) => {
   const textModels = buildTextModels(models);
   const imageModelMap = buildImageModels(imageModels);
+  const videoModelMap = buildVideoModels(videoModels);
 
   return (
     <GatewayContext.Provider
-      value={{ models: textModels, imageModels: imageModelMap }}
+      value={{
+        models: textModels,
+        imageModels: imageModelMap,
+        videoModels: videoModelMap,
+      }}
     >
       {children}
     </GatewayContext.Provider>
