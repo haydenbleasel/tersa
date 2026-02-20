@@ -50,7 +50,7 @@ export const generateImageAction = async ({
 
     const name = `${nanoid()}.${extension}`;
 
-    const blob = await put(name, image.uint8Array, {
+    const blob = await put(name, image.uint8Array.buffer as ArrayBuffer, {
       access: "public",
       contentType: image.mediaType,
     });

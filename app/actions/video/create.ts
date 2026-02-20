@@ -31,7 +31,7 @@ export const generateVideoAction = async ({
       prompt: image ? { image, text: prompt } : prompt,
     });
 
-    const blob = await put(`${nanoid()}.mp4`, result.video.uint8Array, {
+    const blob = await put(`${nanoid()}.mp4`, result.video.uint8Array.buffer as ArrayBuffer, {
       access: "public",
       contentType: "video/mp4",
     });
