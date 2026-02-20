@@ -15,10 +15,8 @@ import {
   FireworksIcon,
   GoogleIcon,
   GroqIcon,
-  HumeIcon,
   InceptionIcon,
   KlingIcon,
-  LmntIcon,
   LumaIcon,
   MetaIcon,
   MinimaxIcon,
@@ -99,20 +97,10 @@ export const providers = {
     name: "Minimax",
     icon: MinimaxIcon,
   },
-  hume: {
-    id: "hume",
-    name: "Hume",
-    icon: HumeIcon,
-  },
   cohere: {
     id: "cohere",
     name: "Cohere",
     icon: CohereIcon,
-  },
-  lmnt: {
-    id: "lmnt",
-    name: "LMNT",
-    icon: LmntIcon,
   },
   "black-forest-labs": {
     id: "black-forest-labs",
