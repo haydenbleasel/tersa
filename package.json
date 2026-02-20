@@ -36,7 +36,7 @@
     "@tiptap/suggestion": "^3.19.0",
     "@vercel/analytics": "^1.6.1",
     "@vercel/blob": "^0.27.0",
-    "@xyflow/react": "^12.10.0",
+    "@xyflow/react": "^12.10.1",
     "ai": "^6.0.95",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
