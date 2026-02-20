@@ -40,7 +40,13 @@ export const editImageAction = async ({
 
     const imageData = await Promise.all(
       images.map(async (img) => {
-        const response = await fetch(img.url);
+        const url = new URL(img.url);
+
+        if (!url.hostname.endsWith(".public.blob.vercel-storage.com")) {
+          throw new Error("Invalid image URL");
+        }
+
+        const response = await fetch(url);
         const buffer = await response.arrayBuffer();
         return new Uint8Array(buffer);
       })
