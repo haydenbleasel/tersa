@@ -4,9 +4,7 @@
     "first-time-contributor",
     "released"
   ],
-  "owner": "haydenbleasel",
+  "owner": "vercel-labs",
   "repo": "tersa",
-  "name": "Hayden Bleasel",
-  "email": "hello@haydenbleasel.com",
   "onlyPublishWithReleaseLabel": false
 }
