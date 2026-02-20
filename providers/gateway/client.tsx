@@ -32,18 +32,18 @@ export type TersaVideoModel = TersaModel & {
   })[];
 };
 
-type GatewayProviderClientProps = {
+interface GatewayProviderClientProps {
   children: ReactNode;
   models: GatewayLanguageModelEntry[];
   imageModels: GatewayLanguageModelEntry[];
   videoModels: GatewayLanguageModelEntry[];
-};
+}
 
-type GatewayContextType = {
+interface GatewayContextType {
   models: Record<string, TersaTextModel>;
   imageModels: Record<string, TersaImageModel>;
   videoModels: Record<string, TersaVideoModel>;
-};
+}
 
 const GatewayContext = createContext<GatewayContextType | undefined>(undefined);
 

@@ -3,7 +3,7 @@ import { useNodeConnections } from "@xyflow/react";
 import { TextPrimitive } from "./primitive";
 import { TextTransform } from "./transform";
 
-export type TextNodeProps = {
+export interface TextNodeProps {
   type: string;
   data: {
     generated?: {
@@ -20,7 +20,7 @@ export type TextNodeProps = {
     text?: string;
   };
   id: string;
-};
+}
 
 export const TextNode = (props: TextNodeProps) => {
   const connections = useNodeConnections({

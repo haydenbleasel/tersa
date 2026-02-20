@@ -3,7 +3,7 @@ import { Fragment, type ReactNode } from "react";
 import { Toolbar } from "../ai-elements/toolbar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-type NodeToolbarProps = {
+interface NodeToolbarProps {
   id: string;
   items:
     | {
@@ -11,7 +11,7 @@ type NodeToolbarProps = {
         children: ReactNode;
       }[]
     | undefined;
-};
+}
 
 export const NodeToolbar = ({ id, items }: NodeToolbarProps) => {
   const { getNode } = useReactFlow();

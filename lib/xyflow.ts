@@ -37,7 +37,7 @@ export const getImagesFromImageNodes = (nodes: Node[]) => {
   return [...sourceImages, ...generatedImages];
 };
 
-export const isValidSourceTarget = (source: Node, target: Node) => {
+export const isValidSourceTarget = (source: Node, _target: Node) => {
   if (source.type === "video" || source.type === "drop") {
     return false;
   }

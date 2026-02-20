@@ -1,4 +1,4 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { type HandleUploadBody, handleUpload } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
@@ -18,7 +18,8 @@ export const POST = async (request: Request) => {
         ],
         maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
       }),
-      onUploadCompleted: async () => {},
+      // Required by @vercel/blob but no action needed
+      onUploadCompleted: async () => undefined,
     });
 
     return NextResponse.json(jsonResponse);

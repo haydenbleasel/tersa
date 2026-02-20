@@ -4,6 +4,8 @@
   "files": {
     "includes": [
       "!components/ui",
+      "!components/kibo-ui",
+      "!components/ai-elements",
       "!lib/utils.ts",
       "!hooks/use-mobile.ts",
       "!components/supabase-ui",

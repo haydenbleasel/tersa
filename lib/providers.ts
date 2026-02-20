@@ -35,11 +35,11 @@ import {
   ZaiIcon,
 } from "./icons";
 
-export type TersaProvider = {
+export interface TersaProvider {
   id: string;
   name: string;
   icon: typeof OpenAiIcon;
-};
+}
 
 export const providers = {
   openai: {
@@ -219,7 +219,7 @@ export const providers = {
   },
 };
 
-export type TersaModel = {
+export interface TersaModel {
   // Inherits from chef if not provided
   icon?: typeof OpenAiIcon;
   label: string;
@@ -229,4 +229,4 @@ export type TersaModel = {
   priceIndicator?: PriceBracket;
   disabled?: boolean;
   default?: boolean;
-};
+}

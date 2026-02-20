@@ -1,16 +1,16 @@
 "use server";
 
 import { gateway } from "@ai-sdk/gateway";
-import { generateImage, generateText } from "ai";
 import { put } from "@vercel/blob";
+import { generateImage, generateText } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
 
-type GenerateImageActionProps = {
+interface GenerateImageActionProps {
   prompt: string;
   modelId: string;
   instructions?: string;
-};
+}
 
 export const generateImageAction = async ({
   prompt,

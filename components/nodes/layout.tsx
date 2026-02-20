@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { useNodeOperations } from "@/providers/node-operations";
 import { NodeToolbar } from "./toolbar";
 
-type NodeLayoutProps = {
+interface NodeLayoutProps {
   children: ReactNode;
   id: string;
   data?: Record<string, unknown> & {
@@ -40,7 +40,7 @@ type NodeLayoutProps = {
     children: ReactNode;
   }[];
   className?: string;
-};
+}
 
 export const NodeLayout = ({
   children,

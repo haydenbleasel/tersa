@@ -12,13 +12,13 @@ import {
 import { nodeButtons } from "@/lib/node-buttons";
 import { NodeLayout } from "./layout";
 
-type DropNodeProps = {
+interface DropNodeProps {
   data: {
     isSource?: boolean;
     position: XYPosition;
   };
   id: string;
-};
+}
 
 export const DropNode = ({ data, id }: DropNodeProps) => {
   const { addNodes, deleteElements, getNode, addEdges, getNodeConnections } =
@@ -106,14 +106,14 @@ export const DropNode = ({ data, id }: DropNodeProps) => {
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Add node">
               {nodeButtons.map((button) => (
-                  <CommandItem
-                    key={button.id}
-                    onSelect={() => handleSelect(button.id)}
-                  >
-                    <button.icon size={16} />
-                    {button.label}
-                  </CommandItem>
-                ))}
+                <CommandItem
+                  key={button.id}
+                  onSelect={() => handleSelect(button.id)}
+                >
+                  <button.icon size={16} />
+                  {button.label}
+                </CommandItem>
+              ))}
             </CommandGroup>
           </CommandList>
         </Command>

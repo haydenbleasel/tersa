@@ -2,10 +2,10 @@ import type { Edge, Node } from "@xyflow/react";
 
 const STORAGE_KEY = "tersa-canvas";
 
-type CanvasData = {
+interface CanvasData {
   nodes: Node[];
   edges: Edge[];
-};
+}
 
 export const saveCanvas = (data: CanvasData) => {
   try {

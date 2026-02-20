@@ -44,8 +44,7 @@ export const VideoTransform = ({
   id,
   type,
   title,
-}: // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation component
-VideoTransformProps) => {
+}: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
   const { videoModels } = useGateway();

@@ -5,7 +5,8 @@ import { Controls as ControlsPrimitive } from "./ai-elements/controls";
 import { ThemeSwitcher } from "./theme-switcher";
 
 export const ControlsInner = () => (
-  <div onDoubleClick={(e) => e.stopPropagation()}>
+  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: Prevents ReactFlow double-click zoom
+  <div onDoubleClick={(e) => e.stopPropagation()} role="toolbar">
     <ControlsPrimitive
       className="rounded-full [&>button]:rounded-full [&>button]:hover:bg-accent"
       orientation="horizontal"

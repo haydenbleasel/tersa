@@ -1,11 +1,11 @@
-import { gateway } from "@ai-sdk/gateway";
 import type { GatewayLanguageModelEntry } from "@ai-sdk/gateway";
+import { gateway } from "@ai-sdk/gateway";
 import type { ReactNode } from "react";
 import { GatewayProviderClient } from "./client";
 
-type GatewayProviderProps = {
+interface GatewayProviderProps {
   children: ReactNode;
-};
+}
 
 // TODO: Remove once video models are available via gateway.getAvailableModels()
 const temporaryVideoModels: GatewayLanguageModelEntry[] = [

@@ -8,9 +8,9 @@ import { uploadFile } from "@/lib/upload";
 import { cn } from "@/lib/utils";
 import { useNodeOperations } from "./node-operations";
 
-type NodeDropzoneProviderProps = {
+interface NodeDropzoneProviderProps {
   children: ReactNode;
-};
+}
 
 export const NodeDropzoneProvider = ({
   children,

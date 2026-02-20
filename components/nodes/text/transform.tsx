@@ -101,7 +101,6 @@ export const TextTransform = ({
     },
   });
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex text generation flow
   const handleGenerate = useCallback(async () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
@@ -197,11 +196,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Stop",
         children: (
-          <Button
-            className="rounded-full"
-            onClick={stop}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={stop} size="icon">
             <SquareIcon size={12} />
           </Button>
         ),
@@ -220,11 +215,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Regenerate",
         children: (
-          <Button
-            className="rounded-full"
-            onClick={handleGenerate}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={handleGenerate} size="icon">
             <RotateCcwIcon size={12} />
           </Button>
         ),
@@ -247,11 +238,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Generate",
         children: (
-          <Button
-            className="rounded-full"
-            onClick={handleGenerate}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={handleGenerate} size="icon">
             <PlayIcon size={12} />
           </Button>
         ),

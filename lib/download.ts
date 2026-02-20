@@ -1,9 +1,9 @@
 import { handleError } from "./error/handle";
 
-type Downloadable = {
+interface Downloadable {
   url: string;
   type: string;
-};
+}
 
 export const download = (
   data: Downloadable | undefined,

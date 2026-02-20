@@ -1,16 +1,16 @@
 "use server";
 
 import { gateway } from "@ai-sdk/gateway";
-import { experimental_generateVideo as generateVideo } from "ai";
 import { put } from "@vercel/blob";
+import { experimental_generateVideo as generateVideo } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
 
-type GenerateVideoActionProps = {
+interface GenerateVideoActionProps {
   modelId: string;
   prompt: string;
   image?: string;
-};
+}
 
 export const generateVideoAction = async ({
   modelId,
@@ -31,10 +31,14 @@ export const generateVideoAction = async ({
       prompt: image ? { image, text: prompt } : prompt,
     });
 
-    const blob = await put(`${nanoid()}.mp4`, result.video.uint8Array.buffer as ArrayBuffer, {
-      access: "public",
-      contentType: "video/mp4",
-    });
+    const blob = await put(
+      `${nanoid()}.mp4`,
+      result.video.uint8Array.buffer as ArrayBuffer,
+      {
+        access: "public",
+        contentType: "video/mp4",
+      }
+    );
 
     return {
       url: blob.url,

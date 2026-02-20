@@ -30,7 +30,7 @@ import {
 } from "../ui/command";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-type ModelSelectorProps = {
+interface ModelSelectorProps {
   id?: string;
   options: Record<string, TersaModel>;
   value: string;
@@ -38,7 +38,7 @@ type ModelSelectorProps = {
   className?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
-};
+}
 
 const getCostBracketIcon = (bracket: PriceBracket, className?: string) => {
   switch (bracket) {

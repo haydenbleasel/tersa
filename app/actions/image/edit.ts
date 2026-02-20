@@ -1,19 +1,19 @@
 "use server";
 
 import { gateway } from "@ai-sdk/gateway";
-import { generateImage } from "ai";
 import { put } from "@vercel/blob";
+import { generateImage } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
 
-type EditImageActionProps = {
+interface EditImageActionProps {
   images: {
     url: string;
     type: string;
   }[];
   modelId: string;
   instructions?: string;
-};
+}
 
 export const editImageAction = async ({
   images,
@@ -56,10 +56,14 @@ export const editImageAction = async ({
 
     const { image } = result;
 
-    const blob = await put(`${nanoid()}.png`, Buffer.from(image.base64, "base64"), {
-      access: "public",
-      contentType: "image/png",
-    });
+    const blob = await put(
+      `${nanoid()}.png`,
+      Buffer.from(image.base64, "base64"),
+      {
+        access: "public",
+        contentType: "image/png",
+      }
+    );
 
     return {
       url: blob.url,

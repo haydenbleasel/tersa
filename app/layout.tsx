@@ -7,9 +7,9 @@ import { mono, sans, serif } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme";
 
-type RootLayoutProps = {
+interface RootLayoutProps {
   children: ReactNode;
-};
+}
 
 const RootLayout = ({ children }: RootLayoutProps) => (
   <html lang="en" suppressHydrationWarning>
