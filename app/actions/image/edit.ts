@@ -5,20 +5,7 @@ import { put } from "@vercel/blob";
 import { generateImage } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
-
-const ALLOWED_BLOB_HOST = "public.blob.vercel-storage.com";
-
-function isAllowedBlobUrl(url: URL): boolean {
-  if (url.protocol !== "https:") {
-    return false;
-  }
-
-  if (url.hostname === ALLOWED_BLOB_HOST) {
-    return true;
-  }
-
-  return url.hostname.endsWith("." + ALLOWED_BLOB_HOST);
-}
+import { assertBlobUrl } from "@/lib/url";
 
 interface EditImageActionProps {
   images: {
@@ -54,11 +41,7 @@ export const editImageAction = async ({
 
     const imageData = await Promise.all(
       images.map(async (img) => {
-        const url = new URL(img.url);
-
-        if (!isAllowedBlobUrl(url)) {
-          throw new Error("Invalid image URL");
-        }
+        const url = assertBlobUrl(img.url);
 
         const response = await fetch(url.toString());
         const buffer = await response.arrayBuffer();

@@ -59,10 +59,28 @@ export const SourcesContent = ({
 
 export type SourceProps = ComponentProps<"a">;
 
+const sanitizeHref = (href: string | undefined): string | undefined => {
+  if (!href) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(href);
+
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      return url.toString();
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export const Source = ({ href, title, children, ...props }: SourceProps) => (
   <a
     className="flex items-center gap-2"
-    href={href}
+    href={sanitizeHref(href)}
     rel="noreferrer"
     target="_blank"
     {...props}

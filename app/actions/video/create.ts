@@ -5,6 +5,7 @@ import { put } from "@vercel/blob";
 import { experimental_generateVideo as generateVideo } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
+import { assertBlobUrl } from "@/lib/url";
 
 interface GenerateVideoActionProps {
   modelId: string;
@@ -26,9 +27,11 @@ export const generateVideoAction = async ({
     }
 > => {
   try {
+    const validatedImage = image ? assertBlobUrl(image).toString() : undefined;
+
     const result = await generateVideo({
       model: gateway.videoModel(modelId),
-      prompt: image ? { image, text: prompt } : prompt,
+      prompt: validatedImage ? { image: validatedImage, text: prompt } : prompt,
     });
 
     const blob = await put(
