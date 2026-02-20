@@ -36,7 +36,11 @@ const getDefaultModel = (models: Record<string, { default?: boolean }>) => {
 
   const firstModel = Object.keys(models)[0];
 
-  return firstModel ?? "";
+  if (!firstModel) {
+    throw new Error("No video models available");
+  }
+
+  return firstModel;
 };
 
 export const VideoTransform = ({

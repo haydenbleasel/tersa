@@ -12,8 +12,8 @@
     "fix": "ultracite fix"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^3.0.51",
-    "@ai-sdk/react": "^3.0.87",
+    "@ai-sdk/gateway": "^3.0.53",
+    "@ai-sdk/react": "^3.0.97",
     "@tiptap/core": "^3.19.0",
     "@tiptap/extension-character-count": "^3.19.0",
     "@tiptap/extension-code-block-lowlight": "^3.19.0",
@@ -37,7 +37,7 @@
     "@vercel/analytics": "^1.6.1",
     "@vercel/blob": "^0.27.0",
     "@xyflow/react": "^12.10.0",
-    "ai": "^6.0.93",
+    "ai": "^6.0.95",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
