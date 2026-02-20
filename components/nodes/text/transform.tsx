@@ -37,11 +37,8 @@ import { useReasoning } from "@/hooks/use-reasoning";
 import { handleError } from "@/lib/error/handle";
 import {
   getDescriptionsFromImageNodes,
-  getFilesFromFileNodes,
   getImagesFromImageNodes,
   getTextFromTextNodes,
-  getTranscriptionFromAudioNodes,
-  getTweetContentFromTweetNodes,
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
 import { ReasoningTunnel } from "@/tunnels/reasoning";
@@ -108,13 +105,10 @@ export const TextTransform = ({
   const handleGenerate = useCallback(async () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
-    const audioPrompts = getTranscriptionFromAudioNodes(incomers);
     const images = getImagesFromImageNodes(incomers);
     const imageDescriptions = getDescriptionsFromImageNodes(incomers);
-    const tweetContent = getTweetContentFromTweetNodes(incomers);
-    const files = getFilesFromFileNodes(incomers);
 
-    if (!(textPrompts.length || audioPrompts.length || data.instructions)) {
+    if (!(textPrompts.length || data.instructions)) {
       handleError("Error generating text", "No prompts found");
       return;
     }
@@ -129,16 +123,8 @@ export const TextTransform = ({
       content.push("--- Text Prompts ---", ...textPrompts);
     }
 
-    if (audioPrompts.length) {
-      content.push("--- Audio Prompts ---", ...audioPrompts);
-    }
-
     if (imageDescriptions.length) {
       content.push("--- Image Descriptions ---", ...imageDescriptions);
-    }
-
-    if (tweetContent.length) {
-      content.push("--- Tweet Content ---", ...tweetContent);
     }
 
     analytics.track("canvas", "node", "generate", {
@@ -147,7 +133,6 @@ export const TextTransform = ({
       model: modelId,
       instructionsLength: data.instructions?.length ?? 0,
       imageCount: images.length,
-      fileCount: files.length,
     });
 
     const attachments: FileUIPart[] = [];
@@ -156,14 +141,6 @@ export const TextTransform = ({
       attachments.push({
         mediaType: image.type,
         url: image.url,
-        type: "file",
-      });
-    }
-
-    for (const file of files) {
-      attachments.push({
-        mediaType: file.type,
-        url: file.url,
         type: "file",
       });
     }

@@ -111,7 +111,7 @@ export const NodeLayout = ({
               "rounded-[28px] bg-transparent shadow-none"
             )}
             handles={{
-              target: type !== "file" && type !== "tweet",
+              target: true,
               source: type !== "video",
             }}
           >

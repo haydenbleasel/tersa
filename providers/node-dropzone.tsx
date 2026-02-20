@@ -1,7 +1,7 @@
 "use client";
 
 import { useReactFlow } from "@xyflow/react";
-import { FileIcon, ImageIcon, VideoIcon } from "lucide-react";
+import { ImageIcon, VideoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadFile } from "@/lib/upload";
@@ -39,14 +39,10 @@ export const NodeDropzoneProvider = ({
         -viewport.y / viewport.zoom + window.innerHeight / 2 / viewport.zoom;
 
       for (const { data, name } of uploads) {
-        let nodeType = "file";
+        let nodeType = "image";
 
-        if (data.type.startsWith("image/")) {
-          nodeType = "image";
-        } else if (data.type.startsWith("video/")) {
+        if (data.type.startsWith("video/")) {
           nodeType = "video";
-        } else if (data.type.startsWith("audio/")) {
-          nodeType = "audio";
         }
 
         addNode(nodeType, {
@@ -82,7 +78,7 @@ export const NodeDropzoneProvider = ({
       >
         <div className="relative isolate flex items-center -space-x-4">
           <div className="flex aspect-square translate-y-2 -rotate-12 items-center justify-center rounded-md bg-background p-3 shadow-xl">
-            <FileIcon className="text-muted-foreground" size={24} />
+            <ImageIcon className="text-muted-foreground" size={24} />
           </div>
           <div className="z-10 flex aspect-square items-center justify-center rounded-md bg-background p-3 shadow-xl">
             <ImageIcon className="text-muted-foreground" size={24} />

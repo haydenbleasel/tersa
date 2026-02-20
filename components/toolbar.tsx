@@ -38,14 +38,14 @@ export const ToolbarInner = () => {
     <Panel
       className="rounded-full"
       onDoubleClick={(e) => e.stopPropagation()}
-      position="bottom-center"
+      position="bottom-right"
     >
       {nodeButtons.map((button) => (
         <Tooltip key={button.id}>
           <TooltipTrigger asChild>
             <Button
               className="rounded-full"
-              onClick={() => handleAddNode(button.id, button.data)}
+              onClick={() => handleAddNode(button.id)}
               size="icon"
               variant="ghost"
             >
