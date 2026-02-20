@@ -7,10 +7,7 @@
       "!components/kibo-ui",
       "!components/ai-elements",
       "!lib/utils.ts",
-      "!hooks/use-mobile.ts",
-      "!components/supabase-ui",
-      "!components/kibo-ui",
-      "!openapi"
+      "!hooks/use-mobile.ts"
     ]
   }
 }
