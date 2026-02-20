@@ -1,7 +1,7 @@
 "use server";
 
 import { gateway } from "@ai-sdk/gateway";
-import { put } from "@vercel/blob";
+import { head, put } from "@vercel/blob";
 import { generateImage } from "ai";
 import { nanoid } from "nanoid";
 import { parseError } from "@/lib/error/parse";
@@ -41,9 +41,10 @@ export const editImageAction = async ({
 
     const imageData = await Promise.all(
       images.map(async (img) => {
-        const url = assertBlobUrl(img.url);
+        assertBlobUrl(img.url);
 
-        const response = await fetch(url.toString());
+        const blob = await head(img.url);
+        const response = await fetch(blob.downloadUrl);
         const buffer = await response.arrayBuffer();
         return new Uint8Array(buffer);
       })
