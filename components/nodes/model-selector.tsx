@@ -19,10 +19,6 @@ import {
 } from "@/lib/providers";
 import { cn } from "@/lib/utils";
 import type { PriceBracket } from "@/providers/gateway/client";
-import {
-  type SubscriptionContextType,
-  useSubscription,
-} from "@/providers/subscription";
 import { Button } from "../ui/button";
 import {
   Command,
@@ -34,7 +30,7 @@ import {
 } from "../ui/command";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-type ModelSelectorProps = {
+interface ModelSelectorProps {
   id?: string;
   options: Record<string, TersaModel>;
   value: string;
@@ -42,7 +38,7 @@ type ModelSelectorProps = {
   className?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
-};
+}
 
 const getCostBracketIcon = (bracket: PriceBracket, className?: string) => {
   switch (bracket) {
@@ -94,18 +90,8 @@ const getCostBracketLabel = (bracket: PriceBracket) => {
   }
 };
 
-const getModelDisabled = (
-  model: TersaModel,
-  plan: SubscriptionContextType["plan"]
-) => {
+const getModelDisabled = (model: TersaModel) => {
   if (model.disabled) {
-    return true;
-  }
-
-  if (
-    !plan &&
-    (model.priceIndicator === "highest" || model.priceIndicator === "high")
-  ) {
     return true;
   }
 
@@ -145,7 +131,6 @@ export const ModelSelector = ({
   disabled,
 }: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
-  const { plan } = useSubscription();
   const activeModel = options[value];
 
   useEffect(() => {
@@ -227,7 +212,7 @@ export const ModelSelector = ({
                         value === modelKey &&
                           "bg-primary text-primary-foreground data-[selected=true]:bg-primary/80 data-[selected=true]:text-primary-foreground"
                       )}
-                      disabled={getModelDisabled(model, plan)}
+                      disabled={getModelDisabled(model)}
                       key={modelKey}
                       onSelect={() => {
                         onChange?.(modelKey);

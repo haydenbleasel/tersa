@@ -1,12 +1,9 @@
-import {
-  NodeToolbar as NodeToolbarRaw,
-  Position,
-  useReactFlow,
-} from "@xyflow/react";
+import { useReactFlow } from "@xyflow/react";
 import { Fragment, type ReactNode } from "react";
+import { Toolbar } from "../ai-elements/toolbar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
-type NodeToolbarProps = {
+interface NodeToolbarProps {
   id: string;
   items:
     | {
@@ -14,18 +11,14 @@ type NodeToolbarProps = {
         children: ReactNode;
       }[]
     | undefined;
-};
+}
 
 export const NodeToolbar = ({ id, items }: NodeToolbarProps) => {
   const { getNode } = useReactFlow();
   const node = getNode(id);
 
   return (
-    <NodeToolbarRaw
-      className="flex items-center gap-1 rounded-full bg-background/40 p-1.5 backdrop-blur-sm"
-      isVisible={node?.selected}
-      position={Position.Bottom}
-    >
+    <Toolbar className="rounded-full" isVisible={node?.selected}>
       {items?.map((button, index) =>
         button.tooltip ? (
           <Tooltip key={button.tooltip}>
@@ -37,6 +30,6 @@ export const NodeToolbar = ({ id, items }: NodeToolbarProps) => {
           <Fragment key={index}>{button.children}</Fragment>
         )
       )}
-    </NodeToolbarRaw>
+    </Toolbar>
   );
 };

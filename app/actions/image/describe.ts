@@ -1,16 +1,12 @@
 "use server";
 
-import { eq } from "drizzle-orm";
-import OpenAI from "openai";
-import { getSubscribedUser } from "@/lib/auth";
-import { database } from "@/lib/database";
+import { gateway } from "@ai-sdk/gateway";
+import { generateText } from "ai";
 import { parseError } from "@/lib/error/parse";
-import { visionModels } from "@/lib/models/vision";
-import { projects } from "@/schema";
+import { assertBlobUrl } from "@/lib/url";
 
 export const describeAction = async (
-  url: string,
-  projectId: string
+  url: string
 ): Promise<
   | {
       description: string;
@@ -20,59 +16,30 @@ export const describeAction = async (
     }
 > => {
   try {
-    await getSubscribedUser();
+    const validatedUrl = assertBlobUrl(url);
 
-    const openai = new OpenAI();
-
-    const project = await database.query.projects.findFirst({
-      where: eq(projects.id, projectId),
-    });
-
-    if (!project) {
-      throw new Error("Project not found");
-    }
-
-    const model = visionModels[project.visionModel];
-
-    if (!model) {
-      throw new Error("Model not found");
-    }
-
-    let parsedUrl = url;
-
-    if (process.env.NODE_ENV !== "production") {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      parsedUrl = `data:${blob.type};base64,${Buffer.from(await blob.arrayBuffer()).toString("base64")}`;
-    }
-
-    const response = await openai.chat.completions.create({
-      model: model.providers[0].model.modelId,
+    const { text } = await generateText({
+      model: gateway("openai/gpt-5-nano"),
       messages: [
         {
           role: "user",
           content: [
             { type: "text", text: "Describe this image." },
             {
-              type: "image_url",
-              image_url: {
-                url: parsedUrl,
-              },
+              type: "image",
+              image: validatedUrl.toString(),
             },
           ],
         },
       ],
     });
 
-    const description = response.choices.at(0)?.message.content;
-
-    if (!description) {
+    if (!text) {
       throw new Error("No description found");
     }
 
     return {
-      description,
+      description: text,
     };
   } catch (error) {
     const message = parseError(error);

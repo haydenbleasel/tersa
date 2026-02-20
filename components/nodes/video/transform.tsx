@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { type ChangeEventHandler, type ComponentProps, useState } from "react";
 import { toast } from "sonner";
-import { mutate } from "swr";
 import { generateVideoAction } from "@/app/actions/video/create";
 import { NodeLayout } from "@/components/nodes/layout";
 import { Button } from "@/components/ui/button";
@@ -17,9 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { download } from "@/lib/download";
 import { handleError } from "@/lib/error/handle";
-import { videoModels } from "@/lib/models/video";
 import { getImagesFromImageNodes, getTextFromTextNodes } from "@/lib/xyflow";
-import { useProject } from "@/providers/project";
+import { useGateway } from "@/providers/gateway/client";
 import { ModelSelector } from "../model-selector";
 import type { VideoNodeProps } from ".";
 
@@ -27,16 +25,22 @@ type VideoTransformProps = VideoNodeProps & {
   title: string;
 };
 
-const getDefaultModel = (models: typeof videoModels) => {
+const getDefaultModel = (models: Record<string, { default?: boolean }>) => {
   const defaultModel = Object.entries(models).find(
     ([_, model]) => model.default
   );
 
-  if (!defaultModel) {
-    throw new Error("No default model found");
+  if (defaultModel) {
+    return defaultModel[0];
   }
 
-  return defaultModel[0];
+  const firstModel = Object.keys(models)[0];
+
+  if (!firstModel) {
+    throw new Error("No video models available");
+  }
+
+  return firstModel;
 };
 
 export const VideoTransform = ({
@@ -44,16 +48,15 @@ export const VideoTransform = ({
   id,
   type,
   title,
-}: // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex video generation component
-VideoTransformProps) => {
+}: VideoTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
   const [loading, setLoading] = useState(false);
-  const project = useProject();
+  const { videoModels } = useGateway();
   const modelId = data.model ?? getDefaultModel(videoModels);
   const analytics = useAnalytics();
 
   const handleGenerate = async () => {
-    if (loading || !project?.id) {
+    if (loading) {
       return;
     }
 
@@ -73,26 +76,27 @@ VideoTransformProps) => {
         promptLength: textPrompts.join("\n").length,
         model: modelId,
         instructionsLength: data.instructions?.length ?? 0,
-        imageCount: images.length,
       });
 
       const response = await generateVideoAction({
         modelId,
         prompt: [data.instructions ?? "", ...textPrompts].join("\n"),
-        images: images.slice(0, 1),
-        nodeId: id,
-        projectId: project.id,
+        image: images.at(0)?.url,
       });
 
       if ("error" in response) {
         throw new Error(response.error);
       }
 
-      updateNodeData(id, response.nodeData);
+      updateNodeData(id, {
+        updatedAt: new Date().toISOString(),
+        generated: {
+          url: response.url,
+          type: response.type,
+        },
+      });
 
       toast.success("Video generated successfully");
-
-      setTimeout(() => mutate("credits"), 5000);
     } catch (error) {
       handleError("Error generating video", error);
     } finally {
@@ -126,7 +130,7 @@ VideoTransformProps) => {
           children: (
             <Button
               className="rounded-full"
-              disabled={loading || !project?.id}
+              disabled={loading}
               onClick={handleGenerate}
               size="icon"
             >

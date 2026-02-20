@@ -12,7 +12,6 @@ import { NodeLayout } from "@/components/nodes/layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { handleError } from "@/lib/error/handle";
 import { uploadFile } from "@/lib/upload";
-import { useProject } from "@/providers/project";
 import type { ImageNodeProps } from ".";
 
 type ImagePrimitiveProps = ImageNodeProps & {
@@ -26,12 +25,11 @@ export const ImagePrimitive = ({
   title,
 }: ImagePrimitiveProps) => {
   const { updateNodeData } = useReactFlow();
-  const project = useProject();
   const [files, setFiles] = useState<File[] | undefined>();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleDrop = async (droppedFiles: File[]) => {
-    if (isUploading || !project?.id) {
+    if (isUploading) {
       return;
     }
 
@@ -43,7 +41,7 @@ export const ImagePrimitive = ({
       setIsUploading(true);
       setFiles(droppedFiles);
       const [file] = droppedFiles;
-      const { url, type: contentType } = await uploadFile(file, "files");
+      const { url, type: contentType } = await uploadFile(file);
 
       updateNodeData(id, {
         content: {
@@ -52,7 +50,7 @@ export const ImagePrimitive = ({
         },
       });
 
-      const description = await describeAction(url, project?.id);
+      const description = await describeAction(url);
 
       if ("error" in description) {
         throw new Error(description.error);

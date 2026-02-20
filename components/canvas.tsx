@@ -3,7 +3,6 @@
 import {
   applyEdgeChanges,
   applyNodeChanges,
-  Background,
   type Edge,
   getOutgoers,
   type IsValidConnection,
@@ -13,27 +12,30 @@ import {
   type OnConnectStart,
   type OnEdgesChange,
   type OnNodesChange,
-  ReactFlow,
   type ReactFlowProps,
   useReactFlow,
 } from "@xyflow/react";
 import { BoxSelectIcon, PlusIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import type { MouseEvent, MouseEventHandler } from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useDebouncedCallback } from "use-debounce";
-import { updateProjectAction } from "@/app/actions/project/update";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useSaveProject } from "@/hooks/use-save-project";
-import { handleError } from "@/lib/error/handle";
+import { loadCanvas, saveCanvas } from "@/lib/canvas-storage";
 import { isValidSourceTarget } from "@/lib/xyflow";
 import { NodeDropzoneProvider } from "@/providers/node-dropzone";
 import { NodeOperationsProvider } from "@/providers/node-operations";
-import { useProject } from "@/providers/project";
-import { ConnectionLine } from "./connection-line";
-import { edgeTypes } from "./edges";
+import { Canvas as CanvasComponent } from "./ai-elements/canvas";
+import { Connection } from "./ai-elements/connection";
+import { Edge as EdgeComponents } from "./ai-elements/edge";
 import { nodeTypes } from "./nodes";
+
+const edgeTypes = {
+  animated: EdgeComponents.Animated,
+  temporary: EdgeComponents.Temporary,
+};
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -42,7 +44,6 @@ import {
 } from "./ui/context-menu";
 
 export const Canvas = ({ children, ...props }: ReactFlowProps) => {
-  const project = useProject();
   const {
     onConnect,
     onEdgesChange,
@@ -51,13 +52,9 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     edges: initialEdges,
     ...restProps
   } = props ?? {};
-  const content = project?.content as { nodes: Node[]; edges: Edge[] };
-  const [nodes, setNodes] = useState<Node[]>(
-    initialNodes ?? content?.nodes ?? []
-  );
-  const [edges, setEdges] = useState<Edge[]>(
-    initialEdges ?? content?.edges ?? []
-  );
+  const [nodes, setNodes] = useState<Node[]>(initialNodes ?? []);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges ?? []);
+  const [loaded, setLoaded] = useState(false);
   const [copiedNodes, setCopiedNodes] = useState<Node[]>([]);
   const {
     getEdges,
@@ -68,30 +65,19 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     updateNode,
   } = useReactFlow();
   const analytics = useAnalytics();
-  const [saveState, setSaveState] = useSaveProject();
 
-  const save = useDebouncedCallback(async () => {
-    if (saveState.isSaving || !project?.userId || !project?.id) {
-      return;
+  useEffect(() => {
+    const stored = loadCanvas();
+    if (stored) {
+      setNodes(stored.nodes);
+      setEdges(stored.edges);
     }
+    setLoaded(true);
+  }, []);
 
-    try {
-      setSaveState((prev) => ({ ...prev, isSaving: true }));
-
-      const response = await updateProjectAction(project.id, {
-        content: toObject(),
-      });
-
-      if ("error" in response) {
-        throw new Error(response.error);
-      }
-
-      setSaveState((prev) => ({ ...prev, lastSaved: new Date() }));
-    } catch (error) {
-      handleError("Error saving project", error);
-    } finally {
-      setSaveState((prev) => ({ ...prev, isSaving: false }));
-    }
+  const save = useDebouncedCallback(() => {
+    const { nodes: currentNodes, edges: currentEdges } = toObject();
+    saveCanvas({ nodes: currentNodes, edges: currentEdges });
   }, 1000);
 
   const handleNodesChange = useCallback<OnNodesChange>(
@@ -187,10 +173,7 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
   const handleConnectEnd = useCallback<OnConnectEnd>(
     (event, connectionState) => {
-      // when a connection is dropped on the pane it's not valid
-
       if (!connectionState.isValid) {
-        // we need to remove the wrapper bounds, in order to get the correct position
         const { clientX, clientY } =
           "changedTouches" in event ? event.changedTouches[0] : event;
 
@@ -223,13 +206,10 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
 
   const isValidConnection = useCallback<IsValidConnection>(
     (connection) => {
-      // we are using getNodes and getEdges helpers here
-      // to make sure we create isValidConnection function only once
       const currentNodes = getNodes();
       const currentEdges = getEdges();
       const target = currentNodes.find((node) => node.id === connection.target);
 
-      // Prevent connecting audio nodes to anything except transcribe nodes
       if (connection.source) {
         const source = currentNodes.find(
           (node) => node.id === connection.source
@@ -246,7 +226,6 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
         }
       }
 
-      // Prevent cycles
       const hasCycle = (node: Node, visited = new Set<string>()) => {
         if (visited.has(node.id)) {
           return false;
@@ -271,7 +250,6 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
   );
 
   const handleConnectStart = useCallback<OnConnectStart>(() => {
-    // Delete any drop nodes when starting to drag a node
     setNodes((nds: Node[]) => nds.filter((n: Node) => n.type !== "drop"));
     setEdges((eds: Edge[]) => eds.filter((e: Edge) => e.type !== "temporary"));
     save();
@@ -323,7 +301,6 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       selected: true,
     }));
 
-    // Unselect all existing nodes
     setNodes((nds: Node[]) =>
       nds.map((node: Node) => ({
         ...node,
@@ -331,7 +308,6 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
       }))
     );
 
-    // Add new nodes
     setNodes((nds: Node[]) => [...nds, ...newNodes]);
   }, [copiedNodes]);
 
@@ -374,17 +350,19 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
     preventDefault: true,
   });
 
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <NodeOperationsProvider addNode={addNode} duplicateNode={duplicateNode}>
       <NodeDropzoneProvider>
         <ContextMenu>
           <ContextMenuTrigger onContextMenu={handleContextMenu}>
-            <ReactFlow
-              connectionLineComponent={ConnectionLine}
-              deleteKeyCode={["Backspace", "Delete"]}
+            <CanvasComponent
+              connectionLineComponent={Connection}
               edges={edges}
               edgeTypes={edgeTypes}
-              fitView
               isValidConnection={isValidConnection}
               nodes={nodes}
               nodeTypes={nodeTypes}
@@ -394,15 +372,10 @@ export const Canvas = ({ children, ...props }: ReactFlowProps) => {
               onDoubleClick={addDropNode}
               onEdgesChange={handleEdgesChange}
               onNodesChange={handleNodesChange}
-              panOnDrag={false}
-              panOnScroll
-              selectionOnDrag={true}
-              zoomOnDoubleClick={false}
               {...restProps}
             >
-              <Background />
               {children}
-            </ReactFlow>
+            </CanvasComponent>
           </ContextMenuTrigger>
           <ContextMenuContent>
             <ContextMenuItem onClick={addDropNode}>

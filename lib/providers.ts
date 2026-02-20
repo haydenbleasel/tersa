@@ -15,10 +15,8 @@ import {
   FireworksIcon,
   GoogleIcon,
   GroqIcon,
-  HumeIcon,
   InceptionIcon,
   KlingIcon,
-  LmntIcon,
   LumaIcon,
   MetaIcon,
   MinimaxIcon,
@@ -37,11 +35,11 @@ import {
   ZaiIcon,
 } from "./icons";
 
-export type TersaProvider = {
+export interface TersaProvider {
   id: string;
   name: string;
   icon: typeof OpenAiIcon;
-};
+}
 
 export const providers = {
   openai: {
@@ -99,20 +97,10 @@ export const providers = {
     name: "Minimax",
     icon: MinimaxIcon,
   },
-  hume: {
-    id: "hume",
-    name: "Hume",
-    icon: HumeIcon,
-  },
   cohere: {
     id: "cohere",
     name: "Cohere",
     icon: CohereIcon,
-  },
-  lmnt: {
-    id: "lmnt",
-    name: "LMNT",
-    icon: LmntIcon,
   },
   "black-forest-labs": {
     id: "black-forest-labs",
@@ -174,6 +162,11 @@ export const providers = {
     name: "Kling",
     icon: KlingIcon,
   },
+  klingai: {
+    id: "klingai",
+    name: "Kling",
+    icon: KlingIcon,
+  },
   replicate: {
     id: "replicate",
     name: "Replicate",
@@ -226,7 +219,7 @@ export const providers = {
   },
 };
 
-export type TersaModel = {
+export interface TersaModel {
   // Inherits from chef if not provided
   icon?: typeof OpenAiIcon;
   label: string;
@@ -236,4 +229,4 @@ export type TersaModel = {
   priceIndicator?: PriceBracket;
   disabled?: boolean;
   default?: boolean;
-};
+}

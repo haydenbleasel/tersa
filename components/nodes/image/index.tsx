@@ -2,7 +2,7 @@ import { useNodeConnections } from "@xyflow/react";
 import { ImagePrimitive } from "./primitive";
 import { ImageTransform } from "./transform";
 
-export type ImageNodeProps = {
+export interface ImageNodeProps {
   type: string;
   data: {
     content?: {
@@ -13,7 +13,6 @@ export type ImageNodeProps = {
       url: string;
       type: string;
     };
-    size?: string;
     width?: number;
     height?: number;
     updatedAt?: string;
@@ -22,7 +21,7 @@ export type ImageNodeProps = {
     instructions?: string;
   };
   id: string;
-};
+}
 
 export const ImageNode = (props: ImageNodeProps) => {
   const connections = useNodeConnections({

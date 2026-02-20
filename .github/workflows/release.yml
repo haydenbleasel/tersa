@@ -6,6 +6,10 @@ on:
   push:
     branches: [main]
 
+# permissions needed for auto shipit
+permissions:
+  contents: write
+
 # what the action will do
 jobs:
   release:

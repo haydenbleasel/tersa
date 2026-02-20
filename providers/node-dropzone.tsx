@@ -1,34 +1,31 @@
 "use client";
 
 import { useReactFlow } from "@xyflow/react";
-import { FileIcon, ImageIcon, VideoIcon } from "lucide-react";
+import { ImageIcon, VideoIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useDropzone } from "react-dropzone";
 import { uploadFile } from "@/lib/upload";
 import { cn } from "@/lib/utils";
 import { useNodeOperations } from "./node-operations";
-import { useProject } from "./project";
 
-type NodeDropzoneProviderProps = {
+interface NodeDropzoneProviderProps {
   children: ReactNode;
-};
+}
 
 export const NodeDropzoneProvider = ({
   children,
 }: NodeDropzoneProviderProps) => {
   const { getViewport } = useReactFlow();
   const { addNode } = useNodeOperations();
-  const project = useProject();
   const dropzone = useDropzone({
     noClick: true,
     autoFocus: false,
     noKeyboard: true,
-    disabled: !project,
     onDrop: async (acceptedFiles) => {
       const uploads = await Promise.all(
         acceptedFiles.map(async (file) => ({
           name: file.name,
-          data: await uploadFile(file, "files"),
+          data: await uploadFile(file),
         }))
       );
 
@@ -42,14 +39,10 @@ export const NodeDropzoneProvider = ({
         -viewport.y / viewport.zoom + window.innerHeight / 2 / viewport.zoom;
 
       for (const { data, name } of uploads) {
-        let nodeType = "file";
+        let nodeType = "image";
 
-        if (data.type.startsWith("image/")) {
-          nodeType = "image";
-        } else if (data.type.startsWith("video/")) {
+        if (data.type.startsWith("video/")) {
           nodeType = "video";
-        } else if (data.type.startsWith("audio/")) {
-          nodeType = "audio";
         }
 
         addNode(nodeType, {
@@ -85,7 +78,7 @@ export const NodeDropzoneProvider = ({
       >
         <div className="relative isolate flex items-center -space-x-4">
           <div className="flex aspect-square translate-y-2 -rotate-12 items-center justify-center rounded-md bg-background p-3 shadow-xl">
-            <FileIcon className="text-muted-foreground" size={24} />
+            <ImageIcon className="text-muted-foreground" size={24} />
           </div>
           <div className="z-10 flex aspect-square items-center justify-center rounded-md bg-background p-3 shadow-xl">
             <ImageIcon className="text-muted-foreground" size={24} />

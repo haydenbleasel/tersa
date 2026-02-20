@@ -4,11 +4,10 @@
   "files": {
     "includes": [
       "!components/ui",
-      "!lib/utils.ts",
-      "!hooks/use-mobile.ts",
-      "!components/supabase-ui",
       "!components/kibo-ui",
-      "!openapi"
+      "!components/ai-elements",
+      "!lib/utils.ts",
+      "!hooks/use-mobile.ts"
     ]
   }
 }

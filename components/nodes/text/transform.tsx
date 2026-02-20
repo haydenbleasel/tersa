@@ -17,7 +17,6 @@ import {
 } from "react";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { mutate } from "swr";
 import {
   Message,
   MessageContent,
@@ -38,15 +37,10 @@ import { useReasoning } from "@/hooks/use-reasoning";
 import { handleError } from "@/lib/error/handle";
 import {
   getDescriptionsFromImageNodes,
-  getFilesFromFileNodes,
   getImagesFromImageNodes,
   getTextFromTextNodes,
-  getTranscriptionFromAudioNodes,
-  getTweetContentFromTweetNodes,
 } from "@/lib/xyflow";
 import { useGateway } from "@/providers/gateway/client";
-import { useProject } from "@/providers/project";
-import { useSubscription } from "@/providers/subscription";
 import { ReasoningTunnel } from "@/tunnels/reasoning";
 import { ModelSelector } from "../model-selector";
 import type { TextNodeProps } from ".";
@@ -74,11 +68,9 @@ export const TextTransform = ({
   title,
 }: TextTransformProps) => {
   const { updateNodeData, getNodes, getEdges } = useReactFlow();
-  const project = useProject();
   const { models } = useGateway();
   const modelId = data.model ?? getDefaultModel(models);
   const analytics = useAnalytics();
-  const subscription = useSubscription();
   const [reasoning, setReasoning] = useReasoning();
   const { sendMessage, messages, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
@@ -87,10 +79,6 @@ export const TextTransform = ({
     onError: (error) => handleError("Error generating text", error),
     onFinish: ({ message, isError }) => {
       if (isError) {
-        if (!subscription.isSubscribed) {
-          return;
-        }
-
         handleError("Error generating text", "Please try again later.");
         return;
       }
@@ -110,22 +98,16 @@ export const TextTransform = ({
       }));
 
       toast.success("Text generated successfully");
-
-      setTimeout(() => mutate("credits"), 5000);
     },
   });
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complex text generation flow
   const handleGenerate = useCallback(async () => {
     const incomers = getIncomers({ id }, getNodes(), getEdges());
     const textPrompts = getTextFromTextNodes(incomers);
-    const audioPrompts = getTranscriptionFromAudioNodes(incomers);
     const images = getImagesFromImageNodes(incomers);
     const imageDescriptions = getDescriptionsFromImageNodes(incomers);
-    const tweetContent = getTweetContentFromTweetNodes(incomers);
-    const files = getFilesFromFileNodes(incomers);
 
-    if (!(textPrompts.length || audioPrompts.length || data.instructions)) {
+    if (!(textPrompts.length || data.instructions)) {
       handleError("Error generating text", "No prompts found");
       return;
     }
@@ -140,16 +122,8 @@ export const TextTransform = ({
       content.push("--- Text Prompts ---", ...textPrompts);
     }
 
-    if (audioPrompts.length) {
-      content.push("--- Audio Prompts ---", ...audioPrompts);
-    }
-
     if (imageDescriptions.length) {
       content.push("--- Image Descriptions ---", ...imageDescriptions);
-    }
-
-    if (tweetContent.length) {
-      content.push("--- Tweet Content ---", ...tweetContent);
     }
 
     analytics.track("canvas", "node", "generate", {
@@ -158,7 +132,6 @@ export const TextTransform = ({
       model: modelId,
       instructionsLength: data.instructions?.length ?? 0,
       imageCount: images.length,
-      fileCount: files.length,
     });
 
     const attachments: FileUIPart[] = [];
@@ -167,14 +140,6 @@ export const TextTransform = ({
       attachments.push({
         mediaType: image.type,
         url: image.url,
-        type: "file",
-      });
-    }
-
-    for (const file of files) {
-      attachments.push({
-        mediaType: file.type,
-        url: file.url,
         type: "file",
       });
     }
@@ -231,12 +196,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Stop",
         children: (
-          <Button
-            className="rounded-full"
-            disabled={!project?.id}
-            onClick={stop}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={stop} size="icon">
             <SquareIcon size={12} />
           </Button>
         ),
@@ -255,12 +215,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Regenerate",
         children: (
-          <Button
-            className="rounded-full"
-            disabled={!project?.id}
-            onClick={handleGenerate}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={handleGenerate} size="icon">
             <RotateCcwIcon size={12} />
           </Button>
         ),
@@ -283,12 +238,7 @@ export const TextTransform = ({
       items.push({
         tooltip: "Generate",
         children: (
-          <Button
-            className="rounded-full"
-            disabled={!project?.id}
-            onClick={handleGenerate}
-            size="icon"
-          >
+          <Button className="rounded-full" onClick={handleGenerate} size="icon">
             <PlayIcon size={12} />
           </Button>
         ),
@@ -318,7 +268,6 @@ export const TextTransform = ({
     modelId,
     id,
     messages,
-    project?.id,
     status,
     stop,
     handleCopy,

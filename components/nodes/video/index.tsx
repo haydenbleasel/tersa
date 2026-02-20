@@ -2,7 +2,7 @@ import { useNodeConnections } from "@xyflow/react";
 import { VideoPrimitive } from "./primitive";
 import { VideoTransform } from "./transform";
 
-export type VideoNodeProps = {
+export interface VideoNodeProps {
   type: string;
   data: {
     content?: {
@@ -20,7 +20,7 @@ export type VideoNodeProps = {
     height?: number;
   };
   id: string;
-};
+}
 
 export const VideoNode = (props: VideoNodeProps) => {
   const connections = useNodeConnections({
